@@ -1,11 +1,16 @@
 extends Node
 
-var lang: String
+func show_ad_inter() -> void:
+	pass
 
 
-func _ready() -> void:
-	if !WebBus.is_init:
-		await WebBus.inited
+func show_ad_reward() -> void:
+	pass
 
-	WebBus.ready()
-	lang = WebBus.get_language()
+
+func mark_gameplay() -> void:
+	pass
+
+
+func mark_ready() -> void:
+	pass
