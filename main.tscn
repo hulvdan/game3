@@ -1,13 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://cc28skn5h7aup"]
+[gd_scene format=3 uid="uid://cc28skn5h7aup"]
 
 [ext_resource type="Script" uid="uid://cqxeo73lvmm07" path="res://src/bf_game.gd" id="1_ig7tw"]
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="2_0xm2m"]
 
-[node name="root" type="Node2D"]
+[node name="root" type="Node2D" unique_id=1918192009]
 
-[node name="game" type="Node" parent="."]
+[node name="game" type="Node" parent="." unique_id=1695219218]
 script = ExtResource("1_ig7tw")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1727524821]
 position = Vector2(578, 317)
 texture = ExtResource("2_0xm2m")

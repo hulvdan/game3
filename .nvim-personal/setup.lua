@@ -74,6 +74,10 @@ function rebuild_tasks()
 			[[godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]],
 		},
 		{ "r_run", [[godot --quit --no-header --headless --check-only && godot]] },
+		{
+			"p_profile",
+			[[cmd /c "cd /d ..\godot-4.6-stable && scons platform=web profile=profile_web_release.py"]],
+		},
 		-- {
 		--     "y_test_python",
 		--     [[uvx ruff check --output-format concise cli && uv run pytest -x -vv]],
@@ -91,14 +95,12 @@ function rebuild_tasks()
 		--         vim.fn.execute([[term python -m http.server -d .cmake\Web_Release -b 0.0.0.0 8001]])
 		--     end,
 		-- },
-		-- {
-		--     "c_serve_webyandex_release",
-		--     function()
-		--         vim.fn.execute(
-		--             [[term npx @yandex-games/sdk-dev-proxy --dev-mode=true -c -p .cmake\WebYandex_Release --port 8082]]
-		--         )
-		--     end,
-		-- },
+		{
+			"c_serve_webyandex_release",
+			function()
+				vim.fn.execute([[term npx @yandex-games/sdk-dev-proxy --dev-mode=true -c -p .export\web --port 8082]])
+			end,
+		},
 		-- { "o_deploy_itch", cli_command("deploy_itch") },
 		-- { "p_deploy_yandex", cli_command("deploy_yandex") },
 		-- { "i_make_swatch", cli_command("make_swatch") },

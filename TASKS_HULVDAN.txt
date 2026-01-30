@@ -7,11 +7,11 @@ BIG PLAN
 PLAN
 ============================================================
 
+* template: minify web build
 * template: build yandex cli
 * template: yandex async music
 * template: game analytics send metrics from game
 * template: save load
-* template:
 * template:
 * template:
 RELEASED

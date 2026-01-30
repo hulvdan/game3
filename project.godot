@@ -8,17 +8,23 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="godot-template"
 run/main_scene="uid://cc28skn5h7aup"
-config/features=PackedStringArray("4.5", "GL Compatibility")
+config/features=PackedStringArray("4.6", "GL Compatibility")
+run/max_fps=60
+boot_splash/show_image=false
 config/icon="res://icon.svg"
 
 [autoload]
 
 Meta="*res://src/bf_meta.gd"
-Bridge="*res://addons/playgama_bridge/bridge.gd"
+Bridge="*uid://cx4klxojbw6ck"
 
 [editor_plugins]
 
