@@ -82,7 +82,7 @@ class BuildType(StrEnum):
 
 
 class BuildPlatform(StrEnum):
-    Win = "win"
+    Win = "windows"
     Web = "web"
     WebYandex = "web_yandex"
     WebItch = "web_itch"

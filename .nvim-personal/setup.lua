@@ -29,14 +29,14 @@ function cli_command(cmd)
 end
 
 target = "game"
-platform = "win"
+platform = "windows"
 build_type = "debug"
 
 function select_target()
 	targets = { "game" }
 	build_types = { "debug", "release" }
 	platforms = {
-		"win",
+		"windows",
 		"web",
 		-- "WebYandex",
 		-- "WebItch",

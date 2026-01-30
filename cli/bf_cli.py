@@ -2,6 +2,7 @@
 import asyncio
 import datetime
 import os
+import shutil
 import zipfile
 from collections import Counter
 from pathlib import Path
@@ -60,41 +61,20 @@ def do_build(
     build_id = (target, platform, build_type)
     assert build_id in bf.ALLOWED_BUILDS, "{} is not allowed!".format(build_id)
 
-    match platform:
-        # case bf.BuildPlatform.Win:
-        #     compiler = bf.MSBUILD_PATH
-        #     # if build_type != BuildType.Release:
-        #     #     compiler = CLANG_CL_PATH
-        #
-        #     bf.run_command(
-        #         rf"""
-        #         "{compiler}" .cmake/vs17/game.sln
-        #         -v:minimal
-        #         -property:WarningLevel=3
-        #         -t:{target}
-        #         """
-        #     )
+    out_path = Path(".export") / f"{platform}_{build_type}" / "index.html"
+    bf.recursive_mkdir(out_path.parent)
+    bf.run_command(f"del /f/s/q {out_path.parent}")
 
-        case _:
-            if platform.lower().startswith("web"):
-                out_path = Path(".export") / f"{platform}_{build_type}" / "index.html"
-                bf.recursive_mkdir(out_path.parent)
-                bf.run_command(f"del /f/s/q {out_path.parent}")
+    export_type = (
+        "--export-release" if build_type == bf.BuildType.Release else "--export-debug"
+    )
+    bf.run_command(rf"godot --quit --headless {export_type} {platform} {out_path}")
 
-                export_type = (
-                    "--export-release"
-                    if build_type == bf.BuildType.Release
-                    else "--export-debug"
-                )
-                bf.run_command(rf"godot --quit --headless {export_type} web {out_path}")
-
-                make_web_build_archive(
-                    f".export/{platform}_{build_type}.zip",
-                    Path(f".export/{platform}_{build_type}"),
-                )
-
-            else:
-                assert False, f"Not supported platform: {platform}"
+    shutil.make_archive(
+        base_name=f".export/{platform}_{build_type}",
+        format="zip",
+        root_dir=f".export/{platform}_{build_type}",
+    )
     # }
 
 
