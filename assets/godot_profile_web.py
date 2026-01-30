@@ -1,3 +1,6 @@
+# GODOT PAGE «Optimizing a build for size»
+# https://docs.godotengine.org/en/stable/engine_details/development/compiling/optimizing_for_size.html
+
 target = "template_release"
 debug_symbols = "no"
 # Godot >4.5 only. Otherwise, use optimize="size"
