@@ -1,24 +1,10 @@
 # Imports.  {  ###
-import json
-import os
-import re
-import shutil
-import string
-import tempfile
-from collections import defaultdict
-from dataclasses import dataclass
-from enum import Enum, unique
-from functools import partial
-from math import radians
 from pathlib import Path
-from typing import Any, TypeAlias
 
 import bf_lib as bf
-import pytest
 import rpp
 from bf_game import *  # noqa
-from bf_typer import timing, timing_mark
-from PIL import Image
+from bf_typer import timing
 
 # }
 
@@ -110,7 +96,7 @@ def do_audio(platform: bf.BuildPlatform) -> None:
 
 
 @timing
-def do_generate(platform: bf.BuildPlatform, build_type: bf.BuildType) -> None:
+def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
     do_audio(platform)
 
 

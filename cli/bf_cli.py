@@ -1,6 +1,4 @@
 # Imports.  {  ###
-import asyncio
-import datetime
 import os
 import shutil
 import zipfile
@@ -10,7 +8,6 @@ from pathlib import Path
 import bf_lib as bf
 import bf_swatch
 import colornames
-import websockets
 from bf_game import *  # noqa
 from bf_gamelib import do_generate, get_sounds_that_reaper_would_export
 from bf_typer import app, command, global_timing_manager_instance, timing
@@ -54,14 +51,30 @@ def make_web_build_archive(zip_path: Path, where_godot_exported_folder: Path) ->
 
 
 @timing
+def do_profile(platform: bf.BuildPlatform) -> None:
+    # {  ###
+    bf.run_command(
+        [
+            "scons",
+            "target=template_release",
+            f"platform={platform}",
+            f"profile=../{bf.PROJECT_DIR.name}/assets/profile_{platform}.py",
+            "build_profile=../godot-template/assets/profile.gdbuild",
+        ],
+        cwd="../godot-4.6-stable",
+    )
+    # }
+
+
+@timing
 def do_build(
     target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType
-):
+) -> None:
     # {  ###
     build_id = (target, platform, build_type)
     assert build_id in bf.ALLOWED_BUILDS, "{} is not allowed!".format(build_id)
 
-    exe = {
+    exe_name = {
         bf.BuildPlatform.Win: "game.exe",
         bf.BuildPlatform.Web: "index.html",
     }[platform]
@@ -71,14 +84,10 @@ def do_build(
     bf.run_command(f"del /f/s/q {out_folder}")
 
     bf.run_command(
-        rf"godot --quit --headless --export-{build_type} {platform} {out_folder}/{exe}"
+        rf"godot --quit --headless --export-{build_type} {platform} {out_folder}/{exe_name}"
     )
 
-    shutil.make_archive(
-        base_name=f".export/{platform}_{build_type}",
-        format="zip",
-        root_dir=f".export/{platform}_{build_type}",
-    )
+    shutil.make_archive(base_name=out_folder, format="zip", root_dir=out_folder)
     # }
 
 
@@ -239,6 +248,14 @@ def do_build(
 
 
 @command
+def profiles() -> None:
+    # {  ###
+    for platform in bf.BuildPlatform:
+        do_profile(platform.value)
+    # }
+
+
+@command
 def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType):
     # {  ###
     # do_cmake(platform, build_type)
@@ -257,7 +274,7 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
 #             continue
 #         do_generate(platform, build_type)
 #         build(bf.BuildTarget.game, platform, build_type)
-#         bf._gamelib = None  # noqa: SLF001
+#         bf._gamelib = None
 #     # }
 
 
@@ -287,78 +304,78 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
 #     # }
 
 
-@command
-def test():
-    # {  ###
-    platform = bf.BuildPlatform.Win
-    build_type = bf.BuildType.Debug
-
-    do_cmake(platform, build_type)
-    do_generate(platform, build_type)
-    do_build(bf.BuildTarget.tests, platform, build_type)
-    do_test()
-    # }
-
-
-@command
-def deploy_itch():
-    # {  ###
-    bf.git_check_no_unstashed()
-
-    bf.git_bump_tag()
-
-    with bf.git_stash():
-        build(bf.BuildTarget.game, bf.BuildPlatform.WebItch, bf.BuildType.Release)
-
-    zip_path = bf.TEMP_DIR / "itch.zip"
-    make_web_build_archive(zip_path, Path(".export/web_release"))
-
-    target = "{}:html".format(bf.game_settings.itch_target)
-    bf.run_command([bf.BUTLER_PATH, "push", zip_path, target])
-    # }
+# @command
+# def test():
+#     # {  ###
+#     platform = bf.BuildPlatform.Win
+#     build_type = bf.BuildType.Debug
+#
+#     do_cmake(platform, build_type)
+#     do_generate(platform, build_type)
+#     do_build(bf.BuildTarget.tests, platform, build_type)
+#     do_test()
+#     # }
 
 
-@command
-def deploy_yandex():
-    # {  ###
-    bf.git_check_no_unstashed()
-
-    bf.git_bump_tag()
-
-    with bf.git_stash():
-        build(bf.BuildTarget.game, bf.BuildPlatform.WebYandex, bf.BuildType.Release)
-    # }
-
-
-@command
-def receive_ws_logs(port: int):
-    # {  ###
-    get_time = lambda: datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
-
-    async def handler(ws):
-        print(f"{get_time()} I: CONNECTED")
-        try:
-            async for msg in ws:
-                print(f"{get_time()} {msg}")
-        except websockets.exceptions.ConnectionClosedError:
-            print(f"{get_time()} I: DISCONNECTED")
-
-    async def main():
-        async with websockets.serve(handler, "0.0.0.0", port):
-            print(f"Listening on ws://0.0.0.0:{port}")
-            await asyncio.Future()
-
-    asyncio.run(main())
-    # }
+# @command
+# def deploy_itch():
+#     # {  ###
+#     bf.git_check_no_unstashed()
+#
+#     bf.git_bump_tag()
+#
+#     with bf.git_stash():
+#         build(bf.BuildTarget.game, bf.BuildPlatform.WebItch, bf.BuildType.Release)
+#
+#     zip_path = bf.TEMP_DIR / "itch.zip"
+#     make_web_build_archive(zip_path, Path(".export/web_release"))
+#
+#     target = "{}:html".format(bf.game_settings.itch_target)
+#     bf.run_command([bf.BUTLER_PATH, "push", zip_path, target])
+#     # }
+#
+#
+# @command
+# def deploy_yandex():
+#     # {  ###
+#     bf.git_check_no_unstashed()
+#
+#     bf.git_bump_tag()
+#
+#     with bf.git_stash():
+#         build(bf.BuildTarget.game, bf.BuildPlatform.WebYandex, bf.BuildType.Release)
+#     # }
 
 
-@command
-def lint():
-    # {  ###
-    do_cmake_ninja_files()
-    do_compile_commands_json()
-    do_lint()
-    # }
+# @command
+# def receive_ws_logs(port: int):
+#     # {  ###
+#     get_time = lambda: datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
+#
+#     async def handler(ws):
+#         print(f"{get_time()} I: CONNECTED")
+#         try:
+#             async for msg in ws:
+#                 print(f"{get_time()} {msg}")
+#         except websockets.exceptions.ConnectionClosedError:
+#             print(f"{get_time()} I: DISCONNECTED")
+#
+#     async def main():
+#         async with websockets.serve(handler, "0.0.0.0", port):
+#             print(f"Listening on ws://0.0.0.0:{port}")
+#             await asyncio.Future()
+#
+#     asyncio.run(main())
+#     # }
+
+
+# @command
+# def lint():
+#     # {  ###
+#     do_cmake_ninja_files()
+#     do_compile_commands_json()
+#     do_lint()
+#     # }
 
 
 # CREDITING SFX {  ###

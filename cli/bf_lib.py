@@ -1,6 +1,5 @@
 # Imports.  {  ###
 import colorsys
-import csv
 import hashlib
 import math
 import re
@@ -39,7 +38,6 @@ class _GameSettings:
     # {  ###
     itch_target: str = "hulvdan/game-template"
     languages: list[str] = field(default_factory=lambda: ["russian", "english"])
-    generate_flatbuffers_api_for: list[str] = field(default_factory=list)
     yandex_metrica_counter_id: int | None = None
     colors: list[str] = field(default_factory=lambda: ["#ffffff", "#000000"])
 
@@ -870,45 +868,6 @@ def test_bannerify():
 
 
 # }
-
-
-# !banner: locale
-# ██╗      ██████╗  ██████╗ █████╗ ██╗     ███████╗
-# ██║     ██╔═══██╗██╔════╝██╔══██╗██║     ██╔════╝
-# ██║     ██║   ██║██║     ███████║██║     █████╗
-# ██║     ██║   ██║██║     ██╔══██║██║     ██╔══╝
-# ███████╗╚██████╔╝╚██████╗██║  ██║███████╗███████╗
-# ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝
-
-
-@dataclass
-class LocalizationResult:
-    loc_ids: list[str]
-    loc_by_languages: dict[str, list[str]]
-
-
-def read_localization_csv() -> LocalizationResult:
-    # {  ###
-    result = LocalizationResult(
-        loc_ids=[], loc_by_languages={x: [] for x in game_settings.languages}
-    )
-
-    with open(ASSETS_DIR / "localization.csv", encoding="utf-8") as in_file:
-        not_language_columns = ("id", "\ufeffid", "comment")
-        for row in csv.DictReader(in_file, delimiter=";"):
-            row_id = row.get("id") or row.get("\ufeffid")
-            assert isinstance(row_id, str)
-            result.loc_ids.append(row_id)
-            for c in row:
-                if c not in not_language_columns:
-                    assert c in game_settings.languages
-                    translation = row[c]
-                    result.loc_by_languages[c].append(
-                        translation.strip() or "<<NOT_TRANSLATED>>"
-                    )
-
-    return result
-    # }
 
 
 # !banner: image

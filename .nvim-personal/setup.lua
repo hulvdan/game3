@@ -83,9 +83,18 @@ function rebuild_tasks()
 			[[godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]],
 		},
 		{ "r_run", [[godot --quit --no-header --headless --check-only && godot]] },
+		-- {
+		-- 	"p_profile",
+		-- 	[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=../godot-template/assets/profile_web.py build_profile=../godot-template/assets/profile.gdbuild"]],
+		-- },
 		{
-			"p_profile",
-			[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=../godot-template/assets/profile_web.py build_profile=../godot-template/assets/profile.gdbuild"]],
+			"p_profiles",
+			cli_command("profiles"),
+			-- string:format(
+			-- 	[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=%s profile=../godot-template/assets/profile_%s.py build_profile=../godot-template/assets/profile.gdbuild"]],
+			-- 	platform,
+			-- 	platform
+			-- ),
 		},
 		-- {
 		--     "y_test_python",

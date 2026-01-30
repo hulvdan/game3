@@ -2,10 +2,19 @@
 
 ## Setting Up The Machine
 
-- Download and put in PATH
-  https://github.com/GDQuest/GDScript-formatter/releases
-- mklink c:\Users\user\Programs\PATH\godot.exe c:\Users\user\Programs\godot\Godot_v4.5.1-stable_win64.exe
-- mklink c:\Users\user\Programs\PATH\godot_console.exe c:\Users\user\Programs\godot\Godot_v4.5.1-stable_win64_console.exe
+- Download godot source to c:\Users\user\dev\home\godot-4.6-stable
+- Inside of it execute:
+  ```
+  python misc\scripts\install_d3d12_sdk_windows.py
+  ```
+- Create godot.exe, godot_console.exe in PATH
+  ```
+  mklink c:\Users\user\Programs\PATH\godot.exe c:\Users\user\Programs\godot\Godot_v4.6-stable_win64.exe
+  mklink c:\Users\user\Programs\PATH\godot_console.exe c:\Users\user\Programs\godot\Godot_v4.6-stable_win64_console.exe
+  ```
+- Optional. For nvim:
+  - Download and put in PATH
+    https://github.com/GDQuest/GDScript-formatter/releases
 
 ## Quickstart
 

@@ -8,11 +8,17 @@ PLAN
 ============================================================
 
 x template: minify web build
+x template: build yandex cli
 
-* template: build yandex cli
-* template: yandex async music
-* template: game analytics send metrics from game
-* template: save load
+* template: game analytics
+* game->template: save load
+* game->template: game analytics send metrics from game
+* game->template: yandex async music
+* game->template:
+* game->template:
+* game->template:
+* game->template:
+* template:
 * template:
 * template:
 
