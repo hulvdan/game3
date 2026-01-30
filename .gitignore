@@ -1,6 +1,14 @@
+*.reapeaks
+*.rpp-PROX
+*.rpp-bak
 *.tmp
 .godot/
-__pycache__/
 /.export/
+/.mypy_cache/
+/.ruff_cache/
 /__MACOSX
 /android/
+/assets/art/src/main*.png
+/assets/art/src/screenshots_processed/
+/assets/level*/backups/
+__pycache__/

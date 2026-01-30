@@ -11,11 +11,7 @@ import bf_swatch
 import colornames
 import websockets
 from bf_game import *  # noqa
-from bf_gamelib import (
-    do_generate,
-    get_sounds_that_reaper_would_export,
-    regenerate_shaders,
-)
+from bf_gamelib import do_generate, get_sounds_that_reaper_would_export
 from bf_typer import app, command, global_timing_manager_instance, timing
 
 # }
@@ -47,53 +43,21 @@ def enrich_game_settings_colors() -> None:
     # }
 
 
-@timing
-def make_web_build_archive(zip_path: Path, cmake_build_out_path: Path) -> None:
-    # {  ###
-    with zipfile.ZipFile(zip_path, "w") as archive:
-        for filepath in (
-            "index.data",
-            "index.html",
-            "index.js",
-            "index.wasm",
-        ):
-            archive.write(cmake_build_out_path / filepath, filepath)
-        RESOURCES_POSTLOAD_DIR = bf.PROJECT_DIR / "resp"
-        for f in RESOURCES_POSTLOAD_DIR.glob("*"):
-            archive.write(f, "{}/{}".format(RESOURCES_POSTLOAD_DIR.name, f.name))
-    # }
-
-
-@timing
-def do_cmake(platform: bf.BuildPlatform, build_type: bf.BuildType) -> None:
-    # {  ###
-    command = [
-        "cmake",
-        "-DBUILD_SHARED_LIBS=OFF",
-        # "-T ClangCL",
-        f"-DPLATFORM={platform}",
-        f"-DCMAKE_CONFIGURATION_TYPES={build_type}",
-    ]
-
-    match platform:
-        case bf.BuildPlatform.Win:
-            # TODO: ASAN
-            # if build_type != BuildType.Release:
-            #     command.append("-A x64")
-            #     command.append("-T ClangCL")
-
-            command.append('-G "Visual Studio 17 2022"')
-            command.append(r"-B .cmake/vs17")
-
-        case _:
-            if platform.lower().startswith("web"):
-                command.insert(0, "emcmake")
-                command.append(f"-B .cmake/{platform}_{build_type}")
-            else:
-                assert False, f"Not supported platform: {platform}"
-
-    bf.run_command(" ".join(command))
-    # }
+# @timing
+# def make_web_build_archive(zip_path: Path, cmake_build_out_path: Path) -> None:
+#     # {  ###
+#     with zipfile.ZipFile(zip_path, "w") as archive:
+#         for filepath in (
+#             "index.data",
+#             "index.html",
+#             "index.js",
+#             "index.wasm",
+#         ):
+#             archive.write(cmake_build_out_path / filepath, filepath)
+#         RESOURCES_POSTLOAD_DIR = bf.PROJECT_DIR / "resp"
+#         for f in RESOURCES_POSTLOAD_DIR.glob("*"):
+#             archive.write(f, "{}/{}".format(RESOURCES_POSTLOAD_DIR.name, f.name))
+#     # }
 
 
 @timing
@@ -105,19 +69,19 @@ def do_build(
     assert build_id in bf.ALLOWED_BUILDS, "{} is not allowed!".format(build_id)
 
     match platform:
-        case bf.BuildPlatform.Win:
-            compiler = bf.MSBUILD_PATH
-            # if build_type != BuildType.Release:
-            #     compiler = CLANG_CL_PATH
-
-            bf.run_command(
-                rf"""
-                "{compiler}" .cmake/vs17/game.sln
-                -v:minimal
-                -property:WarningLevel=3
-                -t:{target}
-                """
-            )
+        # case bf.BuildPlatform.Win:
+        #     compiler = bf.MSBUILD_PATH
+        #     # if build_type != BuildType.Release:
+        #     #     compiler = CLANG_CL_PATH
+        #
+        #     bf.run_command(
+        #         rf"""
+        #         "{compiler}" .cmake/vs17/game.sln
+        #         -v:minimal
+        #         -property:WarningLevel=3
+        #         -t:{target}
+        #         """
+        #     )
 
         case _:
             if platform.lower().startswith("web"):
@@ -128,7 +92,7 @@ def do_build(
                 if platform == bf.BuildPlatform.WebYandex:
                     make_web_build_archive(
                         bf.TEMP_DIR / "yandex.zip",
-                        Path(f".cmake/{platform}_{build_type}"),
+                        Path(f".export/{platform}_{build_type}"),
                     )
 
             else:
@@ -136,126 +100,94 @@ def do_build(
     # }
 
 
-@timing
-def do_test() -> None:
-    bf.run_command(str(bf.CMAKE_TESTS_PATH), timeout_seconds=5)
+# @timing
+# def do_test() -> None:
+#     bf.run_command(str(bf.CMAKE_TESTS_PATH), timeout_seconds=5)
 
 
-@timing
-def do_lint() -> None:
-    # {  ###
-    files_to_lint = [
-        *bf.SRC_DIR.rglob("*.cpp"),
-        *bf.SRC_DIR.rglob("*.h"),
-    ]
-    bf.run_command(["poetry", "run", "cpplint", "--quiet", *files_to_lint])
-
-    (Path(".cmake") / "cppcheck").mkdir(exist_ok=True)
-    defines = (
-        "BF_DEBUG=1",
-        "BF_PLATFORM_Win=1",
-        "TESTS=1",
-    )
-    bf.run_command(
-        [
-            bf.CPPCHECK_PATH,
-            "-j 4",
-            "--cppcheck-build-dir=.cmake/cppcheck",
-            "--project=compile_commands.json",
-            "-ivendor",
-            "--enable=all",
-            "--inline-suppr",
-            "--platform=win64",
-            "--suppress=*:*codegen*",
-            "--suppress=*:*vendor*",
-            "--suppress=checkLevelNormal",
-            "--suppress=checkersReport",
-            "--suppress=constParameterCallback",
-            "--suppress=constParameterPointer",
-            "--suppress=constParameterReference",
-            "--suppress=constStatement",
-            "--suppress=constVariable",
-            "--suppress=constVariablePointer",
-            "--suppress=constVariableReference",
-            "--suppress=cstyleCast",
-            "--suppress=duplicateBreak",
-            "--suppress=invalidPointerCast",
-            "--suppress=knownConditionTrueFalse",
-            "--suppress=memsetClassFloat",
-            "--suppress=missingIncludeSystem",
-            "--suppress=moduloofone",
-            "--suppress=normalCheckLevelMaxBranches",
-            "--suppress=nullPointerArithmetic",
-            "--suppress=passedByValue",
-            "--suppress=selfAssignment",
-            "--suppress=unmatchedSuppression",
-            "--suppress=unreadVariable",
-            "--suppress=useStlAlgorithm",
-            "--suppress=uselessAssignmentArg",
-            "--suppress=variableScope",
-            "--std=c++20",
-            "-q",
-            *[f"-D{d}" for d in defines],
-        ]
-    )
-
-    bf.run_command(
-        rf"""
-            "{bf.CLANG_TIDY_PATH}"
-            src/engine/bf_engine.cpp
-        """
-        # Убираем абсолютный путь к проекту из выдачи линтинга.
-        # Тут куча экранирования происходит, поэтому нужно дублировать обратные слеши.
-        + r'| sed "s/{}//"'.format(
-            str(bf.PROJECT_DIR).replace(os.path.sep, os.path.sep * 3) + os.path.sep * 3
-        )
-    )
-    # }
-
-
-@timing
-def do_cmake_ninja_files() -> None:
-    # {  ###
-    bf.run_command(
-        rf"""
-            cmake
-            -G Ninja
-            -B .cmake/ninja
-            -D CMAKE_CXX_COMPILER=cl
-            -D CMAKE_C_COMPILER=cl
-            -D PLATFORM={bf.BuildPlatform.Win}
-            -DCMAKE_CONFIGURATION_TYPES={bf.BuildType.Debug}
-        """
-    )
-    # }
+# @timing
+# def do_lint() -> None:
+#     # {  ###
+#     files_to_lint = [
+#         *bf.SRC_DIR.rglob("*.cpp"),
+#         *bf.SRC_DIR.rglob("*.h"),
+#     ]
+#     bf.run_command(["poetry", "run", "cpplint", "--quiet", *files_to_lint])
+#
+#     (Path(".cmake") / "cppcheck").mkdir(exist_ok=True)
+#     defines = (
+#         "BF_DEBUG=1",
+#         "BF_PLATFORM_Win=1",
+#         "TESTS=1",
+#     )
+#     bf.run_command(
+#         [
+#             bf.CPPCHECK_PATH,
+#             "-j 4",
+#             "--cppcheck-build-dir=.cmake/cppcheck",
+#             "--project=compile_commands.json",
+#             "-ivendor",
+#             "--enable=all",
+#             "--inline-suppr",
+#             "--platform=win64",
+#             "--suppress=*:*codegen*",
+#             "--suppress=*:*vendor*",
+#             "--suppress=checkLevelNormal",
+#             "--suppress=checkersReport",
+#             "--suppress=constParameterCallback",
+#             "--suppress=constParameterPointer",
+#             "--suppress=constParameterReference",
+#             "--suppress=constStatement",
+#             "--suppress=constVariable",
+#             "--suppress=constVariablePointer",
+#             "--suppress=constVariableReference",
+#             "--suppress=cstyleCast",
+#             "--suppress=duplicateBreak",
+#             "--suppress=invalidPointerCast",
+#             "--suppress=knownConditionTrueFalse",
+#             "--suppress=memsetClassFloat",
+#             "--suppress=missingIncludeSystem",
+#             "--suppress=moduloofone",
+#             "--suppress=normalCheckLevelMaxBranches",
+#             "--suppress=nullPointerArithmetic",
+#             "--suppress=passedByValue",
+#             "--suppress=selfAssignment",
+#             "--suppress=unmatchedSuppression",
+#             "--suppress=unreadVariable",
+#             "--suppress=useStlAlgorithm",
+#             "--suppress=uselessAssignmentArg",
+#             "--suppress=variableScope",
+#             "--std=c++20",
+#             "-q",
+#             *[f"-D{d}" for d in defines],
+#         ]
+#     )
+#
+#     bf.run_command(
+#         rf"""
+#             "{bf.CLANG_TIDY_PATH}"
+#             src/engine/bf_engine.cpp
+#         """
+#         # Убираем абсолютный путь к проекту из выдачи линтинга.
+#         # Тут куча экранирования происходит, поэтому нужно дублировать обратные слеши.
+#         + r'| sed "s/{}//"'.format(
+#             str(bf.PROJECT_DIR).replace(os.path.sep, os.path.sep * 3) + os.path.sep * 3
+#         )
+#     )
+#     # }
 
 
-@timing
-def do_compile_commands_json() -> None:
-    # {  ###
-    bf.run_command(
-        r"""
-            ninja
-            -C .cmake/ninja
-            -f build.ninja
-            -t compdb
-            > compile_commands.json
-        """
-    )
-    # }
+# @timing
+# def do_stop_debugger_ahk() -> None:
+#     bf.run_command(r"autohotkey .nvim-personal\cli.ahk stop_debugger")
 
 
-@timing
-def do_stop_debugger_ahk() -> None:
-    bf.run_command(r"autohotkey .nvim-personal\cli.ahk stop_debugger")
-
-
-@timing
-def do_run_in_debugger_ahk(target: bf.BuildTarget, build_type: bf.BuildType) -> None:
-    # {  ###
-    exe_path = f".cmake/vs17/{build_type}/{target}.exe"
-    bf.run_command(rf"autohotkey .nvim-personal\cli.ahk run_in_debugger {exe_path}")
-    # }
+# @timing
+# def do_run_in_debugger_ahk(target: bf.BuildTarget, build_type: bf.BuildType) -> None:
+#     # {  ###
+#     exe_path = f".cmake/vs17/{build_type}/{target}.exe"
+#     bf.run_command(rf"autohotkey .nvim-personal\cli.ahk run_in_debugger {exe_path}")
+#     # }
 
 
 # @command
@@ -310,67 +242,67 @@ def do_run_in_debugger_ahk(target: bf.BuildTarget, build_type: bf.BuildType) -> 
 #   # }
 
 
-@timing
-def do_activate_game_ahk() -> None:
-    bf.run_command(r"autohotkey .nvim-personal\cli.ahk activate_game")
+# @timing
+# def do_activate_game_ahk() -> None:
+#     bf.run_command(r"autohotkey .nvim-personal\cli.ahk activate_game")
 
 
-@command
-def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):
-    # {  ###
-    do_cmake(platform, build_type)
-    do_generate(platform, build_type)
-    do_activate_game_ahk()
-    # }
+# @command
+# def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):
+#     # {  ###
+#     do_cmake(platform, build_type)
+#     do_generate(platform, build_type)
+#     do_activate_game_ahk()
+#     # }
 
 
 @command
 def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType):
     # {  ###
-    do_cmake(platform, build_type)
+    # do_cmake(platform, build_type)
     do_generate(platform, build_type)
     do_build(target, platform, build_type)
     # }
 
 
-@command
-def build_all_and_test():
-    # {  ###
-
-    test()
-    for target, platform, build_type in bf.ALLOWED_BUILDS:
-        if target != bf.BuildTarget.game:
-            continue
-        do_generate(platform, build_type)
-        build(bf.BuildTarget.game, platform, build_type)
-        bf._gamelib = None  # noqa: SLF001
-    # }
-
-
-@command
-def run_in_debugger(target: bf.BuildTarget, build_type: bf.BuildType):
-    # {  ###
-    platform = bf.BuildPlatform.Win
-
-    do_stop_debugger_ahk()
-
-    do_cmake(platform, build_type)
-    do_generate(platform, build_type)
-    do_build(target, platform, build_type)
-
-    do_run_in_debugger_ahk(target, build_type)
-    # }
+# @command
+# def build_all_and_test():
+#     # {  ###
+#
+#     test()
+#     for target, platform, build_type in bf.ALLOWED_BUILDS:
+#         if target != bf.BuildTarget.game:
+#             continue
+#         do_generate(platform, build_type)
+#         build(bf.BuildTarget.game, platform, build_type)
+#         bf._gamelib = None  # noqa: SLF001
+#     # }
 
 
-@command
-def update_template():
-    # {  ###
-    bf.run_command("git fetch template")
+# @command
+# def run_in_debugger(target: bf.BuildTarget, build_type: bf.BuildType):
+#     # {  ###
+#     platform = bf.BuildPlatform.Win
+#
+#     do_stop_debugger_ahk()
+#
+#     do_cmake(platform, build_type)
+#     do_generate(platform, build_type)
+#     do_build(target, platform, build_type)
+#
+#     do_run_in_debugger_ahk(target, build_type)
+#     # }
 
-    with bf.git_stash():
-        bf.run_command("git merge template/template")
-        bf.run_command("poetry install")
-    # }
+
+# @command
+# def update_template():
+#     # {  ###
+#     bf.run_command("git fetch template")
+#
+#     with bf.git_stash():
+#         bf.run_command("git merge template/template")
+#         bf.run_command("poetry install")
+#     # }
 
 
 @command
@@ -477,11 +409,6 @@ def _credit_sfx(_folder: Path, _credit: str = "") -> None:
 #     while stack:
 #         p = stack.pop(0)
 #         stack = stack[1:]
-
-
-@command
-def shaders() -> None:
-    regenerate_shaders(True)
 
 
 @command

@@ -34,8 +34,17 @@ build_type = "Debug"
 
 function select_target()
 	targets = { "game" }
-	build_types = { "Debug", "Release", "RelWithDebInfo" }
-	platforms = { "Win", "Web", "WebYandex", "WebItch" }
+	build_types = {
+		"Debug",
+		"Release",
+		-- "RelWithDebInfo",
+	}
+	platforms = {
+		"Win",
+		"Web",
+		-- "WebYandex",
+		-- "WebItch",
+	}
 
 	function platform_build_type_choose()
 		require("fastaction").select(platforms, {}, function(selected_platform)
@@ -65,10 +74,10 @@ function rebuild_tasks()
 	vim.g.hulvdan_tasks({
 		{ "a_select_target", select_target },
 		{
-			"b_build_web",
-			[[mkdir .export && mkdir .export/web && godot --quit --headless --check-only && godot --quit --headless --export-release web .export/web/index.html]],
+			"e_build",
+			[[godot --quit --headless --check-only ]]
+				.. cli_command(string.format("build %s %s %s", target, platform, build_type)),
 		},
-		-- { "e_build", cli_command(string.format("build %s %s %s", target, platform, build_type)) },
 		-- { "d_run_in_debugger", cli_command(string.format("run_in_debugger %s Debug", target)) },
 		-- { "f_run_in_debugger_tests", cli_command("run_in_debugger tests Debug") },
 		-- { "u_update_template", cli_command("update_template") },
