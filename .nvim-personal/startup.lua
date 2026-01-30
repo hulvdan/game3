@@ -1,0 +1,8 @@
+vim.defer_fn(function()
+	vim.keymap.set("n", "<space>n", ":e./TASKS_HULVDAN.txt<CR>", { remap = false, silent = true })
+	vim.fn.execute("e src/bf_game.gd")
+	vim.api.nvim_input([[<space>n<C-j><C-j><C-j>]])
+	vim.defer_fn(function()
+		vim.api.nvim_input([[<C-j><A-m><A-q><A-m>]])
+	end, 600)
+end, 1)

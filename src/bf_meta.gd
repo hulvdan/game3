@@ -1,6 +1,6 @@
 extends Node
 
-@export var lang: String
+var lang: String
 
 
 func _ready() -> void:

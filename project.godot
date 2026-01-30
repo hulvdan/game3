@@ -18,7 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 WebBus="*res://addons/webbus/webbus.gd"
-Meta="*res://src/meta.gd"
+Meta="*res://src/bf_meta.gd"
 
 [editor_plugins]
 
