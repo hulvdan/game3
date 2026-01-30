@@ -24,6 +24,13 @@ Meta="*res://src/bf_meta.gd"
 
 enabled=PackedStringArray("res://addons/webbus/plugin.cfg")
 
+[file_customization]
+
+folder_colors={
+"res://assets/": "yellow",
+"res://src/": "blue"
+}
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
