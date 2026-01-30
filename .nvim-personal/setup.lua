@@ -76,7 +76,7 @@ function rebuild_tasks()
 		{ "r_run", [[godot --quit --no-header --headless --check-only && godot]] },
 		{
 			"p_profile",
-			[[cmd /c "cd /d ..\godot-4.6-stable && scons platform=web profile=assets/godot_profile_web.py"]],
+			[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=assets/godot_profile_web.py"]],
 		},
 		-- {
 		--     "y_test_python",

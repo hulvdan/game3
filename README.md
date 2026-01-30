@@ -1,6 +1,6 @@
 # godot-template
 
-## Setup Machine
+## Setting Up The Machine
 
 - Download and put in PATH
   https://github.com/GDQuest/GDScript-formatter/releases
