@@ -71,11 +71,7 @@ function rebuild_tasks()
 		-- { "t_test", cli_command("test") },
 		{
 			"t_test",
-			function()
-				vim.fn.execute(
-					[[term godot --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]]
-				)
-			end,
+			[[godot --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]],
 		},
 		-- {
 		--     "y_test_python",
@@ -166,6 +162,8 @@ end, opts)
 
 -- Errorformat.
 vim.fn.execute([[set errorformat=]])
+-- GUT.
+vim.fn.execute([[set errorformat+=\ \ \ \ \ \ \ \ \ \ at:\ %m\ (res://%f:%l)]])
 -- Python.
 vim.fn.execute([[set errorformat+=%f:%l:%c:\ %m]])
 -- Pyright
