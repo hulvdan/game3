@@ -22,7 +22,7 @@ Meta="*res://src/bf_meta.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/webbus/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/webbus/plugin.cfg")
 
 [file_customization]
 
