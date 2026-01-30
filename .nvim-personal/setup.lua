@@ -1,10 +1,10 @@
 local opts = { remap = false, silent = true }
 
-vim.keymap.set("n", "<leader>fc", ":e codegen/hands/bf_codegen.cpp<CR>", opts)
-vim.keymap.set("n", "<leader>fl", ":e src/bf_lib.cpp<CR>", opts)
-vim.keymap.set("n", "<C-S-g>v", function()
-	vim.fn.system([[start .cmake/vs17/game.sln]])
-end, opts)
+-- vim.keymap.set("n", "<leader>fc", ":e codegen/hands/bf_codegen.cpp<CR>", opts)
+-- vim.keymap.set("n", "<leader>fl", ":e src/bf_lib.cpp<CR>", opts)
+-- vim.keymap.set("n", "<C-S-g>v", function()
+-- 	vim.fn.system([[start .cmake/vs17/game.sln]])
+-- end, opts)
 vim.keymap.set("n", "<C-S-g>r", function()
 	vim.fn.system(
 		string.format(
@@ -76,7 +76,7 @@ function rebuild_tasks()
 		{ "r_run", [[godot --quit --no-header --headless --check-only && godot]] },
 		{
 			"p_profile",
-			[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=assets/godot_profile_web.py"]],
+			[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=../godot-template/assets/godot_profile_web.py"]],
 		},
 		-- {
 		--     "y_test_python",

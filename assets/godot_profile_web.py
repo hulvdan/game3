@@ -4,7 +4,6 @@
 # Popcar's page «How to Minify Godot's Build Size (93MB -> 6.4MB exe)»
 # https://popcar.bearblog.dev/how-to-minify-godots-build-size/
 
-target = "template_release"
 debug_symbols = "no"
 # Godot >4.5 only. Otherwise, use optimize="size"
 optimize = "size_extra"
