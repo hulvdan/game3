@@ -61,14 +61,18 @@ def do_build(
     build_id = (target, platform, build_type)
     assert build_id in bf.ALLOWED_BUILDS, "{} is not allowed!".format(build_id)
 
-    out_path = Path(".export") / f"{platform}_{build_type}" / "index.html"
-    bf.recursive_mkdir(out_path.parent)
-    bf.run_command(f"del /f/s/q {out_path.parent}")
+    exe = {
+        bf.BuildPlatform.Win: "game.exe",
+        bf.BuildPlatform.Web: "index.html",
+    }[platform]
 
-    export_type = (
-        "--export-release" if build_type == bf.BuildType.Release else "--export-debug"
+    out_folder = Path(".export") / f"{platform}_{build_type}"
+    bf.recursive_mkdir(out_folder)
+    bf.run_command(f"del /f/s/q {out_folder}")
+
+    bf.run_command(
+        rf"godot --quit --headless --export-{build_type} {platform} {out_folder}/{exe}"
     )
-    bf.run_command(rf"godot --quit --headless {export_type} {platform} {out_path}")
 
     shutil.make_archive(
         base_name=f".export/{platform}_{build_type}",
