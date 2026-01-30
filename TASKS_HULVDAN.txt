@@ -7,7 +7,8 @@ BIG PLAN
 PLAN
 ============================================================
 
-* template: minify web build
+x template: minify web build
+
 * template: build yandex cli
 * template: yandex async music
 * template: game analytics send metrics from game

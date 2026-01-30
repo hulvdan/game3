@@ -8,3 +8,9 @@
 - mklink c:\Users\user\Programs\PATH\godot_console.exe c:\Users\user\Programs\godot\Godot_v4.5.1-stable_win64_console.exe
 
 ## Quickstart
+
+TODO copy from emberveil2
+
+```
+uv sync
+```
