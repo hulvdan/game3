@@ -71,8 +71,9 @@ function rebuild_tasks()
 		-- { "t_test", cli_command("test") },
 		{
 			"t_test",
-			[[godot --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]],
+			[[godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]],
 		},
+		{ "r_run", [[godot --quit --no-header --headless --check-only && godot]] },
 		-- {
 		--     "y_test_python",
 		--     [[uvx ruff check --output-format concise cli && uv run pytest -x -vv]],
