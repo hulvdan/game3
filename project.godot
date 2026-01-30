@@ -17,12 +17,12 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-WebBus="*res://addons/webbus/webbus.gd"
 Meta="*res://src/bf_meta.gd"
+Bridge="*res://addons/playgama_bridge/bridge.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/webbus/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/playgama_bridge/plugin.cfg")
 
 [file_customization]
 
