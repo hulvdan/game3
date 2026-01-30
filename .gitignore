@@ -1,5 +1,6 @@
 *.tmp
 .godot/
+__pycache__/
 /.export/
 /__MACOSX
 /android/

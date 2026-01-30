@@ -64,6 +64,10 @@ function rebuild_tasks()
 	-- Space + A -> Куча команд.
 	vim.g.hulvdan_tasks({
 		{ "a_select_target", select_target },
+		{
+			"b_build_web",
+			[[mkdir .export && mkdir .export/web && godot --quit --headless --check-only && godot --quit --headless --export-release web .export/web/index.html]],
+		},
 		-- { "e_build", cli_command(string.format("build %s %s %s", target, platform, build_type)) },
 		-- { "d_run_in_debugger", cli_command(string.format("run_in_debugger %s Debug", target)) },
 		-- { "f_run_in_debugger_tests", cli_command("run_in_debugger tests Debug") },
@@ -76,7 +80,7 @@ function rebuild_tasks()
 		{ "r_run", [[godot --quit --no-header --headless --check-only && godot]] },
 		{
 			"p_profile",
-			[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=../godot-template/assets/godot_profile_web.py"]],
+			[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=../godot-template/assets/profile_web.py build_profile=../godot-template/assets/profile.gdbuild"]],
 		},
 		-- {
 		--     "y_test_python",
