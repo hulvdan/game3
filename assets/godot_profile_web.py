@@ -1,5 +1,8 @@
 # GODOT PAGE «Optimizing a build for size»
 # https://docs.godotengine.org/en/stable/engine_details/development/compiling/optimizing_for_size.html
+#
+# Popcar's page «How to Minify Godot's Build Size (93MB -> 6.4MB exe)»
+# https://popcar.bearblog.dev/how-to-minify-godots-build-size/
 
 target = "template_release"
 debug_symbols = "no"
