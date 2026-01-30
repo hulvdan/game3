@@ -43,21 +43,13 @@ def enrich_game_settings_colors() -> None:
     # }
 
 
-# @timing
-# def make_web_build_archive(zip_path: Path, cmake_build_out_path: Path) -> None:
-#     # {  ###
-#     with zipfile.ZipFile(zip_path, "w") as archive:
-#         for filepath in (
-#             "index.data",
-#             "index.html",
-#             "index.js",
-#             "index.wasm",
-#         ):
-#             archive.write(cmake_build_out_path / filepath, filepath)
-#         RESOURCES_POSTLOAD_DIR = bf.PROJECT_DIR / "resp"
-#         for f in RESOURCES_POSTLOAD_DIR.glob("*"):
-#             archive.write(f, "{}/{}".format(RESOURCES_POSTLOAD_DIR.name, f.name))
-#     # }
+@timing
+def make_web_build_archive(zip_path: Path, where_godot_exported_folder: Path) -> None:
+    # {  ###
+    with zipfile.ZipFile(zip_path, "w") as archive:
+        for filepath in where_godot_exported_folder.glob("*"):
+            archive.write(filepath, filepath.name)
+    # }
 
 
 @timing
@@ -85,15 +77,21 @@ def do_build(
 
         case _:
             if platform.lower().startswith("web"):
-                bf.run_command(
-                    rf"cmake --build .cmake/{platform}_{build_type} -t {target}"
-                )
+                out_path = Path(".export") / f"{platform}_{build_type}" / "index.html"
+                bf.recursive_mkdir(out_path.parent)
+                bf.run_command(f"del /f/s/q {out_path.parent}")
 
-                if platform == bf.BuildPlatform.WebYandex:
-                    make_web_build_archive(
-                        bf.TEMP_DIR / "yandex.zip",
-                        Path(f".export/{platform}_{build_type}"),
-                    )
+                export_type = (
+                    "--export-release"
+                    if build_type == bf.BuildType.Release
+                    else "--export-debug"
+                )
+                bf.run_command(rf"godot --quit --headless {export_type} web {out_path}")
+
+                make_web_build_archive(
+                    f".export/{platform}_{build_type}.zip",
+                    Path(f".export/{platform}_{build_type}"),
+                )
 
             else:
                 assert False, f"Not supported platform: {platform}"
@@ -329,7 +327,7 @@ def deploy_itch():
         build(bf.BuildTarget.game, bf.BuildPlatform.WebItch, bf.BuildType.Release)
 
     zip_path = bf.TEMP_DIR / "itch.zip"
-    make_web_build_archive(zip_path, Path(".cmake/WebItch_Release"))
+    make_web_build_archive(zip_path, Path(".export/web_release"))
 
     target = "{}:html".format(bf.game_settings.itch_target)
     bf.run_command([bf.BUTLER_PATH, "push", zip_path, target])

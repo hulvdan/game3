@@ -77,16 +77,15 @@ class StrEnum(str, Enum):
 
 
 class BuildType(StrEnum):
-    Debug = "Debug"
-    RelWithDebInfo = "RelWithDebInfo"
-    Release = "Release"
+    Debug = "debug"
+    Release = "release"
 
 
 class BuildPlatform(StrEnum):
-    Win = "Win"
-    Web = "Web"
-    WebYandex = "WebYandex"
-    WebItch = "WebItch"
+    Win = "win"
+    Web = "web"
+    WebYandex = "web_yandex"
+    WebItch = "web_itch"
 
     def is_web(self) -> bool:
         return self.lower().startswith("web")
@@ -99,7 +98,6 @@ class BuildTarget(StrEnum):
 
 ALLOWED_BUILDS = (  ###
     (BuildTarget.game, BuildPlatform.Win, BuildType.Debug),
-    (BuildTarget.game, BuildPlatform.Win, BuildType.RelWithDebInfo),
     (BuildTarget.game, BuildPlatform.Win, BuildType.Release),
     (BuildTarget.game, BuildPlatform.Web, BuildType.Debug),
     (BuildTarget.game, BuildPlatform.Web, BuildType.Release),
