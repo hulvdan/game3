@@ -15,6 +15,14 @@ run/main_scene="uid://cc28skn5h7aup"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+WebBus="*res://addons/webbus/webbus.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/webbus/plugin.cfg")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
