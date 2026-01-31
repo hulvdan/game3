@@ -7,10 +7,11 @@ BIG PLAN
 PLAN
 ============================================================
 
-* template: minify js build so that it WORKS
+x template: minify js build so that it WORKS
   adjust profile_web_playgama.py
   generate profile
   project settings release template C:/Users/user/dev/home/godot-4.6-stable/bin/godot.web.template_release.wasm32.zip
+
 * template: game analytics JS
 * game->template: save load
 * game->template: yandex async music

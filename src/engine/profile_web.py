@@ -20,8 +20,6 @@ else:
     lto = "full"
 
 # Disables deprecated features
-deprecated = "yes"
-
 disable_3d = "yes"
 disable_advanced_gui = "yes"
 
@@ -36,13 +34,6 @@ minizip = "no"
 # Disables SIL Graphite smart fonts support
 graphite = "no"
 
-# These next few options were introduced in Godot 4.5!
-disable_navigation_2d = "yes"
-disable_navigation_3d = "yes"
-disable_xr = "yes"
-# Disables the new accessibility features
-accesskit = "no"
-
 ####################################################
 
 module_text_server_adv_enabled = "no"
@@ -51,6 +42,10 @@ disable_3d = "yes"
 disable_advanced_gui = "yes"
 module_godot_physics_3d_enabled = "no"
 module_jolt_physics_enabled = "no"
+disable_navigation_2d = "yes"
+disable_navigation_3d = "yes"
+disable_xr = "yes"
+accesskit = "no"
 
 
 # platform: Target platform (web|windows)
