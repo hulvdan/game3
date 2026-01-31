@@ -72,7 +72,7 @@ function rebuild_tasks()
 		{ "a_select_target", select_target },
 		{
 			"e_build",
-			[[godot --quit --headless --check-only && ]]
+			[[godot --quit --headless --check-only --debug --quiet && ]]
 				.. cli_command(string.format("build %s %s %s", target, platform, build_type)),
 		},
 		-- { "d_run_in_debugger", cli_command(string.format("run_in_debugger %s Debug", target)) },
@@ -81,9 +81,9 @@ function rebuild_tasks()
 		-- { "t_test", cli_command("test") },
 		{
 			"t_test",
-			[[godot --quit --headless --check-only && godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]],
+			[[godot --quit --headless --check-only --debug --quiet && godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src/engine -gdir src/game -gexit -gprefix test -gdisable_colors]],
 		},
-		{ "r_run", [[godot --quit --no-header --headless --check-only && godot]] },
+		{ "r_run", [[godot --quit --no-header --headless --check-only --debug --quiet && godot]] },
 		-- {
 		-- 	"p_profile",
 		-- 	[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=../godot-template/assets/profile_web.py build_profile=../godot-template/assets/profile.gdbuild"]],
@@ -184,8 +184,10 @@ end, opts)
 
 -- Errorformat.
 vim.fn.execute([[set errorformat=]])
--- GUT.
+-- Godot. GUT.
 vim.fn.execute([[set errorformat+=\ \ \ \ \ \ \ \ \ \ at:\ %m\ (res://%f:%l)]])
+-- Godot. Warnings.
+vim.fn.execute([[set errorformat+=%mat:\ (res://%f:%l)]])
 -- Python.
 vim.fn.execute([[set errorformat+=%f:%l:%c:\ %m]])
 -- Pyright

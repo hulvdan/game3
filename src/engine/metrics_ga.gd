@@ -7,6 +7,8 @@ var _game_analytics = null
 @export var game_id: String
 @export var game_secret: String
 
+@warning_ignore_start('unsafe_method_access')
+
 
 func _ready() -> void:
 	if Engine.has_singleton("GameAnalytics"):
@@ -31,3 +33,5 @@ func metric(id: String) -> void:
 
 func metricv(id: String, value: int) -> void:
 	_game_analytics.addDesignEvent({ 'eventId': id, value: value })
+
+@warning_ignore_restore('unsafe_method_access')
