@@ -51,16 +51,15 @@ def make_web_build_archive(zip_path: Path, where_godot_exported_folder: Path) ->
 
 
 @timing
-def do_profile(platform: bf.BuildPlatform) -> None:
+def do_profile(godot_platform: str) -> None:
     # {  ###
-    pl = platform.split("_", 1)[0]
     bf.run_command(
         [
             "scons",
             "target=template_release",
-            f"platform={pl}",
-            f"profile=../{bf.PROJECT_DIR.name}/assets/profile_{platform}.py",
-            f"build_profile=../{bf.PROJECT_DIR.name}/assets/profile.gdbuild",
+            f"platform={godot_platform}",
+            f"profile=../{bf.PROJECT_DIR.name}/src/engine/profile.py",
+            f"build_profile=../{bf.PROJECT_DIR.name}/src/engine/profile.gdbuild",
         ],
         cwd="../godot-4.6-stable",
     )
@@ -268,8 +267,9 @@ def do_test() -> None:
 @command
 def profiles() -> None:
     # {  ###
-    for platform in bf.BuildPlatform:
-        do_profile(platform.value)
+    godot_platforms = {x.split("_", 1)[0] for x in bf.BuildPlatform}
+    for x in godot_platforms:
+        do_profile(x)
     # }
 
 
