@@ -81,9 +81,9 @@ class BuildType(StrEnum):
 
 class BuildPlatform(StrEnum):
     Win = "windows"
-    Web = "web"
-    WebYandex = "web_yandex"
-    WebItch = "web_itch"
+    # Web = "web"
+    # WebYandex = "web_yandex"
+    # WebItch = "web_itch"
     WebPlaygama = "web_playgama"
 
     def is_web(self) -> bool:
@@ -92,17 +92,16 @@ class BuildPlatform(StrEnum):
 
 class BuildTarget(StrEnum):
     game = "game"
-    tests = "tests"
 
 
 ALLOWED_BUILDS = (  ###
     (BuildTarget.game, BuildPlatform.Win, BuildType.Debug),
     (BuildTarget.game, BuildPlatform.Win, BuildType.Release),
-    (BuildTarget.game, BuildPlatform.Web, BuildType.Debug),
-    (BuildTarget.game, BuildPlatform.Web, BuildType.Release),
-    (BuildTarget.game, BuildPlatform.WebItch, BuildType.Release),
-    (BuildTarget.game, BuildPlatform.WebYandex, BuildType.Release),
-    (BuildTarget.tests, BuildPlatform.Win, BuildType.Debug),
+    # (BuildTarget.game, BuildPlatform.Web, BuildType.Debug),
+    # (BuildTarget.game, BuildPlatform.Web, BuildType.Release),
+    # (BuildTarget.game, BuildPlatform.WebItch, BuildType.Release),
+    # (BuildTarget.game, BuildPlatform.WebYandex, BuildType.Release),
+    (BuildTarget.game, BuildPlatform.WebPlaygama, BuildType.Release),
 )
 
 
@@ -120,28 +119,16 @@ REPLACING_NEWLINES_PATTERN = re.compile(r"\n+")
 
 PROJECT_DIR = Path(__file__).parent.parent
 TEMP_DIR = PROJECT_DIR / ".temp"
-TEMP_ART_DIR = TEMP_DIR / "art"
 CLI_DIR = Path("cli")
 ASSETS_DIR = PROJECT_DIR / "assets"
 ART_DIR = ASSETS_DIR / "art"
+ART_SRC_DIR = ART_DIR / "src"
 ART_TEXTURES_DIR = ART_DIR / "textures"
 SRC_DIR = Path("src")
-RES_DIR = PROJECT_DIR / "res"
-VENDOR_DIR = PROJECT_DIR / "vendor"
-GAME_DIR = PROJECT_DIR / "src" / "game"
 HANDS_GENERATED_DIR = PROJECT_DIR / "codegen" / "hands"
 FLATBUFFERS_GENERATED_DIR = PROJECT_DIR / "codegen" / "flatbuffers"
-CMAKE_TESTS_PATH = Path(".cmake") / "vs17" / "Debug" / "tests.exe"
 
-CLANG_FORMAT_PATH = "C:/Program Files/LLVM/bin/clang-format.exe"
-CLANG_TIDY_PATH = "C:/Program Files/LLVM/bin/clang-tidy.exe"
-CPPCHECK_PATH = "C:/Program Files/Cppcheck/cppcheck.exe"
-FLATC_PATH = CLI_DIR / "flatc.exe"
-SHADERC_PATH = str(PROJECT_DIR / "vendor/bgfx/.build/win64_vs2022/bin/shadercRelease.exe")
 BUTLER_PATH = "C:/Users/user/Programs/butler/butler.exe"
-
-MSBUILD_PATH = r"c:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe"
-CLANG_CL_PATH = r"c:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\Llvm\x64\bin\clang-cl.exe"
 
 AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".aac", ".m4a", ".wma", ".ogg"}
 

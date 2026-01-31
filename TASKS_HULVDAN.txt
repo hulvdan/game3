@@ -9,6 +9,7 @@ PLAN
 
 x template: minify web build
 x template: build yandex cli
+x template: build playgama
 
 * template: game analytics
 * game->template: save load

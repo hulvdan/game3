@@ -74,10 +74,13 @@ def do_build(
     build_id = (target, platform, build_type)
     assert build_id in bf.ALLOWED_BUILDS, "{} is not allowed!".format(build_id)
 
-    exe_name = {
-        bf.BuildPlatform.Win: "game.exe",
-        bf.BuildPlatform.Web: "index.html",
-    }[platform]
+    exe_name: str | None = None
+    if platform.is_web():
+        exe_name = "index.html"
+    elif platform == bf.BuildPlatform.Win:
+        exe_name = "game.exe"
+    else:
+        assert False
 
     out_folder = Path(".export") / f"{platform}_{build_type}"
     bf.recursive_mkdir(out_folder)

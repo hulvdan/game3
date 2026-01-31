@@ -40,16 +40,6 @@ def get_sounds_that_reaper_would_export() -> set[str]:
 def do_audio(platform: bf.BuildPlatform) -> None:
     # {  ###
     AUDIO_SRC_DIR = bf.ASSETS_DIR / "sfx"
-    AUDIO_DST_DIR = bf.RES_DIR
-    AUDIO_POST_DST_DIR = bf.RES_DIR
-    if platform.is_web():
-        AUDIO_POST_DST_DIR = bf.PROJECT_DIR / "resp"
-    bf.recursive_mkdir(AUDIO_DST_DIR)
-    bf.recursive_mkdir(AUDIO_POST_DST_DIR)
-    for folder in {AUDIO_DST_DIR, AUDIO_POST_DST_DIR}:
-        for f in folder.glob("*.ogg"):
-            f.unlink()
-
     src_files = {p for p in AUDIO_SRC_DIR.glob("*.ogg") if p.is_file()}
 
     # Removing sound files that wouldn't be exported by reaper.

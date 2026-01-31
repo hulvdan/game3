@@ -37,7 +37,8 @@ function select_target()
 	build_types = { "debug", "release" }
 	platforms = {
 		"windows",
-		"web",
+		-- "web",
+		"web_playgama",
 		-- "WebYandex",
 		-- "WebItch",
 	}
