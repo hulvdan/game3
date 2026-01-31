@@ -111,8 +111,6 @@ ART_DIR = ASSETS_DIR / "art"
 ART_SRC_DIR = ART_DIR / "src"
 ART_TEXTURES_DIR = ART_DIR / "textures"
 SRC_DIR = Path("src")
-HANDS_GENERATED_DIR = PROJECT_DIR / "codegen" / "hands"
-FLATBUFFERS_GENERATED_DIR = PROJECT_DIR / "codegen" / "flatbuffers"
 
 BUTLER_PATH = "C:/Users/user/Programs/butler/butler.exe"
 
