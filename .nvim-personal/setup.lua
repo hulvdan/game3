@@ -80,7 +80,12 @@ function rebuild_tasks()
 		-- { "t_test", cli_command("test") },
 		{ "t_test", cli_command("test") },
 		{ "r_run", [[godot --quit --no-header --headless --check-only --debug --quiet && godot]] },
-		{ "p_profiles", cli_command("profiles") },
+		{
+			"p_profiles",
+			function()
+				vim.fn.execute("term " .. cli_command("profiles"))
+			end,
+		},
 		-- {
 		--     "y_test_python",
 		--     [[uvx ruff check --output-format concise cli && uv run pytest -x -vv]],
