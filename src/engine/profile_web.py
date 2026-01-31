@@ -3,6 +3,9 @@
 #
 # Popcar's page «How to Minify Godot's Build Size (93MB -> 6.4MB exe)»
 # https://popcar.bearblog.dev/how-to-minify-godots-build-size/
+#
+# optimize gdbuild
+# https://docs.godotengine.org/en/stable/tutorials/editor/using_engine_compilation_configuration_editor.html#doc-engine-compilation-configuration-editor
 
 debug_symbols = "no"
 threads = "no"
@@ -42,16 +45,12 @@ accesskit = "no"
 
 ####################################################
 
-# Disables all modules so you can only enable what you need
-modules_enabled_by_default = "no"
-module_gdscript_enabled = "yes"
-# Fallback text server; less features but works fine for English.
+module_text_server_adv_enabled = "no"
 module_text_server_fb_enabled = "yes"
-# Needed alongside a text server for text to render correctly
-module_freetype_enabled = "yes"
-module_svg_enabled = "yes"
-module_webp_enabled = "yes"
-module_godot_physics_2d_enabled = "yes"
+disable_3d = "yes"
+disable_advanced_gui = "yes"
+module_godot_physics_3d_enabled = "no"
+module_jolt_physics_enabled = "no"
 
 
 # platform: Target platform (web|windows)
