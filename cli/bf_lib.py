@@ -607,7 +607,7 @@ def git_bump_tag() -> str:
 
 class_name CodegenVersion
 
-const VERSION := "1.{next_version}"
+const VERSION: String = "1.{next_version}"
 """,
         newline="\n",
     )

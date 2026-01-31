@@ -2,4 +2,4 @@
 
 class_name CodegenVersion
 
-const VERSION := "1.1"
+const VERSION: String = "1.1"
