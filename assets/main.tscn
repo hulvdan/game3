@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://bikh3frhaued2" path="res://src/engine/meta.gd" id="2_836ik"]
 [ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
+[ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
 
 [node name="root" type="Node2D" unique_id=1918192009]
 
@@ -12,8 +13,12 @@ script = ExtResource("2_j2eim")
 game_id = "6cd0800abea682e27c7c5e25e5767957"
 game_secret = "1cccb4f791628c4a3d3bf49e30d9a139e81aa563"
 
-[node name="_meta" type="Node" parent="." unique_id=1168592126]
+[node name="_platform_playgama" type="Node" parent="." unique_id=680294843]
+script = ExtResource("2_ujfqy")
+
+[node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics")]
 script = ExtResource("2_836ik")
+metrics = NodePath("../_metrics_ga")
 
 [node name="_game" type="Node" parent="." unique_id=1695219218]
 script = ExtResource("1_ig7tw")

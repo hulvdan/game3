@@ -69,7 +69,7 @@ def do_profile(platform: bf.BuildPlatform) -> None:
 @timing
 def do_check_godot_errors() -> None:
     bf.run_command(
-        "godot --quit --headless -v --check-only --debug --ignore-error-breaks --disable-crash-handler --gpu-abort",
+        "godot --quit --headless --check-only --debug --ignore-error-breaks --disable-crash-handler --gpu-abort",
         timeout_seconds=5,
     )
 

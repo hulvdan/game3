@@ -1,6 +1,7 @@
 extends Node
 
 @export var metrics: MetricsBase
+@export var platform: PlatformBase
 
 
 func metric(id: String) -> void:
@@ -12,16 +13,16 @@ func metricv(id: String, value: int) -> void:
 
 
 func show_ad_inter() -> void:
-	pass
+	platform.show_ad_inter()
 
 
 func show_ad_reward() -> void:
-	pass
+	platform.show_ad_reward()
 
 
 func mark_gameplay() -> void:
-	pass
+	platform.mark_ready()
 
 
 func mark_ready() -> void:
-	pass
+	platform.mark_ready()
