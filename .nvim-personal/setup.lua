@@ -111,9 +111,11 @@ function rebuild_tasks()
 		--     end,
 		-- },
 		{
-			"c_serve_webyandex_release",
+			"c_serve_web_playgama_release",
 			function()
-				vim.fn.execute([[term npx @yandex-games/sdk-dev-proxy --dev-mode=true -c -p .export\web --port 8082]])
+				vim.fn.execute(
+					[[term npx @yandex-games/sdk-dev-proxy --dev-mode=true -c -p .export\web_playgama_release --port 8082]]
+				)
 			end,
 		},
 		-- { "o_deploy_itch", cli_command("deploy_itch") },
