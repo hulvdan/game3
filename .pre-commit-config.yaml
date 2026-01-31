@@ -6,5 +6,5 @@ repos:
       - id: python-no-eval
         entry: 'nocheckin'
         language: pygrep
-        files: ^(?!.pre-commit-config).*.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg)$
+        files: ^(?!.pre-commit-config).*.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
         types: []
