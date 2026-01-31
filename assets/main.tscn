@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://cc28skn5h7aup"]
 
-[ext_resource type="Script" uid="uid://cqxeo73lvmm07" path="res://src/game.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://cqxeo73lvmm07" path="res://src/game/game.gd" id="1_ig7tw"]
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="2_0xm2m"]
-[ext_resource type="Script" uid="uid://bikh3frhaued2" path="res://src/meta.gd" id="2_836ik"]
-[ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/metrics_ga.gd" id="2_j2eim"]
+[ext_resource type="Script" uid="uid://bikh3frhaued2" path="res://src/engine/meta.gd" id="2_836ik"]
+[ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
 
 [node name="root" type="Node2D" unique_id=1918192009]
 
