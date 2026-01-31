@@ -11,9 +11,8 @@ PLAN
   adjust profile_web_playgama.py
   generate profile
   project settings release template C:/Users/user/dev/home/godot-4.6-stable/bin/godot.web.template_release.wasm32.zip
-* template: game analytics js
+* template: game analytics JS
 * game->template: save load
-* game->template: game analytics send metrics from game
 * game->template: yandex async music
 * game->template:
 * game->template:
