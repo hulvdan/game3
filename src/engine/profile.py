@@ -7,7 +7,7 @@
 debug_symbols = "no"
 threads = "no"
 
-_DEBUG = 1
+_DEBUG = 0
 
 if _DEBUG:
     optimize = "none"
