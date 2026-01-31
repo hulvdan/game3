@@ -16,7 +16,7 @@ func _ready() -> void:
 		_game_analytics.setEnabledInfoLog(true)
 		_game_analytics.setEnabledVerboseLog(true)
 
-		_game_analytics.configureBuild(Codegen.VERSION)
+		_game_analytics.configureBuild(CodegenVersion.VERSION)
 
 		# _game_analytics.configureAvailableCustomDimensions01(["ninja", "samurai"])
 		# _game_analytics.configureAvailableCustomDimensions02(["whale", "dolphin"])

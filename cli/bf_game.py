@@ -18,7 +18,6 @@ from collections import Counter
 from itertools import groupby
 
 import bf_lib as bf
-import spacy
 from bf_typer import command, timing
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 

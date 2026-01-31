@@ -78,10 +78,7 @@ function rebuild_tasks()
 		-- { "f_run_in_debugger_tests", cli_command("run_in_debugger tests Debug") },
 		-- { "u_update_template", cli_command("update_template") },
 		-- { "t_test", cli_command("test") },
-		{
-			"t_test",
-			[[godot --quit --headless --check-only --debug --quiet && godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src/engine -gdir src/game -gexit -gprefix test -gdisable_colors]],
-		},
+		{ "t_test", cli_command("test") },
 		{ "r_run", [[godot --quit --no-header --headless --check-only --debug --quiet && godot]] },
 		-- {
 		-- 	"p_profile",
@@ -182,6 +179,8 @@ end, opts)
 
 -- Errorformat.
 vim.fn.execute([[set errorformat=]])
+-- Godot. Launch Checks.
+vim.fn.execute([[set errorformat+=\*Frame\ 0\ -\ res://%f:%l\ %m]])
 -- Godot. GUT.
 vim.fn.execute([[set errorformat+=\ \ \ \ \ \ \ \ \ \ at:\ %m\ (res://%f:%l)]])
 -- Godot. Warnings.

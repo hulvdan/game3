@@ -68,7 +68,10 @@ def do_profile(platform: bf.BuildPlatform) -> None:
 
 @timing
 def do_check_godot_errors() -> None:
-    bf.run_command("godot --quit --headless --check-only --debug --quiet")
+    bf.run_command(
+        "godot --quit --headless -v --check-only --debug --ignore-error-breaks --disable-crash-handler --gpu-abort",
+        timeout_seconds=5,
+    )
 
 
 @timing
@@ -92,16 +95,22 @@ def do_build(
     bf.run_command(f"del /f/s/q {out_folder}")
 
     bf.run_command(
-        rf"godot --quit --headless --export-{build_type} {platform} {out_folder}/{exe_name}"
+        rf"godot --quit --headless --export-{build_type} {platform} {out_folder}/{exe_name}",
+        timeout_seconds=30,
     )
 
     shutil.make_archive(base_name=out_folder, format="zip", root_dir=out_folder)
     # }
 
 
-# @timing
-# def do_test() -> None:
-#     bf.run_command(str(bf.CMAKE_TESTS_PATH), timeout_seconds=5)
+@timing
+def do_test() -> None:
+    # {  ###
+    bf.run_command(
+        "godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src/engine -gdir src/game -gexit -gprefix test -gdisable_colors",
+        timeout_seconds=5,
+    )
+    # }
 
 
 # @timing
@@ -313,17 +322,15 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
 #     # }
 
 
-# @command
-# def test():
-#     # {  ###
-#     platform = bf.BuildPlatform.Win
-#     build_type = bf.BuildType.Debug
-#
-#     do_cmake(platform, build_type)
-#     do_generate(platform, build_type)
-#     do_build(bf.BuildTarget.tests, platform, build_type)
-#     do_test()
-#     # }
+@command
+def test():
+    # {  ###
+    platform = bf.BuildPlatform.Win
+    build_type = bf.BuildType.Debug
+    do_generate(platform, build_type)
+    do_check_godot_errors()
+    do_test()
+    # }
 
 
 # @command
