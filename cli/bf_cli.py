@@ -58,7 +58,7 @@ def do_profile(godot_platform: str) -> None:
             "scons",
             "target=template_release",
             f"platform={godot_platform}",
-            f"profile=../{bf.PROJECT_DIR.name}/src/engine/profile.py",
+            f"profile=../{bf.PROJECT_DIR.name}/src/engine/profile_{godot_platform}.py",
             f"build_profile=../{bf.PROJECT_DIR.name}/src/engine/profile.gdbuild",
         ],
         cwd="../godot-4.6-stable",
