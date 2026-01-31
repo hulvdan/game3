@@ -22,4 +22,6 @@ TODO copy from emberveil2
 
 ```
 uv sync
+pre-commit --install
+pre-commit --install-hooks
 ```
