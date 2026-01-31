@@ -19,7 +19,6 @@ else:
     optimize = "size_extra"
     lto = "full"
 
-# Disables deprecated features
 disable_3d = "yes"
 disable_advanced_gui = "yes"
 
