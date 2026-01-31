@@ -15,6 +15,10 @@
 - Optional. For nvim:
   - Download and put in PATH
     https://github.com/GDQuest/GDScript-formatter/releases
+- Optional. For local testing
+  ```
+  npm install -g serve
+  ```
 
 ## Quickstart
 

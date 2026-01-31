@@ -104,12 +104,12 @@ function rebuild_tasks()
 		--         vim.fn.execute([[term python -m http.server -d .cmake\Web_Debug -b 0.0.0.0 8000]])
 		--     end,
 		-- },
-		-- {
-		--     "x_serve_web_release",
-		--     function()
-		--         vim.fn.execute([[term python -m http.server -d .cmake\Web_Release -b 0.0.0.0 8001]])
-		--     end,
-		-- },
+		{
+			"x_serve_web_playgama_release",
+			function()
+				vim.fn.execute([[term serve -l 8001 .export\web_playgama_release]])
+			end,
+		},
 		{
 			"c_serve_web_playgama_release",
 			function()
