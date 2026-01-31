@@ -2,7 +2,7 @@ extends MetricsBase
 
 class_name MetricsGA
 
-var _game_analytics = null
+var _js_window = null
 
 @export var game_id: String
 @export var game_secret: String
@@ -11,31 +11,32 @@ var _game_analytics = null
 
 
 func _ready() -> void:
-	if Engine.has_singleton("GameAnalytics"):
-		_game_analytics = Engine.get_singleton("GameAnalytics")
-		_game_analytics.setEnabledInfoLog(true)
-		_game_analytics.setEnabledVerboseLog(true)
+	if OS.has_feature('web'):
+		_js_window = JavaScriptBridge.get_interface("window")
 
-		_game_analytics.configureBuild(CodegenVersion.VERSION)
+		_js_window.GameAnalytics("setEnabledInfoLog", true)
+		_js_window.GameAnalytics("setEnabledVerboseLog", true)
 
-		# _game_analytics.configureAvailableCustomDimensions01(["ninja", "samurai"])
-		# _game_analytics.configureAvailableCustomDimensions02(["whale", "dolphin"])
-		# _game_analytics.configureAvailableCustomDimensions03(["horde", "alliance"])
-		# _game_analytics.configureAvailableResourceCurrencies(["gold", "gems"])
-		# _game_analytics.configureAvailableResourceItemTypes(["boost", "lives"])
+		_js_window.GameAnalytics("configureBuild", CodegenVersion.VERSION)
 
-		_game_analytics.init(game_id, game_secret)
+		# _js_window.GameAnalytics("configureAvailableResourceCurrencies", ["gems", "gold"])
+		# _js_window.GameAnalytics("configureAvailableResourceItemTypes", ["boost", "gold"])
+		# _js_window.GameAnalytics("configureAvailableCustomDimensions01", ["ninja", "samurai"])
+		# _js_window.GameAnalytics("configureAvailableCustomDimensions02", ["whale", "dolphin"])
+		# _js_window.GameAnalytics("configureAvailableCustomDimensions03", ["horde", "alliance"])
+
+		_js_window.GameAnalytics("initialize", game_id, game_secret)
 
 		metric('aboba')
 
 
 func metric(id: String) -> void:
-	if _game_analytics:
-		_game_analytics.addDesignEvent({ "eventId": id })
+	if _js_window:
+		_js_window.GameAnalytics("addDesignEvent", { "eventId": id })
 
 
 func metricv(id: String, value: int) -> void:
-	if _game_analytics:
-		_game_analytics.addDesignEvent({ "eventId": id, "value": value })
+	if _js_window:
+		_js_window.GameAnalytics("addDesignEvent", { "eventId": id, "value": value })
 
 @warning_ignore_restore('unsafe_method_access')
