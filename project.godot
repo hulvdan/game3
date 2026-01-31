@@ -28,7 +28,6 @@ buses/default_bus_layout="res://assets/default_bus_layout.tres"
 [autoload]
 
 Meta="*res://src/engine/meta.gd"
-Bridge="*uid://cx4klxojbw6ck"
 
 [debug]
 
@@ -67,7 +66,7 @@ gdscript/warnings/inference_on_variant=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/playgama_bridge/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
 [file_customization]
 

@@ -80,10 +80,6 @@ function rebuild_tasks()
 		-- { "t_test", cli_command("test") },
 		{ "t_test", cli_command("test") },
 		{ "r_run", [[godot --quit --no-header --headless --check-only --debug --quiet && godot]] },
-		-- {
-		-- 	"p_profile",
-		-- 	[[cmd /c "cd /d ..\godot-4.6-stable && scons target=template_release platform=web profile=../godot-template/assets/profile_web.py build_profile=../godot-template/assets/profile.gdbuild"]],
-		-- },
 		{
 			"p_profiles",
 			cli_command("profiles"),
@@ -107,7 +103,10 @@ function rebuild_tasks()
 		{
 			"x_serve_web_playgama_release",
 			function()
-				vim.fn.execute([[term serve -l 8001 .export\web_playgama_release]])
+				vim.fn.execute(
+					[[term openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 365 -subj "/CN=localhost" && python3 -m http.server 8443 --bind 0.0.0.0 --directory .export\web_playgama_release --ssl-keyfile key.pem --ssl-certfile cert.pem]]
+				)
+				-- vim.fn.execute([[term serve -l 8001 .export\web_playgama_release]])
 			end,
 		},
 		{

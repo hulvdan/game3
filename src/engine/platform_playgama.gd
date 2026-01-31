@@ -8,8 +8,9 @@ class_name PlatformPlaygama
 # 	Bridge.advertisement.connect("interstitial_state_changed", Callable(self, "_on_interstitial_state_changed"))
 
 func show_ad_inter() -> void:
-	if Bridge.advertisement.is_interstitial_supported:
-		Bridge.advertisement.show_interstitial()
+	pass
+	#if Bridge.advertisement.is_interstitial_supported:
+	#Bridge.advertisement.show_interstitial()
 
 
 func show_ad_reward() -> void:
