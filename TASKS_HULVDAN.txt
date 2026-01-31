@@ -7,6 +7,7 @@ BIG PLAN
 PLAN
 ============================================================
 
+* gameanalytics fix bits 32
 * template: game analytics
 * game->template: save load
 * game->template: game analytics send metrics from game
