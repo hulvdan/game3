@@ -28,6 +28,7 @@ graphite = "no"
 
 # Disables all modules so you can only enable what you need
 modules_enabled_by_default = "no"
+module_gameanalytics_enabled = "yes"
 module_gdscript_enabled = "yes"
 # Fallback text server; less features but works fine for English.
 module_text_server_fb_enabled = "yes"
