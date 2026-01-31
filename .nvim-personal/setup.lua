@@ -72,7 +72,7 @@ function rebuild_tasks()
 		{ "a_select_target", select_target },
 		{
 			"e_build",
-			[[godot --quit --headless --check-only ]]
+			[[godot --quit --headless --check-only && ]]
 				.. cli_command(string.format("build %s %s %s", target, platform, build_type)),
 		},
 		-- { "d_run_in_debugger", cli_command(string.format("run_in_debugger %s Debug", target)) },
@@ -81,7 +81,7 @@ function rebuild_tasks()
 		-- { "t_test", cli_command("test") },
 		{
 			"t_test",
-			[[godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]],
+			[[godot --quit --headless --check-only && godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src -gexit -gprefix test -gdisable_colors]],
 		},
 		{ "r_run", [[godot --quit --no-header --headless --check-only && godot]] },
 		-- {
