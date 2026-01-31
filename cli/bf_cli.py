@@ -67,6 +67,11 @@ def do_profile(platform: bf.BuildPlatform) -> None:
 
 
 @timing
+def do_check_godot_errors() -> None:
+    bf.run_command("godot --quit --headless --check-only --debug --quiet")
+
+
+@timing
 def do_build(
     target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType
 ) -> None:
@@ -263,6 +268,7 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
     # {  ###
     # do_cmake(platform, build_type)
     do_generate(platform, build_type)
+    do_check_godot_errors()
     do_build(target, platform, build_type)
     # }
 

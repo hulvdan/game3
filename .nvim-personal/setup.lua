@@ -72,8 +72,7 @@ function rebuild_tasks()
 		{ "a_select_target", select_target },
 		{
 			"e_build",
-			[[godot --quit --headless --check-only --debug --quiet && ]]
-				.. cli_command(string.format("build %s %s %s", target, platform, build_type)),
+			cli_command(string.format("build %s %s %s", target, platform, build_type)),
 		},
 		-- { "d_run_in_debugger", cli_command(string.format("run_in_debugger %s Debug", target)) },
 		-- { "f_run_in_debugger_tests", cli_command("run_in_debugger tests Debug") },
@@ -140,13 +139,12 @@ function rebuild_tasks()
 		--         vim.fn.execute([[term uv run python cli\bf_cli.py receive_ws_logs 8003]])
 		--     end,
 		-- },
-		-- -- { "w_temp", cli_command("temp") },
-		-- {
-		--     "w_temp",
-		--     function()
-		--         vim.fn.execute([[term uv run python cli\bf_cli.py temp]])
-		--     end,
-		-- },
+		{
+			"w_temp",
+			function()
+				vim.fn.execute([[term uv run python cli\bf_cli.py temp]])
+			end,
+		},
 		-- { "list_sounds", cli_command("list_sounds") },
 		-- { "z_clean_cmake", [[del /f/s/q .cmake]] },
 		-- { "x_clean_temp", [[del /f/s/q .temp]] },

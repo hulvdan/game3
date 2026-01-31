@@ -9,6 +9,8 @@
 
 [node name="_metrics_ga" type="Node" parent="." unique_id=927896474]
 script = ExtResource("2_j2eim")
+game_id = "6cd0800abea682e27c7c5e25e5767957"
+game_secret = "1cccb4f791628c4a3d3bf49e30d9a139e81aa563"
 
 [node name="_meta" type="Node" parent="." unique_id=1168592126]
 script = ExtResource("2_836ik")

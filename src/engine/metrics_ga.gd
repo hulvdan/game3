@@ -16,7 +16,7 @@ func _ready() -> void:
 		_game_analytics.setEnabledInfoLog(true)
 		_game_analytics.setEnabledVerboseLog(true)
 
-		_game_analytics.configureBuild("0.1.1")
+		_game_analytics.configureBuild(Codegen.VERSION)
 
 		# _game_analytics.configureAvailableCustomDimensions01(["ninja", "samurai"])
 		# _game_analytics.configureAvailableCustomDimensions02(["whale", "dolphin"])
@@ -26,12 +26,16 @@ func _ready() -> void:
 
 		_game_analytics.init(game_id, game_secret)
 
+		metric('aboba')
+
 
 func metric(id: String) -> void:
-	_game_analytics.addDesignEvent({ 'eventId': id })
+	if _game_analytics:
+		_game_analytics.addDesignEvent({ "eventId": id })
 
 
 func metricv(id: String, value: int) -> void:
-	_game_analytics.addDesignEvent({ 'eventId': id, value: value })
+	if _game_analytics:
+		_game_analytics.addDesignEvent({ "eventId": id, "value": value })
 
 @warning_ignore_restore('unsafe_method_access')

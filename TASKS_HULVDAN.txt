@@ -26,6 +26,7 @@ x template: build playgama
 PRE RELEASE
 ============================================================
 * Self-check - https://wiki.playgama.com/playgama/game-requirements/self-check
+* Create gameanalytics game + set gameid and gamesecret in godot
 RELEASED
 ============================================================
 

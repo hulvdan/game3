@@ -37,7 +37,7 @@ def get_sounds_that_reaper_would_export() -> set[str]:
 
 
 @timing
-def do_audio(platform: bf.BuildPlatform) -> None:
+def do_audio(_platform: bf.BuildPlatform) -> None:
     # {  ###
     AUDIO_SRC_DIR = bf.ASSETS_DIR / "sfx"
     src_files = {p for p in AUDIO_SRC_DIR.glob("*.ogg") if p.is_file()}
@@ -87,7 +87,16 @@ def do_audio(platform: bf.BuildPlatform) -> None:
 
 @timing
 def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
-    do_audio(platform)
+    with open(
+        bf.HANDS_GENERATED_DIR / "bf_codegen.cpp", "w", encoding="utf-8", newline="\n"
+    ) as codegen_file:
+        codegen_file.write(CODEGEN_DISCLAIMER)
+
+        def genline(value):
+            codegen_file.write(value)
+            codegen_file.write("\n")
+
+        do_audio(platform)
 
 
 ###
