@@ -26,6 +26,7 @@
 # * Create a repo in GitHub
 # * Add ruleset to protect default branch in GitHub (disable deletions + disable force pushes)
 # * clone repo
+# * open nvim inside it
 git remote add template https://github.com/Hulvdan/godot-template.git
 git fetch template
 git merge template
@@ -34,6 +35,7 @@ uv python install 3.11
 uv sync
 pre-commit install
 pre-commit install --install-hooks
-# * I checked out master branch of godot-template if lazygit
+# * I checked out master branch of godot-template in lazygit
     -> renamed it into `template` in github desktop
+# * Open Godot -> Project Settings -> Change name
 ```
