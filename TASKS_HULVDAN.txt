@@ -18,10 +18,10 @@ x template: game analytics JS
 x template: web load music asynchronously
 x send emberveil2 to yandex again
 x fix load music yandex
+x template: remove music
 
-* template: audio unlock signal
-* template: remove music
 * template: save load
+* template: audio unlock signal
 * template:
 * template:
 * template:
