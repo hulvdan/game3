@@ -14,8 +14,8 @@ func _ready() -> void:
 	if OS.has_feature('web'):
 		_js_window = JavaScriptBridge.get_interface("window")
 
-		_js_window.GameAnalytics("setEnabledInfoLog", true)
-		_js_window.GameAnalytics("setEnabledVerboseLog", true)
+		# _js_window.GameAnalytics("setEnabledInfoLog", true)
+		# _js_window.GameAnalytics("setEnabledVerboseLog", true)
 
 		_js_window.GameAnalytics("configureBuild", CodegenVersion.VERSION)
 
