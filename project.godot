@@ -27,7 +27,6 @@ buses/default_bus_layout="res://assets/default_bus_layout.tres"
 
 [autoload]
 
-Meta="*res://src/engine/meta.gd"
 Bridge="*uid://cx4klxojbw6ck"
 
 [debug]
