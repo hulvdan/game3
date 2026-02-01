@@ -20,12 +20,22 @@
     npm install -g serve
     ```
 
-## Quickstart
-
-TODO copy from emberveil2
+## Bootstrap A New Repo
 
 ```
+# * Create a repo in GitHub
+# * Add ruleset to protect default branch in GitHub (disable deletions + disable force pushes)
+# * Replace here `NEWGAME` with github-name of the repo
+mkdir NEWGAME
+cd NEWGAME
+git init
+git remote add template https://github.com/Hulvdan/godot-template.git
+git fetch template
+git rebase template/template
+uv python install 3.11
 uv sync
-pre-commit --install
-pre-commit --install-hooks
+pre-commit install
+pre-commit install --install-hooks
+git remote add "origin" https://github.com/Hulvdan/NEWGAME.git
+# Set alias in Github Desktop
 ```
