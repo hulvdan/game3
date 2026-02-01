@@ -34,5 +34,6 @@ uv python install 3.11
 uv sync
 pre-commit install
 pre-commit install --install-hooks
-# Set alias in Github Desktop
+# * I checked out master branch of godot-template if lazygit
+    -> renamed it into `template` in github desktop
 ```
