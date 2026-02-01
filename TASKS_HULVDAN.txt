@@ -19,8 +19,8 @@ x template: web load music asynchronously
 x send emberveil2 to yandex again
 
 * template: audio unlocking signal
+* template: remove music
 * template: save load
-* template:
 * template:
 * template:
 * template:
