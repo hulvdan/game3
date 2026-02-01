@@ -326,17 +326,6 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
 #     # }
 
 
-# @command
-# def update_template():
-#     # {  ###
-#     bf.run_command("git fetch template")
-#
-#     with bf.git_stash():
-#         bf.run_command("git merge template/template")
-#         bf.run_command("poetry install")
-#     # }
-
-
 @command
 def test():
     # {  ###
@@ -376,69 +365,6 @@ def test():
 #     with bf.git_stash():
 #         build(bf.BuildTarget.game, bf.BuildPlatform.WebYandex, bf.BuildType.Release)
 #     # }
-
-
-# @command
-# def receive_ws_logs(port: int):
-#     # {  ###
-#     get_time = lambda: datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
-#
-#     async def handler(ws):
-#         print(f"{get_time()} I: CONNECTED")
-#         try:
-#             async for msg in ws:
-#                 print(f"{get_time()} {msg}")
-#         except websockets.exceptions.ConnectionClosedError:
-#             print(f"{get_time()} I: DISCONNECTED")
-#
-#     async def main():
-#         async with websockets.serve(handler, "0.0.0.0", port):
-#             print(f"Listening on ws://0.0.0.0:{port}")
-#             await asyncio.Future()
-#
-#     asyncio.run(main())
-#     # }
-
-
-# @command
-# def lint():
-#     # {  ###
-#     do_cmake_ninja_files()
-#     do_compile_commands_json()
-#     do_lint()
-#     # }
-
-
-# CREDITING SFX {  ###
-def _credit_sfx(_folder: Path, _credit: str = "") -> None:
-    pass
-    # assert isinstance(credit, str)
-    #
-    # credits_file = folder / "_credits.txt"
-    # if credits_file.exists():
-    #     credit = credits_file.read_text("utf-8")
-    #
-    # for file in folder.iterdir():
-    #     is_audio = file.is_file() and any(file.name.endswith(x) for x in AUDIO_EXTENSIONS)
-    #     if credit:
-    #         run_command(
-    #             [
-    #                 "ffmpeg",
-    #                 "-i",
-    #                 "-i",
-    #             ]
-    #         )
-    #     else:
-    #         log.warning()
-
-
-# @command
-# @timing
-# def credit_sfx() -> None:
-#     stack = [Path("e:/Media/SFX CREDIT REQUIRED")]
-#     while stack:
-#         p = stack.pop(0)
-#         stack = stack[1:]
 
 
 @command
