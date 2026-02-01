@@ -127,78 +127,6 @@ def do_test() -> None:
 
 
 # @timing
-# def do_lint() -> None:
-#     # {  ###
-#     files_to_lint = [
-#         *bf.SRC_DIR.rglob("*.cpp"),
-#         *bf.SRC_DIR.rglob("*.h"),
-#     ]
-#     bf.run_command(["poetry", "run", "cpplint", "--quiet", *files_to_lint])
-#
-#     (Path(".cmake") / "cppcheck").mkdir(exist_ok=True)
-#     defines = (
-#         "BF_DEBUG=1",
-#         "BF_PLATFORM_Win=1",
-#         "TESTS=1",
-#     )
-#     bf.run_command(
-#         [
-#             bf.CPPCHECK_PATH,
-#             "-j 4",
-#             "--cppcheck-build-dir=.cmake/cppcheck",
-#             "--project=compile_commands.json",
-#             "-ivendor",
-#             "--enable=all",
-#             "--inline-suppr",
-#             "--platform=win64",
-#             "--suppress=*:*codegen*",
-#             "--suppress=*:*vendor*",
-#             "--suppress=checkLevelNormal",
-#             "--suppress=checkersReport",
-#             "--suppress=constParameterCallback",
-#             "--suppress=constParameterPointer",
-#             "--suppress=constParameterReference",
-#             "--suppress=constStatement",
-#             "--suppress=constVariable",
-#             "--suppress=constVariablePointer",
-#             "--suppress=constVariableReference",
-#             "--suppress=cstyleCast",
-#             "--suppress=duplicateBreak",
-#             "--suppress=invalidPointerCast",
-#             "--suppress=knownConditionTrueFalse",
-#             "--suppress=memsetClassFloat",
-#             "--suppress=missingIncludeSystem",
-#             "--suppress=moduloofone",
-#             "--suppress=normalCheckLevelMaxBranches",
-#             "--suppress=nullPointerArithmetic",
-#             "--suppress=passedByValue",
-#             "--suppress=selfAssignment",
-#             "--suppress=unmatchedSuppression",
-#             "--suppress=unreadVariable",
-#             "--suppress=useStlAlgorithm",
-#             "--suppress=uselessAssignmentArg",
-#             "--suppress=variableScope",
-#             "--std=c++20",
-#             "-q",
-#             *[f"-D{d}" for d in defines],
-#         ]
-#     )
-#
-#     bf.run_command(
-#         rf"""
-#             "{bf.CLANG_TIDY_PATH}"
-#             src/engine/bf_engine.cpp
-#         """
-#         # Убираем абсолютный путь к проекту из выдачи линтинга.
-#         # Тут куча экранирования происходит, поэтому нужно дублировать обратные слеши.
-#         + r'| sed "s/{}//"'.format(
-#             str(bf.PROJECT_DIR).replace(os.path.sep, os.path.sep * 3) + os.path.sep * 3
-#         )
-#     )
-#     # }
-
-
-# @timing
 # def do_stop_debugger_ahk() -> None:
 #     bf.run_command(r"autohotkey .nvim-personal\cli.ahk stop_debugger")
 
@@ -352,18 +280,6 @@ def test():
 #
 #     target = "{}:html".format(bf.game_settings.itch_target)
 #     bf.run_command([bf.BUTLER_PATH, "push", zip_path, target])
-#     # }
-#
-#
-# @command
-# def deploy_yandex():
-#     # {  ###
-#     bf.git_check_no_unstashed()
-#
-#     bf.git_bump_tag()
-#
-#     with bf.git_stash():
-#         build(bf.BuildTarget.game, bf.BuildPlatform.WebYandex, bf.BuildType.Release)
 #     # }
 
 
