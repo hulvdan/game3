@@ -17,6 +17,7 @@ x template: game analytics CORS ADBLOCK
 x template: game analytics JS
 x template: web load music asynchronously
 x send emberveil2 to yandex again
+x fix load music yandex
 
 * template: audio unlock signal
 * template: remove music

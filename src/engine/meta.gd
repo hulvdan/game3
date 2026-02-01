@@ -46,8 +46,8 @@ func _ready() -> void:
 		@warning_ignore("unsafe_method_access")
 		http.request_completed.connect(_on_request_completed)
 
-		var origin: String = JavaScriptBridge.eval("window.location.origin")
-		http.request(origin + "/async_data.pck")
+		var base: String = JavaScriptBridge.eval("document.baseURI.substring(0, document.baseURI.lastIndexOf('/') + 1)")
+		http.request(base + 'async_data.pck')
 	else:
 		async_data_loaded = true
 
