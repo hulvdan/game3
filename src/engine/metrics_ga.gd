@@ -27,7 +27,7 @@ func _ready() -> void:
 
 		_js_window.GameAnalytics("initialize", game_id, game_secret)
 
-		metric('aboba')
+		metric('some:aboba')
 
 
 func metric(id: String) -> void:

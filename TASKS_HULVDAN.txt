@@ -12,8 +12,10 @@ x template: minify js build so that it WORKS
   generate profile
   project settings release template C:/Users/user/dev/home/godot-4.6-stable/bin/godot.web.template_release.wasm32.zip
 x gdlint
+x gosha
 
 * template: game analytics JS
+* send emberveil2 to yandex again
 * game->template: save load
 * game->template: yandex async music
 * game->template:
