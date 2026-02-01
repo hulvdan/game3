@@ -27,12 +27,10 @@ func _ready() -> void:
 
 		_js_window.GameAnalytics("initialize", game_id, game_secret)
 
-		metric('some:aboba')
-
 
 func metric(id: String) -> void:
 	if _js_window:
-		_js_window.GameAnalytics("addDesignEvent", id)
+		_js_window.GameAnalytics("addDesignEvent", id, 0)
 
 
 func metricv(id: String, value: float) -> void:
