@@ -68,5 +68,6 @@
 	},
 	"payments": [],
 	"leaderboards": [],
-	"sendAnalyticsEvents": true
+	"sendAnalyticsEvents": true,
+	"showFullLoadingLogo": false
 }
