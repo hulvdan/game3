@@ -8,4 +8,4 @@ func metric(_id: String) -> void
 
 
 @abstract
-func metricv(_id: String, _value: int) -> void
+func metricv(_id: String, _value: float) -> void

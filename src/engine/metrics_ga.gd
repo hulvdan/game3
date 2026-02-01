@@ -32,11 +32,11 @@ func _ready() -> void:
 
 func metric(id: String) -> void:
 	if _js_window:
-		_js_window.GameAnalytics("addDesignEvent", { "eventId": id })
+		_js_window.GameAnalytics("addDesignEvent", id)
 
 
-func metricv(id: String, value: int) -> void:
+func metricv(id: String, value: float) -> void:
 	if _js_window:
-		_js_window.GameAnalytics("addDesignEvent", { "eventId": id, "value": value })
+		_js_window.GameAnalytics("addDesignEvent", id, value)
 
 @warning_ignore_restore('unsafe_method_access')
