@@ -25,17 +25,14 @@
 ```
 # * Create a repo in GitHub
 # * Add ruleset to protect default branch in GitHub (disable deletions + disable force pushes)
-# * Replace here `NEWGAME` with github-name of the repo
-mkdir NEWGAME
-cd NEWGAME
-git init
+# * clone repo
 git remote add template https://github.com/Hulvdan/godot-template.git
 git fetch template
-git rebase template/template
+git merge template
+git push
 uv python install 3.11
 uv sync
 pre-commit install
 pre-commit install --install-hooks
-git remote add "origin" https://github.com/Hulvdan/NEWGAME.git
 # Set alias in Github Desktop
 ```
