@@ -67,7 +67,12 @@ def do_profile(godot_platform: str) -> None:
 
 
 @timing
-def do_check_godot_errors() -> None:
+def do_godot_lint() -> None:
+    bf.run_command("gdlint src", timeout_seconds=5)
+
+
+@timing
+def do_godot_check_errors() -> None:
     bf.run_command(
         "godot --quit --headless --check-only --debug --ignore-error-breaks --disable-crash-handler --gpu-abort",
         timeout_seconds=5,
@@ -281,7 +286,8 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
     # {  ###
     # do_cmake(platform, build_type)
     do_generate(platform, build_type)
-    do_check_godot_errors()
+    do_godot_lint()
+    do_godot_check_errors()
     do_build(target, platform, build_type)
     # }
 
@@ -332,7 +338,7 @@ def test():
     platform = bf.BuildPlatform.Win
     build_type = bf.BuildType.Debug
     do_generate(platform, build_type)
-    do_check_godot_errors()
+    do_godot_check_errors()
     do_test()
     # }
 

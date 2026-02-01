@@ -2,10 +2,10 @@ extends MetricsBase
 
 class_name MetricsGA
 
-var _js_window = null
-
 @export var game_id: String
 @export var game_secret: String
+
+var _js_window = null
 
 @warning_ignore_start('unsafe_method_access')
 
