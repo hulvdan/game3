@@ -2,5 +2,8 @@
 
 [ext_resource type="Script" uid="uid://cxms6y4ygjkfc" path="res://src/game/async_data.gd" id="1_mhwhk"]
 
-[node name="AsyncData" type="Node" unique_id=474731171]
+[node name="_async_data" type="Node" unique_id=474731171 node_paths=PackedStringArray("audio")]
 script = ExtResource("1_mhwhk")
+audio = NodePath("_music")
+
+[node name="_music" type="AudioStreamPlayer" parent="." unique_id=1231687598]

@@ -1,9 +1,11 @@
 extends Node
 
+class_name Meta
+
 @export var metrics: MetricsBase
 @export var platform: PlatformBase
 
-var _async_data_loaded = false
+static var async_data_loaded: bool = false
 
 
 func _on_request_completed(
@@ -28,9 +30,9 @@ func _on_request_completed(
 		printerr('Failed to write to async_data.pck')
 		return
 
-	_async_data_loaded = ProjectSettings.load_resource_pack("user://async_data.pck")
-	if _async_data_loaded:
-		print('Loaded async_data.pck', _async_data_loaded)
+	async_data_loaded = ProjectSettings.load_resource_pack("user://async_data.pck")
+	if async_data_loaded:
+		print('Loaded async_data.pck', async_data_loaded)
 	else:
 		printerr('Failed to load async_data.pck')
 
@@ -46,6 +48,8 @@ func _ready() -> void:
 
 		var origin: String = JavaScriptBridge.eval("window.location.origin")
 		http.request(origin + "/async_data.pck")
+	else:
+		async_data_loaded = true
 
 
 func metric(id: String) -> void:

@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
 [ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
 
-[node name="Main" type="Node2D" unique_id=1918192009]
+[node name="_main" type="Node2D" unique_id=1918192009]
 
 [node name="_metrics_ga" type="Node" parent="." unique_id=927896474]
 script = ExtResource("2_j2eim")
