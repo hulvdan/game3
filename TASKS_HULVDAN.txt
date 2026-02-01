@@ -7,7 +7,6 @@ BIG PLAN
 PLAN
 ============================================================
 
-
 PRE RELEASE
 ============================================================
 * Self-check - https://wiki.playgama.com/playgama/game-requirements/self-check
