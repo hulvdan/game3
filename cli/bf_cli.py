@@ -87,17 +87,22 @@ def do_build(
     build_id = (target, platform, build_type)
     assert build_id in bf.ALLOWED_BUILDS, "{} is not allowed!".format(build_id)
 
+    out_folder = Path(".export") / f"{platform}_{build_type}"
+
+    bf.recursive_mkdir(out_folder)
+    bf.run_command(f"del /f/s/q {out_folder}")
+
     exe_name: str | None = None
     if platform.is_web():
         exe_name = "index.html"
+        bf.run_command(
+            rf"godot --quit --headless --export-pack web_async_data {out_folder}/async_data.pck",
+            timeout_seconds=30,
+        )
     elif platform == bf.BuildPlatform.Win:
         exe_name = "game.exe"
     else:
         assert False
-
-    out_folder = Path(".export") / f"{platform}_{build_type}"
-    bf.recursive_mkdir(out_folder)
-    bf.run_command(f"del /f/s/q {out_folder}")
 
     bf.run_command(
         rf"godot --quit --headless --export-{build_type} {platform} {out_folder}/{exe_name}",
@@ -115,7 +120,7 @@ def do_build(
 def do_test() -> None:
     # {  ###
     bf.run_command(
-        "godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src/engine -gdir src/game -gexit -gprefix test -gdisable_colors",
+        "godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src/tests -gexit -gprefix test -gdisable_colors",
         timeout_seconds=5,
     )
     # }

@@ -14,15 +14,15 @@ x template: minify js build so that it WORKS
 x gdlint
 x gosha
 x template: game analytics CORS ADBLOCK
+x template: game analytics JS
 
-* template: game analytics JS
+* template: web load music asynchronously
 * send emberveil2 to yandex again
-* game->template: save load
-* game->template: yandex async music
-* game->template:
-* game->template:
-* game->template:
-* game->template:
+* template: save load
+* template:
+* template:
+* template:
+* template:
 * template:
 * template:
 
