@@ -7,25 +7,6 @@ BIG PLAN
 PLAN
 ============================================================
 
-x template: minify js build so that it WORKS
-  adjust profile_web_playgama.py
-  generate profile
-  project settings release template C:/Users/user/dev/home/godot-4.6-stable/bin/godot.web.template_release.wasm32.zip
-x gdlint
-x gosha
-x template: game analytics CORS ADBLOCK
-x template: game analytics JS
-x template: web load music asynchronously
-x send emberveil2 to yandex again
-x fix load music yandex
-x template: remove music
-
-* template: save load
-* template: audio unlock signal
-* template:
-* template:
-* template:
-* template:
 
 PRE RELEASE
 ============================================================
