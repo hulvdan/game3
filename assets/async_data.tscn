@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://ddxqhxbluwt8p"]
 
 [ext_resource type="Script" uid="uid://cxms6y4ygjkfc" path="res://src/game/async_data.gd" id="1_mhwhk"]
+[ext_resource type="AudioStream" uid="uid://b6f867ob8sywo" path="res://assets/music/music_theme__02.ogg" id="2_yophj"]
 
 [node name="_async_data" type="Node" unique_id=474731171 node_paths=PackedStringArray("audio")]
 script = ExtResource("1_mhwhk")
+music_default = Array[AudioStream]([ExtResource("2_yophj")])
 audio = NodePath("_music")
 
 [node name="_music" type="AudioStreamPlayer" parent="." unique_id=1231687598]

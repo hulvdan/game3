@@ -2,10 +2,10 @@ extends Node
 
 class_name Meta
 
+static var async_data_loaded: bool = false
+
 @export var metrics: MetricsBase
 @export var platform: PlatformBase
-
-static var async_data_loaded: bool = false
 
 
 func _on_request_completed(
