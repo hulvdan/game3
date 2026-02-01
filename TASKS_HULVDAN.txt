@@ -13,6 +13,7 @@ x template: minify js build so that it WORKS
   project settings release template C:/Users/user/dev/home/godot-4.6-stable/bin/godot.web.template_release.wasm32.zip
 x gdlint
 x gosha
+x template: game analytics CORS ADBLOCK
 
 * template: game analytics JS
 * send emberveil2 to yandex again
