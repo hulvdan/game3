@@ -1,5 +1,5 @@
-WORKING SINCE XXXX-XX-XX
-https://www.timeanddate.com/date/durationresult.html?d1=X&m1=X&y1=XXXX
+WORKING SINCE 2026-02-03
+https://www.timeanddate.com/date/durationresult.html?d1=3&m1=2&y1=2026
 
 BIG PLAN
 ============================================================
@@ -7,6 +7,13 @@ BIG PLAN
 PLAN
 ============================================================
 
+* определиться с нишей
+  Составляющие
+  * ключевые слова
+  * сеттинг
+  * механика
+* confetti particle sprites
+* кубок типа победа
 PRE RELEASE
 ============================================================
 * Self-check - https://wiki.playgama.com/playgama/game-requirements/self-check
