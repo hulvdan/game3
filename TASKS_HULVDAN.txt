@@ -7,11 +7,24 @@ BIG PLAN
 PLAN
 ============================================================
 
+https://poki.com/en/g/blumgi-bounce
+
 * определиться с нишей
   Составляющие
   * ключевые слова
+    * 
+    * 
+    * 
   * сеттинг
+    * minecraft
+    * 
+    * 
+    * 
   * механика
+    * 
+    * 
+    * 
+    * 
 * confetti particle sprites
 * кубок типа победа
 PRE RELEASE
