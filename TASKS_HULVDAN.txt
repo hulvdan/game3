@@ -19,6 +19,7 @@ x exportable to 3d
 x Res prefix for resources
 x fix pre commit fomatting
 x ahk godot run works good
+x ahk godot close+run works good
 
 * populate game collectibles from gamelib.yml using TOOL
 *
