@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://cc28skn5h7aup"]
 
 [ext_resource type="Script" uid="uid://cqxeo73lvmm07" path="res://src/game/game.gd" id="1_ig7tw"]
-[ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://bikh3frhaued2" path="res://src/engine/meta.gd" id="2_836ik"]
 [ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
 [ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
+[ext_resource type="Resource" uid="uid://bnfmpk4awxyu4" path="res://src/game/creatures/player.tres" id="5_qdlv5"]
+[ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/creature.tscn" id="6_qdlv5"]
 [ext_resource type="Texture2D" uid="uid://cb427chsjifdm" path="res://assets/art/textures/removeme/grass.png" id="6_ujfqy"]
 
 [node name="_main" type="Node3D" unique_id=958610633]
@@ -21,48 +22,26 @@ script = ExtResource("2_ujfqy")
 script = ExtResource("2_836ik")
 metrics = NodePath("../_metrics_ga")
 
-[node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("player", "camera", "elements")]
+[node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("container_creatures", "camera")]
 script = ExtResource("1_ig7tw")
-player = NodePath("../world/player")
+container_creatures = NodePath("../world/_container_creatures")
 camera = NodePath("../world/Camera3D")
 camera_distance = 2.65
 camera_angle = 0.685
-elements = [NodePath("../world/mobs/Sprite3D"), NodePath("../world/mobs/Sprite3D2"), NodePath("../world/foliage/Sprite3D"), NodePath("../world/foliage/Sprite3D2"), NodePath("../world/player")]
+temp_creature_to_spawn = ExtResource("5_qdlv5")
 
 [node name="world" type="Node" parent="." unique_id=40295183]
 
 [node name="Camera3D" type="Camera3D" parent="world" unique_id=1622424363]
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
 
-[node name="player" type="Node3D" parent="world" unique_id=2037299645]
+[node name="_floor" type="Node" parent="world" unique_id=35091996]
 
-[node name="Sprite3D" type="Sprite3D" parent="world/player" unique_id=685359128]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, 0)
-texture = ExtResource("2_0xm2m")
-
-[node name="floor" type="Node" parent="world" unique_id=35091996]
-
-[node name="Sprite3D" type="Sprite3D" parent="world/floor" unique_id=496773331]
+[node name="Sprite3D" type="Sprite3D" parent="world/_floor" unique_id=496773331]
 transform = Transform3D(11.72, 0, 0, 0, -5.122975e-07, -11.72, 0, 11.72, -5.122975e-07, 0, 0, 0)
 sorting_offset = -100.0
 texture = ExtResource("6_ujfqy")
 
-[node name="mobs" type="Node" parent="world" unique_id=1247805864]
+[node name="_container_creatures" type="Node" parent="world" unique_id=849794824]
 
-[node name="Sprite3D" type="Sprite3D" parent="world/mobs" unique_id=950783198]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6954652, 0.36625087, -0.3200822)
-texture = ExtResource("2_0xm2m")
-
-[node name="Sprite3D2" type="Sprite3D" parent="world/mobs" unique_id=359312597]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9668977, 0.4852438, 0)
-texture = ExtResource("2_0xm2m")
-
-[node name="foliage" type="Node" parent="world" unique_id=319955532]
-
-[node name="Sprite3D" type="Sprite3D" parent="world/foliage" unique_id=2054631793]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.386394, 0.34345973, 0)
-texture = ExtResource("2_0xm2m")
-
-[node name="Sprite3D2" type="Sprite3D" parent="world/foliage" unique_id=1404354137]
-transform = Transform3D(0.78698885, -0.057825893, 0.6142513, 0, 0.995598, 0.09372604, -0.6169672, -0.07376135, 0.7835246, -0.6520183, 0.27978033, 0.5994587)
-texture = ExtResource("2_0xm2m")
+[node name="player" parent="world/_container_creatures" unique_id=2069627139 instance=ExtResource("6_qdlv5")]

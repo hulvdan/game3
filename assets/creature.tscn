@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://b5bwvai2t1ngr"]
+
+[ext_resource type="Script" uid="uid://cqs6gmu5sugyq" path="res://src/game/creature.gd" id="1_vvuob"]
+[ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="2_qkfe7"]
+
+[node name="creature" type="Node3D" unique_id=1748776430 node_paths=PackedStringArray("sprite")]
+transform = Transform3D(1, 0, 0, 0, 0.9645574, 0.26387304, 0, -0.26387304, 0.9645574, 0, 0, 0)
+script = ExtResource("1_vvuob")
+sprite = NodePath("Sprite3D")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=1416927643]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, 0)
+texture = ExtResource("2_qkfe7")

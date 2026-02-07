@@ -2,7 +2,9 @@ extends Node
 
 static var _async_scene_loaded = false
 
-@export var player: Node3D
+@export var container_creatures: Node
+
+var player: Node3D
 @export var camera: Camera3D
 
 @export var camera_distance: float
@@ -10,12 +12,27 @@ static var _async_scene_loaded = false
 
 @export var elements: Array[Node3D]
 
+@export var temp_mobs: Array[Vector2]
+@export var temp_creature_to_spawn1: Creature
+@export var temp_creature_to_spawn: CreatureData
 
+
+func _make_creature(_data: CreatureData, _pos: Vector2) -> void:
+	#data.new
+	pass
+	
+	
 func _ready() -> void:
-	assert(player)
+	for c: Node in container_creatures.get_children():
+		container_creatures.remove_child(c)
 	assert(camera)
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
+	
+	_make_creature(temp_creature_to_spawn, Vector2(0,0))
+	
+	for element: Node3D in elements:
+		assert(element)
 
 
 func _physics_process(delta: float) -> void:
@@ -31,11 +48,13 @@ func _physics_process(delta: float) -> void:
 	player.transform.origin.x += offset.x
 	player.transform.origin.z += offset.y
 
-
-func _process(_delta: float) -> void:
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	camera.transform.origin = player.transform.origin + camera_dir * camera_distance
 	camera.transform = camera.transform.looking_at(player.transform.origin)
 
 	for element: Node3D in elements:
 		element.transform.basis = camera.transform.basis
+
+
+func _process(_delta: float) -> void:
+	pass
