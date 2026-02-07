@@ -28,6 +28,7 @@ func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	creature.sprite.texture = creature.res.texture
 
 	elements.append(creature)
+	container_creatures.add_child(creature)
 	return creature
 
 

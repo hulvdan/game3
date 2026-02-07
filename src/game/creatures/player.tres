@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CreatureData" format=3 uid="uid://bnfmpk4awxyu4"]
+[gd_resource type="Resource" script_class="ResCreature" format=3 uid="uid://bnfmpk4awxyu4"]
 
 [ext_resource type="Script" uid="uid://dr4bjag45xl6y" path="res://src/game/res_creature.gd" id="1_nac5h"]
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="2_nac5h"]
