@@ -11,6 +11,7 @@ x Отрисовать пол комнаты
 x Отрисовать перса
 x Игрок перемещается
 x Отрисовать моба
+x gdformat pre commit
 
 * make creature (player) from CreatureData
 * make creature (mob) from CreatureData
