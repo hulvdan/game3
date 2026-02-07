@@ -1,5 +1,5 @@
 extends Resource
 
-class_name CreatureData
+class_name ResCreature
 
 @export var texture: Texture2D

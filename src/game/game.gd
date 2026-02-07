@@ -2,44 +2,46 @@ extends Node
 
 static var _async_scene_loaded = false
 
-@export var container_creatures: Node
 @export var elements: Array[Node3D]
 
-@export var camera: Camera3D
 @export var camera_distance: float
 @export var camera_angle: float
 
-@export var creature_player: CreatureData
-@export var mobs_to_spawn: Array[MobToSpawn]
+@export var creature_player: ResCreature
+@export var mobs_to_spawn: Array[ResMobToSpawn]
 
 @export var collectibles: Array[Collectible]
 
 @export var packed_creature: PackedScene
 
+@onready var camera: Camera3D = $Camera
+@onready var container_creatures: Node = $_container_creatures
+
 var player: Node3D
 
 
-func _make_creature(data: CreatureData, pos: Vector2) -> Node3D:
+func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	var creature: Creature = packed_creature.instantiate()
 	creature.transform.origin.x = pos.x
 	creature.transform.origin.z = pos.y
-	creature.data = data
-	creature.sprite.texture = creature.data.texture
+	creature.res = res
+	creature.sprite.texture = creature.res.texture
 
 	elements.append(creature)
 	return creature
 
 
 func _ready() -> void:
+	assert(camera)
+	assert(container_creatures)
 	for c: Node in container_creatures.get_children():
 		container_creatures.remove_child(c)
-	assert(camera)
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
 
 	player = _make_creature(creature_player, Vector2(0, 0))
 	for mob in mobs_to_spawn:
-		_make_creature(mob.data, mob.pos)
+		_make_creature(mob.res, mob.pos)
 
 	for element: Node3D in elements:
 		assert(element)

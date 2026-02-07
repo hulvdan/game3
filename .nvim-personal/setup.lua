@@ -79,7 +79,7 @@ function rebuild_tasks()
 		-- { "u_update_template", cli_command("update_template") },
 		-- { "t_test", cli_command("test") },
 		{ "t_test", cli_command("test") },
-		{ "r_run", [[godot --quit --no-header --headless --check-only --debug --quiet && godot]] },
+		{ "r_run", cli_command("run") },
 		{
 			"p_profiles",
 			function()
@@ -163,7 +163,7 @@ vim.keymap.set(
 
 vim.keymap.set("n", "<F4>", "<leader>aa", { remap = true, silent = true })
 vim.keymap.set("n", "<F5>", "<leader>ae", { remap = true, silent = true })
-vim.keymap.set("n", "<F6>", "<leader>ad", { remap = true, silent = true })
+vim.keymap.set("n", "<F6>", "<leader>ar", { remap = true, silent = true })
 vim.keymap.set("n", "<F7>", "<leader>af", { remap = true, silent = true })
 
 -- Space + M -> настройки игры пользователя.

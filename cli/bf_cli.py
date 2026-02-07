@@ -131,12 +131,9 @@ def do_test() -> None:
 #     bf.run_command(r"autohotkey .nvim-personal\cli.ahk stop_debugger")
 
 
-# @timing
-# def do_run_in_debugger_ahk(target: bf.BuildTarget, build_type: bf.BuildType) -> None:
-#     # {  ###
-#     exe_path = f".cmake/vs17/{build_type}/{target}.exe"
-#     bf.run_command(rf"autohotkey .nvim-personal\cli.ahk run_in_debugger {exe_path}")
-#     # }
+@timing
+def do_run_in_godot_ahk() -> None:
+    bf.run_command(r"autohotkey .nvim-personal\cli.ahk run_in_godot")
 
 
 # @command
@@ -252,8 +249,17 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
 #     do_generate(platform, build_type)
 #     do_build(target, platform, build_type)
 #
-#     do_run_in_debugger_ahk(target, build_type)
+#     do_run_in_godot_ahk()
 #     # }
+
+
+@command
+def run():
+    platform = bf.BuildPlatform.Win
+    build_type = bf.BuildType.Debug
+    do_generate(platform, build_type)
+    do_godot_check_errors()
+    do_run_in_godot_ahk()
 
 
 @command
