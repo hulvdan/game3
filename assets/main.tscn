@@ -5,8 +5,9 @@
 [ext_resource type="Script" uid="uid://bikh3frhaued2" path="res://src/engine/meta.gd" id="2_836ik"]
 [ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
 [ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
+[ext_resource type="Texture2D" uid="uid://cb427chsjifdm" path="res://assets/art/textures/removeme/grass.png" id="6_ujfqy"]
 
-[node name="_main" type="Node2D" unique_id=1918192009]
+[node name="_main" type="Node3D" unique_id=958610633]
 
 [node name="_metrics_ga" type="Node" parent="." unique_id=927896474]
 script = ExtResource("2_j2eim")
@@ -23,6 +24,19 @@ metrics = NodePath("../_metrics_ga")
 [node name="_game" type="Node" parent="." unique_id=1695219218]
 script = ExtResource("1_ig7tw")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1727524821]
-position = Vector2(578, 317)
+[node name="world" type="Node" parent="." unique_id=40295183]
+
+[node name="player" type="Node" parent="world" unique_id=382329787]
+
+[node name="Sprite3D" type="Sprite3D" parent="world/player" unique_id=685359128]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, 0)
 texture = ExtResource("2_0xm2m")
+
+[node name="floor" type="Node" parent="world" unique_id=35091996]
+
+[node name="Sprite3D" type="Sprite3D" parent="world/floor" unique_id=496773331]
+transform = Transform3D(11.72, 0, 0, 0, -5.122975e-07, -11.72, 0, 11.72, -5.122975e-07, 0, 0, 0)
+texture = ExtResource("6_ujfqy")
+
+[node name="Camera3D" type="Camera3D" parent="world" unique_id=1622424363]
+transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
