@@ -35,16 +35,6 @@ uv python install 3.11
 uv sync
 pre-commit install
 pre-commit install --install-hooks
-git submodule update --init --recursive
-cd addons
-cd godot-yaml
-scons target=template_debug
-scons target=template_release
-scons platform=windows target=template_debug
-scons platform=windows target=template_release
-scons platform=web target=template_release
-cd ..
-cd ..
 # * I checked out master branch of godot-template in lazygit
     -> renamed it into `template` in github desktop
 # * Open Godot -> Project Settings -> Change name
