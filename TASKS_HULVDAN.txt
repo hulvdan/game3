@@ -16,6 +16,7 @@ x make creature (player) from CreatureData
 x make creature (mob) from CreatureData
 x _make_creature successfully sets sprite texture
 x exportable to 3d
+x Res prefix for resources
 
 * Игрок атакует луком (tiella charge)
 * Перемещение между комнатами
