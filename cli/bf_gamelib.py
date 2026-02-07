@@ -1,8 +1,10 @@
 # Imports.  {  ###
+import json
 from pathlib import Path
 
 import bf_lib as bf
 import rpp
+import yaml
 from bf_game import *  # noqa
 from bf_typer import timing
 
@@ -99,6 +101,13 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         genline("class_name Codegen")
 
         do_audio(platform)
+
+        with open("src/game/gamelib.yml", encoding="utf-8") as yaml_file:
+            gamelib = yaml.safe_load(yaml_file)
+        for processing_function in bf.gamelib_processing_functions:
+            processing_function(genline, gamelib)
+        with open("src/game/gamelib.json", "w", encoding="utf-8") as json_file:
+            json.dump(gamelib, json_file)
 
 
 ###

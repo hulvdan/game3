@@ -1,5 +1,8 @@
+aboba: asdflkajsdf
 collectibles:
-  - type: WOOD
-    texture: res://assets/art/textures/undefined.png
-  - type: STONE
-    texture: res://assets/art/textures/undefined.png
+  - asdflkasdjf
+  - asdflkasdjf
+  # - type: WOOD
+  #   texture: undefined
+  # - type: STONE
+  #   texture: undefined
