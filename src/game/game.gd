@@ -12,25 +12,35 @@ var player: Node3D
 
 @export var elements: Array[Node3D]
 
-@export var temp_mobs: Array[Vector2]
-@export var temp_creature_to_spawn1: Creature
-@export var temp_creature_to_spawn: CreatureData
+@export var creature_player: CreatureData
+@export var creature_mob: CreatureData
+
+@export var mobs_to_spawn: Array[MobToSpawn]
+
+@export var prefab_creature: PackedScene
 
 
-func _make_creature(_data: CreatureData, _pos: Vector2) -> void:
-	#data.new
-	pass
-	
-	
+func _make_creature(data: CreatureData, pos: Vector2) -> Node3D:
+	var creature: Creature = prefab_creature.instantiate()
+	creature.transform.origin.x = pos.x
+	creature.transform.origin.z = pos.y
+	creature.data = data
+
+	elements.append(creature)
+	return creature
+
+
 func _ready() -> void:
 	for c: Node in container_creatures.get_children():
 		container_creatures.remove_child(c)
 	assert(camera)
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
-	
-	_make_creature(temp_creature_to_spawn, Vector2(0,0))
-	
+
+	player = _make_creature(creature_player, Vector2(0, 0))
+	for mob in mobs_to_spawn:
+		_make_creature(mob.data, mob.pos)
+
 	for element: Node3D in elements:
 		assert(element)
 

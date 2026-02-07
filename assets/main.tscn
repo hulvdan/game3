@@ -5,22 +5,23 @@
 [ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
 [ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
 [ext_resource type="Resource" uid="uid://bnfmpk4awxyu4" path="res://src/game/creatures/player.tres" id="5_qdlv5"]
+[ext_resource type="Script" uid="uid://dimsr1isj0yda" path="res://src/game/mob_to_spawn.gd" id="5_tkxyu"]
 [ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/creature.tscn" id="6_qdlv5"]
 [ext_resource type="Texture2D" uid="uid://cb427chsjifdm" path="res://assets/art/textures/removeme/grass.png" id="6_ujfqy"]
 
+[sub_resource type="Resource" id="Resource_fphxj"]
+script = ExtResource("5_tkxyu")
+pos = Vector2(1.22, 0)
+data = ExtResource("5_qdlv5")
+metadata/_custom_type_script = "uid://dimsr1isj0yda"
+
+[sub_resource type="Resource" id="Resource_tkxyu"]
+script = ExtResource("5_tkxyu")
+pos = Vector2(-0.83, 0.82)
+data = ExtResource("5_qdlv5")
+metadata/_custom_type_script = "uid://dimsr1isj0yda"
+
 [node name="_main" type="Node3D" unique_id=958610633]
-
-[node name="_metrics_ga" type="Node" parent="." unique_id=927896474]
-script = ExtResource("2_j2eim")
-game_id = "6cd0800abea682e27c7c5e25e5767957"
-game_secret = "1cccb4f791628c4a3d3bf49e30d9a139e81aa563"
-
-[node name="_platform_playgama" type="Node" parent="." unique_id=680294843]
-script = ExtResource("2_ujfqy")
-
-[node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics")]
-script = ExtResource("2_836ik")
-metrics = NodePath("../_metrics_ga")
 
 [node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("container_creatures", "camera")]
 script = ExtResource("1_ig7tw")
@@ -28,7 +29,20 @@ container_creatures = NodePath("../world/_container_creatures")
 camera = NodePath("../world/Camera3D")
 camera_distance = 2.65
 camera_angle = 0.685
-temp_creature_to_spawn = ExtResource("5_qdlv5")
+mobs_to_spawn = Array[ExtResource("5_tkxyu")]([SubResource("Resource_fphxj"), SubResource("Resource_tkxyu")])
+prefab_creature = ExtResource("6_qdlv5")
+
+[node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics")]
+script = ExtResource("2_836ik")
+metrics = NodePath("_metrics_ga")
+
+[node name="_metrics_ga" type="Node" parent="_meta" unique_id=927896474]
+script = ExtResource("2_j2eim")
+game_id = "6cd0800abea682e27c7c5e25e5767957"
+game_secret = "1cccb4f791628c4a3d3bf49e30d9a139e81aa563"
+
+[node name="_platform_playgama" type="Node" parent="_meta" unique_id=680294843]
+script = ExtResource("2_ujfqy")
 
 [node name="world" type="Node" parent="." unique_id=40295183]
 
@@ -45,3 +59,4 @@ texture = ExtResource("6_ujfqy")
 [node name="_container_creatures" type="Node" parent="world" unique_id=849794824]
 
 [node name="player" parent="world/_container_creatures" unique_id=2069627139 instance=ExtResource("6_qdlv5")]
+visible = false
