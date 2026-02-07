@@ -14,7 +14,8 @@ static var _async_scene_loaded = false
 
 @export var packed_creature: PackedScene
 
-@onready var gamelib: Gamelib = $_gamelib
+@export var gamelib: Gamelib
+
 @onready var camera: Camera3D = $_camera
 @onready var container_creatures: Node = $_container_creatures
 

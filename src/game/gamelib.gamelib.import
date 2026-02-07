@@ -1,0 +1,13 @@
+[remap]
+
+importer="gamelib_importer"
+type="Gamelib"
+uid="uid://hc0munb00lhj"
+valid=false
+
+[deps]
+
+source_file="res://src/game/gamelib.gamelib"
+
+[params]
+

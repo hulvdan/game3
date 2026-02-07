@@ -65,7 +65,7 @@ gdscript/warnings/inference_on_variant=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/playgama_bridge/plugin.cfg")
+enabled=PackedStringArray("res://addons/gamelib/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/playgama_bridge/plugin.cfg")
 
 [file_customization]
 
