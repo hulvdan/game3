@@ -2,12 +2,15 @@
 
 importer="gamelib_importer"
 type="Gamelib"
-uid="uid://hc0munb00lhj"
-valid=false
+uid="uid://uybe2ohbtlwp"
+path="res://.godot/imported/gamelib.gamelib-a522233aa65d41a2ed1b09b5b8c5b30d.tres"
 
 [deps]
 
+files=["res://.godot/imported/gamelib.gamelib-a522233aa65d41a2ed1b09b5b8c5b30d.tres"]
+
 source_file="res://src/game/gamelib.gamelib"
+dest_files=["res://.godot/imported/gamelib.gamelib-a522233aa65d41a2ed1b09b5b8c5b30d.tres", "res://.godot/imported/gamelib.gamelib-a522233aa65d41a2ed1b09b5b8c5b30d.tres"]
 
 [params]
 

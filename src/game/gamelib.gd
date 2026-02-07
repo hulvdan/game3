@@ -6,5 +6,5 @@ class ResCollectible extends Resource:
 	var type: String
 
 
-var aboba: String
-var collectibles: Array[ResCollectible]
+@export var aboba: String
+@export var collectibles: Array[ResCollectible]
