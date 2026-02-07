@@ -9,9 +9,12 @@ PLAN
 
 x Отрисовать пол комнаты
 x Отрисовать перса
+x Игрок перемещается
+x Отрисовать моба
 
-* Игрок перемещается
-* Отрисовать моба
+* make creature (player) from CreatureData
+* make creature (mob) from CreatureData
+*
 * exportable to 3d
 * Игрок атакует луком (tiella charge)
 * Перемещение между комнатами
