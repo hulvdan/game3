@@ -7,11 +7,11 @@ class_name MetricsGA
 
 var _js_window = null
 
-@warning_ignore_start('unsafe_method_access')
+@warning_ignore_start("unsafe_method_access")
 
 
 func _ready() -> void:
-	if OS.has_feature('web'):
+	if OS.has_feature("web"):
 		_js_window = JavaScriptBridge.get_interface("window")
 		_js_window.GameAnalytics("configureBuild", CodegenVersion.VERSION)
 		_js_window.GameAnalytics("initialize", game_id, game_secret)
@@ -26,4 +26,5 @@ func metricv(id: String, value: float) -> void:
 	if _js_window:
 		_js_window.GameAnalytics("addDesignEvent", id, value)
 
-@warning_ignore_restore('unsafe_method_access')
+
+@warning_ignore_restore("unsafe_method_access")

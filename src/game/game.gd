@@ -3,25 +3,22 @@ extends Node
 static var _async_scene_loaded = false
 
 @export var container_creatures: Node
+@export var elements: Array[Node3D]
 
-var player: Node3D
 @export var camera: Camera3D
-
 @export var camera_distance: float
 @export var camera_angle: float
 
-@export var elements: Array[Node3D]
-
 @export var creature_player: CreatureData
-@export var creature_mob: CreatureData
-
 @export var mobs_to_spawn: Array[MobToSpawn]
 
-@export var prefab_creature: PackedScene
+@export var packed_creature: PackedScene
+
+var player: Node3D
 
 
 func _make_creature(data: CreatureData, pos: Vector2) -> Node3D:
-	var creature: Creature = prefab_creature.instantiate()
+	var creature: Creature = packed_creature.instantiate()
 	creature.transform.origin.x = pos.x
 	creature.transform.origin.z = pos.y
 	creature.data = data
@@ -49,7 +46,7 @@ func _physics_process(delta: float) -> void:
 	if Meta.async_data_loaded and not _async_scene_loaded:
 		_async_scene_loaded = true
 		var r = load("res://assets/async_data.tscn")
-		@warning_ignore('unsafe_method_access')
+		@warning_ignore("unsafe_method_access")
 		var n: Node = r.instantiate()
 		add_child(n)
 

@@ -8,3 +8,32 @@ repos:
         language: pygrep
         files: ^(?!.pre-commit-config).*.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
         types: []
+  # - repo: https://github.com/Scony/godot-gdscript-toolkit
+  #   rev: 4.5.0
+  #   hooks:
+  #     # - id: gdlint
+  #     #   # name: gdlint
+  #     #   # description: "gdlint - linter for GDScript"
+  #     #   # entry: gdlint
+  #     #   # language: python
+  #     #   # language_version: python3
+  #     #   # require_serial: true
+  #     #   # types: [gdscript]
+  #     - id: gdformat
+  #       # name: gdformat
+  #       # description: "gdformat - formatter for GDScript"
+  #       # entry: gdformat
+  #       # language: python
+  #       # language_version: python3
+  #       # require_serial: true
+  #       # types: [gdscript]
+  - repo: local
+    hooks:
+      - id: gdformat
+        name: gdformat
+        entry: gdformat src
+        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        require_serial: true
+        pass_filenames: false
+        always_run: true
+        language: system

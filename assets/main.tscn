@@ -29,8 +29,9 @@ container_creatures = NodePath("../world/_container_creatures")
 camera = NodePath("../world/Camera3D")
 camera_distance = 2.65
 camera_angle = 0.685
+creature_player = ExtResource("5_qdlv5")
 mobs_to_spawn = Array[ExtResource("5_tkxyu")]([SubResource("Resource_fphxj"), SubResource("Resource_tkxyu")])
-prefab_creature = ExtResource("6_qdlv5")
+packed_creature = ExtResource("6_qdlv5")
 
 [node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics")]
 script = ExtResource("2_836ik")

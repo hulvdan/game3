@@ -9,36 +9,36 @@ static var async_data_loaded: bool = false
 
 
 func _on_request_completed(
-		_result: int,
-		response_code: int,
-		_headers: PackedStringArray,
-		body: PackedByteArray,
+	_result: int,
+	response_code: int,
+	_headers: PackedStringArray,
+	body: PackedByteArray,
 ) -> void:
 	if response_code != 200:
-		printerr('Failed to download async_data.pck')
+		printerr("Failed to download async_data.pck")
 		return
 
 	var file = FileAccess.open("user://async_data.pck", FileAccess.WRITE)
 	if not file:
-		printerr('Failed to open async_data.pck for writing')
+		printerr("Failed to open async_data.pck for writing")
 		return
 
 	var stored: bool = file.store_buffer(body)
 	file.close()
 
 	if not stored:
-		printerr('Failed to write to async_data.pck')
+		printerr("Failed to write to async_data.pck")
 		return
 
 	async_data_loaded = ProjectSettings.load_resource_pack("user://async_data.pck")
 	if async_data_loaded:
-		print('Loaded async_data.pck', async_data_loaded)
+		print("Loaded async_data.pck", async_data_loaded)
 	else:
-		printerr('Failed to load async_data.pck')
+		printerr("Failed to load async_data.pck")
 
 
 func _ready() -> void:
-	if OS.has_feature('web'):
+	if OS.has_feature("web"):
 		var http: HTTPRequest = HTTPRequest.new()
 
 		add_child(http)
@@ -46,8 +46,10 @@ func _ready() -> void:
 		@warning_ignore("unsafe_method_access")
 		http.request_completed.connect(_on_request_completed)
 
-		var base: String = JavaScriptBridge.eval("document.baseURI.substring(0, document.baseURI.lastIndexOf('/') + 1)")
-		http.request(base + 'async_data.pck')
+		var base: String = JavaScriptBridge.eval(
+			"document.baseURI.substring(0, document.baseURI.lastIndexOf('/') + 1)"
+		)
+		http.request(base + "async_data.pck")
 	else:
 		async_data_loaded = true
 
