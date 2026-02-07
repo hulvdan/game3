@@ -22,8 +22,10 @@ func _make_creature(data: CreatureData, pos: Vector2) -> Node3D:
 	creature.transform.origin.x = pos.x
 	creature.transform.origin.z = pos.y
 	creature.data = data
+	creature.sprite.texture = creature.data.texture
 
 	elements.append(creature)
+	container_creatures.add_child(creature)
 	return creature
 
 

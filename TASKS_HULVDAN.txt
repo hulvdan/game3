@@ -12,10 +12,10 @@ x Отрисовать перса
 x Игрок перемещается
 x Отрисовать моба
 x gdformat pre commit
+x make creature (player) from CreatureData
+x make creature (mob) from CreatureData
+x _make_creature successfully sets sprite texture
 
-* make creature (player) from CreatureData
-* make creature (mob) from CreatureData
-*
 * exportable to 3d
 * Игрок атакует луком (tiella charge)
 * Перемещение между комнатами
