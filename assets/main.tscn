@@ -21,10 +21,14 @@ script = ExtResource("2_ujfqy")
 script = ExtResource("2_836ik")
 metrics = NodePath("../_metrics_ga")
 
-[node name="_game" type="Node" parent="." unique_id=1695219218]
+[node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("camera")]
 script = ExtResource("1_ig7tw")
+camera = NodePath("../world/Camera3D")
 
 [node name="world" type="Node" parent="." unique_id=40295183]
+
+[node name="Camera3D" type="Camera3D" parent="world" unique_id=1622424363]
+transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
 
 [node name="player" type="Node" parent="world" unique_id=382329787]
 
@@ -37,6 +41,3 @@ texture = ExtResource("2_0xm2m")
 [node name="Sprite3D" type="Sprite3D" parent="world/floor" unique_id=496773331]
 transform = Transform3D(11.72, 0, 0, 0, -5.122975e-07, -11.72, 0, 11.72, -5.122975e-07, 0, 0, 0)
 texture = ExtResource("6_ujfqy")
-
-[node name="Camera3D" type="Camera3D" parent="world" unique_id=1622424363]
-transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)

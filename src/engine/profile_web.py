@@ -19,7 +19,7 @@ else:
     optimize = "size_extra"
     lto = "full"
 
-disable_3d = "yes"
+# disable_3d = "yes"
 disable_advanced_gui = "yes"
 
 # Disables the Vulkan driver (used in Forward+/Mobile Renderers)
@@ -35,8 +35,6 @@ graphite = "no"
 
 module_text_server_adv_enabled = "no"
 module_text_server_fb_enabled = "yes"
-disable_3d = "yes"
-disable_advanced_gui = "yes"
 module_godot_physics_3d_enabled = "no"
 module_jolt_physics_enabled = "no"
 disable_navigation_2d = "yes"

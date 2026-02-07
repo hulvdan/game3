@@ -210,6 +210,8 @@ def profiles() -> None:
     # {  ###
     godot_platforms = {x.split("_", 1)[0] for x in bf.BuildPlatform}
     for x in godot_platforms:
+        if 1 and x == "windows":
+            continue
         do_profile(x)
     # }
 
