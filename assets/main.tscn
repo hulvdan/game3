@@ -72,7 +72,6 @@ texture = ExtResource("6_ujfqy")
 [node name="_container_creatures" type="Node" parent="_game" unique_id=849794824]
 
 [node name="player" parent="_game/_container_creatures" unique_id=2069627139 instance=ExtResource("6_qdlv5")]
-visible = false
 
 [node name="removeme" type="Node" parent="_game" unique_id=548742715]
 script = ExtResource("11_m5usj")

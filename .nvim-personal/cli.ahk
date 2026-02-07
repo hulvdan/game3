@@ -8,8 +8,30 @@ switch command, 0
 {
 
 case "run_in_godot":
-    if WinExist(ahk_exe godot.exe) {
-        ControlSend,, {f8}{f5}, ahk_exe godot.exe
+    WinGet, id, List
+    Loop, %id% {
+        this_id := id%A_Index%
+        WinGetTitle, title, ahk_id %this_id%
+        WinGet, exe, ProcessName, ahk_id %this_id%
+        if RegExMatch(exe, "Godot_.*_win64\.exe") {
+            WinActivate, ahk_id %this_id%
+            ControlSend,, {f8}, ahk_id %this_id%
+            break
+        }
+    }
+
+    sleep 300
+
+    WinGet, id, List
+    Loop, %id% {
+        this_id := id%A_Index%
+        WinGetTitle, title, ahk_id %this_id%
+        WinGet, exe, ProcessName, ahk_id %this_id%
+        if RegExMatch(exe, "Godot_.*_win64\.exe") {
+            WinActivate, ahk_id %this_id%
+            ControlSend,, {f5}, ahk_id %this_id%
+            break
+        }
     }
 
 Default:
