@@ -5,13 +5,12 @@
 [ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
 [ext_resource type="Script" uid="uid://dr4bjag45xl6y" path="res://src/game/res_creature.gd" id="2_m5usj"]
 [ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
-[ext_resource type="Script" uid="uid://ccsngmvtsj162" path="res://src/game/collectible_data.gd" id="4_vqaxa"]
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="5_m5usj"]
 [ext_resource type="Resource" uid="uid://bnfmpk4awxyu4" path="res://src/game/creatures/player.tres" id="5_qdlv5"]
 [ext_resource type="Script" uid="uid://dimsr1isj0yda" path="res://src/game/res_mob_to_spawn.gd" id="5_tkxyu"]
 [ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/packed_creature.tscn" id="6_qdlv5"]
 [ext_resource type="Texture2D" uid="uid://cb427chsjifdm" path="res://assets/art/textures/removeme/grass.png" id="6_ujfqy"]
-[ext_resource type="Script" uid="uid://b1qcunksat8ey" path="res://src/game/removeme.gd" id="11_m5usj"]
+[ext_resource type="Script" uid="uid://b1qcunksat8ey" path="res://src/game/gamelib.gd" id="11_m5usj"]
 
 [sub_resource type="Resource" id="Resource_vvw4a"]
 script = ExtResource("2_m5usj")
@@ -30,24 +29,6 @@ pos = Vector2(-0.83, 0.82)
 res = ExtResource("5_qdlv5")
 metadata/_custom_type_script = "uid://dimsr1isj0yda"
 
-[sub_resource type="Resource" id="Resource_otm8r"]
-script = ExtResource("4_vqaxa")
-id = "bone_s"
-texture = ExtResource("5_m5usj")
-metadata/_custom_type_script = "uid://ccsngmvtsj162"
-
-[sub_resource type="Resource" id="Resource_vqaxa"]
-script = ExtResource("4_vqaxa")
-metadata/_custom_type_script = "uid://ccsngmvtsj162"
-
-[sub_resource type="Resource" id="Resource_m5usj"]
-script = ExtResource("4_vqaxa")
-metadata/_custom_type_script = "uid://ccsngmvtsj162"
-
-[sub_resource type="Resource" id="Resource_h4xlo"]
-script = ExtResource("4_vqaxa")
-metadata/_custom_type_script = "uid://ccsngmvtsj162"
-
 [node name="_main" type="Node3D" unique_id=958610633]
 
 [node name="_game" type="Node" parent="." unique_id=1695219218]
@@ -56,10 +37,12 @@ camera_distance = 2.65
 camera_angle = 0.685
 creature_player = SubResource("Resource_vvw4a")
 mobs_to_spawn = Array[ExtResource("5_tkxyu")]([SubResource("Resource_fphxj"), SubResource("Resource_tkxyu")])
-collectibles = Array[ExtResource("4_vqaxa")]([SubResource("Resource_otm8r"), SubResource("Resource_vqaxa"), SubResource("Resource_m5usj"), SubResource("Resource_h4xlo")])
 packed_creature = ExtResource("6_qdlv5")
 
-[node name="Camera" type="Camera3D" parent="_game" unique_id=1622424363]
+[node name="_gamelib" type="Node" parent="_game" unique_id=2013419289]
+script = ExtResource("11_m5usj")
+
+[node name="_camera" type="Camera3D" parent="_game" unique_id=1622424363]
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
 
 [node name="_floor" type="Node" parent="_game" unique_id=35091996]
@@ -84,6 +67,3 @@ game_secret = "1cccb4f791628c4a3d3bf49e30d9a139e81aa563"
 
 [node name="_platform_playgama" type="Node" parent="_meta" unique_id=680294843]
 script = ExtResource("2_ujfqy")
-
-[node name="Node" type="Node" parent="." unique_id=2013419289]
-script = ExtResource("11_m5usj")

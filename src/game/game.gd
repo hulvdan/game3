@@ -1,5 +1,7 @@
 extends Node
 
+class_name Game
+
 static var _async_scene_loaded = false
 
 @export var elements: Array[Node3D]
@@ -10,11 +12,10 @@ static var _async_scene_loaded = false
 @export var creature_player: ResCreature
 @export var mobs_to_spawn: Array[ResMobToSpawn]
 
-@export var collectibles: Array[Collectible]
-
 @export var packed_creature: PackedScene
 
-@onready var camera: Camera3D = $Camera
+@onready var gamelib: Gamelib = $_gamelib
+@onready var camera: Camera3D = $_camera
 @onready var container_creatures: Node = $_container_creatures
 
 var player: Node3D

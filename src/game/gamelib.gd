@@ -1,6 +1,8 @@
 @tool
 extends Node
 
+class_name Gamelib
+
 @export var reload: bool = false
 @export var collectibles: Array[ResCollectible]
 
@@ -28,8 +30,9 @@ func _reload_gamelib() -> void:
 	print(_a.collectibles[0])
 
 	collectibles.clear()
+	collectibles = []
 	for c in _a.collectibles:
-		var cc: ResCollectible = ResCollectible.new()
+		var cc = ResCollectible.new()
 		cc.type = c
 		collectibles.append(cc)
 
