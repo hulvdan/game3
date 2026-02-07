@@ -15,8 +15,8 @@ x gdformat pre commit
 x make creature (player) from CreatureData
 x make creature (mob) from CreatureData
 x _make_creature successfully sets sprite texture
+x exportable to 3d
 
-* exportable to 3d
 * Игрок атакует луком (tiella charge)
 * Перемещение между комнатами
 * Отрисовать древо прогрессии

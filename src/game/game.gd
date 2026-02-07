@@ -12,6 +12,8 @@ static var _async_scene_loaded = false
 @export var creature_player: CreatureData
 @export var mobs_to_spawn: Array[MobToSpawn]
 
+@export var collectibles: Array[Collectible]
+
 @export var packed_creature: PackedScene
 
 var player: Node3D
@@ -25,7 +27,6 @@ func _make_creature(data: CreatureData, pos: Vector2) -> Node3D:
 	creature.sprite.texture = creature.data.texture
 
 	elements.append(creature)
-	container_creatures.add_child(creature)
 	return creature
 
 
