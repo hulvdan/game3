@@ -7,6 +7,7 @@ repos:
         entry: 'nocheckin'
         language: pygrep
         files: ^(?!.pre-commit-config).*.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
+        exclude: ^addons/.*$
         types: []
   # - repo: https://github.com/Scony/godot-gdscript-toolkit
   #   rev: 4.5.0
