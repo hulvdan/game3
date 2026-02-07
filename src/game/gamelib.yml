@@ -1,3 +1,5 @@
 collectibles:
   - type: WOOD
+    texture: res://assets/art/textures/undefined.png
   - type: STONE
+    texture: res://assets/art/textures/undefined.png
