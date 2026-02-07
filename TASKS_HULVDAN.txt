@@ -18,6 +18,8 @@ x _make_creature successfully sets sprite texture
 x exportable to 3d
 x Res prefix for resources
 
+* populate game collectibles from gamelib.yml
+*
 * Игрок атакует луком (tiella charge)
 * Перемещение между комнатами
 * Отрисовать древо прогрессии

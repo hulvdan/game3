@@ -29,11 +29,11 @@ repos:
   #       # types: [gdscript]
   - repo: local
     hooks:
-      - id: gdformat
-        name: gdformat
-        entry: gdformat src
+      - id: gdscript-formatter
+        name: gdscript-formatter
+        entry: gdscript-formatter
         stages: [pre-commit, pre-merge-commit, pre-push, manual]
         require_serial: true
-        pass_filenames: false
         always_run: true
         language: system
+        types: [gdscript]
