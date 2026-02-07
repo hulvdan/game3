@@ -75,6 +75,7 @@ texture = ExtResource("6_ujfqy")
 
 [node name="removeme" type="Node" parent="_game" unique_id=548742715]
 script = ExtResource("11_m5usj")
+collectibles = null
 
 [node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics")]
 script = ExtResource("2_836ik")
