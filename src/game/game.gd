@@ -14,6 +14,7 @@ static var _async_scene_loaded = false
 @export var creature_player: ResCreature
 
 @export var packed_creature: PackedScene
+@export var packed_floor_tile: PackedScene
 
 @export_file("*.binpb") var glib_filepath: String
 
@@ -21,6 +22,7 @@ var player: Node3D
 
 @onready var camera: Camera3D = $_camera
 @onready var container_creatures: Node = $_container_creatures
+@onready var container_floor: Node = $_floor
 
 
 func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
@@ -49,8 +51,18 @@ func _ready() -> void:
 		var r: ResCreature = load(mob.get_res())
 		_make_creature(r, glib.ToV2(mob.get_pos()))
 
-	for element: Node3D in elements:
+	for element in elements:
 		assert(element)
+
+	for c in container_floor.get_children():
+		container_floor.remove_child(c)
+	var room = glib.v.get_rooms()[0]
+	for rect in room.get_rects():
+		var floor_tile: Node3D = packed_floor_tile.instantiate()
+		var pos = glib.ToV2(rect.get_pos())
+		floor_tile.transform.origin.x = pos.x
+		floor_tile.transform.origin.z = pos.y
+		container_floor.add_child(floor_tile)
 
 
 func _physics_process(delta: float) -> void:

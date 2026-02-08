@@ -140,6 +140,9 @@ func _ready() -> void:
         genline("class_name Codegen")
 
         do_audio(platform)
+        for func in bf.glib_processing_functions:
+            func(genline, glib)
+
     out_path = Path(".temp") / "glib.json"
     bf.recursive_mkdir(out_path.parent)
     with open(out_path, "w", encoding="utf-8") as out_file:

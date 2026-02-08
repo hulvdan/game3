@@ -89,6 +89,19 @@ def _process_glib(_genline, glib) -> None:
 
     transforms: list[tuple[str, str, str, dict[str, int]]] = []
 
+    world = bf.ldtk_load("assets/level.ldtk")
+    rooms = []
+    for level in world.levels:
+        floor = level.get_layer("Floor")
+        rects = []
+        for y in range(floor.cHei_):
+            for x in range(floor.cWid_):
+                t = y * floor.cWid_ + x
+                if floor.intGridCsv[t]:
+                    rects.append({"pos": {"x": x, "y": y}, "size": {"x": 1, "y": 1}})
+        rooms.append({"rects": rects})
+    glib["rooms"] = rooms
+
     # Transforms.
     # ============================================================
     # {  ###
