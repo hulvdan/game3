@@ -23,14 +23,13 @@ camera_angle = 0.75
 creature_player = SubResource("Resource_vvw4a")
 packed_creature = ExtResource("6_qdlv5")
 packed_floor_tile = ExtResource("5_tkxyu")
-glib_filepath = "res://assets/glib.binpb"
 
 [node name="_camera" type="Camera3D" parent="_game" unique_id=1622424363]
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
 
-[node name="_floor" type="Node" parent="_game" unique_id=35091996]
+[node name="_container_floor" type="Node" parent="_game" unique_id=35091996]
 
-[node name="Sprite3D" parent="_game/_floor" unique_id=1975851868 instance=ExtResource("5_tkxyu")]
+[node name="Sprite3D" parent="_game/_container_floor" unique_id=1975851868 instance=ExtResource("5_tkxyu")]
 
 [node name="_container_creatures" type="Node" parent="_game" unique_id=849794824]
 

@@ -16,13 +16,11 @@ static var _async_scene_loaded = false
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
 
-@export_file("*.binpb") var glib_filepath: String
-
 var player: Node3D
 
 @onready var camera: Camera3D = $_camera
 @onready var container_creatures: Node = $_container_creatures
-@onready var container_floor: Node = $_floor
+@onready var container_floor: Node = $_container_floor
 
 
 func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
@@ -41,8 +39,7 @@ func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 func _ready() -> void:
 	assert(camera)
 	assert(container_creatures)
-	for c: Node in container_creatures.get_children():
-		container_creatures.remove_child(c)
+	bf.clear_children(container_creatures)
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
 
@@ -54,8 +51,7 @@ func _ready() -> void:
 	for element in elements:
 		assert(element)
 
-	for c in container_floor.get_children():
-		container_floor.remove_child(c)
+	bf.clear_children(container_floor)
 	var room = glib.v.get_rooms()[1]
 	var room_offset = -glib.ToV2(room.get_size()) / 2
 	for tile_pos in room.get_tiles():
