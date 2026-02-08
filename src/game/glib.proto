@@ -1,22 +1,30 @@
 syntax = "proto3";
 
+message GPos {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message GPosf {
+  float x = 1;
+  float y = 2;
+}
+
 message GCreature {
   string name = 1;
-  int32 id = 2;
-  string email = 3;
 
-  enum GPhoneType {
-    MOBILE = 0;
-    HOME = 1;
-    WORK = 2;
-  }
-
-  message GPhoneNumber {
-    string number = 1;
-    GPhoneType type = 2;
-  }
-
-  repeated GPhoneNumber phones = 4;
+  // enum GPhoneType {
+  //   MOBILE = 0;
+  //   HOME = 1;
+  //   WORK = 2;
+  // }
+  //
+  // message GPhoneNumber {
+  //   string number = 1;
+  //   GPhoneType type = 2;
+  // }
+  //
+  // repeated GPhoneNumber phones = 4;
 }
 
 message Lib {

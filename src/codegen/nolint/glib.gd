@@ -725,6 +725,176 @@ class PBPacker:
 ############### USER DATA BEGIN ################
 
 
+class GPos:
+	func _init():
+		var service
+
+		__x = PBField.new("x", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __x
+		data[__x.tag] = service
+
+		__y = PBField.new("y", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __y
+		data[__y.tag] = service
+
+
+	var data = { }
+
+	var __x: PBField
+
+
+	func has_x() -> bool:
+		if __x.value != null:
+			return true
+		return false
+
+
+	func get_x() -> int:
+		return __x.value
+
+
+	func clear_x() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__x.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_x(value: int) -> void:
+		__x.value = value
+
+
+	var __y: PBField
+
+
+	func has_y() -> bool:
+		if __y.value != null:
+			return true
+		return false
+
+
+	func get_y() -> int:
+		return __y.value
+
+
+	func clear_y() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__y.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_y(value: int) -> void:
+		__y.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GPosf:
+	func _init():
+		var service
+
+		__x = PBField.new("x", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __x
+		data[__x.tag] = service
+
+		__y = PBField.new("y", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __y
+		data[__y.tag] = service
+
+
+	var data = { }
+
+	var __x: PBField
+
+
+	func has_x() -> bool:
+		if __x.value != null:
+			return true
+		return false
+
+
+	func get_x() -> float:
+		return __x.value
+
+
+	func clear_x() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__x.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_x(value: float) -> void:
+		__x.value = value
+
+
+	var __y: PBField
+
+
+	func has_y() -> bool:
+		if __y.value != null:
+			return true
+		return false
+
+
+	func get_y() -> float:
+		return __y.value
+
+
+	func clear_y() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__y.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_y(value: float) -> void:
+		__y.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GCreature:
 	func _init():
 		var service
@@ -743,13 +913,6 @@ class GCreature:
 		service = PBServiceField.new()
 		service.field = __email
 		data[__email.tag] = service
-
-		var __phones_default: Array[GCreature.GPhoneNumber] = []
-		__phones = PBField.new("phones", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 4, true, __phones_default)
-		service = PBServiceField.new()
-		service.field = __phones
-		service.func_ref = Callable(self, "add_phones")
-		data[__phones.tag] = service
 
 
 	var data = { }
@@ -818,116 +981,6 @@ class GCreature:
 
 	func set_email(value: String) -> void:
 		__email.value = value
-
-
-	var __phones: PBField
-
-
-	func get_phones() -> Array[GCreature.GPhoneNumber]:
-		return __phones.value
-
-
-	func clear_phones() -> void:
-		data[4].state = PB_SERVICE_STATE.UNFILLED
-		__phones.value.clear()
-
-
-	func add_phones() -> GCreature.GPhoneNumber:
-		var element = GCreature.GPhoneNumber.new()
-		__phones.value.append(element)
-		return element
-
-
-	enum GPhoneType {
-		MOBILE = 0,
-		HOME = 1,
-		WORK = 2,
-	}
-
-
-	class GPhoneNumber:
-		func _init():
-			var service
-
-			__number = PBField.new("number", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
-			service = PBServiceField.new()
-			service.field = __number
-			data[__number.tag] = service
-
-			__type = PBField.new("type", PB_DATA_TYPE.ENUM, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.ENUM])
-			service = PBServiceField.new()
-			service.field = __type
-			data[__type.tag] = service
-
-
-		var data = { }
-
-		var __number: PBField
-
-
-		func has_number() -> bool:
-			if __number.value != null:
-				return true
-			return false
-
-
-		func get_number() -> String:
-			return __number.value
-
-
-		func clear_number() -> void:
-			data[1].state = PB_SERVICE_STATE.UNFILLED
-			__number.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
-
-
-		func set_number(value: String) -> void:
-			__number.value = value
-
-
-		var __type: PBField
-
-
-		func has_type() -> bool:
-			if __type.value != null:
-				return true
-			return false
-
-
-		func get_type():
-			return __type.value
-
-
-		func clear_type() -> void:
-			data[2].state = PB_SERVICE_STATE.UNFILLED
-			__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.ENUM]
-
-
-		func set_type(value) -> void:
-			__type.value = value
-
-
-		func _to_string() -> String:
-			return PBPacker.message_to_string(data)
-
-
-		func to_bytes() -> PackedByteArray:
-			return PBPacker.pack_message(data)
-
-
-		func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
-			var cur_limit = bytes.size()
-			if limit != -1:
-				cur_limit = limit
-			var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
-			if result == cur_limit:
-				if PBPacker.check_required(data):
-					if limit == -1:
-						return PB_ERR.NO_ERRORS
-				else:
-					return PB_ERR.REQUIRED_FIELDS
-			elif limit == -1 && result > 0:
-				return PB_ERR.PARSE_INCOMPLETE
-			return result
 
 
 	func _to_string() -> String:
