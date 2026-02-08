@@ -28,12 +28,12 @@ x cli generate activates game
   -> in python Lib.parse(glib) and turn into binary
   -> save binary
 *
+* create doors from g.lib
+*
 * glib texture_id
   -> use textures array: glib.textures
   -> query it using glib.textures[glib.v.rooms[0].texture_id]
 * the same goes for glib sound_id
-*
-* create doors from g.lib
 *
 * buf lint src/game/glib.proto
 *
