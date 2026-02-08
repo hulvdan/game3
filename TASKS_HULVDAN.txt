@@ -11,12 +11,12 @@ x godot flatbuffers shit
 x protobuf
 x load protobuf file
 x proto formatter
+x create mobs from g.lib
+x add assets/glib.binpb to scene dependencies
+x add src/game/res_creatures to scene dependencies
 
-* create mobs from g.lib
 * create floor from g.lib
 * create doors from g.lib
-*
-* add assets/glib.binpb to scene dependencies
 *
 * buf lint src/game/glib.proto
 *
