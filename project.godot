@@ -41,6 +41,7 @@ buses/default_bus_layout="res://assets/default_bus_layout.tres"
 [autoload]
 
 Bridge="*uid://cx4klxojbw6ck"
+Glib="*uid://1jksc3q42eag"
 
 [debug]
 

@@ -1,5 +1,18 @@
+extends Node
+
 class_name glib
 static var v: Lib
+
+
+func _ready() -> void:
+	var glib_file = FileAccess.open("res://assets/glib.binpb", FileAccess.READ)
+	assert(glib_file)
+	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
+	glib_file.close()
+	v = Lib.new()
+	var err = v.from_bytes(glib_bytes)
+	assert(not err)
+
 #
 # BSD 3-Clause License
 #

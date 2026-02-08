@@ -59,17 +59,6 @@ func _ready() -> void:
 	for element: Node3D in elements:
 		assert(element)
 
-	var glib_file = FileAccess.open(glib_filepath, FileAccess.READ)
-	assert(glib_file)
-	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
-	glib_file.close()
-
-	glib.v = glib.Lib.new()
-	print(glib.v.get_creatures())
-	var err = glib.v.from_bytes(glib_bytes)
-	assert(not err)
-	print(glib.v.get_creatures())
-
 
 func _physics_process(delta: float) -> void:
 	if Meta.async_data_loaded and not _async_scene_loaded:

@@ -99,7 +99,21 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         """,
     )
     with Path("src/codegen/nolint/glib.gd").open("w", encoding="utf-8") as out_file:
-        out_file.write("class_name glib\nstatic var v: Lib\n")
+        out_file.write("""extends Node
+class_name glib
+static var v: Lib
+
+func _ready() -> void:
+	var glib_file = FileAccess.open("res://assets/glib.binpb", FileAccess.READ)
+	assert(glib_file)
+	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
+	glib_file.close()
+	v = Lib.new()
+	var err = v.from_bytes(glib_bytes)
+	assert(not err)
+
+""")
+
         out_file.write(Path(".temp/glib.gd").read_text(encoding="utf-8"))
     bf.run_command("gdscript-formatter src/codegen/nolint/glib.gd")
     with open("src/game/glib.yaml", encoding="utf-8") as glib_file:
