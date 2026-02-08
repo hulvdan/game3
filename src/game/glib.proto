@@ -1,24 +1,24 @@
 syntax = "proto3";
 
-message Creature {
+message GLCreature {
   string name = 1;
   int32 id = 2;
   string email = 3;
 
-  enum PhoneType {
+  enum GLPhoneType {
     MOBILE = 0;
     HOME = 1;
     WORK = 2;
   }
 
-  message PhoneNumber {
+  message GLPhoneNumber {
     string number = 1;
-    PhoneType type = 2;
+    GLPhoneType type = 2;
   }
 
-  repeated PhoneNumber phones = 4;
+  repeated GLPhoneNumber phones = 4;
 }
 
 message Glib {
-  repeated Creature creatures = 1;
+  repeated GLCreature creatures = 1;
 }
