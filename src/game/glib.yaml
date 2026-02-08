@@ -1,4 +1,4 @@
-mobs_to_spawn2:
+mobs_to_spawn:
   - res: res://src/game/res_creatures/player.tres
     pos:
       x: 1

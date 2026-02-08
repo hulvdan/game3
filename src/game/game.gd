@@ -47,7 +47,7 @@ func _ready() -> void:
 	player = _make_creature(creature_player, Vector2(0, 0))
 	for mob in glib.v.get_mobs_to_spawn():
 		var r: ResCreature = load(mob.get_res())
-		_make_creature(r, glib.ToVector2(mob.get_pos()))
+		_make_creature(r, glib.ToV2(mob.get_pos()))
 
 	for element: Node3D in elements:
 		assert(element)

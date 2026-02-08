@@ -3,19 +3,19 @@ extends Node
 static var v: Lib = Lib.new()
 
 
-func ToVector2(value: GPos2) -> Vector2:
+func ToV2(value: GV2) -> Vector2:
 	return Vector2(value.get_x(), value.get_y())
 
 
-func ToVector2i(value: GPos2i) -> Vector2i:
+func ToV2i(value: GV2i) -> Vector2i:
 	return Vector2i(value.get_x(), value.get_y())
 
 
-func ToVector3(value: GPos3) -> Vector3:
+func ToV3(value: GV3) -> Vector3:
 	return Vector3(value.get_x(), value.get_y(), value.get_z())
 
 
-func ToVector3i(value: GPos3i) -> Vector3i:
+func ToV3i(value: GV3i) -> Vector3i:
 	return Vector3i(value.get_x(), value.get_y(), value.get_z())
 
 
@@ -739,7 +739,7 @@ class PBPacker:
 ############### USER DATA BEGIN ################
 
 
-class GPos2i:
+class GV2i:
 	func _init():
 		var service
 
@@ -824,7 +824,7 @@ class GPos2i:
 		return result
 
 
-class GPos2:
+class GV2:
 	func _init():
 		var service
 
@@ -909,7 +909,7 @@ class GPos2:
 		return result
 
 
-class GPos3i:
+class GV3i:
 	func _init():
 		var service
 
@@ -1021,7 +1021,7 @@ class GPos3i:
 		return result
 
 
-class GPos3:
+class GV3:
 	func _init():
 		var service
 
@@ -1182,7 +1182,7 @@ class GMobToSpawn:
 		return false
 
 
-	func get_pos() -> GPos2:
+	func get_pos() -> GV2:
 		return __pos.value
 
 
@@ -1191,8 +1191,8 @@ class GMobToSpawn:
 		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_pos() -> GPos2:
-		__pos.value = GPos2.new()
+	func new_pos() -> GV2:
+		__pos.value = GV2.new()
 		return __pos.value
 
 
@@ -1248,7 +1248,7 @@ class GRoomRect:
 		return false
 
 
-	func get_pos() -> GPos2:
+	func get_pos() -> GV2:
 		return __pos.value
 
 
@@ -1257,8 +1257,8 @@ class GRoomRect:
 		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_pos() -> GPos2:
-		__pos.value = GPos2.new()
+	func new_pos() -> GV2:
+		__pos.value = GV2.new()
 		return __pos.value
 
 
@@ -1271,7 +1271,7 @@ class GRoomRect:
 		return false
 
 
-	func get_size() -> GPos2:
+	func get_size() -> GV2:
 		return __size.value
 
 
@@ -1280,8 +1280,8 @@ class GRoomRect:
 		__size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_size() -> GPos2:
-		__size.value = GPos2.new()
+	func new_size() -> GV2:
+		__size.value = GV2.new()
 		return __size.value
 
 
@@ -1336,7 +1336,7 @@ class GDoor:
 		return false
 
 
-	func get_pos() -> GPos2:
+	func get_pos() -> GV2:
 		return __pos.value
 
 
@@ -1345,8 +1345,8 @@ class GDoor:
 		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_pos() -> GPos2:
-		__pos.value = GPos2.new()
+	func new_pos() -> GV2:
+		__pos.value = GV2.new()
 		return __pos.value
 
 
