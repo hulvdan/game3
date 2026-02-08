@@ -21,8 +21,8 @@ x glib hot reload
 
 * buf don't ignore excessive fields
   https://buf.build/docs/reference/cli/buf/generate/#description
-  -> Generate python classes
-  -> parse from dict
+  -> use protoc to turn glib.proto into python classes
+  -> in python Lib.parse(glib) and turn into binary
   -> save binary
 *
 * create doors from g.lib

@@ -123,12 +123,14 @@ def do_test() -> None:
     # }
 
 
-# @timing
 # def do_stop_debugger_ahk() -> None:
 #     bf.run_command(r"autohotkey .nvim-personal\cli.ahk stop_debugger")
 
 
-@timing
+def do_activate_godot_ahk() -> None:
+    bf.run_command(r"autohotkey .nvim-personal\cli.ahk activate")
+
+
 def do_run_in_godot_ahk() -> None:
     bf.run_command(r"autohotkey .nvim-personal\cli.ahk run_in_godot")
 
@@ -199,6 +201,7 @@ def profiles() -> None:
 @command
 def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):
     do_generate(platform, build_type)
+    do_activate_godot_ahk()
 
 
 @command
