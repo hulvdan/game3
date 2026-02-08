@@ -9,7 +9,7 @@ import bf_lib as bf
 import bf_swatch
 import colornames
 from bf_game import *  # noqa
-from bf_gamelib import do_generate, get_sounds_that_reaper_would_export
+from bf_glib import do_generate, get_sounds_that_reaper_would_export
 from bf_typer import app, command, global_timing_manager_instance, timing
 
 # }
@@ -234,7 +234,7 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
 #             continue
 #         do_generate(platform, build_type)
 #         build(bf.BuildTarget.game, platform, build_type)
-#         bf._gamelib = None
+#         bf._glib = None
 #     # }
 
 

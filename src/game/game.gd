@@ -14,6 +14,8 @@ static var _async_scene_loaded = false
 
 @export var packed_creature: PackedScene
 
+@export_file("*.binpb") var glib_filepath: String
+
 @onready var camera: Camera3D = $_camera
 @onready var container_creatures: Node = $_container_creatures
 
@@ -54,6 +56,13 @@ func _ready() -> void:
 
 	for element: Node3D in elements:
 		assert(element)
+
+	var glib_file = FileAccess.open(glib_filepath, FileAccess.READ)
+	assert(glib_file)
+	var glib_bytes = glib_file.get_buffer(glib_file.get_length())
+	glib_file.close()
+	var g = Glib.new()
+	g.from_bytes(glib_bytes)
 
 
 func _physics_process(delta: float) -> void:

@@ -1,15 +1,15 @@
 """
 USAGE:
 
-    from bf_lib import game_settings, gamelib_processor
+    from bf_lib import game_settings, glib_processor
 
     game_settings.itch_target = "hulvdan/cult-boy"
     game_settings.languages = ["russian", "english"]
     game_settings.yandex_metrica_counter_id = 1
 
-    @gamelib_processor
-    def process_gamelib(_genline, gamelib) -> None:
-        for tile in gamelib["tiles"]:
+    @glib_processor
+    def process_glib(_genline, glib) -> None:
+        for tile in glib["tiles"]:
             t = tile["type"]
 """
 
@@ -63,23 +63,23 @@ bf.game_settings.colors = [  ###
 scoped_processing_args = ["None", "None"]
 
 
-@bf.gamelib_processor
-def process_gamelib(*args, **kwargs) -> None:
+@bf.glib_processor
+def process_glib(*args, **kwargs) -> None:
     # {  ###
     try:
-        _process_gamelib(*args, **kwargs)
+        _process_glib(*args, **kwargs)
     except Exception:
         print("ERROR HAPPENED DURING PROCESSING:", ", ".join(scoped_processing_args))
         raise
     # }
 
 
-def _process_gamelib(_genline, gamelib) -> None:
+def _process_glib(_genline, glib) -> None:
     # def enumerate_table(field: str):
     #     # {  ###
     #     scoped_processing_args[0] = field
     #
-    #     for i, x in enumerate(gamelib[field]):
+    #     for i, x in enumerate(glib[field]):
     #         scoped_processing_args[1] = x["type"]
     #         yield i, x
     #
@@ -93,7 +93,7 @@ def _process_gamelib(_genline, gamelib) -> None:
     # ============================================================
     # {  ###
     for v in transforms:
-        bf.recursive_replace_transform(gamelib, *(v[1:]))
+        bf.recursive_replace_transform(glib, *(v[1:]))
     # }
 
 

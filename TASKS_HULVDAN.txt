@@ -8,8 +8,12 @@ PLAN
 ============================================================
 
 x godot flatbuffers shit
+x protobuf
 
-* protobuf
+* load protobuf file
+*
+* buf lint src/game/glib.proto
+*
 * Игрок атакует луком (tiella charge)
 * Перемещение между комнатами
 * Отрисовать древо прогрессии
