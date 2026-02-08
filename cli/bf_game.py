@@ -14,11 +14,7 @@ USAGE:
 """
 
 # Imports.  {  ###
-import json
-from pathlib import Path
-
 import bf_lib as bf
-import yaml
 from bf_typer import command, timing
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
@@ -334,30 +330,7 @@ def process_images():
 
 @command
 def temp():
-    bf.run_command(
-        [
-            "godot",
-            "--headless",
-            "-s",
-            "addons/protobuf/protobuf_cmdln.gd",
-            "--input=src/game/glib.proto",
-            "--output=src/codegen/glib.gd",
-            "&&",
-            "gdscript-formatter",
-            "src/codegen/glib.gd",
-        ]
-    )
-
-    with open("src/game/glib.yaml", "r", encoding="utf-8") as gamelib_file:
-        glib = yaml.safe_load(gamelib_file)
-    out_path = Path(".temp") / "glib.json"
-    bf.recursive_mkdir(out_path.parent)
-    with open(out_path, "w", encoding="utf-8") as out_file:
-        json.dump(glib, out_file, indent=2)
-
-    bf.run_command(
-        rf"buf convert src/game/glib.proto --type=Glib --from={out_path} --to=assets/glib.binpb"
-    )
+    pass
 
 
 ###

@@ -47,11 +47,11 @@ class _GameSettings:
 game_settings = _GameSettings()
 
 
-gamelib_processing_functions = []
+glib_processing_functions = []
 
 
-def gamelib_processor(func):
-    gamelib_processing_functions.append(func)
+def glib_processor(func):
+    glib_processing_functions.append(func)
     return func
 
 
@@ -346,7 +346,7 @@ _recursive_replace_transform_patterns: Any = None
 
 
 def recursive_replace_transform(
-    gamelib_recursed,
+    glib_recursed,
     key_postfix_single: str,
     key_postfix_list: str,
     codename_to_index: dict[str, int],
@@ -357,7 +357,7 @@ def recursive_replace_transform(
     global _recursive_replace_transform_patterns
     errors = None
 
-    if not isinstance(gamelib_recursed, dict):
+    if not isinstance(glib_recursed, dict):
         return None
 
     if root:
@@ -366,7 +366,7 @@ def recursive_replace_transform(
             re.compile(f"(.*_)?{key_postfix_list}(_\\d+)?$"),
         )
 
-    for key, value in gamelib_recursed.items():
+    for key, value in glib_recursed.items():
         _call_stack.append(key)
 
         added_type = False
@@ -405,7 +405,7 @@ def recursive_replace_transform(
                     key, value, _call_stack
                 )
                 try:
-                    gamelib_recursed[key] = codename_to_index[value]
+                    glib_recursed[key] = codename_to_index[value]
                 except KeyError:
                     if not errors:
                         errors = []
@@ -459,7 +459,7 @@ def recursive_replace_transform(
 
 
 def recursive_flattenizer(
-    gamelib_recursed,
+    glib_recursed,
     key_postfix_single: str,
     key_postfix_list: str,
     root_list_field: str,
@@ -467,16 +467,16 @@ def recursive_flattenizer(
     list_to_fill: list | None = None,
 ) -> None:
     # {  ###
-    if not isinstance(gamelib_recursed, dict):
+    if not isinstance(glib_recursed, dict):
         return
 
-    should_emplace_list_in_gamelib = False
+    should_emplace_list_in_glib = False
     if list_to_fill is None:
-        assert root_list_field not in gamelib_recursed
-        should_emplace_list_in_gamelib = True
+        assert root_list_field not in glib_recursed
+        should_emplace_list_in_glib = True
         list_to_fill = [{}]
 
-    for key, value in gamelib_recursed.items():
+    for key, value in glib_recursed.items():
         if isinstance(key, str) and (
             key.endswith((key_postfix_single, key_postfix_list))
         ):
@@ -484,10 +484,10 @@ def recursive_flattenizer(
                 assert isinstance(value, list)
                 start = len(list_to_fill)
                 list_to_fill.extend(value)
-                gamelib_recursed[key] = {"start": start, "end": len(list_to_fill)}
+                glib_recursed[key] = {"start": start, "end": len(list_to_fill)}
             else:
-                list_to_fill.append(gamelib_recursed[key])
-                gamelib_recursed[key] = len(list_to_fill) - 1
+                list_to_fill.append(glib_recursed[key])
+                glib_recursed[key] = len(list_to_fill) - 1
 
         elif isinstance(value, dict):
             recursive_flattenizer(
@@ -511,8 +511,8 @@ def recursive_flattenizer(
                     list_to_fill=list_to_fill,
                 )
 
-    if should_emplace_list_in_gamelib:
-        gamelib_recursed[root_list_field] = list_to_fill
+    if should_emplace_list_in_glib:
+        glib_recursed[root_list_field] = list_to_fill
     # }
 
 

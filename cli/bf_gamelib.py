@@ -1,8 +1,10 @@
 # Imports.  {  ###
+import json
 from pathlib import Path
 
 import bf_lib as bf
 import rpp
+import yaml
 from bf_game import *  # noqa
 from bf_typer import timing
 
@@ -87,6 +89,21 @@ def do_audio(_platform: bf.BuildPlatform) -> None:
 
 @timing
 def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
+    bf.run_command(
+        [
+            "godot",
+            "--headless",
+            "-s",
+            "addons/protobuf/protobuf_cmdln.gd",
+            "--input=src/game/glib.proto",
+            "--output=src/codegen/nolint/glib.gd",
+            "&&",
+            "gdscript-formatter",
+            "src/codegen/nolint/glib.gd",
+        ]
+    )
+    with open("src/game/glib.yaml", encoding="utf-8") as glib_file:
+        glib = yaml.safe_load(glib_file)
     with open(
         "src/codegen/hands.gd", "w", encoding="utf-8", newline="\n"
     ) as codegen_file:
@@ -99,6 +116,13 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         genline("class_name Codegen")
 
         do_audio(platform)
+    out_path = Path(".temp") / "glib.json"
+    bf.recursive_mkdir(out_path.parent)
+    with open(out_path, "w", encoding="utf-8") as out_file:
+        json.dump(glib, out_file, indent=2)
+    bf.run_command(
+        rf"buf convert src/game/glib.proto --type=Glib --from={out_path} --to=assets/glib.binpb"
+    )
 
 
 ###

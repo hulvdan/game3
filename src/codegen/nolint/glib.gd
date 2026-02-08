@@ -710,7 +710,7 @@ class PBPacker:
 ############### USER DATA BEGIN ################
 
 
-class Creature:
+class G_Creature:
 	func _init():
 		var service
 
@@ -729,7 +729,7 @@ class Creature:
 		service.field = __email
 		data[__email.tag] = service
 
-		var __phones_default: Array[Creature.PhoneNumber] = []
+		var __phones_default: Array[G_Creature.G_PhoneNumber] = []
 		__phones = PBField.new("phones", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 4, true, __phones_default)
 		service = PBServiceField.new()
 		service.field = __phones
@@ -808,7 +808,7 @@ class Creature:
 	var __phones: PBField
 
 
-	func get_phones() -> Array[Creature.PhoneNumber]:
+	func get_phones() -> Array[G_Creature.G_PhoneNumber]:
 		return __phones.value
 
 
@@ -817,20 +817,20 @@ class Creature:
 		__phones.value.clear()
 
 
-	func add_phones() -> Creature.PhoneNumber:
-		var element = Creature.PhoneNumber.new()
+	func add_phones() -> G_Creature.G_PhoneNumber:
+		var element = G_Creature.G_PhoneNumber.new()
 		__phones.value.append(element)
 		return element
 
 
-	enum PhoneType {
+	enum G_PhoneType {
 		MOBILE = 0,
 		HOME = 1,
 		WORK = 2,
 	}
 
 
-	class PhoneNumber:
+	class G_PhoneNumber:
 		func _init():
 			var service
 
@@ -939,11 +939,11 @@ class Creature:
 		return result
 
 
-class Gamelib:
+class Glib:
 	func _init():
 		var service
 
-		var __creatures_default: Array[Creature] = []
+		var __creatures_default: Array[G_Creature] = []
 		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __creatures_default)
 		service = PBServiceField.new()
 		service.field = __creatures
@@ -956,7 +956,7 @@ class Gamelib:
 	var __creatures: PBField
 
 
-	func get_creatures() -> Array[Creature]:
+	func get_creatures() -> Array[G_Creature]:
 		return __creatures.value
 
 
@@ -965,8 +965,8 @@ class Gamelib:
 		__creatures.value.clear()
 
 
-	func add_creatures() -> Creature:
-		var element = Creature.new()
+	func add_creatures() -> G_Creature:
+		var element = G_Creature.new()
 		__creatures.value.append(element)
 		return element
 

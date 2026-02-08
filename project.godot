@@ -44,6 +44,10 @@ Bridge="*uid://cx4klxojbw6ck"
 
 [debug]
 
+gdscript/warnings/directory_rules={
+"res://addons": 0,
+"res://src/codegen/nolint": 0
+}
 gdscript/warnings/unassigned_variable=2
 gdscript/warnings/unassigned_variable_op_assign=2
 gdscript/warnings/unused_variable=2
