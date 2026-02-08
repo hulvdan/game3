@@ -14,8 +14,10 @@ x proto formatter
 x create mobs from g.lib
 x add assets/glib.binpb to scene dependencies
 x add src/game/res_creatures to scene dependencies
+x create floor from g.lib
+x floor: tile size is 1 meter
 
-* create floor from g.lib
+* floor: offset room center to world center
 * create doors from g.lib
 *
 * buf don't ignore excessive fields

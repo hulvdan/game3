@@ -3,6 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://cb427chsjifdm" path="res://assets/art/textures/removeme/grass.png" id="1_hofgd"]
 
 [node name="Sprite3D" type="Sprite3D" unique_id=1975851868]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+transform = Transform3D(3.31, 0, 0, 0, -1.4468469e-07, -3.31, 0, 3.31, -1.4468469e-07, 0, 0, 0)
 sorting_offset = -100.0
 texture = ExtResource("1_hofgd")

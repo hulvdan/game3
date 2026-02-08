@@ -56,7 +56,7 @@ func _ready() -> void:
 
 	for c in container_floor.get_children():
 		container_floor.remove_child(c)
-	var room = glib.v.get_rooms()[0]
+	var room = glib.v.get_rooms()[1]
 	for rect in room.get_rects():
 		var floor_tile: Node3D = packed_floor_tile.instantiate()
 		var pos = glib.ToV2(rect.get_pos())
