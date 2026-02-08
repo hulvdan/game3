@@ -12,6 +12,8 @@
   mklink c:\Users\user\Programs\PATH\godot.exe c:\Users\user\Programs\godot\Godot_v4.6-stable_win64.exe
   mklink c:\Users\user\Programs\PATH\godot_console.exe c:\Users\user\Programs\godot\Godot_v4.6-stable_win64_console.exe
   ```
+- Download buf and place it into PATH
+  https://github.com/bufbuild/buf/releases/tag/v1.65.0
 - Optional. For nvim:
   - Download and put in PATH
     https://github.com/GDQuest/GDScript-formatter/releases

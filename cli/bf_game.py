@@ -14,7 +14,11 @@ USAGE:
 """
 
 # Imports.  {  ###
+import json
+from pathlib import Path
+
 import bf_lib as bf
+import yaml
 from bf_typer import command, timing
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
@@ -330,17 +334,27 @@ def process_images():
 
 @command
 def temp():
-    bf.git_bump_tag()
-    # nlp = spacy.load("ru_core_news_sm")
-    # text = input("enter: ")
-    # lemmas = [token.lemma_ for token in nlp(text) if token.is_alpha]
-    # values = []
-    # for k, v in Counter(lemmas).items():
-    #     values.append((v, k))
-    # values.sort(key=lambda x: -x[0])
-    # for v, k in values:
-    #     if v >= 3 and len(k) > 2:
-    #         print(v, k)
+    bf.run_command(
+        [
+            "godot",
+            "--headless",
+            "-s",
+            "addons/protobuf/protobuf_cmdln.gd",
+            "--input=src/game/glib.proto",
+            "--output=src/game/glib.proto.gd",
+        ]
+    )
+
+    with open("src/game/glib.yaml", "r", encoding="utf-8") as gamelib_file:
+        glib = yaml.safe_load(gamelib_file)
+    out_path = Path(".temp") / "glib.json"
+    bf.recursive_mkdir(out_path.parent)
+    with open(out_path, "w", encoding="utf-8") as out_file:
+        json.dump(glib, out_file, indent=2)
+
+    bf.run_command(
+        rf"buf convert src/game/glib.proto --type=Glib --from={out_path} --to=assets/glib.binpb"
+    )
 
 
 ###

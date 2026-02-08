@@ -21,9 +21,8 @@ var player: Node3D
 
 
 func _get_validation_conditions() -> Array[ValidationCondition]:
-	print(Game.get_global_name())
 	return [
-		ValidationCondition.scene_is_of_type(packed_creature, Camera3D),
+		ValidationCondition.scene_is_of_type(packed_creature, Creature),
 		ValidationCondition.simple(camera_distance > 0, 'camera_distance > 0'),
 		ValidationCondition.simple(camera_angle > 0, 'camera_angle > 0'),
 	]

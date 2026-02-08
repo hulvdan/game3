@@ -1,3 +1,4 @@
+*.binpb
 *.reapeaks
 *.rpp-PROX
 *.rpp-bak
@@ -6,6 +7,7 @@
 /.export/
 /.mypy_cache/
 /.ruff_cache/
+/.temp/
 /__MACOSX
 /android/
 /assets/art/src/main*.png
