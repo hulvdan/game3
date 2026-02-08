@@ -75,9 +75,6 @@ function rebuild_tasks()
             cli_command(string.format("build %s %s %s", target, platform, build_type)),
         },
         { "g_codegen", cli_command("codegen windows debug") },
-        -- { "f_run_in_debugger_tests", cli_command("run_in_debugger tests Debug") },
-        -- { "u_update_template", cli_command("update_template") },
-        -- { "t_test", cli_command("test") },
         { "t_test", cli_command("test") },
         { "r_run", cli_command("run") },
         {
@@ -100,9 +97,6 @@ function rebuild_tasks()
         {
             "x_serve_web_playgama_release",
             function()
-                -- vim.fn.execute(
-                -- 	[[term openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 365 -subj "/CN=localhost" && python3 -m http.server 8443 --bind 0.0.0.0 --directory .export\web_playgama_release --ssl-keyfile key.pem --ssl-certfile cert.pem]]
-                -- )
                 vim.fn.execute([[term serve -l 8001 .export\web_playgama_release]])
             end,
         },
