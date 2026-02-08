@@ -52,9 +52,10 @@ texture = ExtResource("6_ujfqy")
 
 [node name="player" parent="_game/_container_creatures" unique_id=2069627139 instance=ExtResource("6_qdlv5")]
 
-[node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics")]
+[node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics", "platform")]
 script = ExtResource("2_836ik")
 metrics = NodePath("_metrics_ga")
+platform = NodePath("_platform_playgama")
 
 [node name="_metrics_ga" type="Node" parent="_meta" unique_id=927896474]
 script = ExtResource("2_j2eim")

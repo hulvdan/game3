@@ -59,7 +59,8 @@ func _enter_tree():
 	_connect_signals()
 	_dock = preload(VALIDATOR_DOCK_SCENE_PATH).instantiate() as GodotDoctorDock
 	add_control_to_dock(
-		_setting_dock_slot_to_editor_dock_slot(settings.default_dock_position), _dock
+		_setting_dock_slot_to_editor_dock_slot(settings.default_dock_position),
+		_dock,
 	)
 	_push_toast("Plugin loaded.", 0)
 
@@ -71,7 +72,6 @@ func _exit_tree():
 	_disconnect_signals()
 	_remove_dock()
 	_push_toast("Plugin unloaded.", 0)
-
 
 # ============================================================================
 # SIGNAL MANAGEMENT - Connection and disconnection of signals
@@ -94,7 +94,6 @@ func _disconnect_signals():
 		scene_saved.disconnect(_on_scene_saved)
 	if validation_requested.is_connected(_on_validation_requested):
 		validation_requested.disconnect(_on_validation_requested)
-
 
 # ============================================================================
 # UI AND DIALOG MANAGEMENT - Welcome dialog and dock management
@@ -126,7 +125,6 @@ func _show_welcome_dialog():
 func _remove_dock():
 	remove_control_from_docks(_dock)
 	_dock.free()
-
 
 # ============================================================================
 # EVENT HANDLERS - Signal callbacks for scene saves and validation requests
@@ -162,7 +160,6 @@ func _on_validation_requested(scene_root: Node) -> void:
 	# Validate each node
 	for node: Node in nodes_to_validate:
 		_validate_node(node)
-
 
 # ============================================================================
 # CORE VALIDATION - Main validation entry points for nodes and resources
@@ -213,7 +210,7 @@ func _validate_node(node: Node) -> void:
 			(
 				"_validate_node called on %s, but it didn't have the validation method (%s)."
 				% [validation_target.name, VALIDATING_METHOD_NAME]
-			)
+			),
 		)
 
 	_validate_node_validation_conditions(node, validation_conditions)
@@ -221,7 +218,6 @@ func _validate_node(node: Node) -> void:
 	# If we created a temporary instance, we should free it.
 	if validation_target != node and is_instance_valid(validation_target):
 		validation_target.free()
-
 
 # ============================================================================
 # VALIDATION CONDITION PROCESSING - Processing and reporting validation results
@@ -231,7 +227,8 @@ func _validate_node(node: Node) -> void:
 ## Processes validation conditions for a resource.
 ## Evaluates all conditions, formats errors, displays toasts, and adds warnings to the dock.
 func _validate_resource_validation_conditions(
-	resource: Resource, validation_conditions: Array[ValidationCondition]
+		resource: Resource,
+		validation_conditions: Array[ValidationCondition],
 ) -> void:
 	var validation_result: ValidationResult = ValidationResult.new(validation_conditions)
 	if validation_result.errors.size() > 0:
@@ -240,7 +237,7 @@ func _validate_resource_validation_conditions(
 				"Found %s configuration warning(s) in %s."
 				% [validation_result.errors.size(), resource.resource_path]
 			),
-			1
+			1,
 		)
 	for error in validation_result.errors:
 		var name: String = resource.resource_path.split("/")[-1]
@@ -248,14 +245,16 @@ func _validate_resource_validation_conditions(
 		_print_debug("Adding error to dock...")
 		# Push the warning to the dock, passing the original resource so the user can locate it.
 		_dock.add_resource_warning_to_dock(
-			resource, "[b]Configuration warning in %s:[/b]\n%s" % [name, error]
+			resource,
+			"[b]Configuration warning in %s:[/b]\n%s" % [name, error],
 		)
 
 
 ## Processes validation conditions for a node.
 ## Evaluates all conditions, formats errors, displays toasts, and adds warnings to the dock.
 func _validate_node_validation_conditions(
-	node: Node, validation_conditions: Array[ValidationCondition]
+		node: Node,
+		validation_conditions: Array[ValidationCondition],
 ) -> void:
 	var errors: PackedStringArray = []
 	# ValidationResult processes the conditions upon instantiation.
@@ -265,16 +264,16 @@ func _validate_node_validation_conditions(
 	if errors.size() > 0:
 		_push_toast(
 			"Found %s configuration warnings in %s." % [validation_result.errors.size(), node.name],
-			1
+			1,
 		)
 	for error in errors:
 		_print_debug("Found error in node %s: %s" % [node.name, error])
 		_print_debug("Adding error to dock...")
 		# Push the warning to the dock, passing the original node so the user can locate it.
 		_dock.add_node_warning_to_dock(
-			node, "[b]Configuration warning in %s:[/b]\n%s" % [node.name, error]
+			node,
+			"[b]Configuration warning in %s:[/b]\n%s" % [node.name, error],
 		)
-
 
 # ============================================================================
 # HELPER METHODS - Node finding and property inspection
@@ -318,11 +317,11 @@ func _get_default_validation_conditions(validation_target: Object) -> Array[Vali
 		match prop_type:
 			TYPE_OBJECT:
 				validation_conditions.append(
-					ValidationCondition.is_instance_valid(prop_value, prop_name)
+					ValidationCondition.is_instance_valid(prop_value, prop_name),
 				)
 			TYPE_STRING:
 				validation_conditions.append(
-					ValidationCondition.stripped_string_not_empty(prop_value, prop_name)
+					ValidationCondition.stripped_string_not_empty(prop_value, prop_name),
 				)
 			_:
 				continue
@@ -338,7 +337,7 @@ func _get_export_props(object: Object) -> Array[Dictionary]:
 		return []
 
 	var script: Script = object.get_script()
-	if script == null and not object is Resource:
+	if script == null:
 		return []
 
 	var export_props: Array[Dictionary] = []
@@ -355,7 +354,6 @@ func _get_export_props(object: Object) -> Array[Dictionary]:
 		export_props.append(prop)
 
 	return export_props
-
 
 # ============================================================================
 # INSTANCE MANAGEMENT - Creating and copying node properties
@@ -393,7 +391,6 @@ func _copy_properties(from_node: Node, to_node: Node) -> void:
 	for prop in from_node.get_property_list():
 		if prop.usage & PROPERTY_USAGE_EDITOR:
 			to_node.set(prop.name, from_node.get(prop.name))
-
 
 # ============================================================================
 # UTILITY METHODS - Debug printing, toasts, and configuration mapping
@@ -435,5 +432,5 @@ func _setting_dock_slot_to_editor_dock_slot(dock_slot: GodotDoctorSettings.DockS
 		GodotDoctorSettings.DockSlot.DOCK_SLOT_RIGHT_BR:
 			return DockSlot.DOCK_SLOT_RIGHT_BR
 		_:
-			return DockSlot.DOCK_SLOT_RIGHT_BL  # Default fallback
+			return DockSlot.DOCK_SLOT_RIGHT_BL # Default fallback
 #gdlint:enable = max-returns

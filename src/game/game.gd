@@ -20,6 +20,15 @@ static var _async_scene_loaded = false
 var player: Node3D
 
 
+func _get_validation_conditions() -> Array[ValidationCondition]:
+	print(Game.get_global_name())
+	return [
+		ValidationCondition.scene_is_of_type(packed_creature, Camera3D),
+		ValidationCondition.simple(camera_distance > 0, 'camera_distance > 0'),
+		ValidationCondition.simple(camera_angle > 0, 'camera_angle > 0'),
+	]
+
+
 func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	var creature: Creature = packed_creature.instantiate()
 	creature.transform.origin.x = pos.x

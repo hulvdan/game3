@@ -15,12 +15,12 @@ case "run_in_godot":
         WinGet, exe, ProcessName, ahk_id %this_id%
         if RegExMatch(exe, "Godot_.*_win64\.exe") {
             WinActivate, ahk_id %this_id%
-            ControlSend,, {f8}, ahk_id %this_id%
+            Send, {f8}
             break
         }
     }
 
-    sleep 300
+    sleep 200
 
     WinGet, id, List
     Loop, %id% {
@@ -29,7 +29,9 @@ case "run_in_godot":
         WinGet, exe, ProcessName, ahk_id %this_id%
         if RegExMatch(exe, "Godot_.*_win64\.exe") {
             WinActivate, ahk_id %this_id%
-            ControlSend,, {f5}, ahk_id %this_id%
+            Send, {ctrl down}s{ctrl up}
+            sleep 300
+            Send, {f5}
             break
         }
     }
