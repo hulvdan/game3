@@ -3,7 +3,7 @@ extends Node
 static var v: Lib = Lib.new()
 
 
-func ToVector2(value) -> Vector2:
+func ToVector2(value: GPos) -> Vector2:
 	return Vector2(value.get_x(), value.get_y())
 
 
@@ -727,7 +727,7 @@ class PBPacker:
 ############### USER DATA BEGIN ################
 
 
-class GPos:
+class GPosi:
 	func _init():
 		var service
 
@@ -812,7 +812,7 @@ class GPos:
 		return result
 
 
-class GPosf:
+class GPos:
 	func _init():
 		var service
 
@@ -946,7 +946,7 @@ class GMobToSpawn:
 		return false
 
 
-	func get_pos() -> GPosf:
+	func get_pos() -> GPos:
 		return __pos.value
 
 
@@ -955,8 +955,8 @@ class GMobToSpawn:
 		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_pos() -> GPosf:
-		__pos.value = GPosf.new()
+	func new_pos() -> GPos:
+		__pos.value = GPos.new()
 		return __pos.value
 
 

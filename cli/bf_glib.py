@@ -102,7 +102,7 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         out_file.write("""extends Node
 static var v: Lib = Lib.new()
 
-func ToVector2(value) -> Vector2:
+func ToVector2(value: GPos) -> Vector2:
     return Vector2(value.get_x(), value.get_y())
 
 func _ready() -> void:

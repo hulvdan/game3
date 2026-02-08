@@ -1,18 +1,18 @@
 syntax = "proto3";
 
-message GPos {
+message GPosi {
   int32 x = 1;
   int32 y = 2;
 }
 
-message GPosf {
+message GPos {
   float x = 1;
   float y = 2;
 }
 
 message GMobToSpawn {
   string res = 1;
-  GPosf pos = 2;
+  GPos pos = 2;
 }
 
 message Lib {
