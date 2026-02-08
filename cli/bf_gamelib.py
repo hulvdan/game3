@@ -102,12 +102,5 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
 
         do_audio(platform)
 
-        with open("src/game/gamelib.yml", encoding="utf-8") as yaml_file:
-            gamelib = yaml.safe_load(yaml_file)
-        for processing_function in bf.gamelib_processing_functions:
-            processing_function(genline, gamelib)
-        with open("src/game/gamelib.gamelib", "w", encoding="utf-8") as json_file:
-            json.dump(gamelib, json_file, indent=2)
-
 
 ###
