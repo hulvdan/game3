@@ -1220,95 +1220,6 @@ class GMobToSpawn:
 		return result
 
 
-class GRoomRect:
-	func _init():
-		var service
-
-		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
-		service = PBServiceField.new()
-		service.field = __pos
-		service.func_ref = Callable(self, "new_pos")
-		data[__pos.tag] = service
-
-		__size = PBField.new("size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
-		service = PBServiceField.new()
-		service.field = __size
-		service.func_ref = Callable(self, "new_size")
-		data[__size.tag] = service
-
-
-	var data = { }
-
-	var __pos: PBField
-
-
-	func has_pos() -> bool:
-		if __pos.value != null:
-			return true
-		return false
-
-
-	func get_pos() -> GV2:
-		return __pos.value
-
-
-	func clear_pos() -> void:
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-
-
-	func new_pos() -> GV2:
-		__pos.value = GV2.new()
-		return __pos.value
-
-
-	var __size: PBField
-
-
-	func has_size() -> bool:
-		if __size.value != null:
-			return true
-		return false
-
-
-	func get_size() -> GV2:
-		return __size.value
-
-
-	func clear_size() -> void:
-		data[2].state = PB_SERVICE_STATE.UNFILLED
-		__size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-
-
-	func new_size() -> GV2:
-		__size.value = GV2.new()
-		return __size.value
-
-
-	func _to_string() -> String:
-		return PBPacker.message_to_string(data)
-
-
-	func to_bytes() -> PackedByteArray:
-		return PBPacker.pack_message(data)
-
-
-	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
-		var cur_limit = bytes.size()
-		if limit != -1:
-			cur_limit = limit
-		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
-		if result == cur_limit:
-			if PBPacker.check_required(data):
-				if limit == -1:
-					return PB_ERR.NO_ERRORS
-			else:
-				return PB_ERR.REQUIRED_FIELDS
-		elif limit == -1 && result > 0:
-			return PB_ERR.PARSE_INCOMPLETE
-		return result
-
-
 class GDoor:
 	func _init():
 		var service
@@ -1400,12 +1311,12 @@ class GRoom:
 	func _init():
 		var service
 
-		var __rects_default: Array[GRoomRect] = []
-		__rects = PBField.new("rects", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __rects_default)
+		var __tiles_default: Array[GV2] = []
+		__tiles = PBField.new("tiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __tiles_default)
 		service = PBServiceField.new()
-		service.field = __rects
-		service.func_ref = Callable(self, "add_rects")
-		data[__rects.tag] = service
+		service.field = __tiles
+		service.func_ref = Callable(self, "add_tiles")
+		data[__tiles.tag] = service
 
 		var __doors_default: Array[GDoor] = []
 		__doors = PBField.new("doors", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 2, true, __doors_default)
@@ -1414,24 +1325,30 @@ class GRoom:
 		service.func_ref = Callable(self, "add_doors")
 		data[__doors.tag] = service
 
+		__size = PBField.new("size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __size
+		service.func_ref = Callable(self, "new_size")
+		data[__size.tag] = service
+
 
 	var data = { }
 
-	var __rects: PBField
+	var __tiles: PBField
 
 
-	func get_rects() -> Array[GRoomRect]:
-		return __rects.value
+	func get_tiles() -> Array[GV2]:
+		return __tiles.value
 
 
-	func clear_rects() -> void:
+	func clear_tiles() -> void:
 		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__rects.value.clear()
+		__tiles.value.clear()
 
 
-	func add_rects() -> GRoomRect:
-		var element = GRoomRect.new()
-		__rects.value.append(element)
+	func add_tiles() -> GV2:
+		var element = GV2.new()
+		__tiles.value.append(element)
 		return element
 
 
@@ -1451,6 +1368,29 @@ class GRoom:
 		var element = GDoor.new()
 		__doors.value.append(element)
 		return element
+
+
+	var __size: PBField
+
+
+	func has_size() -> bool:
+		if __size.value != null:
+			return true
+		return false
+
+
+	func get_size() -> GV2:
+		return __size.value
+
+
+	func clear_size() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_size() -> GV2:
+		__size.value = GV2.new()
+		return __size.value
 
 
 	func _to_string() -> String:

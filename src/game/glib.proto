@@ -27,19 +27,15 @@ message GMobToSpawn {
   GV2 pos = 2;
 }
 
-message GRoomRect {
-  GV2 pos = 1;
-  GV2 size = 2;
-}
-
 message GDoor {
   GV2 pos = 1;
   int32 direction = 2;
 }
 
 message GRoom {
-  repeated GRoomRect rects = 1;
+  repeated GV2 tiles = 1;
   repeated GDoor doors = 2;
+  GV2 size = 3;
 }
 
 message Lib {
