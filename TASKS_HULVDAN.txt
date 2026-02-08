@@ -17,14 +17,16 @@ x add src/game/res_creatures to scene dependencies
 x create floor from g.lib
 x floor: tile size is 1 meter
 x floor: offset room center to world center
+x glib hot reload
 
-* create doors from g.lib
-*
 * buf don't ignore excessive fields
   https://buf.build/docs/reference/cli/buf/generate/#description
   -> Generate python classes
   -> parse from dict
   -> save binary
+*
+* create doors from g.lib
+*
 * buf lint src/game/glib.proto
 *
 * Игрок атакует луком (tiella charge)

@@ -114,13 +114,26 @@ func ToV3(value: GV3) -> Vector3:
 func ToV3i(value: GV3i) -> Vector3i:
     return Vector3i(value.get_x(), value.get_y(), value.get_z())
 
-func _ready() -> void:
-	var glib_file = FileAccess.open("res://assets/glib.binpb", FileAccess.READ)
+static var _glib_mtime: int = -1
+
+const glib_binary_path: String = "res://assets/glib.binpb"
+
+func _reload_gamelib() -> void:
+    _glib_mtime = FileAccess.get_modified_time(glib_binary_path)
+	var glib_file = FileAccess.open(glib_binary_path, FileAccess.READ)
 	assert(glib_file)
 	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
 	glib_file.close()
 	var err = v.from_bytes(glib_bytes)
 	assert(not err)
+
+func _ready() -> void:
+    _reload_gamelib()
+
+func _physics_process(_delta: float) -> void:
+    if _glib_mtime != FileAccess.get_modified_time(glib_binary_path):
+        v = Lib.new()
+        _reload_gamelib()
 
 """)
 

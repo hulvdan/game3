@@ -185,20 +185,6 @@ def do_run_in_godot_ahk() -> None:
 #   # }
 
 
-# @timing
-# def do_activate_game_ahk() -> None:
-#     bf.run_command(r"autohotkey .nvim-personal\cli.ahk activate_game")
-
-
-# @command
-# def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):
-#     # {  ###
-#     do_cmake(platform, build_type)
-#     do_generate(platform, build_type)
-#     do_activate_game_ahk()
-#     # }
-
-
 @command
 def profiles() -> None:
     # {  ###
@@ -211,9 +197,13 @@ def profiles() -> None:
 
 
 @command
+def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):
+    do_generate(platform, build_type)
+
+
+@command
 def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType):
     # {  ###
-    # do_cmake(platform, build_type)
     do_generate(platform, build_type)
     do_godot_lint()
     do_godot_check_errors()
@@ -232,21 +222,6 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
 #         do_generate(platform, build_type)
 #         build(bf.BuildTarget.game, platform, build_type)
 #         bf._glib = None
-#     # }
-
-
-# @command
-# def run_in_debugger(target: bf.BuildTarget, build_type: bf.BuildType):
-#     # {  ###
-#     platform = bf.BuildPlatform.Win
-#
-#     do_stop_debugger_ahk()
-#
-#     do_cmake(platform, build_type)
-#     do_generate(platform, build_type)
-#     do_build(target, platform, build_type)
-#
-#     do_run_in_godot_ahk()
 #     # }
 
 
