@@ -9,8 +9,9 @@ PLAN
 
 x godot flatbuffers shit
 x protobuf
+x load protobuf file
 
-* load protobuf file
+* add assets/glib.binpb to scene dependencies
 * proto formatter
 * buf lint src/game/glib.proto
 *
