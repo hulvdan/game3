@@ -75,7 +75,7 @@ func _physics_process(delta: float) -> void:
 		add_child(n)
 
 	var player_move_direction = Input.get_vector("move_l", "move_r", "move_u", "move_d")
-	var offset = player_move_direction * delta
+	var offset = player_move_direction * delta * glib.v.get_player_speed()
 	player.transform.origin.x += offset.x
 	player.transform.origin.z += offset.y
 

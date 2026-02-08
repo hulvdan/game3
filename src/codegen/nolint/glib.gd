@@ -1435,6 +1435,11 @@ class Lib:
 		service.func_ref = Callable(self, "add_rooms")
 		data[__rooms.tag] = service
 
+		__player_speed = PBField.new("player_speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_speed
+		data[__player_speed.tag] = service
+
 
 	var data = { }
 
@@ -1472,6 +1477,28 @@ class Lib:
 		var element = GRoom.new()
 		__rooms.value.append(element)
 		return element
+
+
+	var __player_speed: PBField
+
+
+	func has_player_speed() -> bool:
+		if __player_speed.value != null:
+			return true
+		return false
+
+
+	func get_player_speed() -> float:
+		return __player_speed.value
+
+
+	func clear_player_speed() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__player_speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_speed(value: float) -> void:
+		__player_speed.value = value
 
 
 	func _to_string() -> String:

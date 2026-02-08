@@ -18,8 +18,8 @@ metadata/_custom_type_script = "uid://dr4bjag45xl6y"
 
 [node name="_game" type="Node" parent="." unique_id=1695219218]
 script = ExtResource("1_ig7tw")
-camera_distance = 3.235
-camera_angle = 0.685
+camera_distance = 3.44
+camera_angle = 0.75
 creature_player = SubResource("Resource_vvw4a")
 packed_creature = ExtResource("6_qdlv5")
 packed_floor_tile = ExtResource("5_tkxyu")

@@ -41,4 +41,5 @@ message GRoom {
 message Lib {
   repeated GMobToSpawn mobs_to_spawn = 1;
   repeated GRoom rooms = 2;
+  float player_speed = 3;
 }

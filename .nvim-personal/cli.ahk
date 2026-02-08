@@ -20,7 +20,7 @@ case "run_in_godot":
         }
     }
 
-    sleep 200
+    sleep 500
 
     WinGet, id, List
     Loop, %id% {
