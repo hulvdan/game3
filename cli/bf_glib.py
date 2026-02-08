@@ -105,6 +105,9 @@ static var v: Lib = Lib.new()
 func ToVector2(value: GPos) -> Vector2:
     return Vector2(value.get_x(), value.get_y())
 
+func ToVector2i(value: GPosi) -> Vector2i:
+    return Vector2i(value.get_x(), value.get_y())
+
 func _ready() -> void:
 	var glib_file = FileAccess.open("res://assets/glib.binpb", FileAccess.READ)
 	assert(glib_file)
