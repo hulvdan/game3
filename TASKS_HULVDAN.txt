@@ -18,6 +18,7 @@ x create floor from g.lib
 x floor: tile size is 1 meter
 x floor: offset room center to world center
 x glib hot reload
+x cli generate activates game
 
 * buf don't ignore excessive fields
   https://buf.build/docs/reference/cli/buf/generate/#description
