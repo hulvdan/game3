@@ -7,8 +7,9 @@ BIG PLAN
 PLAN
 ============================================================
 
-* populate game collectibles from gamelib.yml using TOOL
-*
+x godot flatbuffers shit
+
+* protobuf
 * Игрок атакует луком (tiella charge)
 * Перемещение между комнатами
 * Отрисовать древо прогрессии
