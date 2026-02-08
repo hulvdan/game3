@@ -10,23 +10,11 @@ message GPosf {
   float y = 2;
 }
 
-message GCreature {
-  string name = 1;
-
-  // enum GPhoneType {
-  //   MOBILE = 0;
-  //   HOME = 1;
-  //   WORK = 2;
-  // }
-  //
-  // message GPhoneNumber {
-  //   string number = 1;
-  //   GPhoneType type = 2;
-  // }
-  //
-  // repeated GPhoneNumber phones = 4;
+message GMobToSpawn {
+  string res = 1;
+  GPosf pos = 2;
 }
 
 message Lib {
-  repeated GCreature creatures = 1;
+  repeated GMobToSpawn mobs_to_spawn = 1;
 }

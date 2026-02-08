@@ -21,7 +21,7 @@ bufenter_function = function()
         return
     end
 
-    if table_contains({ ".c", ".h", ".cpp", ".hpp" }, extension) then
+    if table_contains({ ".c", ".h", ".cpp", ".hpp", ".proto" }, extension) then
         vim.fn.execute("set shiftwidth=2")
     end
 end

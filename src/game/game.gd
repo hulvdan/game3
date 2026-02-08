@@ -12,7 +12,6 @@ static var _async_scene_loaded = false
 @export var camera_angle: float
 
 @export var creature_player: ResCreature
-@export var mobs_to_spawn: Array[ResMobToSpawn]
 
 @export var packed_creature: PackedScene
 
@@ -33,6 +32,7 @@ func _get_validation_conditions() -> Array[ValidationCondition]:
 
 
 func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
+	assert(res)
 	var creature: Creature = packed_creature.instantiate()
 	creature.transform.origin.x = pos.x
 	creature.transform.origin.z = pos.y
@@ -53,8 +53,9 @@ func _ready() -> void:
 	assert(camera_angle > 0)
 
 	player = _make_creature(creature_player, Vector2(0, 0))
-	for mob in mobs_to_spawn:
-		_make_creature(mob.res, mob.pos)
+	for mob in glib.v.get_mobs_to_spawn():
+		var r: ResCreature = load(mob.get_res())
+		_make_creature(r, glib.ToVector2(mob.get_pos()))
 
 	for element: Node3D in elements:
 		assert(element)

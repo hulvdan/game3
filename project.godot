@@ -41,7 +41,7 @@ buses/default_bus_layout="res://assets/default_bus_layout.tres"
 [autoload]
 
 Bridge="*uid://cx4klxojbw6ck"
-Glib="*uid://1jksc3q42eag"
+glib="*uid://1jksc3q42eag"
 
 [debug]
 
@@ -64,10 +64,9 @@ gdscript/warnings/unreachable_pattern=2
 gdscript/warnings/standalone_expression=2
 gdscript/warnings/standalone_ternary=2
 gdscript/warnings/incompatible_ternary=2
-gdscript/warnings/unsafe_property_access=1
-gdscript/warnings/unsafe_method_access=1
-gdscript/warnings/unsafe_cast=2
-gdscript/warnings/unsafe_call_argument=2
+gdscript/warnings/unsafe_property_access=2
+gdscript/warnings/unsafe_method_access=2
+gdscript/warnings/unsafe_call_argument=1
 gdscript/warnings/unsafe_void_return=2
 gdscript/warnings/static_called_on_instance=2
 gdscript/warnings/missing_tool=2
@@ -83,7 +82,7 @@ gdscript/warnings/inference_on_variant=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdflatbuffers/plugin.cfg", "res://addons/godot_doctor/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/playgama_bridge/plugin.cfg", "res://addons/protobuf/plugin.cfg", "res://addons/resources_spreadsheet_view/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot_doctor/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/playgama_bridge/plugin.cfg", "res://addons/protobuf/plugin.cfg", "res://addons/resources_spreadsheet_view/plugin.cfg")
 
 [file_customization]
 

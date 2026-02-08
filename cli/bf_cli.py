@@ -73,10 +73,7 @@ def do_godot_lint() -> None:
 
 @timing
 def do_godot_check_errors() -> None:
-    bf.run_command(
-        "godot --quit --headless --check-only --ignore-error-breaks --disable-crash-handler --gpu-abort",
-        timeout_seconds=5,
-    )
+    bf.run_command("godot --quit --headless --check-only --debug", timeout_seconds=5)
 
 
 @timing

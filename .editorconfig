@@ -2,6 +2,7 @@ root = true
 
 [*]
 charset = utf-8
+indent_style = space
 
 [*.gd]
 indent_size = 4
@@ -9,4 +10,6 @@ indent_style = tab
 
 [*.{yml,yaml}]
 indent_size = 2
-indent_style = space
+
+[*.proto]
+indent_size = 2

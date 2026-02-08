@@ -100,15 +100,16 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
     )
     with Path("src/codegen/nolint/glib.gd").open("w", encoding="utf-8") as out_file:
         out_file.write("""extends Node
-class_name glib
-static var v: Lib
+static var v: Lib = Lib.new()
+
+func ToVector2(value) -> Vector2:
+    return Vector2(value.get_x(), value.get_y())
 
 func _ready() -> void:
 	var glib_file = FileAccess.open("res://assets/glib.binpb", FileAccess.READ)
 	assert(glib_file)
 	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
 	glib_file.close()
-	v = Lib.new()
 	var err = v.from_bytes(glib_bytes)
 	assert(not err)
 

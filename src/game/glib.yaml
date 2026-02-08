@@ -1,3 +1,9 @@
-creatures:
-  - name: aboba1
-  - name: aboba2
+mobs_to_spawn:
+  - res: res://src/game/res_creatures/player.tres
+    pos:
+      x: 1
+      y: 0
+  - res: res://src/game/res_creatures/player.tres
+    pos:
+      x: -2
+      y: 1

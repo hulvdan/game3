@@ -1,7 +1,10 @@
 extends Node
 
-class_name glib
-static var v: Lib
+static var v: Lib = Lib.new()
+
+
+func ToVector2(value) -> Vector2:
+	return Vector2(value.get_x(), value.get_y())
 
 
 func _ready() -> void:
@@ -9,7 +12,6 @@ func _ready() -> void:
 	assert(glib_file)
 	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
 	glib_file.close()
-	v = Lib.new()
 	var err = v.from_bytes(glib_bytes)
 	assert(not err)
 
@@ -895,92 +897,67 @@ class GPosf:
 		return result
 
 
-class GCreature:
+class GMobToSpawn:
 	func _init():
 		var service
 
-		__name = PBField.new("name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		__res = PBField.new("res", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
 		service = PBServiceField.new()
-		service.field = __name
-		data[__name.tag] = service
+		service.field = __res
+		data[__res.tag] = service
 
-		__id = PBField.new("id", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
-		service.field = __id
-		data[__id.tag] = service
-
-		__email = PBField.new("email", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
-		service = PBServiceField.new()
-		service.field = __email
-		data[__email.tag] = service
+		service.field = __pos
+		service.func_ref = Callable(self, "new_pos")
+		data[__pos.tag] = service
 
 
 	var data = { }
 
-	var __name: PBField
+	var __res: PBField
 
 
-	func has_name() -> bool:
-		if __name.value != null:
+	func has_res() -> bool:
+		if __res.value != null:
 			return true
 		return false
 
 
-	func get_name() -> String:
-		return __name.value
+	func get_res() -> String:
+		return __res.value
 
 
-	func clear_name() -> void:
+	func clear_res() -> void:
 		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+		__res.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
 
 
-	func set_name(value: String) -> void:
-		__name.value = value
+	func set_res(value: String) -> void:
+		__res.value = value
 
 
-	var __id: PBField
+	var __pos: PBField
 
 
-	func has_id() -> bool:
-		if __id.value != null:
+	func has_pos() -> bool:
+		if __pos.value != null:
 			return true
 		return false
 
 
-	func get_id() -> int:
-		return __id.value
+	func get_pos() -> GPosf:
+		return __pos.value
 
 
-	func clear_id() -> void:
+	func clear_pos() -> void:
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		__id.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func set_id(value: int) -> void:
-		__id.value = value
-
-
-	var __email: PBField
-
-
-	func has_email() -> bool:
-		if __email.value != null:
-			return true
-		return false
-
-
-	func get_email() -> String:
-		return __email.value
-
-
-	func clear_email() -> void:
-		data[3].state = PB_SERVICE_STATE.UNFILLED
-		__email.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
-
-
-	func set_email(value: String) -> void:
-		__email.value = value
+	func new_pos() -> GPosf:
+		__pos.value = GPosf.new()
+		return __pos.value
 
 
 	func _to_string() -> String:
@@ -1011,31 +988,31 @@ class Lib:
 	func _init():
 		var service
 
-		var __creatures_default: Array[GCreature] = []
-		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __creatures_default)
+		var __mobs_to_spawn_default: Array[GMobToSpawn] = []
+		__mobs_to_spawn = PBField.new("mobs_to_spawn", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __mobs_to_spawn_default)
 		service = PBServiceField.new()
-		service.field = __creatures
-		service.func_ref = Callable(self, "add_creatures")
-		data[__creatures.tag] = service
+		service.field = __mobs_to_spawn
+		service.func_ref = Callable(self, "add_mobs_to_spawn")
+		data[__mobs_to_spawn.tag] = service
 
 
 	var data = { }
 
-	var __creatures: PBField
+	var __mobs_to_spawn: PBField
 
 
-	func get_creatures() -> Array[GCreature]:
-		return __creatures.value
+	func get_mobs_to_spawn() -> Array[GMobToSpawn]:
+		return __mobs_to_spawn.value
 
 
-	func clear_creatures() -> void:
+	func clear_mobs_to_spawn() -> void:
 		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__creatures.value.clear()
+		__mobs_to_spawn.value.clear()
 
 
-	func add_creatures() -> GCreature:
-		var element = GCreature.new()
-		__creatures.value.append(element)
+	func add_mobs_to_spawn() -> GMobToSpawn:
+		var element = GMobToSpawn.new()
+		__mobs_to_spawn.value.append(element)
 		return element
 
 
