@@ -342,9 +342,11 @@ def temp():
             "addons/protobuf/protobuf_cmdln.gd",
             "--input=src/game/glib.proto",
             "--output=src/codegen/glib.gd",
+            "&&",
+            "gdscript-formatter",
+            "src/codegen/glib.gd",
         ]
     )
-    bf.run_command("gdscript-formatter src/codegen/glib.gd")
 
     with open("src/game/glib.yaml", "r", encoding="utf-8") as gamelib_file:
         glib = yaml.safe_load(gamelib_file)
