@@ -20,6 +20,8 @@ x floor: offset room center to world center
 x glib hot reload
 x cli generate activates game
 
+* walls: create colliders on 0 tiles
+*
 * buf don't ignore excessive fields
   https://buf.build/docs/reference/cli/buf/generate/#description
   -> use protoc to turn glib.proto into python classes
