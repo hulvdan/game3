@@ -1,0 +1,24 @@
+{
+  "column_properties": {
+    "res://src/game/res_creatures/": {
+      "metadata/_custom_type_script": {
+        "visibility": 0
+      },
+      "resource_local_to_scene": {
+        "visibility": 0
+      },
+      "resource_name": {
+        "visibility": 0
+      },
+      "texture": {
+        "visibility": 1
+      }
+    }
+  },
+  "recent_paths": [
+    "res://src/game/res_creatures/"
+  ],
+  "table_functions": {
+
+  }
+}

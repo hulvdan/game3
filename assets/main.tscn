@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://dr4bjag45xl6y" path="res://src/game/res_creature.gd" id="2_m5usj"]
 [ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="5_m5usj"]
-[ext_resource type="Resource" uid="uid://bnfmpk4awxyu4" path="res://src/game/creatures/player.tres" id="5_qdlv5"]
+[ext_resource type="Resource" uid="uid://bnfmpk4awxyu4" path="res://src/game/res_creatures/player.tres" id="5_qdlv5"]
 [ext_resource type="Script" uid="uid://dimsr1isj0yda" path="res://src/game/res_mob_to_spawn.gd" id="5_tkxyu"]
 [ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/packed_creature.tscn" id="6_qdlv5"]
 [ext_resource type="Texture2D" uid="uid://cb427chsjifdm" path="res://assets/art/textures/removeme/grass.png" id="6_ujfqy"]
