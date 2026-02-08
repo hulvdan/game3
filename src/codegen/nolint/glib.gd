@@ -3,12 +3,20 @@ extends Node
 static var v: Lib = Lib.new()
 
 
-func ToVector2(value: GPos) -> Vector2:
+func ToVector2(value: GPos2) -> Vector2:
 	return Vector2(value.get_x(), value.get_y())
 
 
-func ToVector2i(value: GPosi) -> Vector2i:
+func ToVector2i(value: GPos2i) -> Vector2i:
 	return Vector2i(value.get_x(), value.get_y())
+
+
+func ToVector3(value: GPos3) -> Vector3:
+	return Vector3(value.get_x(), value.get_y(), value.get_z())
+
+
+func ToVector3i(value: GPos3i) -> Vector3i:
+	return Vector3i(value.get_x(), value.get_y(), value.get_z())
 
 
 func _ready() -> void:
@@ -731,7 +739,7 @@ class PBPacker:
 ############### USER DATA BEGIN ################
 
 
-class GPosi:
+class GPos2i:
 	func _init():
 		var service
 
@@ -816,7 +824,7 @@ class GPosi:
 		return result
 
 
-class GPos:
+class GPos2:
 	func _init():
 		var service
 
@@ -901,6 +909,230 @@ class GPos:
 		return result
 
 
+class GPos3i:
+	func _init():
+		var service
+
+		__x = PBField.new("x", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __x
+		data[__x.tag] = service
+
+		__y = PBField.new("y", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __y
+		data[__y.tag] = service
+
+		__z = PBField.new("z", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __z
+		data[__z.tag] = service
+
+
+	var data = { }
+
+	var __x: PBField
+
+
+	func has_x() -> bool:
+		if __x.value != null:
+			return true
+		return false
+
+
+	func get_x() -> int:
+		return __x.value
+
+
+	func clear_x() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__x.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_x(value: int) -> void:
+		__x.value = value
+
+
+	var __y: PBField
+
+
+	func has_y() -> bool:
+		if __y.value != null:
+			return true
+		return false
+
+
+	func get_y() -> int:
+		return __y.value
+
+
+	func clear_y() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__y.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_y(value: int) -> void:
+		__y.value = value
+
+
+	var __z: PBField
+
+
+	func has_z() -> bool:
+		if __z.value != null:
+			return true
+		return false
+
+
+	func get_z() -> int:
+		return __z.value
+
+
+	func clear_z() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__z.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_z(value: int) -> void:
+		__z.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GPos3:
+	func _init():
+		var service
+
+		__x = PBField.new("x", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __x
+		data[__x.tag] = service
+
+		__y = PBField.new("y", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __y
+		data[__y.tag] = service
+
+		__z = PBField.new("z", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __z
+		data[__z.tag] = service
+
+
+	var data = { }
+
+	var __x: PBField
+
+
+	func has_x() -> bool:
+		if __x.value != null:
+			return true
+		return false
+
+
+	func get_x() -> float:
+		return __x.value
+
+
+	func clear_x() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__x.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_x(value: float) -> void:
+		__x.value = value
+
+
+	var __y: PBField
+
+
+	func has_y() -> bool:
+		if __y.value != null:
+			return true
+		return false
+
+
+	func get_y() -> float:
+		return __y.value
+
+
+	func clear_y() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__y.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_y(value: float) -> void:
+		__y.value = value
+
+
+	var __z: PBField
+
+
+	func has_z() -> bool:
+		if __z.value != null:
+			return true
+		return false
+
+
+	func get_z() -> float:
+		return __z.value
+
+
+	func clear_z() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__z.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_z(value: float) -> void:
+		__z.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GMobToSpawn:
 	func _init():
 		var service
@@ -950,7 +1182,7 @@ class GMobToSpawn:
 		return false
 
 
-	func get_pos() -> GPos:
+	func get_pos() -> GPos2:
 		return __pos.value
 
 
@@ -959,9 +1191,266 @@ class GMobToSpawn:
 		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_pos() -> GPos:
-		__pos.value = GPos.new()
+	func new_pos() -> GPos2:
+		__pos.value = GPos2.new()
 		return __pos.value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GRoomRect:
+	func _init():
+		var service
+
+		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __pos
+		service.func_ref = Callable(self, "new_pos")
+		data[__pos.tag] = service
+
+		__size = PBField.new("size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __size
+		service.func_ref = Callable(self, "new_size")
+		data[__size.tag] = service
+
+
+	var data = { }
+
+	var __pos: PBField
+
+
+	func has_pos() -> bool:
+		if __pos.value != null:
+			return true
+		return false
+
+
+	func get_pos() -> GPos2:
+		return __pos.value
+
+
+	func clear_pos() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_pos() -> GPos2:
+		__pos.value = GPos2.new()
+		return __pos.value
+
+
+	var __size: PBField
+
+
+	func has_size() -> bool:
+		if __size.value != null:
+			return true
+		return false
+
+
+	func get_size() -> GPos2:
+		return __size.value
+
+
+	func clear_size() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_size() -> GPos2:
+		__size.value = GPos2.new()
+		return __size.value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GDoor:
+	func _init():
+		var service
+
+		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __pos
+		service.func_ref = Callable(self, "new_pos")
+		data[__pos.tag] = service
+
+		__direction = PBField.new("direction", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __direction
+		data[__direction.tag] = service
+
+
+	var data = { }
+
+	var __pos: PBField
+
+
+	func has_pos() -> bool:
+		if __pos.value != null:
+			return true
+		return false
+
+
+	func get_pos() -> GPos2:
+		return __pos.value
+
+
+	func clear_pos() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_pos() -> GPos2:
+		__pos.value = GPos2.new()
+		return __pos.value
+
+
+	var __direction: PBField
+
+
+	func has_direction() -> bool:
+		if __direction.value != null:
+			return true
+		return false
+
+
+	func get_direction() -> int:
+		return __direction.value
+
+
+	func clear_direction() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_direction(value: int) -> void:
+		__direction.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GRoom:
+	func _init():
+		var service
+
+		var __rects_default: Array[GRoomRect] = []
+		__rects = PBField.new("rects", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __rects_default)
+		service = PBServiceField.new()
+		service.field = __rects
+		service.func_ref = Callable(self, "add_rects")
+		data[__rects.tag] = service
+
+		var __doors_default: Array[GDoor] = []
+		__doors = PBField.new("doors", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 2, true, __doors_default)
+		service = PBServiceField.new()
+		service.field = __doors
+		service.func_ref = Callable(self, "add_doors")
+		data[__doors.tag] = service
+
+
+	var data = { }
+
+	var __rects: PBField
+
+
+	func get_rects() -> Array[GRoomRect]:
+		return __rects.value
+
+
+	func clear_rects() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__rects.value.clear()
+
+
+	func add_rects() -> GRoomRect:
+		var element = GRoomRect.new()
+		__rects.value.append(element)
+		return element
+
+
+	var __doors: PBField
+
+
+	func get_doors() -> Array[GDoor]:
+		return __doors.value
+
+
+	func clear_doors() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__doors.value.clear()
+
+
+	func add_doors() -> GDoor:
+		var element = GDoor.new()
+		__doors.value.append(element)
+		return element
 
 
 	func _to_string() -> String:
@@ -999,6 +1488,13 @@ class Lib:
 		service.func_ref = Callable(self, "add_mobs_to_spawn")
 		data[__mobs_to_spawn.tag] = service
 
+		var __rooms_default: Array[GRoom] = []
+		__rooms = PBField.new("rooms", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 2, true, __rooms_default)
+		service = PBServiceField.new()
+		service.field = __rooms
+		service.func_ref = Callable(self, "add_rooms")
+		data[__rooms.tag] = service
+
 
 	var data = { }
 
@@ -1017,6 +1513,24 @@ class Lib:
 	func add_mobs_to_spawn() -> GMobToSpawn:
 		var element = GMobToSpawn.new()
 		__mobs_to_spawn.value.append(element)
+		return element
+
+
+	var __rooms: PBField
+
+
+	func get_rooms() -> Array[GRoom]:
+		return __rooms.value
+
+
+	func clear_rooms() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__rooms.value.clear()
+
+
+	func add_rooms() -> GRoom:
+		var element = GRoom.new()
+		__rooms.value.append(element)
 		return element
 
 

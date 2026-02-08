@@ -102,11 +102,17 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         out_file.write("""extends Node
 static var v: Lib = Lib.new()
 
-func ToVector2(value: GPos) -> Vector2:
+func ToVector2(value: GPos2) -> Vector2:
     return Vector2(value.get_x(), value.get_y())
 
-func ToVector2i(value: GPosi) -> Vector2i:
+func ToVector2i(value: GPos2i) -> Vector2i:
     return Vector2i(value.get_x(), value.get_y())
+
+func ToVector3(value: GPos3) -> Vector3:
+    return Vector3(value.get_x(), value.get_y(), value.get_z())
+
+func ToVector3i(value: GPos3i) -> Vector3i:
+    return Vector3i(value.get_x(), value.get_y(), value.get_z())
 
 func _ready() -> void:
 	var glib_file = FileAccess.open("res://assets/glib.binpb", FileAccess.READ)

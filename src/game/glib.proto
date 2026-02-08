@@ -1,20 +1,48 @@
 syntax = "proto3";
 
-message GPosi {
+message GPos2i {
   int32 x = 1;
   int32 y = 2;
 }
 
-message GPos {
+message GPos2 {
   float x = 1;
   float y = 2;
 }
 
+message GPos3i {
+  int32 x = 1;
+  int32 y = 2;
+  int32 z = 3;
+}
+
+message GPos3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
 message GMobToSpawn {
   string res = 1;
-  GPos pos = 2;
+  GPos2 pos = 2;
+}
+
+message GRoomRect {
+  GPos2 pos = 1;
+  GPos2 size = 2;
+}
+
+message GDoor {
+  GPos2 pos = 1;
+  int32 direction = 2;
+}
+
+message GRoom {
+  repeated GRoomRect rects = 1;
+  repeated GDoor doors = 2;
 }
 
 message Lib {
   repeated GMobToSpawn mobs_to_spawn = 1;
+  repeated GRoom rooms = 2;
 }
