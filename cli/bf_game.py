@@ -341,7 +341,7 @@ def temp():
             "-s",
             "addons/protobuf/protobuf_cmdln.gd",
             "--input=src/game/glib.proto",
-            "--output=src/game/glib.proto.gd",
+            "--output=src/codegen/glib.gd",
         ]
     )
 
