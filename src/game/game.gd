@@ -23,14 +23,6 @@ var player: Node3D
 @onready var container_creatures: Node = $_container_creatures
 
 
-func _get_validation_conditions() -> Array[ValidationCondition]:
-	return [
-		ValidationCondition.scene_is_of_type(packed_creature, Creature),
-		ValidationCondition.simple(camera_distance > 0, 'camera_distance > 0'),
-		ValidationCondition.simple(camera_angle > 0, 'camera_angle > 0'),
-	]
-
-
 func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	assert(res)
 	var creature: Creature = packed_creature.instantiate()
