@@ -2,6 +2,8 @@ extends Node
 
 class_name Game
 
+#const G = preload("res://src/codegen/nolint/glib.gd")
+
 static var _async_scene_loaded = false
 
 @export var elements: Array[Node3D]
@@ -16,10 +18,10 @@ static var _async_scene_loaded = false
 
 @export_file("*.binpb") var glib_filepath: String
 
+var player: Node3D
+
 @onready var camera: Camera3D = $_camera
 @onready var container_creatures: Node = $_container_creatures
-
-var player: Node3D
 
 
 func _get_validation_conditions() -> Array[ValidationCondition]:
@@ -59,10 +61,14 @@ func _ready() -> void:
 
 	var glib_file = FileAccess.open(glib_filepath, FileAccess.READ)
 	assert(glib_file)
-	var glib_bytes = glib_file.get_buffer(glib_file.get_length())
+	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
 	glib_file.close()
-	var g = Glib.new()
-	g.from_bytes(glib_bytes)
+
+	glib.v = glib.Lib.new()
+	print(glib.v.get_creatures())
+	var err = glib.v.from_bytes(glib_bytes)
+	assert(not err)
+	print(glib.v.get_creatures())
 
 
 func _physics_process(delta: float) -> void:

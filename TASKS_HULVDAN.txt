@@ -11,7 +11,7 @@ x godot flatbuffers shit
 x protobuf
 
 * load protobuf file
-*
+* proto formatter
 * buf lint src/game/glib.proto
 *
 * Игрок атакует луком (tiella charge)

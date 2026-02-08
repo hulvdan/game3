@@ -258,6 +258,7 @@ def run():
     platform = bf.BuildPlatform.Win
     build_type = bf.BuildType.Debug
     do_generate(platform, build_type)
+    do_godot_lint()
     do_godot_check_errors()
     do_run_in_godot_ahk()
 
@@ -268,6 +269,7 @@ def test():
     platform = bf.BuildPlatform.Win
     build_type = bf.BuildType.Debug
     do_generate(platform, build_type)
+    do_godot_lint()
     do_godot_check_errors()
     do_test()
     # }

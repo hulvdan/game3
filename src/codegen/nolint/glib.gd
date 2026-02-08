@@ -1,3 +1,5 @@
+class_name glib
+static var v: Lib
 #
 # BSD 3-Clause License
 #
@@ -710,7 +712,7 @@ class PBPacker:
 ############### USER DATA BEGIN ################
 
 
-class G_Creature:
+class GCreature:
 	func _init():
 		var service
 
@@ -729,7 +731,7 @@ class G_Creature:
 		service.field = __email
 		data[__email.tag] = service
 
-		var __phones_default: Array[G_Creature.G_PhoneNumber] = []
+		var __phones_default: Array[GCreature.GPhoneNumber] = []
 		__phones = PBField.new("phones", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 4, true, __phones_default)
 		service = PBServiceField.new()
 		service.field = __phones
@@ -808,7 +810,7 @@ class G_Creature:
 	var __phones: PBField
 
 
-	func get_phones() -> Array[G_Creature.G_PhoneNumber]:
+	func get_phones() -> Array[GCreature.GPhoneNumber]:
 		return __phones.value
 
 
@@ -817,20 +819,20 @@ class G_Creature:
 		__phones.value.clear()
 
 
-	func add_phones() -> G_Creature.G_PhoneNumber:
-		var element = G_Creature.G_PhoneNumber.new()
+	func add_phones() -> GCreature.GPhoneNumber:
+		var element = GCreature.GPhoneNumber.new()
 		__phones.value.append(element)
 		return element
 
 
-	enum G_PhoneType {
+	enum GPhoneType {
 		MOBILE = 0,
 		HOME = 1,
 		WORK = 2,
 	}
 
 
-	class G_PhoneNumber:
+	class GPhoneNumber:
 		func _init():
 			var service
 
@@ -939,11 +941,11 @@ class G_Creature:
 		return result
 
 
-class Glib:
+class Lib:
 	func _init():
 		var service
 
-		var __creatures_default: Array[G_Creature] = []
+		var __creatures_default: Array[GCreature] = []
 		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __creatures_default)
 		service = PBServiceField.new()
 		service.field = __creatures
@@ -956,7 +958,7 @@ class Glib:
 	var __creatures: PBField
 
 
-	func get_creatures() -> Array[G_Creature]:
+	func get_creatures() -> Array[GCreature]:
 		return __creatures.value
 
 
@@ -965,8 +967,8 @@ class Glib:
 		__creatures.value.clear()
 
 
-	func add_creatures() -> G_Creature:
-		var element = G_Creature.new()
+	func add_creatures() -> GCreature:
+		var element = GCreature.new()
 		__creatures.value.append(element)
 		return element
 
