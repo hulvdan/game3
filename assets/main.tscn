@@ -10,7 +10,6 @@
 [ext_resource type="Script" uid="uid://dimsr1isj0yda" path="res://src/game/res_mob_to_spawn.gd" id="5_tkxyu"]
 [ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/packed_creature.tscn" id="6_qdlv5"]
 [ext_resource type="Texture2D" uid="uid://cb427chsjifdm" path="res://assets/art/textures/removeme/grass.png" id="6_ujfqy"]
-[ext_resource type="Resource" uid="uid://uybe2ohbtlwp" path="res://src/game/gamelib.gamelib" id="7_m5usj"]
 
 [sub_resource type="Resource" id="Resource_vvw4a"]
 script = ExtResource("2_m5usj")
@@ -38,7 +37,6 @@ camera_angle = 0.685
 creature_player = SubResource("Resource_vvw4a")
 mobs_to_spawn = Array[ExtResource("5_tkxyu")]([SubResource("Resource_fphxj"), SubResource("Resource_tkxyu")])
 packed_creature = ExtResource("6_qdlv5")
-gamelib = ExtResource("7_m5usj")
 
 [node name="_camera" type="Camera3D" parent="_game" unique_id=1622424363]
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
