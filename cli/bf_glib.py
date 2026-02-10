@@ -130,7 +130,7 @@ func _reload_gamelib() -> void:
 func _ready() -> void:
     _reload_gamelib()
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(_dt: float) -> void:
     if _glib_mtime != FileAccess.get_modified_time(glib_binary_path):
         v = Lib.new()
         _reload_gamelib()

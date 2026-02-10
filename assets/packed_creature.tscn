@@ -10,6 +10,7 @@ axis_lock_linear_y = true
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
+linear_damp = 16.0
 script = ExtResource("1_vvuob")
 node_body = NodePath(".")
 node_rotate = NodePath("rotate")

@@ -10,8 +10,8 @@ PLAN
 x ldtk size() property
 x walls: create colliders on 0 tiles
 x creatures have rigit bodies
+x yml speed doesn't care about linear damping
 
-* 
 * buf don't ignore excessive fields
   https://buf.build/docs/reference/cli/buf/generate/#description
   -> use protoc to turn glib.proto into python classes

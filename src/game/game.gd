@@ -71,7 +71,7 @@ func _ready() -> void:
 			container_floor.add_child(node)
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(dt: float) -> void:
 	if Meta.async_data_loaded and not _async_scene_loaded:
 		_async_scene_loaded = true
 		var r = load("res://assets/async_data.tscn")
@@ -80,8 +80,11 @@ func _physics_process(delta: float) -> void:
 		add_child(n)
 
 	var player_move_direction = Input.get_vector("move_l", "move_r", "move_u", "move_d")
-	var offset: Vector2 = player_move_direction * delta * glib.v.get_player_speed()
-	player.node_body.apply_central_force(Vector3(offset.x, 0, offset.y))
+	var offset: Vector2 = player_move_direction * dt * glib.v.get_player_speed()
+
+	player.node_body.apply_central_force(
+		(Vector3(offset.x, 0, offset.y) * player.node_body.linear_damp * player.node_body.mass) / dt,
+	)
 
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	camera.transform.origin = player.transform.origin + camera_dir * camera_distance
