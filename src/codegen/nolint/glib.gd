@@ -1327,13 +1327,6 @@ class GRoom:
 	func _init():
 		var service
 
-		var __tiles_default: Array[GV2] = []
-		__tiles = PBField.new("tiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __tiles_default)
-		service = PBServiceField.new()
-		service.field = __tiles
-		service.func_ref = Callable(self, "add_tiles")
-		data[__tiles.tag] = service
-
 		var __doors_default: Array[GDoor] = []
 		__doors = PBField.new("doors", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 2, true, __doors_default)
 		service = PBServiceField.new()
@@ -1347,26 +1340,14 @@ class GRoom:
 		service.func_ref = Callable(self, "new_size")
 		data[__size.tag] = service
 
+		var __tiles_default: Array[int] = []
+		__tiles = PBField.new("tiles", PB_DATA_TYPE.INT32, PB_RULE.REPEATED, 4, true, __tiles_default)
+		service = PBServiceField.new()
+		service.field = __tiles
+		data[__tiles.tag] = service
+
 
 	var data = { }
-
-	var __tiles: PBField
-
-
-	func get_tiles() -> Array[GV2]:
-		return __tiles.value
-
-
-	func clear_tiles() -> void:
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__tiles.value.clear()
-
-
-	func add_tiles() -> GV2:
-		var element = GV2.new()
-		__tiles.value.append(element)
-		return element
-
 
 	var __doors: PBField
 
@@ -1395,7 +1376,7 @@ class GRoom:
 		return false
 
 
-	func get_size() -> GV2:
+	func get_size() -> GV2i:
 		return __size.value
 
 
@@ -1404,9 +1385,25 @@ class GRoom:
 		__size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_size() -> GV2:
-		__size.value = GV2.new()
+	func new_size() -> GV2i:
+		__size.value = GV2i.new()
 		return __size.value
+
+
+	var __tiles: PBField
+
+
+	func get_tiles() -> Array[int]:
+		return __tiles.value
+
+
+	func clear_tiles() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__tiles.value.clear()
+
+
+	func add_tiles(value: int) -> void:
+		__tiles.value.append(value)
 
 
 	func _to_string() -> String:

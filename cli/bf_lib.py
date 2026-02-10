@@ -1400,6 +1400,15 @@ class LdtkTileset(BaseModel):
     customData: list[LdtkTilesetTileCustomdata]
     enumTags: list[LdtkTilesetTileEnumTag]
     uid: int
+
+    @property
+    def size(self) -> list[int]:
+        return [self.cWid_, self.cHei_]
+
+    @property
+    def size_dict(self) -> list[int]:
+        return {"x": self.cWid_, "y": self.cHei_}
+
     # }
 
 
@@ -1557,6 +1566,10 @@ class LdtkLayerInstance(BaseModel):
     @property
     def size(self) -> list[int]:
         return [self.cWid_, self.cHei_]
+
+    @property
+    def size_dict(self) -> list[int]:
+        return {"x": self.cWid_, "y": self.cHei_}
 
     # }
 

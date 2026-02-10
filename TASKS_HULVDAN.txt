@@ -7,8 +7,11 @@ BIG PLAN
 PLAN
 ============================================================
 
-* walls: create colliders on 0 tiles
-*
+x ldtk size() property
+x walls: create colliders on 0 tiles
+x creatures have rigit bodies
+
+* 
 * buf don't ignore excessive fields
   https://buf.build/docs/reference/cli/buf/generate/#description
   -> use protoc to turn glib.proto into python classes

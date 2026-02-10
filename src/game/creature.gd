@@ -2,5 +2,8 @@ extends Node3D
 
 class_name Creature
 
-@export var sprite: Sprite3D
+@export var node_body: RigidBody3D
+@export var node_rotate: Node3D
+@export var node_sprite: Sprite3D
+
 var res: ResCreature

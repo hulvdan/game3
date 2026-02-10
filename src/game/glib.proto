@@ -33,9 +33,10 @@ message GDoor {
 }
 
 message GRoom {
-  repeated GV2 tiles = 1;
+  // repeated GV2 tiles = 1;
   repeated GDoor doors = 2;
-  GV2 size = 3;
+  GV2i size = 3;
+  repeated int32 tiles = 4;
 }
 
 message Lib {

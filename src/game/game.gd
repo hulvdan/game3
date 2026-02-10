@@ -15,8 +15,9 @@ static var _async_scene_loaded = false
 
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
+@export var packed_collider_tile: PackedScene
 
-var player: Node3D
+var player: Creature
 
 @onready var camera: Camera3D = $_camera
 @onready var container_creatures: Node = $_container_creatures
@@ -29,9 +30,9 @@ func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	creature.transform.origin.x = pos.x
 	creature.transform.origin.z = pos.y
 	creature.res = res
-	creature.sprite.texture = creature.res.texture
+	creature.node_sprite.texture = creature.res.texture
 
-	elements.append(creature)
+	elements.append(creature.node_rotate)
 	container_creatures.add_child(creature)
 	return creature
 
@@ -53,13 +54,21 @@ func _ready() -> void:
 
 	bf.clear_children(container_floor)
 	var room = glib.v.get_rooms()[1]
-	var room_offset = -glib.ToV2(room.get_size()) / 2
-	for tile_pos in room.get_tiles():
-		var floor_tile: Node3D = packed_floor_tile.instantiate()
-		var pos = glib.ToV2(tile_pos) + room_offset
-		floor_tile.transform.origin.x = pos.x
-		floor_tile.transform.origin.z = pos.y
-		container_floor.add_child(floor_tile)
+	var size = glib.ToV2i(room.get_size())
+	var room_offset = -Vector2(size) / 2
+	var tiles = room.get_tiles()
+	for y in range(size.y):
+		for x in range(size.x):
+			var pos = Vector2(x, y) + room_offset
+			var t = y * size.x + x
+			var node: Node3D
+			if tiles[t]:
+				node = packed_floor_tile.instantiate()
+			else:
+				node = packed_collider_tile.instantiate()
+			node.transform.origin.x = pos.x
+			node.transform.origin.z = pos.y
+			container_floor.add_child(node)
 
 
 func _physics_process(delta: float) -> void:
@@ -71,13 +80,12 @@ func _physics_process(delta: float) -> void:
 		add_child(n)
 
 	var player_move_direction = Input.get_vector("move_l", "move_r", "move_u", "move_d")
-	var offset = player_move_direction * delta * glib.v.get_player_speed()
-	player.transform.origin.x += offset.x
-	player.transform.origin.z += offset.y
+	var offset: Vector2 = player_move_direction * delta * glib.v.get_player_speed()
+	player.node_body.apply_central_force(Vector3(offset.x, 0, offset.y))
 
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	camera.transform.origin = player.transform.origin + camera_dir * camera_distance
-	camera.transform = camera.transform.looking_at(player.transform.origin)
+	camera.transform = camera.transform.looking_at(player.node_body.transform.origin)
 
 	for element: Node3D in elements:
 		element.transform.basis = camera.transform.basis

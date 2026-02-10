@@ -1,4 +1,4 @@
-player_speed: 3
+player_speed: 300
 mobs_to_spawn:
   - res: res://src/game/res_creatures/player.tres
     pos:
