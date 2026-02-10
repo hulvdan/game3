@@ -2,8 +2,6 @@ extends Node
 
 class_name Game
 
-#const G = preload("res://src/codegen/nolint/glib.gd")
-
 static var _async_scene_loaded = false
 
 @export var elements: Array[Node3D]
@@ -71,7 +69,14 @@ func _ready() -> void:
 			container_floor.add_child(node)
 
 
-func _physics_process(dt: float) -> void:
+func _move_body_with_speed(body: RigidBody3D, direction: Vector2, speed: float) -> void:
+	var offset: Vector2 = direction * speed
+	body.apply_central_force(
+		Vector3(offset.x, 0, offset.y) * body.linear_damp * body.mass,
+	)
+
+
+func _physics_process(_dt: float) -> void:
 	if Meta.async_data_loaded and not _async_scene_loaded:
 		_async_scene_loaded = true
 		var r = load("res://assets/async_data.tscn")
@@ -79,11 +84,10 @@ func _physics_process(dt: float) -> void:
 		var n: Node = r.instantiate()
 		add_child(n)
 
-	var player_move_direction = Input.get_vector("move_l", "move_r", "move_u", "move_d")
-	var offset: Vector2 = player_move_direction * dt * glib.v.get_player_speed()
-
-	player.node_body.apply_central_force(
-		(Vector3(offset.x, 0, offset.y) * player.node_body.linear_damp * player.node_body.mass) / dt,
+	_move_body_with_speed(
+		player.node_body,
+		Input.get_vector("move_l", "move_r", "move_u", "move_d"),
+		glib.v.get_player_speed(),
 	)
 
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
