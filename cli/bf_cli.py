@@ -205,6 +205,14 @@ def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):
 
 
 @command
+def codegen_and_lint(platform: bf.BuildPlatform, build_type: bf.BuildType):
+    do_generate(platform, build_type)
+    do_godot_lint()
+    do_godot_check_errors()
+    do_activate_godot_ahk()
+
+
+@command
 def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType):
     # {  ###
     do_generate(platform, build_type)

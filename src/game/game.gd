@@ -36,7 +36,6 @@ func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 
 
 func _ready() -> void:
-	assert(camera)
 	assert(container_creatures)
 	bf.clear_children(container_creatures)
 	assert(camera_distance > 0)
@@ -52,7 +51,7 @@ func _ready() -> void:
 
 	bf.clear_children(container_floor)
 	var room = glib.v.get_rooms()[1]
-	var size = glib.ToV2i(room.get_size())
+	var size: Vector2i = glib.ToV2i(room.get_size())
 	var room_offset = -Vector2(size) / 2
 	var tiles = room.get_tiles()
 	for y in range(size.y):
@@ -87,7 +86,7 @@ func _physics_process(_dt: float) -> void:
 	camera.transform.origin = player.transform.origin + camera_dir * camera_distance
 	camera.transform = camera.transform.looking_at(player.node_body.transform.origin)
 
-	for element: Node3D in elements:
+	for element in elements:
 		element.transform.basis = camera.transform.basis
 
 
