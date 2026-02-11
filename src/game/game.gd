@@ -25,6 +25,7 @@ var room_node: Node
 var room: Room
 
 @onready var camera: Camera3D = $_camera
+@onready var container_ui_minimap: Node2D = $_ui
 
 
 class RoomData:
@@ -49,6 +50,8 @@ func _on_player_entered_door(_body: Node3D) -> void:
 
 
 func _ready() -> void:
+	container_ui_minimap.transform.origin = Vector2(5, 5)
+
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
 	for y in range(ws.y):
 		for x in range(ws.x):

@@ -12,7 +12,8 @@ x create doors from g.lib
 x correct creatures pos placement
 x correct door pos placement
 
-*
+* generate rooms
+* show rooms minimap
 *
 *
 *
