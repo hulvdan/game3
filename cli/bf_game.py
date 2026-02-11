@@ -98,7 +98,7 @@ def _process_glib(_genline, glib) -> None:
         for door in entities.entities("Door"):
             doors.append(
                 {
-                    "center_pos": bf.as_dict(door.posf_center),
+                    "center_pos": bf.as_dict(door.pos_center),
                     "size": bf.as_dict(door.size),
                     "direction": int(door.field("Direction").split("_", 1)[-1]),
                 }

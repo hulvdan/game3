@@ -85,7 +85,7 @@ func _ready() -> void:
 				node = packed_floor_tile.instantiate()
 			else:
 				node = packed_collider_tile.instantiate()
-			bf.set_pos_2d(node, Vector2(x, y))
+			bf.set_pos_2d(node, Vector2(x, y) + Vector2(0.5, 0.5))
 			room.container_floor.add_child(node)
 
 	for door in g_room.get_doors():

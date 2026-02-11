@@ -10,8 +10,11 @@ PLAN
 x excluded shit from explorer
 x create doors from g.lib
 x correct creatures pos placement
+x correct door pos placement
 
-* correct door pos placement
+*
+*
+*
 *
 * buf don't ignore excessive fields
   https://buf.build/docs/reference/cli/buf/generate/#description

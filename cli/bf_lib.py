@@ -1506,12 +1506,12 @@ class LdtkEntityInstance(BaseModel):
     # worldY_: int  # -61
 
     @property
-    def posi(self) -> tuple[int, int]:
+    def pos(self) -> tuple[int, int]:
         return (self.grid_[0], self.grid_[1])
 
     @property
-    def posf_center(self) -> dict[str, int]:
-        return (self.grid_[0] + self.width / 16, self.grid_[1] + self.height / 16)
+    def pos_center(self) -> tuple[float, float]:
+        return (self.grid_[0] + self.width / 32, self.grid_[1] + self.height / 32)
 
     @property
     def size(self) -> tuple[int, int]:
