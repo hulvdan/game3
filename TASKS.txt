@@ -13,6 +13,7 @@ x correct creatures pos placement
 x correct door pos placement
 x vscode: vim move lines up / down
 x vscode: ctrl P shows function params
+x vscode: bind alt+n to search forward (+backward)
 
 * generate rooms
 * show rooms minimap
