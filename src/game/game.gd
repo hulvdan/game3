@@ -16,6 +16,7 @@ static var _async_scene_loaded = false
 @export var packed_collider_tile: PackedScene
 @export var packed_door: PackedScene
 @export var packed_room: PackedScene
+@export var packed_ui_minimap_room: PackedScene
 
 var player: Creature
 var current_room_pos: Vector2i = Vector2i(-1, -1)
@@ -50,12 +51,19 @@ func _on_player_entered_door(_body: Node3D) -> void:
 
 
 func _ready() -> void:
-	container_ui_minimap.transform.origin = Vector2(5, 5)
+	bf.clear_children(container_ui_minimap)
 
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
 	for y in range(ws.y):
 		for x in range(ws.x):
 			rooms.append(RoomData.new())
+			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
+			var scale = 1.0 / 3.0
+			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale).translated(Vector2(x + 1, y + 1) * 100 * scale)
+
+			if Vector2i(x, y) == current_room_pos:
+				minimap_room.color
+			container_ui_minimap.add_child(minimap_room)
 
 	if room:
 		remove_child(room)
