@@ -90,5 +90,5 @@ func _physics_process(_dt: float) -> void:
 		element.transform.basis = camera.transform.basis
 
 
-func _process(_delta: float) -> void:
+func _process(_dt: float) -> void:
 	pass
