@@ -1,4 +1,11 @@
 {
+    "files.exclude": {
+        "**/*.tscn*.tmp": true,
+        "**/*.binpb": true,
+        ".godot/": true,
+        ".venv/": true,
+        "**/*.uid": true,
+    },
     // "runOnSave.statusMessageTimeout": 1,
     "runOnSave.commands": [
         // {
