@@ -70,7 +70,7 @@ func _ready() -> void:
 	player = _make_creature(creature_player, Vector2(size) / 2)
 	for mob in glib.v.get_mobs_to_spawn():
 		var r: ResCreature = load(mob.get_res())
-		_make_creature(r, glib.ToV2(mob.get_pos()))
+		_make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
 
 	for element in elements:
 		assert(element)
