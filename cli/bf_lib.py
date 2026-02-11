@@ -1340,6 +1340,10 @@ def im_draw_on_top(
 # ╚══════╝╚═════╝    ╚═╝   ╚═╝  ╚═╝
 
 
+def as_dict(pos: tuple[int, int] | float) -> dict[str, int | float]:
+    return {"x": pos[0], "y": pos[1]}
+
+
 class LdtkEntity(BaseModel):
     # {  ###
     identifier: str
@@ -1404,10 +1408,6 @@ class LdtkTileset(BaseModel):
     @property
     def size(self) -> list[int]:
         return [self.cWid_, self.cHei_]
-
-    @property
-    def size_dict(self) -> list[int]:
-        return {"x": self.cWid_, "y": self.cHei_}
 
     # }
 
@@ -1506,12 +1506,20 @@ class LdtkEntityInstance(BaseModel):
     # worldY_: int  # -61
 
     @property
-    def size(self) -> list[int]:
+    def posi(self) -> tuple[int, int]:
+        return (self.grid_[0], self.grid_[1])
+
+    @property
+    def posf_center(self) -> dict[str, int]:
+        return (self.grid_[0] + self.width / 16, self.grid_[1] + self.height / 16)
+
+    @property
+    def size(self) -> tuple[int, int]:
         assert self.width % 16 == 0
         assert self.height % 16 == 0
         x = self.width // 16
         y = self.height // 16
-        return [x, y]
+        return (x, y)
 
     field = ldtk_field_function
     field_ref = ldtk_field_ref_function
@@ -1567,9 +1575,8 @@ class LdtkLayerInstance(BaseModel):
     def size(self) -> list[int]:
         return [self.cWid_, self.cHei_]
 
-    @property
-    def size_dict(self) -> list[int]:
-        return {"x": self.cWid_, "y": self.cHei_}
+    def entities(self, identifier: str) -> Iterator[LdtkEntityInstance, None, None]:
+        return (x for x in self.entityInstances if x.identifier_ == identifier)
 
     # }
 

@@ -1,3 +1,7 @@
+debug_collisions: 1
+world_size:
+  x: 7
+  y: 5
 player_speed: 4
 mobs_to_spawn:
   - res: res://src/game/res_creatures/player.tres

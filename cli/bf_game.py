@@ -93,7 +93,23 @@ def _process_glib(_genline, glib) -> None:
     rooms = []
     for level in world.levels:
         floor = level.get_layer("Floor")
-        rooms.append({"tiles": floor.intGridCsv, "size": floor.size_dict})
+        doors = []
+        entities = level.get_layer("Entities")
+        for door in entities.entities("Door"):
+            doors.append(
+                {
+                    "center_pos": bf.as_dict(door.posf_center),
+                    "size": bf.as_dict(door.size),
+                    "direction": int(door.field("Direction").split("_", 1)[-1]),
+                }
+            )
+        rooms.append(
+            {
+                "tiles": floor.intGridCsv,
+                "size": bf.as_dict(floor.size),
+                "doors": doors,
+            }
+        )
     glib["rooms"] = rooms
 
     # Transforms.

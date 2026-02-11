@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://wg8ef4e6306p"]
+
+[ext_resource type="Script" uid="uid://btwrl160dqpi2" path="res://src/game/room.gd" id="1_3cfnp"]
+[ext_resource type="PackedScene" uid="uid://dotetriask15v" path="res://assets/packed_floor_tile.tscn" id="2_rljux"]
+[ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/packed_creature.tscn" id="3_3a6xa"]
+
+[node name="room" type="Node" unique_id=154726596]
+script = ExtResource("1_3cfnp")
+
+[node name="_container_floor" type="Node" parent="." unique_id=1301900845]
+
+[node name="Sprite3D" parent="_container_floor" unique_id=1975851868 instance=ExtResource("2_rljux")]
+
+[node name="_container_creatures" type="Node" parent="." unique_id=1160002427]
+
+[node name="player" parent="_container_creatures" unique_id=1935514979 instance=ExtResource("3_3a6xa")]
+
+[node name="_container_doors" type="Node" parent="." unique_id=1436040055]

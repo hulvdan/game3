@@ -9,13 +9,13 @@ PLAN
 
 x excluded shit from explorer
 
+* create doors from g.lib
+*
 * buf don't ignore excessive fields
   https://buf.build/docs/reference/cli/buf/generate/#description
   -> use protoc to turn glib.proto into python classes
   -> in python Lib.parse(glib) and turn into binary
   -> save binary
-*
-* create doors from g.lib
 *
 * glib texture_id
   -> use textures array: glib.textures

@@ -24,15 +24,18 @@
         //     "runIn": "terminal"
         // },
         {
-            // Match any python files by path.
             "match": "glib.yaml$",
             "command": "uv run python cli/bf_cli.py codegen windows debug",
             "runIn": "backend"
         },
         {
-            // Match any python files by path.
             "match": ".gd$",
             "command": "uv run gdscript-formatter ${file}",
+            "runIn": "backend"
+        },
+        {
+            "match": "glib.proto$",
+            "command": "uv run python cli/bf_cli.py regen_glib_proto",
             "runIn": "backend"
         },
         // {

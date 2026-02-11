@@ -28,7 +28,8 @@ message GMobToSpawn {
 }
 
 message GDoor {
-  GV2 pos = 1;
+  GV2 center_pos = 1;
+  GV2 size = 3;
   int32 direction = 2;
 }
 
@@ -40,7 +41,9 @@ message GRoom {
 }
 
 message Lib {
+  int32 debug_collisions = 5;
   repeated GMobToSpawn mobs_to_spawn = 1;
   repeated GRoom rooms = 2;
   float player_speed = 3;
+  GV2i world_size = 4;
 }

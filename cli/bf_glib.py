@@ -87,8 +87,7 @@ def do_audio(_platform: bf.BuildPlatform) -> None:
 #     # }
 
 
-@timing
-def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
+def do_regen_glib_proto() -> None:
     bf.run_command(
         """
         godot
@@ -129,6 +128,7 @@ func _reload_gamelib() -> void:
 
 func _ready() -> void:
     _reload_gamelib()
+    get_tree().debug_collisions_hint = glib.v.get_debug_collisions() != 0
 
 func _physics_process(_dt: float) -> void:
     if _glib_mtime != FileAccess.get_modified_time(glib_binary_path):
@@ -138,7 +138,14 @@ func _physics_process(_dt: float) -> void:
 """)
 
         out_file.write(Path(".temp/glib.gd").read_text(encoding="utf-8"))
+
     bf.run_command("gdscript-formatter src/codegen/nolint/glib.gd")
+
+
+@timing
+def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
+    do_regen_glib_proto()
+
     with open("src/game/glib.yaml", encoding="utf-8") as glib_file:
         glib = yaml.safe_load(glib_file)
     with open(

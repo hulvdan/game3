@@ -209,10 +209,10 @@
 			}
 		}
 	], "enums": [{ "identifier": "Direction", "uid": 4, "values": [
-		{ "id": "Enum0", "tileRect": { "tilesetUid": 5, "x": 304, "y": 80, "w": 16, "h": 16 }, "color": 16777215 },
-		{ "id": "Enum1", "tileRect": { "tilesetUid": 5, "x": 256, "y": 80, "w": 16, "h": 16 }, "color": 16777215 },
-		{ "id": "Enum2", "tileRect": { "tilesetUid": 5, "x": 288, "y": 80, "w": 16, "h": 16 }, "color": 16777215 },
-		{ "id": "Enum3", "tileRect": { "tilesetUid": 5, "x": 272, "y": 80, "w": 16, "h": 16 }, "color": 16777215 }
+		{ "id": "Right_0", "tileRect": { "tilesetUid": 5, "x": 304, "y": 80, "w": 16, "h": 16 }, "color": 16777215 },
+		{ "id": "Up_1", "tileRect": { "tilesetUid": 5, "x": 256, "y": 80, "w": 16, "h": 16 }, "color": 16777215 },
+		{ "id": "Left_2", "tileRect": { "tilesetUid": 5, "x": 288, "y": 80, "w": 16, "h": 16 }, "color": 16777215 },
+		{ "id": "Down_3", "tileRect": { "tilesetUid": 5, "x": 272, "y": 80, "w": 16, "h": 16 }, "color": 16777215 }
 	], "iconTilesetUid": 5, "externalRelPath": null, "externalFileChecksum": null, "tags": [] }], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
@@ -262,60 +262,41 @@
 					"entityInstances": [
 						{
 							"__identifier": "Door",
-							"__grid": [0,4],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": { "tilesetUid": 5, "x": 288, "y": 80, "w": 16, "h": 16 },
-							"__smartColor": "#BE4A2F",
-							"iid": "5240d9a0-fa90-11f0-a600-5182324d2c2f",
-							"width": 32,
-							"height": 32,
-							"defUid": 2,
-							"px": [0,64],
-							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Enum2", "__tile": { "tilesetUid": 5, "x": 288, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["Enum2"]
-							}] }],
-							"__worldX": 16,
-							"__worldY": 80
-						},
-						{
-							"__identifier": "Door",
-							"__grid": [10,4],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": { "tilesetUid": 5, "x": 304, "y": 80, "w": 16, "h": 16 },
-							"__smartColor": "#BE4A2F",
-							"iid": "57a57720-fa90-11f0-a600-ada05d0f8624",
-							"width": 32,
-							"height": 32,
-							"defUid": 2,
-							"px": [160,64],
-							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Enum0", "__tile": { "tilesetUid": 5, "x": 304, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["Enum0"]
-							}] }],
-							"__worldX": 176,
-							"__worldY": 80
-						},
-						{
-							"__identifier": "Door",
 							"__grid": [5,0],
 							"__pivot": [0,0],
 							"__tags": [],
 							"__tile": { "tilesetUid": 5, "x": 256, "y": 80, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"iid": "5e7b09c0-fa90-11f0-a600-f92eaee2950d",
+							"iid": "47330900-fa90-11f0-af07-456798fb1adc",
 							"width": 32,
 							"height": 32,
 							"defUid": 2,
 							"px": [80,0],
-							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Enum1", "__tile": { "tilesetUid": 5, "x": 256, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
+							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Up_1", "__tile": { "tilesetUid": 5, "x": 256, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
 								"id": "V_String",
-								"params": ["Enum1"]
+								"params": ["Up_1"]
 							}] }],
 							"__worldX": 96,
 							"__worldY": 16
+						},
+						{
+							"__identifier": "Door",
+							"__grid": [0,4],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": { "tilesetUid": 5, "x": 288, "y": 80, "w": 16, "h": 16 },
+							"__smartColor": "#BE4A2F",
+							"iid": "47fee480-fa90-11f0-af07-e3bf1b215f64",
+							"width": 32,
+							"height": 32,
+							"defUid": 2,
+							"px": [0,64],
+							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Left_2", "__tile": { "tilesetUid": 5, "x": 288, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
+								"id": "V_String",
+								"params": ["Left_2"]
+							}] }],
+							"__worldX": 16,
+							"__worldY": 80
 						},
 						{
 							"__identifier": "Door",
@@ -324,17 +305,36 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 5, "x": 272, "y": 80, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"iid": "b8c00dc0-fa90-11f0-a600-99c60a0ba032",
+							"iid": "486399c0-fa90-11f0-af07-f980de7e7b57",
 							"width": 32,
 							"height": 32,
 							"defUid": 2,
 							"px": [80,128],
-							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Enum3", "__tile": { "tilesetUid": 5, "x": 272, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
+							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Down_3", "__tile": { "tilesetUid": 5, "x": 272, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
 								"id": "V_String",
-								"params": ["Enum3"]
+								"params": ["Down_3"]
 							}] }],
 							"__worldX": 96,
 							"__worldY": 144
+						},
+						{
+							"__identifier": "Door",
+							"__grid": [10,4],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": { "tilesetUid": 5, "x": 304, "y": 80, "w": 16, "h": 16 },
+							"__smartColor": "#BE4A2F",
+							"iid": "48b933d0-fa90-11f0-af07-affffd618645",
+							"width": 32,
+							"height": 32,
+							"defUid": 2,
+							"px": [160,64],
+							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Right_0", "__tile": { "tilesetUid": 5, "x": 304, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
+								"id": "V_String",
+								"params": ["Right_0"]
+							}] }],
+							"__worldX": 176,
+							"__worldY": 80
 						}
 					]
 				},
@@ -428,9 +428,9 @@
 							"height": 32,
 							"defUid": 2,
 							"px": [0,96],
-							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Enum2", "__tile": { "tilesetUid": 5, "x": 288, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
+							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Left_2", "__tile": { "tilesetUid": 5, "x": 288, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
 								"id": "V_String",
-								"params": ["Enum2"]
+								"params": ["Left_2"]
 							}] }],
 							"__worldX": 224,
 							"__worldY": 112
@@ -447,9 +447,9 @@
 							"height": 32,
 							"defUid": 2,
 							"px": [160,32],
-							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Enum0", "__tile": { "tilesetUid": 5, "x": 304, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
+							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Right_0", "__tile": { "tilesetUid": 5, "x": 304, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
 								"id": "V_String",
-								"params": ["Enum0"]
+								"params": ["Right_0"]
 							}] }],
 							"__worldX": 384,
 							"__worldY": 48
@@ -466,9 +466,9 @@
 							"height": 32,
 							"defUid": 2,
 							"px": [64,0],
-							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Enum1", "__tile": { "tilesetUid": 5, "x": 256, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
+							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Up_1", "__tile": { "tilesetUid": 5, "x": 256, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
 								"id": "V_String",
-								"params": ["Enum1"]
+								"params": ["Up_1"]
 							}] }],
 							"__worldX": 288,
 							"__worldY": 16
@@ -485,9 +485,9 @@
 							"height": 32,
 							"defUid": 2,
 							"px": [96,128],
-							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Enum3", "__tile": { "tilesetUid": 5, "x": 272, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
+							"fieldInstances": [{ "__identifier": "Direction", "__type": "LocalEnum.Direction", "__value": "Down_3", "__tile": { "tilesetUid": 5, "x": 272, "y": 80, "w": 16, "h": 16 }, "defUid": 6, "realEditorValues": [{
 								"id": "V_String",
-								"params": ["Enum3"]
+								"params": ["Down_3"]
 							}] }],
 							"__worldX": 320,
 							"__worldY": 144

@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://dotetriask15v" path="res://assets/packed_floor_tile.tscn" id="5_tkxyu"]
 [ext_resource type="PackedScene" uid="uid://bccjnav8tefj3" path="res://assets/packed_collider_tile.tscn" id="6_fphxj"]
 [ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/packed_creature.tscn" id="6_qdlv5"]
+[ext_resource type="PackedScene" uid="uid://cjuik3mmcwc3i" path="res://assets/packed_door.tscn" id="7_m5usj"]
+[ext_resource type="PackedScene" uid="uid://wg8ef4e6306p" path="res://assets/packed_room.tscn" id="7_vqaxa"]
 
 [sub_resource type="Resource" id="Resource_vvw4a"]
 script = ExtResource("2_m5usj")
@@ -25,17 +27,11 @@ creature_player = SubResource("Resource_vvw4a")
 packed_creature = ExtResource("6_qdlv5")
 packed_floor_tile = ExtResource("5_tkxyu")
 packed_collider_tile = ExtResource("6_fphxj")
+packed_door = ExtResource("7_m5usj")
+packed_room = ExtResource("7_vqaxa")
 
 [node name="_camera" type="Camera3D" parent="_game" unique_id=1622424363]
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
-
-[node name="_container_floor" type="Node" parent="_game" unique_id=35091996]
-
-[node name="Sprite3D" parent="_game/_container_floor" unique_id=1975851868 instance=ExtResource("5_tkxyu")]
-
-[node name="_container_creatures" type="Node" parent="_game" unique_id=849794824]
-
-[node name="player" parent="_game/_container_creatures" unique_id=2069627139 instance=ExtResource("6_qdlv5")]
 
 [node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics", "platform")]
 script = ExtResource("2_836ik")

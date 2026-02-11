@@ -36,6 +36,7 @@ func _reload_gamelib() -> void:
 
 func _ready() -> void:
 	_reload_gamelib()
+	get_tree().debug_collisions_hint = glib.v.get_debug_collisions() != 0
 
 
 func _physics_process(_dt: float) -> void:
@@ -1240,11 +1241,17 @@ class GDoor:
 	func _init():
 		var service
 
-		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__center_pos = PBField.new("center_pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
-		service.field = __pos
-		service.func_ref = Callable(self, "new_pos")
-		data[__pos.tag] = service
+		service.field = __center_pos
+		service.func_ref = Callable(self, "new_center_pos")
+		data[__center_pos.tag] = service
+
+		__size = PBField.new("size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __size
+		service.func_ref = Callable(self, "new_size")
+		data[__size.tag] = service
 
 		__direction = PBField.new("direction", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
@@ -1254,27 +1261,50 @@ class GDoor:
 
 	var data = { }
 
-	var __pos: PBField
+	var __center_pos: PBField
 
 
-	func has_pos() -> bool:
-		if __pos.value != null:
+	func has_center_pos() -> bool:
+		if __center_pos.value != null:
 			return true
 		return false
 
 
-	func get_pos() -> GV2:
-		return __pos.value
+	func get_center_pos() -> GV2:
+		return __center_pos.value
 
 
-	func clear_pos() -> void:
+	func clear_center_pos() -> void:
 		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		__center_pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_pos() -> GV2:
-		__pos.value = GV2.new()
-		return __pos.value
+	func new_center_pos() -> GV2:
+		__center_pos.value = GV2.new()
+		return __center_pos.value
+
+
+	var __size: PBField
+
+
+	func has_size() -> bool:
+		if __size.value != null:
+			return true
+		return false
+
+
+	func get_size() -> GV2:
+		return __size.value
+
+
+	func clear_size() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_size() -> GV2:
+		__size.value = GV2.new()
+		return __size.value
 
 
 	var __direction: PBField
@@ -1434,6 +1464,11 @@ class Lib:
 	func _init():
 		var service
 
+		__debug_collisions = PBField.new("debug_collisions", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __debug_collisions
+		data[__debug_collisions.tag] = service
+
 		var __mobs_to_spawn_default: Array[GMobToSpawn] = []
 		__mobs_to_spawn = PBField.new("mobs_to_spawn", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __mobs_to_spawn_default)
 		service = PBServiceField.new()
@@ -1453,8 +1488,36 @@ class Lib:
 		service.field = __player_speed
 		data[__player_speed.tag] = service
 
+		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __world_size
+		service.func_ref = Callable(self, "new_world_size")
+		data[__world_size.tag] = service
+
 
 	var data = { }
+
+	var __debug_collisions: PBField
+
+
+	func has_debug_collisions() -> bool:
+		if __debug_collisions.value != null:
+			return true
+		return false
+
+
+	func get_debug_collisions() -> int:
+		return __debug_collisions.value
+
+
+	func clear_debug_collisions() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__debug_collisions.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_debug_collisions(value: int) -> void:
+		__debug_collisions.value = value
+
 
 	var __mobs_to_spawn: PBField
 
@@ -1512,6 +1575,29 @@ class Lib:
 
 	func set_player_speed(value: float) -> void:
 		__player_speed.value = value
+
+
+	var __world_size: PBField
+
+
+	func has_world_size() -> bool:
+		if __world_size.value != null:
+			return true
+		return false
+
+
+	func get_world_size() -> GV2i:
+		return __world_size.value
+
+
+	func clear_world_size() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__world_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_world_size() -> GV2i:
+		__world_size.value = GV2i.new()
+		return __world_size.value
 
 
 	func _to_string() -> String:
