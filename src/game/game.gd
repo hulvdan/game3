@@ -47,19 +47,21 @@ func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	return creature
 
 
+func _room_index(pos: Vector2i) -> int:
+	return pos.y * glib.v.get_world_size().get_x() + pos.x
+
+
 func _on_player_entered_door(_body: Node3D, direction_index: int) -> void:
 	if _body != player:
 		return
 
-	var room_t_old: int = current_room_pos.y * glib.v.get_world_size().get_x() + current_room_pos.x
-	var mat: ShaderMaterial = ui_minimap_rooms[room_t_old].material
+	var mat: ShaderMaterial = ui_minimap_rooms[_room_index(current_room_pos)].material
 	mat.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
 
 	current_room_pos += bf.DIRECTION_OFFSETS[direction_index]
 
-	var room_t_new: int = current_room_pos.y * glib.v.get_world_size().get_x() + current_room_pos.x
-	mat = ui_minimap_rooms[room_t_new].material
-	mat.set_shader_parameter('flash', Vector4(1, 1, 1, 1))
+	mat = ui_minimap_rooms[_room_index(current_room_pos)].material
+	mat.set_shader_parameter('flash', Vector4(1, 1, 1, 0.66))
 
 	_remake_room()
 
@@ -120,8 +122,6 @@ func _remake_room() -> void:
 
 
 func _ready() -> void:
-	bf.clear_children(container_ui_minimap)
-
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
 	current_room_pos = Vector2i(Vector2(ws) / 2.0)
 
@@ -129,7 +129,7 @@ func _ready() -> void:
 		var y: int = ws.y - y_ - 1
 		for x in range(ws.x):
 			var room_data = RoomData.new()
-			room_data.gindex = hash(y * ws.x + x) % len(glib.v.get_rooms())
+			room_data.gindex = hash(_room_index(Vector2i(x, y))) % len(glib.v.get_rooms())
 			rooms.append(room_data)
 
 			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
