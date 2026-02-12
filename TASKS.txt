@@ -10,13 +10,11 @@ PLAN
 x minimap: slot shader
 x minimap: duplicate shader for every slot
 x minimap: current slot flash white
+x move to another room
+x moving to another room updates minimap color
 
-* minimap: 
-* minimap: 
-* minimap: 
-*
-* generate rooms
-* show rooms minimap
+* don't create doors that lead out of bounds
+* show doors (e.g. red rect)
 *
 *
 *

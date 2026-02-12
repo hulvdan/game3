@@ -21,6 +21,7 @@ static var _async_scene_loaded = false
 var player: Creature
 var current_room_pos: Vector2i = Vector2i(-1, -1)
 var rooms: Array[RoomData] = []
+var ui_minimap_rooms: Array[Sprite2D] = []
 
 var room_node: Node
 var room: Room
@@ -30,7 +31,8 @@ var room: Room
 
 
 class RoomData:
-	var directions: int = 0
+	# var directions: int = 0
+	var gindex: int = -1
 
 
 func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
@@ -45,35 +47,24 @@ func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	return creature
 
 
-func _on_player_entered_door(_body: Node3D) -> void:
-	if _body == player:
-		print('player entered door')
+func _on_player_entered_door(_body: Node3D, direction_index: int) -> void:
+	if _body != player:
+		return
+
+	var room_t_old: int = current_room_pos.y * glib.v.get_world_size().get_x() + current_room_pos.x
+	var mat: ShaderMaterial = ui_minimap_rooms[room_t_old].material
+	mat.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
+
+	current_room_pos += bf.DIRECTION_OFFSETS[direction_index]
+
+	var room_t_new: int = current_room_pos.y * glib.v.get_world_size().get_x() + current_room_pos.x
+	mat = ui_minimap_rooms[room_t_new].material
+	mat.set_shader_parameter('flash', Vector4(1, 1, 1, 1))
+
+	_remake_room()
 
 
-func _ready() -> void:
-	bf.clear_children(container_ui_minimap)
-
-	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
-	current_room_pos = Vector2i(Vector2(ws) / 2.0)
-
-	for y in range(ws.y):
-		for x in range(ws.x):
-			rooms.append(RoomData.new())
-			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
-
-			var scale: float = 1.0 / 3.0
-			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale)
-			minimap_room.transform = minimap_room.transform.translated(Vector2(x + 1, y + 1) * 100 * scale)
-
-			var mat = bf.duplicate_shader_material(minimap_room)
-
-			var flash = Vector4(1, 1, 1, 0)
-			if Vector2i(x, y) == current_room_pos:
-				flash.w = 1
-			mat.set_shader_parameter('flash', flash)
-
-			container_ui_minimap.add_child(minimap_room)
-
+func _remake_room() -> void:
 	if room:
 		remove_child(room)
 	room = packed_room.instantiate()
@@ -84,7 +75,8 @@ func _ready() -> void:
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
 
-	var g_room = glib.v.get_rooms()[1]
+	var g_rooms = glib.v.get_rooms()
+	var g_room = g_rooms[(current_room_pos.x + current_room_pos.y) % len(g_rooms)]
 	var size: Vector2i = glib.ToV2i(g_room.get_size())
 
 	player = _make_creature(creature_player, Vector2(size) / 2)
@@ -113,7 +105,41 @@ func _ready() -> void:
 		bf.scale_2d(door_node, glib.ToV2(door.get_size()))
 		bf.set_pos_2d(door_node, glib.ToV2(door.get_center_pos()))
 		room.container_doors.add_child(door_node)
-		door_node.body_entered.connect(_on_player_entered_door)
+
+		var captured_dir: int = door.get_direction()
+		door_node.body_entered.connect(func(x: Node3D): _on_player_entered_door(x, captured_dir))
+
+
+func _ready() -> void:
+	bf.clear_children(container_ui_minimap)
+
+	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
+	current_room_pos = Vector2i(Vector2(ws) / 2.0)
+
+	for y_ in range(ws.y):
+		var y: int = ws.y - y_ - 1
+		for x in range(ws.x):
+			var room_data = RoomData.new()
+			room_data.gindex = hash(y * ws.x + x) % len(glib.v.get_rooms())
+			rooms.append(room_data)
+
+			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
+
+			var scale: float = 1.0 / 3.0
+			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale)
+			minimap_room.transform = minimap_room.transform.translated(Vector2(x + 1, y + 1) * 100 * scale)
+
+			var mat = bf.duplicate_shader_material(minimap_room)
+
+			var flash = Vector4(1, 1, 1, 0)
+			if Vector2i(x, y) == current_room_pos:
+				flash.w = 1
+			mat.set_shader_parameter('flash', flash)
+
+			ui_minimap_rooms.append(minimap_room)
+			container_ui_minimap.add_child(minimap_room)
+
+	_remake_room()
 
 
 func _physics_process(_dt: float) -> void:

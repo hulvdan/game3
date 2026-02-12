@@ -7,6 +7,13 @@ enum Direction {
 	DOWN = 8,
 }
 
+const DIRECTION_OFFSETS: Array[Vector2i] = [
+	Vector2i(1, 0),
+	Vector2i(0, 1),
+	Vector2i(-1, 0),
+	Vector2i(0, -1),
+]
+
 
 func clear_children(node: Node) -> void:
 	for c in node.get_children():
