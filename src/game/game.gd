@@ -58,11 +58,13 @@ func _ready() -> void:
 		for x in range(ws.x):
 			rooms.append(RoomData.new())
 			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
-			var scale = 1.0 / 3.0
-			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale).translated(Vector2(x + 1, y + 1) * 100 * scale)
 
-			if Vector2i(x, y) == current_room_pos:
-				minimap_room.color
+			var scale: float = 1.0 / 3.0
+			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale)
+			minimap_room.transform = minimap_room.transform.translated(Vector2(x + 1, y + 1) * 100 * scale)
+
+			# if Vector2i(x, y) == current_room_pos:
+			# 	minimap_room.color
 			container_ui_minimap.add_child(minimap_room)
 
 	if room:
