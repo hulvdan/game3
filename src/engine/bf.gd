@@ -8,12 +8,6 @@ enum Direction {
 }
 
 
-func duplicate_shader_material(sprite: Sprite2D) -> ShaderMaterial:
-	var mat: ShaderMaterial = sprite.material.duplicate()
-	sprite.material = mat
-	return mat
-
-
 func clear_children(node: Node) -> void:
 	for c in node.get_children():
 		c.queue_free()
@@ -33,3 +27,9 @@ func set_pos_2d(node: Node3D, pos: Vector2) -> void:
 
 func scale_2d(node: Node3D, scale: Vector2) -> void:
 	node.transform = node.transform.scaled(Vector3(scale.x, 1, scale.y))
+
+
+func duplicate_shader_material(sprite: Sprite2D) -> ShaderMaterial:
+	var mat: ShaderMaterial = sprite.material.duplicate()
+	sprite.material = mat
+	return mat
