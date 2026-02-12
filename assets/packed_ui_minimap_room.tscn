@@ -4,8 +4,8 @@
 [ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/new_shader.tres" id="1_ylfs7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_g2tp3"]
-render_priority = 0
 shader = ExtResource("1_ylfs7")
+shader_parameter/flash = Color(1, 1, 1, 0)
 
 [node name="_minimap_room" type="Sprite2D" unique_id=123282093]
 material = SubResource("ShaderMaterial_g2tp3")
