@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://cjuik3mmcwc3i" path="res://assets/packed_door.tscn" id="7_m5usj"]
 [ext_resource type="PackedScene" uid="uid://wg8ef4e6306p" path="res://assets/packed_room.tscn" id="7_vqaxa"]
 [ext_resource type="PackedScene" uid="uid://b3beehm2dl1yp" path="res://assets/packed_ui_minimap_room.tscn" id="9_otm8r"]
-[ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/new_shader.tres" id="10_h4xlo"]
+[ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/ui_flash.tres" id="10_h4xlo"]
 
 [sub_resource type="Resource" id="Resource_vvw4a"]
 script = ExtResource("2_m5usj")
@@ -20,8 +20,8 @@ texture = ExtResource("5_m5usj")
 metadata/_custom_type_script = "uid://dr4bjag45xl6y"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vvw4a"]
-render_priority = 0
 shader = ExtResource("10_h4xlo")
+shader_parameter/flash = Color(1, 1, 1, 0)
 
 [node name="_main" type="Node3D" unique_id=958610633]
 

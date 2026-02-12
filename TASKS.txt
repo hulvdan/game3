@@ -8,9 +8,9 @@ PLAN
 ============================================================
 
 x minimap: slot shader
+x minimap: duplicate shader for every slot
+x minimap: current slot flash white
 
-* minimap: duplicate shader for every slot
-* minimap: slot flash
 * minimap: 
 * minimap: 
 * minimap: 

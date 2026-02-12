@@ -54,6 +54,8 @@ func _ready() -> void:
 	bf.clear_children(container_ui_minimap)
 
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
+	current_room_pos = Vector2i(Vector2(ws) / 2.0)
+
 	for y in range(ws.y):
 		for x in range(ws.x):
 			rooms.append(RoomData.new())
@@ -63,8 +65,13 @@ func _ready() -> void:
 			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale)
 			minimap_room.transform = minimap_room.transform.translated(Vector2(x + 1, y + 1) * 100 * scale)
 
-			# if Vector2i(x, y) == current_room_pos:
-			# 	minimap_room.color
+			var mat = bf.duplicate_shader_material(minimap_room)
+
+			var flash = Vector4(1, 1, 1, 0)
+			if Vector2i(x, y) == current_room_pos:
+				flash.w = 1
+			mat.set_shader_parameter('flash', flash)
+
 			container_ui_minimap.add_child(minimap_room)
 
 	if room:
