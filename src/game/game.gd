@@ -66,7 +66,8 @@ func _on_player_entered_door(_body: Node3D, direction_index: int) -> void:
 
 func _remake_room() -> void:
 	if room:
-		remove_child(room)
+		room.queue_free()
+		elements.clear()
 	room = packed_room.instantiate()
 	add_child(room)
 
@@ -100,7 +101,15 @@ func _remake_room() -> void:
 			bf.set_pos_2d(node, Vector2(x, y) + Vector2(0.5, 0.5))
 			room.container_floor.add_child(node)
 
+	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
+	var bounds = Rect2i(Vector2i(0, 0), ws)
+
 	for door in g_room.get_doors():
+		var offset = bf.DIRECTION_OFFSETS[door.get_direction()]
+		var to_pos: Vector2i = current_room_pos + offset
+		if !bounds.has_point(to_pos):
+			continue
+
 		var door_node: Area3D = packed_door.instantiate()
 		bf.scale_2d(door_node, glib.ToV2(door.get_size()))
 		bf.set_pos_2d(door_node, glib.ToV2(door.get_center_pos()))

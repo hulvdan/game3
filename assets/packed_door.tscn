@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://cjuik3mmcwc3i"]
 
+[ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="1_pmrth"]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_fphxj"]
 
 [node name="Area3D" type="Area3D" unique_id=1574907712]
@@ -7,3 +9,7 @@ collision_layer = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=951168035]
 shape = SubResource("BoxShape3D_fphxj")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=1244048617]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.165, 0)
+texture = ExtResource("1_pmrth")

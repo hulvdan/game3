@@ -12,9 +12,14 @@ x minimap: duplicate shader for every slot
 x minimap: current slot flash white
 x move to another room
 x moving to another room updates minimap color
+x don't create doors that lead out of bounds
+x show doors (e.g. red rect)
 
-* don't create doors that lead out of bounds
-* show doors (e.g. red rect)
+*
+*
+*
+*
+*
 *
 *
 *
