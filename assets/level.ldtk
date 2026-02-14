@@ -1046,7 +1046,15 @@
 							"defUid": 10,
 							"px": [64,144],
 							"fieldInstances": [
-								{ "__identifier": "ref", "__type": "Array<EntityRef>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] },
+								{ "__identifier": "ref", "__type": "Array<EntityRef>", "__value": [{
+									"entityIid": "91c24920-fa90-11f0-b016-db67fbc71a9b",
+									"layerIid": "a9a0c112-fa90-11f0-bba5-ef100fe5123f",
+									"levelIid": "9f375950-fa90-11f0-bba5-3d05472eced7",
+									"worldIid": "27a80101-fa90-11f0-a600-872af0a8f689"
+								}], "__tile": null, "defUid": 13, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["91c24920-fa90-11f0-b016-db67fbc71a9b"]
+								}] },
 								{ "__identifier": "skill", "__type": "LocalEnum.CODEGEN_Progression", "__value": "CLASS_BARBARIAN", "__tile": null, "defUid": 15, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["CLASS_BARBARIAN"]
@@ -1076,6 +1084,28 @@
 							],
 							"__worldX": 128,
 							"__worldY": -160
+						},
+						{
+							"__identifier": "Progression",
+							"__grid": [4,7],
+							"__pivot": [0,0],
+							"__tags": ["progression"],
+							"__tile": null,
+							"__smartColor": "#FEE761",
+							"iid": "91c24920-fa90-11f0-b016-db67fbc71a9b",
+							"width": 16,
+							"height": 16,
+							"defUid": 10,
+							"px": [64,112],
+							"fieldInstances": [
+								{ "__identifier": "ref", "__type": "Array<EntityRef>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] },
+								{ "__identifier": "skill", "__type": "LocalEnum.CODEGEN_Progression", "__value": "SKILL_HP", "__tile": null, "defUid": 15, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["SKILL_HP"]
+								}] }
+							],
+							"__worldX": 80,
+							"__worldY": -144
 						}
 					]
 				},
