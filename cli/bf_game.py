@@ -100,7 +100,8 @@ def _process_glib(_genline, glib) -> None:
                 for v in glib["progression"]
             ]
     Path("assets/level.ldtk").write_text(
-        json.dumps(ldtk_codegen_data, ensure_ascii=False), encoding="utf-8"
+        json.dumps(ldtk_codegen_data, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
     )
 
     world = bf.ldtk_load("assets/level.ldtk")
