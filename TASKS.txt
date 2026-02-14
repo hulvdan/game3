@@ -18,8 +18,8 @@ x vscodevim: ctrl j, ctrl k
 x vscode: space0 fold + good hjkl behavior for folds
 x format ldtk
 x vscode shrink tabs
+x progression: proto
 
-* progression: proto
 * progression: display in-game
 * progression: 
 * progression: 

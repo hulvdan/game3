@@ -168,20 +168,24 @@ def _process_glib(genline, glib) -> None:
 
         # tuples of field_name + type_name
         # ex: [("hostilities", "Hostility")]
-        table_transform_data: list[tuple[str, str]] = []
+        table_field_name_type_pairs: list[tuple[str, str]] = []
         for i in range(start, end):
             line = glib_proto_lines[i]  # ex: `repeated Hostility hostilities = 7;`
             field_name = line.split(" =", 1)[0].rsplit(" ", 1)[-1].strip()
             type_name = line.split(" =", 1)[0].rsplit(" ", 2)[-2].strip()
             print(f"{field_name=} {type_name=}")
-            table_transform_data.append((field_name, type_name))
+            table_field_name_type_pairs.append((field_name, type_name))
 
-        for field_name, type_name in table_transform_data:
+        print(f"{table_field_name_type_pairs=}")
+        for field_name, type_name in table_field_name_type_pairs:
             types = [x["type"] for x in glib[field_name]]
             for t in types:
                 assert t.upper() == t, (
                     "{}. {}. `type` fields must be in CONSTANT_CASE".format(field_name, t)
                 )
+            container = glib[field_name]
+            for i in range(len(container)):
+                container[i]["type"] = i
             bf.check_duplicates(types)
             bf.genenum(genline, type_name + "Type", types, add_count=True)
             transforms.append(

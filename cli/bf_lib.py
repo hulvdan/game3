@@ -303,21 +303,21 @@ def genenum(
 
     if hex_values:
         for i, value in enumerate(values):
-            genline_with_comment("  {}_{} = {},".format(name, value, hex(2**i)), i)
+            genline_with_comment("    {} = {},".format(value, hex(2**i)), i)
     elif override_values:
         i = 0
         for value, value2 in zip(values, override_values, strict=True):
-            genline_with_comment("  {}_{} = {},".format(name, value, value2), i)
+            genline_with_comment("    {} = {},".format(value, value2), i)
             i += 1
     else:
         for i, value in enumerate(values):
             if enumerate_values:
-                genline_with_comment("  {}_{} = {},".format(name, value, i), i)
+                genline_with_comment("    {} = {},".format(value, i), i)
             else:
-                genline_with_comment("  {}_{},".format(name, value), i)
+                genline_with_comment("    {},".format(value), i)
 
     if add_count:
-        genline("  {}_COUNT,".format(name))
+        genline("    COUNT,")
 
     genline("}\n")
 

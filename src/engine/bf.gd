@@ -17,31 +17,6 @@ const DIRECTION_OFFSETS: Array[Vector2i] = [
 	Vector2i(0, 1),
 ]
 
-enum PropertyType {
-	DAMAGE,
-	CRIT_CHANCE,
-	CRIT_DAMAGE,
-	DEFENSE,
-	DODGE,
-}
-
-
-class Property:
-	var type: PropertyType
-	var valuei: int
-	var valuef: float
-
-
-class ScriptBase:
-	var properties: Array[Property]
-
-
-func amplify(script: ScriptBase, value: int) -> void:
-	for p in script.properties:
-		if p.type == PropertyType.DAMAGE:
-			p.valuei += value
-			break
-
 
 func clear_children(node: Node) -> void:
 	for c in node.get_children():
