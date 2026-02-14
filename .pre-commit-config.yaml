@@ -25,7 +25,7 @@ repos:
     hooks:
       - id: prettier
         # name: prettier
-        files: ^.*\.(json|jsonc|json5|ldtk)$
+        files: \.(json|ldtk)$
         stages: [pre-commit]
         args: ["--tab-width", "2"]
   - repo: local
