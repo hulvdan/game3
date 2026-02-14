@@ -4,8 +4,6 @@ class_name Game
 
 static var async_scene_loaded = false
 
-@export var elements: Array[Node3D]
-
 @export var camera_distance: float
 @export var camera_angle: float
 
@@ -41,7 +39,7 @@ func make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	creature.res = res
 	creature.node_sprite.texture = creature.res.texture
 
-	elements.append(creature.node_rotate)
+	room.target_camera_elements.append(creature.node_target_camera)
 	room.container_creatures.add_child(creature)
 	return creature
 
@@ -75,7 +73,6 @@ func remake_room(new_room_pos: Vector2i) -> void:
 	player_is_entering_door = false
 	if room:
 		room.queue_free()
-		elements.clear()
 	room = packed_room.instantiate()
 	add_child(room)
 
@@ -93,7 +90,7 @@ func remake_room(new_room_pos: Vector2i) -> void:
 		var r: ResCreature = load(mob.get_res())
 		make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
 
-	for element in elements:
+	for element in room.target_camera_elements:
 		assert(element)
 
 	bf.clear_children(room.container_floor)
@@ -167,13 +164,11 @@ func _physics_process(_dt: float) -> void:
 		glib.v.get_player_speed(),
 	)
 
+
+func _process(_dt: float) -> void:
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	camera.transform.origin = player.transform.origin + camera_dir * camera_distance
 	camera.transform = camera.transform.looking_at(player.node_body.transform.origin)
 
-	for element in elements:
-		element.transform.basis = camera.transform.basis
-
-
-func _process(_dt: float) -> void:
-	pass
+	for e in room.target_camera_elements:
+		e.transform.basis = camera.transform.basis
