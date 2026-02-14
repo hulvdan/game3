@@ -546,12 +546,7 @@
                     "h": 16
                   },
                   "defUid": 6,
-                  "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["Up_3"]
-                    }
-                  ]
+                  "realEditorValues": [{ "id": "V_String", "params": ["Up_3"] }]
                 }
               ],
               "__worldX": 96,
@@ -589,10 +584,7 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["Left_2"]
-                    }
+                    { "id": "V_String", "params": ["Left_2"] }
                   ]
                 }
               ],
@@ -631,10 +623,7 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["Down_1"]
-                    }
+                    { "id": "V_String", "params": ["Down_1"] }
                   ]
                 }
               ],
@@ -673,10 +662,7 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["Right_0"]
-                    }
+                    { "id": "V_String", "params": ["Right_0"] }
                   ]
                 }
               ],
@@ -822,10 +808,7 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["Left_2"]
-                    }
+                    { "id": "V_String", "params": ["Left_2"] }
                   ]
                 }
               ],
@@ -864,10 +847,7 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["Right_0"]
-                    }
+                    { "id": "V_String", "params": ["Right_0"] }
                   ]
                 }
               ],
@@ -905,12 +885,7 @@
                     "h": 16
                   },
                   "defUid": 6,
-                  "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["Up_3"]
-                    }
-                  ]
+                  "realEditorValues": [{ "id": "V_String", "params": ["Up_3"] }]
                 }
               ],
               "__worldX": 288,
@@ -948,10 +923,7 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["Down_1"]
-                    }
+                    { "id": "V_String", "params": ["Down_1"] }
                   ]
                 }
               ],
@@ -1090,10 +1062,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["CRAFT_BLACKSMITH"]
-                    }
+                    { "id": "V_String", "params": ["CRAFT_BLACKSMITH"] }
                   ]
                 }
               ],
@@ -1128,10 +1097,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["SKILL_MANA"]
-                    }
+                    { "id": "V_String", "params": ["SKILL_MANA"] }
                   ]
                 }
               ],
@@ -1198,10 +1164,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["SKILL_HP"]
-                    }
+                    { "id": "V_String", "params": ["SKILL_HP"] }
                   ]
                 }
               ],
@@ -1248,10 +1211,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["CLASS_HEAVY_KNIGHT"]
-                    }
+                    { "id": "V_String", "params": ["CLASS_HEAVY_KNIGHT"] }
                   ]
                 }
               ],
@@ -1298,10 +1258,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["CRAFT_WITCH"]
-                    }
+                    { "id": "V_String", "params": ["CRAFT_WITCH"] }
                   ]
                 }
               ],
@@ -1358,10 +1315,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["CRAFT_ENGINEER"]
-                    }
+                    { "id": "V_String", "params": ["CRAFT_ENGINEER"] }
                   ]
                 }
               ],
@@ -1396,10 +1350,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["SKILL_MAGIC_ATTACK"]
-                    }
+                    { "id": "V_String", "params": ["SKILL_MAGIC_ATTACK"] }
                   ]
                 }
               ],
@@ -1434,10 +1385,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["SKILL_ATTACK"]
-                    }
+                    { "id": "V_String", "params": ["SKILL_ATTACK"] }
                   ]
                 }
               ],
@@ -1484,10 +1432,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["CLASS_BARBARIAN"]
-                    }
+                    { "id": "V_String", "params": ["CLASS_BARBARIAN"] }
                   ]
                 }
               ],
@@ -1522,10 +1467,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["SKILL_ARMOR"]
-                    }
+                    { "id": "V_String", "params": ["SKILL_ARMOR"] }
                   ]
                 }
               ],
@@ -1560,10 +1502,7 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": ["SKILL_HP"]
-                    }
+                    { "id": "V_String", "params": ["SKILL_HP"] }
                   ]
                 }
               ],
