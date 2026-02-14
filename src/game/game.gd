@@ -2,7 +2,7 @@ extends Node
 
 class_name Game
 
-static var _async_scene_loaded = false
+static var async_scene_loaded = false
 
 @export var elements: Array[Node3D]
 
@@ -19,12 +19,13 @@ static var _async_scene_loaded = false
 @export var packed_ui_minimap_room: PackedScene
 
 var player: Creature
-var current_room_pos: Vector2i = Vector2i(-1, -1)
+var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
 var ui_minimap_rooms: Array[Sprite2D] = []
 
 var room_node: Node
 var room: Room
+var player_is_entering_door := false
 
 @onready var camera: Camera3D = $_camera
 @onready var container_ui_minimap: Node2D = $_ui
@@ -35,7 +36,7 @@ class RoomData:
 	var gindex: int = -1
 
 
-func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
+func make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	assert(res)
 	var creature: Creature = packed_creature.instantiate()
 	bf.set_pos_2d(creature, pos)
@@ -47,30 +48,33 @@ func _make_creature(res: ResCreature, pos: Vector2) -> Node3D:
 	return creature
 
 
-func _room_index(pos: Vector2i) -> int:
+func room_index(pos: Vector2i) -> int:
 	return pos.y * glib.v.get_world_size().get_x() + pos.x
 
 
-func _on_player_entered_door(_body: Node3D, direction_index: int) -> void:
+func on_player_entered_door(_body: Node3D, direction_index: int) -> void:
+	if player_is_entering_door:
+		return
 	if _body != player:
 		return
 
-	var mat: ShaderMaterial = ui_minimap_rooms[_room_index(current_room_pos)].material
-	mat.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
-
-	current_room_pos += bf.DIRECTION_OFFSETS[direction_index]
-
-	mat = ui_minimap_rooms[_room_index(current_room_pos)].material
-	mat.set_shader_parameter('flash', Vector4(1, 1, 1, 0.66))
-
 	var tween = create_tween()
-	var r: Control = $TransitionRect
-	tween.tween_property(r, "modulate:a", 1, 0.5)
-	tween.tween_callback(Callable(self, "_remake_room"))
-	tween.tween_property(r, "modulate:a", 0, 0.5)
+	var r: Node = $TransitionRect
+	player_is_entering_door = true
+	tween.tween_property(r, "modulate:a", 1, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_callback(remake_room.bind(current_room_pos + bf.DIRECTION_OFFSETS[direction_index]))
+	tween.tween_property(r, "modulate:a", 0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 
-func _remake_room() -> void:
+func remake_room(room_pos: Vector2i) -> void:
+	if current_room_pos != Vector2i.MAX:
+		var s1: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
+		s1.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
+	current_room_pos = room_pos
+	var s2: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
+	s2.set_shader_parameter('flash', Vector4(1, 1, 1, 0.6))
+
+	player_is_entering_door = false
 	if room:
 		room.queue_free()
 		elements.clear()
@@ -86,10 +90,10 @@ func _remake_room() -> void:
 	var g_room = g_rooms[(current_room_pos.x + current_room_pos.y) % len(g_rooms)]
 	var size: Vector2i = glib.ToV2i(g_room.get_size())
 
-	player = _make_creature(creature_player, Vector2(size) / 2)
+	player = make_creature(creature_player, Vector2(size) / 2)
 	for mob in glib.v.get_mobs_to_spawn():
 		var r: ResCreature = load(mob.get_res())
-		_make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
+		make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
 
 	for element in elements:
 		assert(element)
@@ -122,22 +126,21 @@ func _remake_room() -> void:
 		room.container_doors.add_child(door_node)
 
 		var captured_dir: int = door.get_direction()
-		door_node.body_entered.connect(func(x: Node3D): _on_player_entered_door(x, captured_dir))
+		door_node.body_entered.connect(func(x: Node3D): on_player_entered_door(x, captured_dir))
 
 
 func _ready() -> void:
-	var transition_rect: ColorRect = $TransitionRect
+	var transition_rect: Control = $TransitionRect
 	transition_rect.visible = true
 	create_tween().tween_property(transition_rect, "modulate:a", 0, 0)
 
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
-	current_room_pos = Vector2i(Vector2(ws) / 2.0)
 
 	for y_ in range(ws.y):
 		var y: int = ws.y - y_ - 1
 		for x in range(ws.x):
 			var room_data = RoomData.new()
-			room_data.gindex = hash(_room_index(Vector2i(x, y))) % len(glib.v.get_rooms())
+			room_data.gindex = hash(room_index(Vector2i(x, y))) % len(glib.v.get_rooms())
 			rooms.append(room_data)
 
 			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
@@ -146,22 +149,17 @@ func _ready() -> void:
 			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale)
 			minimap_room.transform = minimap_room.transform.translated(Vector2(x + 1, y + 1) * 100 * scale)
 
-			var mat = bf.duplicate_shader_material(minimap_room)
-
-			var flash = Vector4(1, 1, 1, 0)
-			if Vector2i(x, y) == current_room_pos:
-				flash.w = 1
-			mat.set_shader_parameter('flash', flash)
+			bf.duplicate_shader_material(minimap_room)
 
 			ui_minimap_rooms.append(minimap_room)
 			container_ui_minimap.add_child(minimap_room)
 
-	_remake_room()
+	remake_room(Vector2i(Vector2(ws) / 2.0))
 
 
 func _physics_process(_dt: float) -> void:
-	if Meta.async_data_loaded and not _async_scene_loaded:
-		_async_scene_loaded = true
+	if Meta.async_data_loaded and not async_scene_loaded:
+		async_scene_loaded = true
 		var r = load("res://assets/async_data.tscn")
 		@warning_ignore("unsafe_method_access")
 		var n: Node = r.instantiate()

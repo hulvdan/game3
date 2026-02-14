@@ -11,8 +11,9 @@ x vial + ahk F24 fix
 x vscode space w -> save
 x vscode vim yank highlight
 x transition tween
+x vscode run f5/f6
+x tween: toggle minimap only after room changed (in the middle of tween)
 
-* tween: 
 * tween: 
 * tween: 
 * tween: 
