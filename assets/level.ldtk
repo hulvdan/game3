@@ -424,56 +424,16 @@
         "identifier": "CODEGEN_Progression",
         "uid": 14,
         "values": [
-          {
-            "id": "SKILL_HP",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "SKILL_MANA",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "SKILL_ATTACK",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "SKILL_ARMOR",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "SKILL_MAGIC_ATTACK",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "CRAFT_BLACKSMITH",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "CRAFT_WITCH",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "CRAFT_ENGINEER",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "CLASS_HEAVY_KNIGHT",
-            "tileRect": null,
-            "color": 0
-          },
-          {
-            "id": "CLASS_BARBARIAN",
-            "tileRect": null,
-            "color": 0
-          }
+          { "id": "SKILL_HP", "tileRect": null, "color": 0 },
+          { "id": "SKILL_MANA", "tileRect": null, "color": 0 },
+          { "id": "SKILL_ATTACK", "tileRect": null, "color": 0 },
+          { "id": "SKILL_ARMOR", "tileRect": null, "color": 0 },
+          { "id": "SKILL_MAGIC_ATTACK", "tileRect": null, "color": 0 },
+          { "id": "CRAFT_BLACKSMITH", "tileRect": null, "color": 0 },
+          { "id": "CRAFT_WITCH", "tileRect": null, "color": 0 },
+          { "id": "CRAFT_ENGINEER", "tileRect": null, "color": 0 },
+          { "id": "CLASS_HEAVY_KNIGHT", "tileRect": null, "color": 0 },
+          { "id": "CLASS_BARBARIAN", "tileRect": null, "color": 0 }
         ],
         "iconTilesetUid": null,
         "externalRelPath": null,
