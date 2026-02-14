@@ -15,6 +15,7 @@ static var async_scene_loaded = false
 @export var packed_door: PackedScene
 @export var packed_room: PackedScene
 @export var packed_ui_minimap_room: PackedScene
+@export var packed_ui_progression_entry: PackedScene
 
 var player: Creature
 var current_room_pos: Vector2i = Vector2i.MAX
@@ -151,6 +152,15 @@ func _ready() -> void:
 
 			ui_minimap_rooms.append(minimap_room)
 			container_ui_minimap.add_child(minimap_room)
+
+	var progression_size: Vector2i = glib.ToV2i(glib.v.get_progression_size())
+	for entry in glib.v.get_progression():
+		if !entry.get_type():
+			continue
+		var node: Node2D = packed_ui_progression_entry.instantiate()
+		container_ui_progression.add_child(node)
+		var pos: Vector2i = glib.ToV2i(entry.get_pos())
+		node.transform.origin = (Vector2(pos.x, pos.y) - Vector2(progression_size) / 2.0) * 40.0
 
 	remake_room(Vector2i(Vector2(ws) / 2.0))
 

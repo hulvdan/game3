@@ -133,11 +133,8 @@ def _process_glib(genline, glib) -> None:
     # ============================================================
     prog_type_2_prog = {x["type"]: x for x in glib["progression"][1:]}
     required_to_specify_progression_types = list(prog_type_2_prog.keys())
-    for entity in (
-        world.get_level("DONT_INCLUDE_Progression")
-        .get_layer("Progression")
-        .entities("Progression")
-    ):
+    level_progression = world.get_level("DONT_INCLUDE_Progression")
+    for entity in level_progression.get_layer("Progression").entities("Progression"):
         progression_type = entity.field("progression_type")
         assert progression_type in required_to_specify_progression_types, (
             f"Progression {progression_type} must be specified in ldtk ONCE"
@@ -148,6 +145,7 @@ def _process_glib(genline, glib) -> None:
     assert not required_to_specify_progression_types, (
         f"The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
     )
+    glib["progression_size"] = bf.as_dict(level_progression.size)
 
     # Tables.
     # ============================================================

@@ -19,8 +19,8 @@ x vscode: space0 fold + good hjkl behavior for folds
 x format ldtk
 x vscode shrink tabs
 x progression: proto
+x progression: display in-game
 
-* progression: display in-game
 * progression: 
 * progression: 
 * progression: 

@@ -1589,8 +1589,8 @@ class LdtkLevel(BaseModel):
     worldX: int
     worldY: int
     worldDepth: int
-    # pxWid: int
-    # pxHei: int
+    pxWid: int
+    pxHei: int
     # bgColor_: "#000000"
     # bgColor: null
     # useAutoIdentifier: true
@@ -1613,6 +1613,10 @@ class LdtkLevel(BaseModel):
             if layer.identifier_ == name:
                 return layer
         assert False, f"Layer {name} not found"
+
+    @property
+    def size(self) -> list[int]:
+        return [self.pxWid // 16, self.pxHei // 16]
 
     # }
 
