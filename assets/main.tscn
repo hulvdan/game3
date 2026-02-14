@@ -32,17 +32,37 @@ packed_door = ExtResource("7_m5usj")
 packed_room = ExtResource("7_vqaxa")
 packed_ui_minimap_room = ExtResource("9_otm8r")
 
-[node name="_ui" type="Node2D" parent="_game" unique_id=1224367118]
+[node name="_container_ui_minimap" type="Node2D" parent="_game" unique_id=229164054]
+unique_name_in_owner = true
 
-[node name="_minimap_room" type="Sprite2D" parent="_game/_ui" unique_id=960137371]
-visible = false
+[node name="_minimap_room" type="Sprite2D" parent="_game/_container_ui_minimap" unique_id=960137371]
 material = SubResource("ShaderMaterial_vvw4a")
 texture = ExtResource("5_m5usj")
 
+[node name="Control" type="Control" parent="_game" unique_id=929978051]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="_container_ui_progression" type="Node2D" parent="_game/Control" unique_id=485440728]
+unique_name_in_owner = true
+
+[node name="_progression_entry" type="Sprite2D" parent="_game/Control/_container_ui_progression" unique_id=528918248]
+texture = ExtResource("5_m5usj")
+
 [node name="_camera" type="Camera3D" parent="_game" unique_id=1622424363]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
 
-[node name="TransitionRect" type="ColorRect" parent="_game" unique_id=1997420545]
+[node name="_transition_rect" type="ColorRect" parent="_game" unique_id=1997420545]
+unique_name_in_owner = true
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
