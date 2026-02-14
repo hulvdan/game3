@@ -40,11 +40,21 @@ packed_ui_minimap_room = ExtResource("9_otm8r")
 [node name="_ui" type="Node2D" parent="_game" unique_id=1224367118]
 
 [node name="_minimap_room" type="Sprite2D" parent="_game/_ui" unique_id=960137371]
+visible = false
 material = SubResource("ShaderMaterial_vvw4a")
 texture = ExtResource("5_m5usj")
 
 [node name="_camera" type="Camera3D" parent="_game" unique_id=1622424363]
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
+
+[node name="TransitionRect" type="ColorRect" parent="_game" unique_id=1997420545]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [node name="_meta" type="Node" parent="." unique_id=1168592126 node_paths=PackedStringArray("metrics", "platform")]
 script = ExtResource("2_836ik")

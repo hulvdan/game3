@@ -7,19 +7,15 @@ BIG PLAN
 PLAN
 ============================================================
 
-x minimap: slot shader
-x minimap: duplicate shader for every slot
-x minimap: current slot flash white
-x move to another room
-x moving to another room updates minimap color
-x don't create doors that lead out of bounds
-x show doors (e.g. red rect)
-x z is negative
+x vial + ahk F24 fix
+x vscode space w -> save
+x vscode vim yank highlight
+x transition tween
 
-*
-*
-*
-*
+* tween: 
+* tween: 
+* tween: 
+* tween: 
 *
 *
 *

@@ -63,7 +63,11 @@ func _on_player_entered_door(_body: Node3D, direction_index: int) -> void:
 	mat = ui_minimap_rooms[_room_index(current_room_pos)].material
 	mat.set_shader_parameter('flash', Vector4(1, 1, 1, 0.66))
 
-	_remake_room()
+	var tween = create_tween()
+	var r: Control = $TransitionRect
+	tween.tween_property(r, "modulate:a", 1, 0.5)
+	tween.tween_callback(Callable(self, "_remake_room"))
+	tween.tween_property(r, "modulate:a", 0, 0.5)
 
 
 func _remake_room() -> void:
@@ -122,6 +126,10 @@ func _remake_room() -> void:
 
 
 func _ready() -> void:
+	var transition_rect: ColorRect = $TransitionRect
+	transition_rect.visible = true
+	create_tween().tween_property(transition_rect, "modulate:a", 0, 0)
+
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
 	current_room_pos = Vector2i(Vector2(ws) / 2.0)
 
