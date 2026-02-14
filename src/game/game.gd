@@ -64,7 +64,7 @@ func on_player_entered_door(body: Node3D, direction_index: int) -> void:
 	tween.tween_property(r, "modulate:a", 0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 
-func remake_room(new_room_pos: Vector2i, enter_direction_index: int) -> void:
+func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	if current_room_pos != Vector2i.MAX:
 		var s1: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
 		s1.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
@@ -121,8 +121,8 @@ func remake_room(new_room_pos: Vector2i, enter_direction_index: int) -> void:
 
 		door_node.body_entered.connect(on_player_entered_door.bind(door.get_direction()))
 
-		if (door.get_direction() + 2) % 4 == enter_direction_index:
-			player_pos = glib.ToV2(door.get_center_pos()) + Vector2(bf.DIRECTION_OFFSETS[enter_direction_index]) * 2
+		if (door.get_direction() + 2) % 4 == player_direction_index:
+			player_pos = glib.ToV2(door.get_center_pos()) + Vector2(bf.DIRECTION_OFFSETS[player_direction_index]) * 2
 
 	player = make_creature(res_creature_player, player_pos)
 	for mob in glib.v.get_mobs_to_spawn():
