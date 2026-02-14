@@ -21,6 +21,7 @@ x vscode shrink tabs
 x progression: proto
 x progression: display in-game
 x spawning near door
+x f1 @a
 
 * player attacks using bow 
 * roll button?
