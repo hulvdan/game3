@@ -23,6 +23,8 @@ x progression: display in-game
 x spawning near door
 
 * player attacks using bow 
+* roll button?
+* rolling stops bow
 * correct in front of door appearing
 * mob takes damage from bow
 * swing attack?
