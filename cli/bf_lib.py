@@ -192,7 +192,7 @@ def run_command(
 
     if p.returncode:
         log.critical(f'Failed to execute: "{c}"')
-        exit(p.returncode)
+
     # }
 
 

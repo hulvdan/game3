@@ -46,6 +46,11 @@ message GProgression {
   GV2i pos = 3;
 }
 
+message GCreature {
+  int32 type = 1;
+  string debug_name = 2;
+}
+
 message Lib {
   int32 debug_collisions = 5;
   repeated GMobToSpawn mobs_to_spawn = 1;
@@ -55,5 +60,6 @@ message Lib {
   GV2i progression_size = 6;
   // TABLE_GEN_START
   repeated GProgression progression = 7;
+  repeated GCreature creatures = 8;
   // TABLE_GEN_END
 }

@@ -14,3 +14,11 @@ enum GProgressionType {
 	CLASS_BARBARIAN,
 	COUNT,
 }
+
+enum GCreatureType {
+	INVALID,
+	PLAYER,
+	MOB_SHOOTER,
+	MOB_BONKER,
+	COUNT,
+}

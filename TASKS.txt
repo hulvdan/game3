@@ -20,7 +20,26 @@ x format ldtk
 x vscode shrink tabs
 x progression: proto
 x progression: display in-game
+x spawning near door
 
+* player attacks using bow 
+* correct in front of door appearing
+* mob takes damage from bow
+* swing attack?
+* long range by default + melee spells?
+* player hp bar 
+* mob hp bar
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+*
+*
+*
 * progression: 
 * progression: 
 * progression: 

@@ -28,3 +28,9 @@ progression:
   - type: CRAFT_ENGINEER
   - type: CLASS_HEAVY_KNIGHT
   - type: CLASS_BARBARIAN
+
+creatures:
+  - type: INVALID
+  - type: PLAYER
+  - type: MOB_SHOOTER
+  - type: MOB_BONKER

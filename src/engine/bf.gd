@@ -4,17 +4,18 @@ extends Node
 # const INT_MIN = -9223372036854775808 # -2^63
 
 enum Direction {
+	NOT_SET = 0,
 	RIGHT = 1,
-	UP = 2,
+	DOWN = 2,
 	LEFT = 4,
-	DOWN = 8,
+	UP = 8,
 }
 
 const DIRECTION_OFFSETS: Array[Vector2i] = [
 	Vector2i(1, 0),
-	Vector2i(0, -1),
-	Vector2i(-1, 0),
 	Vector2i(0, 1),
+	Vector2i(-1, 0),
+	Vector2i(0, -1),
 ]
 
 

@@ -60,11 +60,11 @@ func on_player_entered_door(body: Node3D, direction_index: int) -> void:
 	var r: Node = $_transition_rect
 	player_is_entering_door = true
 	tween.tween_property(r, "modulate:a", 1, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_callback(remake_room.bind(current_room_pos + bf.DIRECTION_OFFSETS[direction_index]))
+	tween.tween_callback(remake_room.bind(current_room_pos + bf.DIRECTION_OFFSETS[direction_index], direction_index))
 	tween.tween_property(r, "modulate:a", 0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 
-func remake_room(new_room_pos: Vector2i) -> void:
+func remake_room(new_room_pos: Vector2i, enter_direction_index: int) -> void:
 	if current_room_pos != Vector2i.MAX:
 		var s1: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
 		s1.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
@@ -87,11 +87,6 @@ func remake_room(new_room_pos: Vector2i) -> void:
 	var g_room = g_rooms[(current_room_pos.x + current_room_pos.y) % len(g_rooms)]
 	var size: Vector2i = glib.ToV2i(g_room.get_size())
 
-	player = make_creature(res_creature_player, Vector2(size) / 2)
-	for mob in glib.v.get_mobs_to_spawn():
-		var r: ResCreature = load(mob.get_res())
-		make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
-
 	for element in room.target_camera_elements:
 		assert(element)
 
@@ -111,6 +106,8 @@ func remake_room(new_room_pos: Vector2i) -> void:
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
 	var bounds = Rect2i(Vector2i(0, 0), ws)
 
+	var player_pos: Vector2 = Vector2(size) / 2
+
 	for door in g_room.get_doors():
 		var offset = bf.DIRECTION_OFFSETS[door.get_direction()]
 		var to_pos: Vector2i = current_room_pos + offset
@@ -123,6 +120,14 @@ func remake_room(new_room_pos: Vector2i) -> void:
 		room.container_doors.add_child(door_node)
 
 		door_node.body_entered.connect(on_player_entered_door.bind(door.get_direction()))
+
+		if (door.get_direction() + 2) % 4 == enter_direction_index:
+			player_pos = glib.ToV2(door.get_center_pos()) + Vector2(bf.DIRECTION_OFFSETS[enter_direction_index]) * 2
+
+	player = make_creature(res_creature_player, player_pos)
+	for mob in glib.v.get_mobs_to_spawn():
+		var r: ResCreature = load(mob.get_res())
+		make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
 
 
 func _ready() -> void:
@@ -137,21 +142,24 @@ func _ready() -> void:
 
 	for y_ in range(ws.y):
 		var y: int = ws.y - y_ - 1
+		var rooms_slice: Array[Sprite2D] = []
+
 		for x in range(ws.x):
 			var room_data = RoomData.new()
 			room_data.gindex = hash(room_index(Vector2i(x, y))) % len(glib.v.get_rooms())
 			rooms.append(room_data)
 
 			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
+			rooms_slice.append(minimap_room)
 
 			var scale: float = 1.0 / 3.0
 			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale)
 			minimap_room.transform = minimap_room.transform.translated(Vector2(x + 1, y + 1) * 100 * scale)
 
 			bf.duplicate_shader_material(minimap_room)
-
-			ui_minimap_rooms.append(minimap_room)
 			container_ui_minimap.add_child(minimap_room)
+
+		ui_minimap_rooms = rooms_slice + ui_minimap_rooms
 
 	var progression_size: Vector2i = glib.ToV2i(glib.v.get_progression_size())
 	for entry in glib.v.get_progression():
@@ -162,7 +170,7 @@ func _ready() -> void:
 		var pos: Vector2i = glib.ToV2i(entry.get_pos())
 		node.transform.origin = (Vector2(pos.x, pos.y) - Vector2(progression_size) / 2.0) * 40.0
 
-	remake_room(Vector2i(Vector2(ws) / 2.0))
+	remake_room(Vector2i(Vector2(ws) / 2.0), -1)
 
 
 func _physics_process(_dt: float) -> void:
@@ -172,11 +180,12 @@ func _physics_process(_dt: float) -> void:
 		var n: Node = r.instantiate()
 		add_child(n)
 
-	bf.move_body_with_speed(
-		player.node_body,
-		Input.get_vector("move_l", "move_r", "move_u", "move_d"),
-		glib.v.get_player_speed(),
-	)
+	if !player_is_entering_door:
+		bf.move_body_with_speed(
+			player.node_body,
+			Input.get_vector("move_l", "move_r", "move_u", "move_d"),
+			glib.v.get_player_speed(),
+		)
 
 
 func _process(_dt: float) -> void:
