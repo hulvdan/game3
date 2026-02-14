@@ -14,3 +14,4 @@
 /assets/art/src/screenshots_processed/
 /assets/level*/backups/
 __pycache__/
+node_modules/

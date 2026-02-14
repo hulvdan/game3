@@ -1,50 +1,54 @@
 {
-    "files.exclude": {
-        "**/*.tscn*.tmp": true,
-        "**/*.binpb": true,
-        ".godot/": true,
-        ".venv/": true,
-        "**/*.uid": true,
+  "files.exclude": {
+    "**/*.tscn*.tmp": true,
+    "**/*.binpb": true,
+    ".godot/": true,
+    ".venv/": true,
+    "**/*.uid": true
+  },
+  "runOnSave.commands": [
+    {
+      "match": "glib.yaml$",
+      "command": "uv run python cli/bf_cli.py codegen windows debug",
+      "runIn": "backend"
     },
-    // "runOnSave.statusMessageTimeout": 1,
-    "runOnSave.commands": [
-        // {
-        //     // Match scss files except names start with `_`.
-        //     "match": ".*\\.scss$",
-        //     "notMatch": "[\\\\\\/]_[^\\\\\\/]*\\.scss$",
-        //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
-        //     "runIn": "backend",
-        //     "runningStatusMessage": "Compiling ${fileBasename}",
-        //     "finishStatusMessage": "${fileBasename} compiled"
-        // },
-        // {
-        //     // Match less files except names start with `_`.
-        //     "globMatch": "**/[^_]*.less",
-        //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
-        //     "runIn": "terminal"
-        // },
-        {
-            "match": "glib.yaml$",
-            "command": "uv run python cli/bf_cli.py codegen windows debug",
-            "runIn": "backend"
-        },
-        {
-            "match": ".gd$",
-            "command": "uv run gdscript-formatter ${file}",
-            "runIn": "backend"
-        },
-        {
-            "match": "glib.proto$",
-            "command": "uv run python cli/bf_cli.py regen_glib_proto",
-            "runIn": "backend"
-        },
-        // {
-        //     // Match any python files by language id.
-        //     "languages": [
-        //         "python"
-        //     ],
-        //     "command": "python.runLinting",
-        //     "runIn": "vscode"
-        // }
-    ]
+    {
+      "match": ".gd$",
+      "command": "uv run gdscript-formatter ${file}",
+      "runIn": "backend"
+    },
+    {
+      "match": "glib.proto$",
+      "command": "uv run python cli/bf_cli.py regen_glib_proto",
+      "runIn": "backend"
+    },
+    {
+      "languages": ["python"],
+      "command": "uv run ruff check --select I ${file} --fix",
+      "runIn": "backend"
+    }
+    // {
+    //     // Match scss files except names start with `_`.
+    //     "match": ".*\\.scss$",
+    //     "notMatch": "[\\\\\\/]_[^\\\\\\/]*\\.scss$",
+    //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
+    //     "runIn": "backend",
+    //     "runningStatusMessage": "Compiling ${fileBasename}",
+    //     "finishStatusMessage": "${fileBasename} compiled"
+    // },
+    // {
+    //     // Match less files except names start with `_`.
+    //     "globMatch": "**/[^_]*.less",
+    //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
+    //     "runIn": "terminal"
+    // },
+    // {
+    //     // Match any python files by language id.
+    //     "languages": [
+    //         "python"
+    //     ],
+    //     "command": "python.runLinting",
+    //     "runIn": "vscode"
+    // }
+  ]
 }

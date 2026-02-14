@@ -15,8 +15,9 @@ x vscode run f5/f6
 x tween: toggle minimap only after room changed (in the middle of tween)
 x removed submodules
 x vscodevim: ctrl j, ctrl k
+x vscode: space0 fold + good hjkl behavior for folds
 
-* 
+* format  
 *
 *
 *

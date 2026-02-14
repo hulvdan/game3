@@ -9,10 +9,10 @@ static var async_data_loaded: bool = false
 
 
 func _on_request_completed(
-	_result: int,
-	response_code: int,
-	_headers: PackedStringArray,
-	body: PackedByteArray,
+		_result: int,
+		response_code: int,
+		_headers: PackedStringArray,
+		body: PackedByteArray,
 ) -> void:
 	if response_code != 200:
 		printerr("Failed to download async_data.pck")
@@ -47,7 +47,7 @@ func _ready() -> void:
 		http.request_completed.connect(_on_request_completed)
 
 		var base: String = JavaScriptBridge.eval(
-			"document.baseURI.substring(0, document.baseURI.lastIndexOf('/') + 1)"
+			"document.baseURI.substring(0, document.baseURI.lastIndexOf('/') + 1)",
 		)
 		http.request(base + "async_data.pck")
 	else:

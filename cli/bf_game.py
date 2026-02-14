@@ -14,6 +14,9 @@ USAGE:
 """
 
 # Imports.  {  ###
+import json
+from pathlib import Path
+
 import bf_lib as bf
 from bf_typer import command, timing
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
@@ -88,6 +91,17 @@ def _process_glib(_genline, glib) -> None:
     #     # }
 
     transforms: list[tuple[str, str, str, dict[str, int]]] = []
+
+    ldtk_codegen_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
+    for enum in ldtk_codegen_data["defs"]["enums"]:
+        if enum["identifier"].startswith("CODEGEN_"):
+            enum["values"] = [
+                {"id": v["type"], "tileRect": None, "color": 0}
+                for v in glib["progression"]
+            ]
+    Path("assets/level.ldtk").write_text(
+        json.dumps(ldtk_codegen_data, ensure_ascii=False), encoding="utf-8"
+    )
 
     world = bf.ldtk_load("assets/level.ldtk")
     rooms = []

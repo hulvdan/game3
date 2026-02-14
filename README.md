@@ -35,8 +35,8 @@ git merge template
 git push
 uv python install 3.11
 uv sync
-pre-commit install
-pre-commit install --install-hooks
+uv run pre-commit install
+uv run pre-commit install --install-hooks
 # * I checked out master branch of godot-template in lazygit
     -> renamed it into `template` in github desktop
 # * Open Godot -> Project Settings -> Change name

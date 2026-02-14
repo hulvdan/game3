@@ -1,8 +1,11 @@
 debug_collisions: 1
+
 world_size:
   x: 7
   y: 5
+
 player_speed: 4
+
 mobs_to_spawn:
   - res: res://src/game/res_creatures/player.tres
     pos:
@@ -12,3 +15,15 @@ mobs_to_spawn:
     pos:
       x: -2
       y: 2
+
+progression:
+  - type: SKILL_HP
+  - type: SKILL_MANA
+  - type: SKILL_ATTACK
+  - type: SKILL_ARMOR
+  - type: SKILL_MAGIC_ATTACK
+  - type: CRAFT_BLACKSMITH
+  - type: CRAFT_WITCH
+  - type: CRAFT_ENGINEER
+  - type: CLASS_HEAVY_KNIGHT
+  - type: CLASS_BARBARIAN

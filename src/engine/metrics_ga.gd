@@ -26,5 +26,4 @@ func metricv(id: String, value: float) -> void:
 	if _js_window:
 		_js_window.GameAnalytics("addDesignEvent", id, value)
 
-
 @warning_ignore_restore("unsafe_method_access")

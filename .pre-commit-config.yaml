@@ -4,7 +4,7 @@ repos:
     rev: v1.10.0
     hooks:
       - id: python-no-eval
-        entry: 'nocheckin'
+        entry: "nocheckin"
         language: pygrep
         files: ^(?!.pre-commit-config).*.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
         exclude: ^addons/.*$
@@ -20,6 +20,14 @@ repos:
   #       # language_version: python3
   #       # require_serial: true
   #       # types: [gdscript]
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v4.0.0-alpha.8"
+    hooks:
+      - id: prettier
+        # name: prettier
+        files: ^.*\.(json|jsonc|json5|ldtk)$
+        stages: [pre-commit]
+        args: ["--tab-width", "2"]
   - repo: local
     hooks:
       - id: gdscript-formatter

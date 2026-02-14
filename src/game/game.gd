@@ -23,7 +23,6 @@ var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
 var ui_minimap_rooms: Array[Sprite2D] = []
 
-var room_node: Node
 var room: Room
 var player_is_entering_door := false
 
@@ -32,7 +31,6 @@ var player_is_entering_door := false
 
 
 class RoomData:
-	# var directions: int = 0
 	var gindex: int = -1
 
 
@@ -52,10 +50,10 @@ func room_index(pos: Vector2i) -> int:
 	return pos.y * glib.v.get_world_size().get_x() + pos.x
 
 
-func on_player_entered_door(_body: Node3D, direction_index: int) -> void:
+func on_player_entered_door(body: Node3D, direction_index: int) -> void:
 	if player_is_entering_door:
 		return
-	if _body != player:
+	if body != player:
 		return
 
 	var tween = create_tween()
@@ -66,11 +64,11 @@ func on_player_entered_door(_body: Node3D, direction_index: int) -> void:
 	tween.tween_property(r, "modulate:a", 0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 
-func remake_room(room_pos: Vector2i) -> void:
+func remake_room(new_room_pos: Vector2i) -> void:
 	if current_room_pos != Vector2i.MAX:
 		var s1: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
 		s1.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
-	current_room_pos = room_pos
+	current_room_pos = new_room_pos
 	var s2: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
 	s2.set_shader_parameter('flash', Vector4(1, 1, 1, 0.6))
 
@@ -125,8 +123,7 @@ func remake_room(room_pos: Vector2i) -> void:
 		bf.set_pos_2d(door_node, glib.ToV2(door.get_center_pos()))
 		room.container_doors.add_child(door_node)
 
-		var captured_dir: int = door.get_direction()
-		door_node.body_entered.connect(func(x: Node3D): on_player_entered_door(x, captured_dir))
+		door_node.body_entered.connect(on_player_entered_door.bind(door.get_direction()))
 
 
 func _ready() -> void:
@@ -160,8 +157,7 @@ func _ready() -> void:
 func _physics_process(_dt: float) -> void:
 	if Meta.async_data_loaded and not async_scene_loaded:
 		async_scene_loaded = true
-		var r = load("res://assets/async_data.tscn")
-		@warning_ignore("unsafe_method_access")
+		var r: PackedScene = load("res://assets/async_data.tscn")
 		var n: Node = r.instantiate()
 		add_child(n)
 
