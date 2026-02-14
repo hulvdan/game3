@@ -63,7 +63,9 @@
         "parallaxFactorX": 0,
         "parallaxFactorY": 0,
         "parallaxScaling": true,
-        "requiredTags": ["progression"],
+        "requiredTags": [
+          "progression"
+        ],
         "excludedTags": [],
         "autoTilesKilledByOtherLayerUid": null,
         "uiFilterTags": [],
@@ -99,7 +101,9 @@
         "parallaxFactorY": 0,
         "parallaxScaling": true,
         "requiredTags": [],
-        "excludedTags": ["progression"],
+        "excludedTags": [
+          "progression"
+        ],
         "autoTilesKilledByOtherLayerUid": null,
         "uiFilterTags": [],
         "useAsyncRender": false,
@@ -233,7 +237,9 @@
       {
         "identifier": "Progression",
         "uid": 10,
-        "tags": ["progression"],
+        "tags": [
+          "progression"
+        ],
         "exportToToc": false,
         "allowOutOfBounds": false,
         "doc": null,
@@ -424,16 +430,56 @@
         "identifier": "CODEGEN_Progression",
         "uid": 14,
         "values": [
-          { "id": "SKILL_HP", "tileRect": null, "color": 0 },
-          { "id": "SKILL_MANA", "tileRect": null, "color": 0 },
-          { "id": "SKILL_ATTACK", "tileRect": null, "color": 0 },
-          { "id": "SKILL_ARMOR", "tileRect": null, "color": 0 },
-          { "id": "SKILL_MAGIC_ATTACK", "tileRect": null, "color": 0 },
-          { "id": "CRAFT_BLACKSMITH", "tileRect": null, "color": 0 },
-          { "id": "CRAFT_WITCH", "tileRect": null, "color": 0 },
-          { "id": "CRAFT_ENGINEER", "tileRect": null, "color": 0 },
-          { "id": "CLASS_HEAVY_KNIGHT", "tileRect": null, "color": 0 },
-          { "id": "CLASS_BARBARIAN", "tileRect": null, "color": 0 }
+          {
+            "id": "SKILL_HP",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "SKILL_MANA",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "SKILL_ATTACK",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "SKILL_ARMOR",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "SKILL_MAGIC_ATTACK",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "CRAFT_BLACKSMITH",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "CRAFT_WITCH",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "CRAFT_ENGINEER",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "CLASS_HEAVY_KNIGHT",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "CLASS_BARBARIAN",
+            "tileRect": null,
+            "color": 0
+          }
         ],
         "iconTilesetUid": null,
         "externalRelPath": null,
@@ -517,8 +563,14 @@
           "entityInstances": [
             {
               "__identifier": "Door",
-              "__grid": [5, 0],
-              "__pivot": [0, 0],
+              "__grid": [
+                5,
+                0
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
               "__tags": [],
               "__tile": {
                 "tilesetUid": 5,
@@ -532,7 +584,10 @@
               "width": 32,
               "height": 32,
               "defUid": 2,
-              "px": [80, 0],
+              "px": [
+                80,
+                0
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "Direction",
@@ -546,7 +601,14 @@
                     "h": 16
                   },
                   "defUid": 6,
-                  "realEditorValues": [{ "id": "V_String", "params": ["Up_3"] }]
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Up_3"
+                      ]
+                    }
+                  ]
                 }
               ],
               "__worldX": 96,
@@ -554,8 +616,14 @@
             },
             {
               "__identifier": "Door",
-              "__grid": [0, 4],
-              "__pivot": [0, 0],
+              "__grid": [
+                0,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
               "__tags": [],
               "__tile": {
                 "tilesetUid": 5,
@@ -569,7 +637,10 @@
               "width": 32,
               "height": 32,
               "defUid": 2,
-              "px": [0, 64],
+              "px": [
+                0,
+                64
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "Direction",
@@ -584,7 +655,12 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["Left_2"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Left_2"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -593,8 +669,14 @@
             },
             {
               "__identifier": "Door",
-              "__grid": [5, 8],
-              "__pivot": [0, 0],
+              "__grid": [
+                5,
+                8
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
               "__tags": [],
               "__tile": {
                 "tilesetUid": 5,
@@ -608,7 +690,10 @@
               "width": 32,
               "height": 32,
               "defUid": 2,
-              "px": [80, 128],
+              "px": [
+                80,
+                128
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "Direction",
@@ -623,7 +708,12 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["Down_1"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Down_1"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -632,8 +722,14 @@
             },
             {
               "__identifier": "Door",
-              "__grid": [10, 4],
-              "__pivot": [0, 0],
+              "__grid": [
+                10,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
               "__tags": [],
               "__tile": {
                 "tilesetUid": 5,
@@ -647,7 +743,10 @@
               "width": 32,
               "height": 32,
               "defUid": 2,
-              "px": [160, 64],
+              "px": [
+                160,
+                64
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "Direction",
@@ -662,7 +761,12 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["Right_0"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Right_0"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -690,12 +794,126 @@
           "visible": true,
           "optionalRules": [],
           "intGridCsv": [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           "autoLayerTiles": [],
           "seed": 420112,
@@ -778,8 +996,14 @@
           "entityInstances": [
             {
               "__identifier": "Door",
-              "__grid": [0, 6],
-              "__pivot": [0, 0],
+              "__grid": [
+                0,
+                6
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
               "__tags": [],
               "__tile": {
                 "tilesetUid": 5,
@@ -793,7 +1017,10 @@
               "width": 32,
               "height": 32,
               "defUid": 2,
-              "px": [0, 96],
+              "px": [
+                0,
+                96
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "Direction",
@@ -808,7 +1035,12 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["Left_2"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Left_2"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -817,8 +1049,14 @@
             },
             {
               "__identifier": "Door",
-              "__grid": [10, 2],
-              "__pivot": [0, 0],
+              "__grid": [
+                10,
+                2
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
               "__tags": [],
               "__tile": {
                 "tilesetUid": 5,
@@ -832,7 +1070,10 @@
               "width": 32,
               "height": 32,
               "defUid": 2,
-              "px": [160, 32],
+              "px": [
+                160,
+                32
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "Direction",
@@ -847,7 +1088,12 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["Right_0"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Right_0"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -856,8 +1102,14 @@
             },
             {
               "__identifier": "Door",
-              "__grid": [4, 0],
-              "__pivot": [0, 0],
+              "__grid": [
+                4,
+                0
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
               "__tags": [],
               "__tile": {
                 "tilesetUid": 5,
@@ -871,7 +1123,10 @@
               "width": 32,
               "height": 32,
               "defUid": 2,
-              "px": [64, 0],
+              "px": [
+                64,
+                0
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "Direction",
@@ -885,7 +1140,14 @@
                     "h": 16
                   },
                   "defUid": 6,
-                  "realEditorValues": [{ "id": "V_String", "params": ["Up_3"] }]
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Up_3"
+                      ]
+                    }
+                  ]
                 }
               ],
               "__worldX": 288,
@@ -893,8 +1155,14 @@
             },
             {
               "__identifier": "Door",
-              "__grid": [6, 8],
-              "__pivot": [0, 0],
+              "__grid": [
+                6,
+                8
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
               "__tags": [],
               "__tile": {
                 "tilesetUid": 5,
@@ -908,7 +1176,10 @@
               "width": 32,
               "height": 32,
               "defUid": 2,
-              "px": [96, 128],
+              "px": [
+                96,
+                128
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "Direction",
@@ -923,7 +1194,12 @@
                   },
                   "defUid": 6,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["Down_1"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Down_1"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -951,12 +1227,126 @@
           "visible": true,
           "optionalRules": [],
           "intGridCsv": [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-            0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-            1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           "autoLayerTiles": [],
           "seed": 6843252,
@@ -1014,16 +1404,27 @@
           "entityInstances": [
             {
               "__identifier": "Progression",
-              "__grid": [7, 12],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                7,
+                12
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "018c1410-fa90-11f0-bba5-f7d2d05e3d94",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [112, 192],
+              "px": [
+                112,
+                192
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1047,11 +1448,15 @@
                   "realEditorValues": [
                     {
                       "id": "V_String",
-                      "params": ["02cfdeb0-fa90-11f0-bba5-cf0e13e9d89e"]
+                      "params": [
+                        "02cfdeb0-fa90-11f0-bba5-cf0e13e9d89e"
+                      ]
                     },
                     {
                       "id": "V_String",
-                      "params": ["04830cf0-fa90-11f0-bba5-1d69baa1f446"]
+                      "params": [
+                        "04830cf0-fa90-11f0-bba5-1d69baa1f446"
+                      ]
                     }
                   ]
                 },
@@ -1062,7 +1467,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["CRAFT_BLACKSMITH"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "CRAFT_BLACKSMITH"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1071,16 +1481,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [7, 14],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                7,
+                14
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "02cfdeb0-fa90-11f0-bba5-cf0e13e9d89e",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [112, 224],
+              "px": [
+                112,
+                224
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1097,7 +1518,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["SKILL_MANA"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "SKILL_MANA"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1106,16 +1532,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [7, 10],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                7,
+                10
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "04830cf0-fa90-11f0-bba5-1d69baa1f446",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [112, 160],
+              "px": [
+                112,
+                160
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1145,15 +1582,21 @@
                   "realEditorValues": [
                     {
                       "id": "V_String",
-                      "params": ["2d2c71a0-fa90-11f0-bba5-f54849f94f32"]
+                      "params": [
+                        "2d2c71a0-fa90-11f0-bba5-f54849f94f32"
+                      ]
                     },
                     {
                       "id": "V_String",
-                      "params": ["459475d0-fa90-11f0-bba5-217aa8e0fec1"]
+                      "params": [
+                        "459475d0-fa90-11f0-bba5-217aa8e0fec1"
+                      ]
                     },
                     {
                       "id": "V_String",
-                      "params": ["44d78e70-fa90-11f0-bba5-c16300065288"]
+                      "params": [
+                        "44d78e70-fa90-11f0-bba5-c16300065288"
+                      ]
                     }
                   ]
                 },
@@ -1164,7 +1607,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["SKILL_HP"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "SKILL_HP"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1173,16 +1621,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [7, 8],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                7,
+                8
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "2d2c71a0-fa90-11f0-bba5-f54849f94f32",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [112, 128],
+              "px": [
+                112,
+                128
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1200,7 +1659,9 @@
                   "realEditorValues": [
                     {
                       "id": "V_String",
-                      "params": ["c0842ba0-fa90-11f0-bba5-5bd9f074e4d8"]
+                      "params": [
+                        "c0842ba0-fa90-11f0-bba5-5bd9f074e4d8"
+                      ]
                     }
                   ]
                 },
@@ -1211,7 +1672,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["CLASS_HEAVY_KNIGHT"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "CLASS_HEAVY_KNIGHT"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1220,16 +1686,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [10, 9],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                10,
+                9
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "44d78e70-fa90-11f0-bba5-c16300065288",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [160, 144],
+              "px": [
+                160,
+                144
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1247,7 +1724,9 @@
                   "realEditorValues": [
                     {
                       "id": "V_String",
-                      "params": ["4d125660-fa90-11f0-bba5-e998bb23b0a9"]
+                      "params": [
+                        "4d125660-fa90-11f0-bba5-e998bb23b0a9"
+                      ]
                     }
                   ]
                 },
@@ -1258,7 +1737,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["CRAFT_WITCH"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "CRAFT_WITCH"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1267,16 +1751,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [4, 11],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                4,
+                11
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "459475d0-fa90-11f0-bba5-217aa8e0fec1",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [64, 176],
+              "px": [
+                64,
+                176
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1300,11 +1795,15 @@
                   "realEditorValues": [
                     {
                       "id": "V_String",
-                      "params": ["4fe46220-fa90-11f0-bba5-035d6bd1da1b"]
+                      "params": [
+                        "4fe46220-fa90-11f0-bba5-035d6bd1da1b"
+                      ]
                     },
                     {
                       "id": "V_String",
-                      "params": ["baf597f0-fa90-11f0-bba5-139b2f1c79cd"]
+                      "params": [
+                        "baf597f0-fa90-11f0-bba5-139b2f1c79cd"
+                      ]
                     }
                   ]
                 },
@@ -1315,7 +1814,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["CRAFT_ENGINEER"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "CRAFT_ENGINEER"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1324,16 +1828,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [10, 11],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                10,
+                11
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "4d125660-fa90-11f0-bba5-e998bb23b0a9",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [160, 176],
+              "px": [
+                160,
+                176
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1350,7 +1865,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["SKILL_MAGIC_ATTACK"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "SKILL_MAGIC_ATTACK"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1359,16 +1879,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [4, 13],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                4,
+                13
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "4fe46220-fa90-11f0-bba5-035d6bd1da1b",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [64, 208],
+              "px": [
+                64,
+                208
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1385,7 +1916,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["SKILL_ATTACK"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "SKILL_ATTACK"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1394,16 +1930,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [4, 9],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                4,
+                9
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "baf597f0-fa90-11f0-bba5-139b2f1c79cd",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [64, 144],
+              "px": [
+                64,
+                144
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1421,7 +1968,9 @@
                   "realEditorValues": [
                     {
                       "id": "V_String",
-                      "params": ["91c24920-fa90-11f0-b016-db67fbc71a9b"]
+                      "params": [
+                        "91c24920-fa90-11f0-b016-db67fbc71a9b"
+                      ]
                     }
                   ]
                 },
@@ -1432,7 +1981,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["CLASS_BARBARIAN"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "CLASS_BARBARIAN"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1441,16 +1995,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [7, 6],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                7,
+                6
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "c0842ba0-fa90-11f0-bba5-5bd9f074e4d8",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [112, 96],
+              "px": [
+                112,
+                96
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1467,7 +2032,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["SKILL_ARMOR"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "SKILL_ARMOR"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1476,16 +2046,27 @@
             },
             {
               "__identifier": "Progression",
-              "__grid": [4, 7],
-              "__pivot": [0, 0],
-              "__tags": ["progression"],
+              "__grid": [
+                4,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [
+                "progression"
+              ],
               "__tile": null,
               "__smartColor": "#FEE761",
               "iid": "91c24920-fa90-11f0-b016-db67fbc71a9b",
               "width": 16,
               "height": 16,
               "defUid": 10,
-              "px": [64, 112],
+              "px": [
+                64,
+                112
+              ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
@@ -1502,7 +2083,12 @@
                   "__tile": null,
                   "defUid": 15,
                   "realEditorValues": [
-                    { "id": "V_String", "params": ["SKILL_HP"] }
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "SKILL_HP"
+                      ]
+                    }
                   ]
                 }
               ],
@@ -1555,18 +2141,262 @@
           "visible": true,
           "optionalRules": [],
           "intGridCsv": [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           "autoLayerTiles": [],
           "seed": 8906043,
