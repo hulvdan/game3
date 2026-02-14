@@ -6,6 +6,10 @@
     ".venv/": true,
     "**/*.uid": true
   },
+  "files.associations": {
+    "*.ldtk": "json",
+    ".prettierrc": "json"
+  },
   "runOnSave.commands": [
     {
       "match": "glib.yaml$",

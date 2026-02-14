@@ -20,14 +20,6 @@ repos:
   #       # language_version: python3
   #       # require_serial: true
   #       # types: [gdscript]
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v4.0.0-alpha.8"
-    hooks:
-      - id: prettier
-        # name: prettier
-        files: \.(json|ldtk)$
-        stages: [pre-commit]
-        args: ["--tab-width", "2"]
   - repo: local
     hooks:
       - id: gdscript-formatter
@@ -38,3 +30,10 @@ repos:
         always_run: true
         language: system
         types: [gdscript]
+      - id: prettier
+        name: prettier
+        entry: prettier --parser json --write
+        language: system
+        require_serial: true
+        files: \.(json|ldtk)$
+        stages: [pre-commit]
