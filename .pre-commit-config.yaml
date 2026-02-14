@@ -36,4 +36,4 @@ repos:
         language: system
         require_serial: true
         files: \.(json|ldtk)$
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit, pre-push, manual]

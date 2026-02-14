@@ -7,7 +7,7 @@ static var async_scene_loaded = false
 @export var camera_distance: float
 @export var camera_angle: float
 
-@export var creature_player: ResCreature
+@export var res_creature_player: ResCreature
 
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
@@ -85,7 +85,7 @@ func remake_room(new_room_pos: Vector2i) -> void:
 	var g_room = g_rooms[(current_room_pos.x + current_room_pos.y) % len(g_rooms)]
 	var size: Vector2i = glib.ToV2i(g_room.get_size())
 
-	player = make_creature(creature_player, Vector2(size) / 2)
+	player = make_creature(res_creature_player, Vector2(size) / 2)
 	for mob in glib.v.get_mobs_to_spawn():
 		var r: ResCreature = load(mob.get_res())
 		make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
