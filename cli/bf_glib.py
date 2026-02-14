@@ -163,6 +163,8 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         for func in bf.glib_processing_functions:
             func(genline, glib)
 
+    bf.run_command("gdscript-formatter src/codegen/hands.gd")
+
     out_path = Path(".temp") / "glib.json"
     bf.recursive_mkdir(out_path.parent)
     with open(out_path, "w", encoding="utf-8") as out_file:
