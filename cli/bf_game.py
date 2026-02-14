@@ -77,7 +77,7 @@ def process_glib(*args, **kwargs) -> None:
     # }
 
 
-def _process_glib(_genline, glib) -> None:
+def _process_glib(genline, glib) -> None:
     # def enumerate_table(field: str):
     #     # {  ###
     #     scoped_processing_args[0] = field
@@ -107,6 +107,8 @@ def _process_glib(_genline, glib) -> None:
     world = bf.ldtk_load("assets/level.ldtk")
     rooms = []
     for level in world.levels:
+        if level.identifier.startswith("DONT_INCLUDE"):
+            continue
         floor = level.get_layer("Floor")
         doors = []
         entities = level.get_layer("Entities")
@@ -126,6 +128,71 @@ def _process_glib(_genline, glib) -> None:
             }
         )
     glib["rooms"] = rooms
+
+    # Progression.
+    # ============================================================
+    prog_type_2_prog = {x["type"]: x for x in glib["progression"][1:]}
+    required_to_specify_progression_types = list(prog_type_2_prog.keys())
+    for entity in (
+        world.get_level("DONT_INCLUDE_Progression")
+        .get_layer("Progression")
+        .entities("Progression")
+    ):
+        progression_type = entity.field("progression_type")
+        assert progression_type in required_to_specify_progression_types, (
+            f"Progression {progression_type} must be specified in ldtk ONCE"
+        )
+        required_to_specify_progression_types.remove(progression_type)
+        p = prog_type_2_prog[progression_type]
+        p["pos"] = bf.as_dict(entity.pos)
+    assert not required_to_specify_progression_types, (
+        f"The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
+    )
+
+    # Tables.
+    # ============================================================
+    if 1:  # {  ###
+        with open(bf.SRC_DIR / "game" / "glib.proto", encoding="utf-8") as in_file:
+            glib_proto_lines = [l.strip() for l in in_file if l.strip()]
+
+        start = -1
+        end = -1
+        for i, line in enumerate(glib_proto_lines):
+            if "TABLE_GEN_START" in line:
+                start = i + 1
+            if "TABLE_GEN_END" in line:
+                end = i
+                break
+        assert start >= 0
+        assert end > start
+
+        # tuples of field_name + type_name
+        # ex: [("hostilities", "Hostility")]
+        table_transform_data: list[tuple[str, str]] = []
+        for i in range(start, end):
+            line = glib_proto_lines[i]  # ex: `repeated Hostility hostilities = 7;`
+            field_name = line.split(" =", 1)[0].rsplit(" ", 1)[-1].strip()
+            type_name = line.split(" =", 1)[0].rsplit(" ", 2)[-2].strip()
+            print(f"{field_name=} {type_name=}")
+            table_transform_data.append((field_name, type_name))
+
+        for field_name, type_name in table_transform_data:
+            types = [x["type"] for x in glib[field_name]]
+            for t in types:
+                assert t.upper() == t, (
+                    "{}. {}. `type` fields must be in CONSTANT_CASE".format(field_name, t)
+                )
+            bf.check_duplicates(types)
+            bf.genenum(genline, type_name + "Type", types, add_count=True)
+            transforms.append(
+                (
+                    field_name,
+                    f"{type_name.lower()}_type",
+                    f"{type_name.lower()}_types",
+                    {v: i for i, v in enumerate(types)},
+                )
+            )
+    # }
 
     # Transforms.
     # ============================================================

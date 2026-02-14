@@ -40,10 +40,20 @@ message GRoom {
   repeated int32 tiles = 4;
 }
 
+message GProgression {
+  int32 type = 1;
+  string debug_name = 2;
+  GV2i pos = 3;
+}
+
 message Lib {
   int32 debug_collisions = 5;
   repeated GMobToSpawn mobs_to_spawn = 1;
   repeated GRoom rooms = 2;
   float player_speed = 3;
   GV2i world_size = 4;
+  GV2i progression_size = 6;
+  // TABLE_GEN_START
+  repeated GProgression progression = 7;
+  // TABLE_GEN_END
 }

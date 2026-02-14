@@ -23,11 +23,13 @@
     },
     {
       "match": "glib.proto$",
-      "command": "uv run python cli/bf_cli.py regen_glib_proto",
+      "command": "uv run python cli/bf_cli.py regen_glib_proto && uv run python cli/bf_cli.py codegen windows debug",
       "runIn": "backend"
     },
     {
-      "languages": ["python"],
+      "languages": [
+        "python"
+      ],
       "command": "uv run ruff check --select I ${file} --fix",
       "runIn": "backend"
     }

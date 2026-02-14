@@ -256,9 +256,9 @@
         "fillOpacity": 1,
         "lineOpacity": 1,
         "hollow": false,
-        "color": "#FEE761",
+        "color": "#63C74D",
         "renderMode": "Ellipse",
-        "showName": true,
+        "showName": false,
         "tilesetId": null,
         "tileRenderMode": "FitInside",
         "tileRect": null,
@@ -308,7 +308,7 @@
             "tilesetUid": null
           },
           {
-            "identifier": "skill",
+            "identifier": "progression_type",
             "doc": null,
             "__type": "LocalEnum.CODEGEN_Progression",
             "uid": 15,
@@ -317,9 +317,9 @@
             "canBeNull": false,
             "arrayMinLength": null,
             "arrayMaxLength": null,
-            "editorDisplayMode": "Hidden",
+            "editorDisplayMode": "ValueOnly",
             "editorDisplayScale": 1,
-            "editorDisplayPos": "Above",
+            "editorDisplayPos": "Center",
             "editorLinkStyle": "StraightArrow",
             "editorDisplayColor": null,
             "editorAlwaysShow": false,
@@ -430,6 +430,11 @@
         "identifier": "CODEGEN_Progression",
         "uid": 14,
         "values": [
+          {
+            "id": "INVALID",
+            "tileRect": null,
+            "color": 0
+          },
           {
             "id": "SKILL_HP",
             "tileRect": null,
@@ -1358,14 +1363,14 @@
       "__neighbours": []
     },
     {
-      "identifier": "Progression",
+      "identifier": "DONT_INCLUDE_Progression",
       "iid": "9f375950-fa90-11f0-bba5-3d05472eced7",
       "uid": 8,
-      "worldX": 16,
-      "worldY": -256,
+      "worldX": 64,
+      "worldY": -176,
       "worldDepth": 0,
-      "pxWid": 256,
-      "pxHei": 256,
+      "pxWid": 144,
+      "pxHei": 176,
       "__bgColor": "#696A79",
       "bgColor": null,
       "useAutoIdentifier": false,
@@ -1381,8 +1386,8 @@
         {
           "__identifier": "Progression",
           "__type": "Entities",
-          "__cWid": 16,
-          "__cHei": 16,
+          "__cWid": 9,
+          "__cHei": 11,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -1405,8 +1410,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                7,
-                12
+                4,
+                7
               ],
               "__pivot": [
                 0,
@@ -1416,14 +1421,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "018c1410-fa90-11f0-bba5-f7d2d05e3d94",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                112,
-                192
+                64,
+                112
               ],
               "fieldInstances": [
                 {
@@ -1461,7 +1466,7 @@
                   ]
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "CRAFT_BLACKSMITH",
                   "__tile": null,
@@ -1482,8 +1487,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                7,
-                14
+                4,
+                9
               ],
               "__pivot": [
                 0,
@@ -1493,14 +1498,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "02cfdeb0-fa90-11f0-bba5-cf0e13e9d89e",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                112,
-                224
+                64,
+                144
               ],
               "fieldInstances": [
                 {
@@ -1512,7 +1517,7 @@
                   "realEditorValues": []
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "SKILL_MANA",
                   "__tile": null,
@@ -1533,8 +1538,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                7,
-                10
+                4,
+                5
               ],
               "__pivot": [
                 0,
@@ -1544,14 +1549,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "04830cf0-fa90-11f0-bba5-1d69baa1f446",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                112,
-                160
+                64,
+                80
               ],
               "fieldInstances": [
                 {
@@ -1601,7 +1606,7 @@
                   ]
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "SKILL_HP",
                   "__tile": null,
@@ -1622,8 +1627,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                7,
-                8
+                4,
+                3
               ],
               "__pivot": [
                 0,
@@ -1633,14 +1638,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "2d2c71a0-fa90-11f0-bba5-f54849f94f32",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                112,
-                128
+                64,
+                48
               ],
               "fieldInstances": [
                 {
@@ -1666,7 +1671,7 @@
                   ]
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "CLASS_HEAVY_KNIGHT",
                   "__tile": null,
@@ -1687,8 +1692,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                10,
-                9
+                7,
+                4
               ],
               "__pivot": [
                 0,
@@ -1698,14 +1703,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "44d78e70-fa90-11f0-bba5-c16300065288",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                160,
-                144
+                112,
+                64
               ],
               "fieldInstances": [
                 {
@@ -1731,7 +1736,7 @@
                   ]
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "CRAFT_WITCH",
                   "__tile": null,
@@ -1752,8 +1757,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                4,
-                11
+                1,
+                6
               ],
               "__pivot": [
                 0,
@@ -1763,14 +1768,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "459475d0-fa90-11f0-bba5-217aa8e0fec1",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                64,
-                176
+                16,
+                96
               ],
               "fieldInstances": [
                 {
@@ -1808,7 +1813,7 @@
                   ]
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "CRAFT_ENGINEER",
                   "__tile": null,
@@ -1829,8 +1834,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                10,
-                11
+                7,
+                6
               ],
               "__pivot": [
                 0,
@@ -1840,14 +1845,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "4d125660-fa90-11f0-bba5-e998bb23b0a9",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                160,
-                176
+                112,
+                96
               ],
               "fieldInstances": [
                 {
@@ -1859,7 +1864,7 @@
                   "realEditorValues": []
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "SKILL_MAGIC_ATTACK",
                   "__tile": null,
@@ -1880,8 +1885,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                4,
-                13
+                1,
+                8
               ],
               "__pivot": [
                 0,
@@ -1891,14 +1896,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "4fe46220-fa90-11f0-bba5-035d6bd1da1b",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                64,
-                208
+                16,
+                128
               ],
               "fieldInstances": [
                 {
@@ -1910,7 +1915,7 @@
                   "realEditorValues": []
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "SKILL_ATTACK",
                   "__tile": null,
@@ -1931,8 +1936,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                4,
-                9
+                1,
+                4
               ],
               "__pivot": [
                 0,
@@ -1942,40 +1947,26 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "baf597f0-fa90-11f0-bba5-139b2f1c79cd",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                64,
-                144
+                16,
+                64
               ],
               "fieldInstances": [
                 {
                   "__identifier": "ref",
                   "__type": "Array<EntityRef>",
-                  "__value": [
-                    {
-                      "entityIid": "91c24920-fa90-11f0-b016-db67fbc71a9b",
-                      "layerIid": "a9a0c112-fa90-11f0-bba5-ef100fe5123f",
-                      "levelIid": "9f375950-fa90-11f0-bba5-3d05472eced7",
-                      "worldIid": "27a80101-fa90-11f0-a600-872af0a8f689"
-                    }
-                  ],
+                  "__value": [],
                   "__tile": null,
                   "defUid": 13,
-                  "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": [
-                        "91c24920-fa90-11f0-b016-db67fbc71a9b"
-                      ]
-                    }
-                  ]
+                  "realEditorValues": []
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "CLASS_BARBARIAN",
                   "__tile": null,
@@ -1996,8 +1987,8 @@
             {
               "__identifier": "Progression",
               "__grid": [
-                7,
-                6
+                4,
+                1
               ],
               "__pivot": [
                 0,
@@ -2007,14 +1998,14 @@
                 "progression"
               ],
               "__tile": null,
-              "__smartColor": "#FEE761",
+              "__smartColor": "#63C74D",
               "iid": "c0842ba0-fa90-11f0-bba5-5bd9f074e4d8",
               "width": 16,
               "height": 16,
               "defUid": 10,
               "px": [
-                112,
-                96
+                64,
+                16
               ],
               "fieldInstances": [
                 {
@@ -2026,7 +2017,7 @@
                   "realEditorValues": []
                 },
                 {
-                  "__identifier": "skill",
+                  "__identifier": "progression_type",
                   "__type": "LocalEnum.CODEGEN_Progression",
                   "__value": "SKILL_ARMOR",
                   "__tile": null,
@@ -2043,65 +2034,14 @@
               ],
               "__worldX": 128,
               "__worldY": -160
-            },
-            {
-              "__identifier": "Progression",
-              "__grid": [
-                4,
-                7
-              ],
-              "__pivot": [
-                0,
-                0
-              ],
-              "__tags": [
-                "progression"
-              ],
-              "__tile": null,
-              "__smartColor": "#FEE761",
-              "iid": "91c24920-fa90-11f0-b016-db67fbc71a9b",
-              "width": 16,
-              "height": 16,
-              "defUid": 10,
-              "px": [
-                64,
-                112
-              ],
-              "fieldInstances": [
-                {
-                  "__identifier": "ref",
-                  "__type": "Array<EntityRef>",
-                  "__value": [],
-                  "__tile": null,
-                  "defUid": 13,
-                  "realEditorValues": []
-                },
-                {
-                  "__identifier": "skill",
-                  "__type": "LocalEnum.CODEGEN_Progression",
-                  "__value": "SKILL_HP",
-                  "__tile": null,
-                  "defUid": 15,
-                  "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": [
-                        "SKILL_HP"
-                      ]
-                    }
-                  ]
-                }
-              ],
-              "__worldX": 80,
-              "__worldY": -144
             }
           ]
         },
         {
           "__identifier": "Entities",
           "__type": "Entities",
-          "__cWid": 16,
-          "__cHei": 16,
+          "__cWid": 9,
+          "__cHei": 11,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -2125,8 +2065,8 @@
         {
           "__identifier": "Floor",
           "__type": "IntGrid",
-          "__cWid": 16,
-          "__cHei": 16,
+          "__cWid": 9,
+          "__cHei": 11,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -2141,163 +2081,6 @@
           "visible": true,
           "optionalRules": [],
           "intGridCsv": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
             0,
             0,
             0,

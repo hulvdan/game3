@@ -1460,6 +1460,120 @@ class GRoom:
 		return result
 
 
+class GProgression:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __pos
+		service.func_ref = Callable(self, "new_pos")
+		data[__pos.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	var __pos: PBField
+
+
+	func has_pos() -> bool:
+		if __pos.value != null:
+			return true
+		return false
+
+
+	func get_pos() -> GV2i:
+		return __pos.value
+
+
+	func clear_pos() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_pos() -> GV2i:
+		__pos.value = GV2i.new()
+		return __pos.value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class Lib:
 	func _init():
 		var service
@@ -1493,6 +1607,19 @@ class Lib:
 		service.field = __world_size
 		service.func_ref = Callable(self, "new_world_size")
 		data[__world_size.tag] = service
+
+		__progression_size = PBField.new("progression_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __progression_size
+		service.func_ref = Callable(self, "new_progression_size")
+		data[__progression_size.tag] = service
+
+		var __progression_default: Array[GProgression] = []
+		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 7, true, __progression_default)
+		service = PBServiceField.new()
+		service.field = __progression
+		service.func_ref = Callable(self, "add_progression")
+		data[__progression.tag] = service
 
 
 	var data = { }
@@ -1598,6 +1725,47 @@ class Lib:
 	func new_world_size() -> GV2i:
 		__world_size.value = GV2i.new()
 		return __world_size.value
+
+
+	var __progression_size: PBField
+
+
+	func has_progression_size() -> bool:
+		if __progression_size.value != null:
+			return true
+		return false
+
+
+	func get_progression_size() -> GV2i:
+		return __progression_size.value
+
+
+	func clear_progression_size() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__progression_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_progression_size() -> GV2i:
+		__progression_size.value = GV2i.new()
+		return __progression_size.value
+
+
+	var __progression: PBField
+
+
+	func get_progression() -> Array[GProgression]:
+		return __progression.value
+
+
+	func clear_progression() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__progression.value.clear()
+
+
+	func add_progression() -> GProgression:
+		var element = GProgression.new()
+		__progression.value.append(element)
+		return element
 
 
 	func _to_string() -> String:

@@ -17,6 +17,7 @@ mobs_to_spawn:
       y: 2
 
 progression:
+  - type: INVALID
   - type: SKILL_HP
   - type: SKILL_MANA
   - type: SKILL_ATTACK

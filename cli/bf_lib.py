@@ -293,12 +293,12 @@ def genenum(
     string = f"enum {name}"
     if enum_type:
         string += f" : {enum_type}"
-    string += " {  ///"
+    string += " {"
     genline(string)
 
     def genline_with_comment(line: str, i: int) -> None:
         if comments and comments[i]:
-            line += "  // " + comments[i]
+            line += "  # " + comments[i]
         genline(line)
 
     if hex_values:
@@ -319,7 +319,7 @@ def genenum(
     if add_count:
         genline("  {}_COUNT,".format(name))
 
-    genline("};\n")
+    genline("}\n")
 
     if add_to_string:
         genline(f"const char* {name}ToString({name} type) {{")
@@ -1612,7 +1612,7 @@ class LdtkLevel(BaseModel):
         for layer in self.layerInstances:
             if layer.identifier_ == name:
                 return layer
-        assert False
+        assert False, f"Layer {name} not found"
 
     # }
 
@@ -1621,6 +1621,13 @@ class Ldtk(BaseModel):
     # {  ###
     defs: LdtkDefs
     levels: list[LdtkLevel]
+
+    def get_level(self, name: str) -> LdtkLevel:
+        for level in self.levels:
+            if level.identifier == name:
+                return level
+        assert False, f"Level {name} not found"
+
     # }
 
 
