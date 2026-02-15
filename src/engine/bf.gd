@@ -44,3 +44,7 @@ func duplicate_shader_material(sprite: Sprite2D) -> ShaderMaterial:
 	var mat: ShaderMaterial = sprite.material.duplicate()
 	sprite.material = mat
 	return mat
+
+
+func from_xz(value: Vector3) -> Vector2:
+	return Vector2(value.x, value.z)

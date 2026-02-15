@@ -20,7 +20,12 @@ x pre shooting min time
 x shooting hold time 
 x player attacks using bow 
 x holding arrow slows down player
+x mobs move towards player
 
+* show player HP
+* show mob HP?
+* mob strikes when player is nearby
+* show arrow on player
 * mirror rooms vertically + horizontally
 * rolling stops bow
 * roll button?

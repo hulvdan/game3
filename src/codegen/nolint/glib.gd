@@ -1603,6 +1603,11 @@ class GCreature:
 		service.field = __hp
 		data[__hp.tag] = service
 
+		__speed = PBField.new("speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __speed
+		data[__speed.tag] = service
+
 
 	var data = { }
 
@@ -1716,6 +1721,28 @@ class GCreature:
 		__hp.value = value
 
 
+	var __speed: PBField
+
+
+	func has_speed() -> bool:
+		if __speed.value != null:
+			return true
+		return false
+
+
+	func get_speed() -> float:
+		return __speed.value
+
+
+	func clear_speed() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_speed(value: float) -> void:
+		__speed.value = value
+
+
 	func _to_string() -> String:
 		return PBPacker.message_to_string(data)
 
@@ -1763,15 +1790,10 @@ class Lib:
 		service.func_ref = Callable(self, "add_rooms")
 		data[__rooms.tag] = service
 
-		__player_speed = PBField.new("player_speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__player_speed_holding_scale = PBField.new("player_speed_holding_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __player_speed
-		data[__player_speed.tag] = service
-
-		__player_speed_holding_arrow = PBField.new("player_speed_holding_arrow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_speed_holding_arrow
-		data[__player_speed_holding_arrow.tag] = service
+		service.field = __player_speed_holding_scale
+		data[__player_speed_holding_scale.tag] = service
 
 		__arrow_speed_min = PBField.new("arrow_speed_min", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -1890,48 +1912,26 @@ class Lib:
 		return element
 
 
-	var __player_speed: PBField
+	var __player_speed_holding_scale: PBField
 
 
-	func has_player_speed() -> bool:
-		if __player_speed.value != null:
+	func has_player_speed_holding_scale() -> bool:
+		if __player_speed_holding_scale.value != null:
 			return true
 		return false
 
 
-	func get_player_speed() -> float:
-		return __player_speed.value
+	func get_player_speed_holding_scale() -> float:
+		return __player_speed_holding_scale.value
 
 
-	func clear_player_speed() -> void:
+	func clear_player_speed_holding_scale() -> void:
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		__player_speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__player_speed_holding_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_speed(value: float) -> void:
-		__player_speed.value = value
-
-
-	var __player_speed_holding_arrow: PBField
-
-
-	func has_player_speed_holding_arrow() -> bool:
-		if __player_speed_holding_arrow.value != null:
-			return true
-		return false
-
-
-	func get_player_speed_holding_arrow() -> float:
-		return __player_speed_holding_arrow.value
-
-
-	func clear_player_speed_holding_arrow() -> void:
-		data[15].state = PB_SERVICE_STATE.UNFILLED
-		__player_speed_holding_arrow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_player_speed_holding_arrow(value: float) -> void:
-		__player_speed_holding_arrow.value = value
+	func set_player_speed_holding_scale(value: float) -> void:
+		__player_speed_holding_scale.value = value
 
 
 	var __arrow_speed_min: PBField

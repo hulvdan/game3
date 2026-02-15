@@ -52,14 +52,14 @@ message GCreature {
   string res = 3;
   int32 creature_type = 4;
   int32 hp = 5;
+  float speed = 6;
 }
 
 message Lib {
   int32 debug_collisions = 5;
   repeated GMobToSpawn mobs_to_spawn = 1;
   repeated GRoom rooms = 2;
-  float player_speed = 3;
-  float player_speed_holding_arrow = 15;
+  float player_speed_holding_scale = 3;
   float arrow_speed_min = 9;
   float arrow_speed_max = 10;
   int32 arrow_damage_min = 11;

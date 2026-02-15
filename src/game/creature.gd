@@ -10,3 +10,10 @@ var type: glib.GCreatureType
 var res: ResCreature
 var hp: int
 var this_frame_taken_damage: int = 0
+
+
+class Controller:
+	var move: Vector2
+
+
+var controller: Controller = Controller.new()

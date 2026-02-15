@@ -46,6 +46,7 @@ class RoomData:
 func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature:
 	var data: glib.GCreature = glib.v.get_creatures()[type]
 	var creature: Creature = packed_creature.instantiate()
+	creature.type = type
 	creature.res = load(data.get_res())
 	assert(creature.res)
 	bf.set_pos_2d(creature, pos)
@@ -200,15 +201,27 @@ func _physics_process(dt: float) -> void:
 	if Meta.async_data_loaded and not async_scene_loaded:
 		async_scene_loaded = true
 		var r: PackedScene = load("res://assets/async_data.tscn")
-		var n: Node = r.instantiate()
-		add_child(n)
+		add_child(r.instantiate())
+
+	for creature: Creature in room.container_creatures.get_children():
+		creature.controller.move = Vector2(0, 0)
+		if creature.type <= glib.GCreatureType.PLAYER:
+			continue
+		var dir: Vector2 = bf.from_xz(player.transform.origin) - bf.from_xz(creature.transform.origin)
+		if dir != Vector2(0, 0):
+			dir = dir.normalized()
+		creature.controller.move = dir
 
 	if !player_is_entering_door:
-		bf.move_body_with_speed(
-			player.node_body,
-			Input.get_vector("move_l", "move_r", "move_u", "move_d"),
-			glib.v.get_player_speed_holding_arrow() if room.player_holding else glib.v.get_player_speed(),
-		)
+		player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
+
+	var creatures = glib.v.get_creatures()
+	for creature: Creature in room.container_creatures.get_children():
+		var data: glib.GCreature = creatures[creature.type]
+		var speed: float = data.get_speed()
+		if creature.type == glib.GCreatureType.PLAYER and room.player_holding:
+			speed *= glib.v.get_player_speed_holding_scale()
+		bf.move_body_with_speed(creature.node_body, creature.controller.move, speed)
 
 	var end_point: Vector3 = get_mouse_world_point()
 	if end_point != Vector3.INF:
