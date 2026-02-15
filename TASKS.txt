@@ -9,10 +9,14 @@ PLAN
 
 x bow sprite on player
 x bow aims towards mouse
+x spawn arrow on click
 
 * player attacks using bow 
-  * spawn arrow on click
-  * arrow collidies with walls
+  * correct arrow translation direction
+  * arrow collidies with walls (doesn't collide with other arrows)
+  *  
+  * 
+  * 
   * 
   * 
   * 

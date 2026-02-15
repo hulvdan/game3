@@ -18,6 +18,7 @@ static var async_scene_loaded = false
 @export var packed_ui_minimap_room: PackedScene
 @export var packed_ui_progression_entry: PackedScene
 @export var packed_bow: PackedScene
+@export var packed_arrow: PackedScene
 
 var player: Creature
 var player_bow: Node3D
@@ -188,7 +189,7 @@ func get_mouse_world_point() -> Vector3:
 	return Vector3.INF
 
 
-func _physics_process(_dt: float) -> void:
+func _physics_process(dt: float) -> void:
 	if Meta.async_data_loaded and not async_scene_loaded:
 		async_scene_loaded = true
 		var r: PackedScene = load("res://assets/async_data.tscn")
@@ -205,6 +206,16 @@ func _physics_process(_dt: float) -> void:
 	var end_point: Vector3 = get_mouse_world_point()
 	if end_point != Vector3.INF:
 		player_bow.transform.basis = player.transform.looking_at(end_point).basis
+
+	if Input.get_action_strength("shoot") >= 0.5:
+		var arrow: Node3D = packed_arrow.instantiate()
+		arrow.transform.origin = player.transform.origin
+		arrow.transform.basis = player_bow.transform.basis
+		room.container_projectiles.add_child(arrow)
+
+	for projectile: Node3D in room.container_projectiles.get_children():
+		projectile.translate(-projectile.basis.x * glib.v.get_arrow_speed() * dt)
+		# projectile.transform = projectile.transform.translated()
 
 
 func _process(_dt: float) -> void:

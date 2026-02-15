@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://cp0ir0onklq08" path="res://assets/packed_ui_progression_entry.tscn" id="9_vvw4a"]
 [ext_resource type="PackedScene" uid="uid://dt4q7rgbrwtxh" path="res://assets/packed_bow.tscn" id="10_ew6cl"]
 [ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/ui_flash.tres" id="10_h4xlo"]
+[ext_resource type="PackedScene" uid="uid://cjk26kw0piudl" path="res://assets/packed_arrow.tscn" id="11_km2eh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vvw4a"]
 shader = ExtResource("10_h4xlo")
@@ -35,6 +36,7 @@ packed_room = ExtResource("7_vqaxa")
 packed_ui_minimap_room = ExtResource("9_otm8r")
 packed_ui_progression_entry = ExtResource("9_vvw4a")
 packed_bow = ExtResource("10_ew6cl")
+packed_arrow = ExtResource("11_km2eh")
 
 [node name="_container_ui_minimap" type="Node2D" parent="_game" unique_id=229164054]
 unique_name_in_owner = true

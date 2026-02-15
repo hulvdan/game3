@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cjk26kw0piudl"]
+
+[ext_resource type="Texture2D" uid="uid://dmvkulolq5k7p" path="res://assets/art/textures/removeme/arrow.png" id="1_quauw"]
+
+[node name="arrow" type="Node3D" unique_id=1961089291]
+
+[node name="Node3D" type="Node3D" parent="." unique_id=1671833346]
+
+[node name="Sprite3D" type="Sprite3D" parent="Node3D" unique_id=779208082]
+transform = Transform3D(-1.5298985e-08, 0.35, -1.5298985e-08, 0, -1.5298985e-08, -0.35, -0.35, -1.5298985e-08, 6.687399e-16, 0, 0, 0)
+texture = ExtResource("1_quauw")

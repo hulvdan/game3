@@ -16,3 +16,5 @@ script = ExtResource("1_3cfnp")
 [node name="player" parent="_container_creatures" unique_id=1935514979 instance=ExtResource("3_3a6xa")]
 
 [node name="_container_doors" type="Node" parent="." unique_id=1436040055]
+
+[node name="_container_projectiles" type="Node" parent="." unique_id=37047198]

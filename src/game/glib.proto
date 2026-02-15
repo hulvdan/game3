@@ -56,6 +56,7 @@ message Lib {
   repeated GMobToSpawn mobs_to_spawn = 1;
   repeated GRoom rooms = 2;
   float player_speed = 3;
+  float arrow_speed = 9;
   GV2i world_size = 4;
   GV2i progression_size = 6;
   // TABLE_GEN_START

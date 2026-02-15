@@ -1687,6 +1687,11 @@ class Lib:
 		service.field = __player_speed
 		data[__player_speed.tag] = service
 
+		__arrow_speed = PBField.new("arrow_speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __arrow_speed
+		data[__arrow_speed.tag] = service
+
 		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __world_size
@@ -1794,6 +1799,28 @@ class Lib:
 
 	func set_player_speed(value: float) -> void:
 		__player_speed.value = value
+
+
+	var __arrow_speed: PBField
+
+
+	func has_arrow_speed() -> bool:
+		if __arrow_speed.value != null:
+			return true
+		return false
+
+
+	func get_arrow_speed() -> float:
+		return __arrow_speed.value
+
+
+	func clear_arrow_speed() -> void:
+		data[9].state = PB_SERVICE_STATE.UNFILLED
+		__arrow_speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_arrow_speed(value: float) -> void:
+		__arrow_speed.value = value
 
 
 	var __world_size: PBField
