@@ -16,14 +16,10 @@ x ref collision masks
 x projectiles destroy enemy creatures
 x binding tres
 x validating not found / excessive tres files
+x pre shooting min time 
+x shooting hold time 
+x player attacks using bow 
 
-* player attacks using bow 
-  * pre shooting min time 
-  * shooting hold time 
-  * shooting yield time
-  * 
-  * 
-  * 
 * mirror rooms vertically + horizontally
 * rolling stops bow
 * roll button?

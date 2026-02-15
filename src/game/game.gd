@@ -215,12 +215,18 @@ func _physics_process(dt: float) -> void:
 		player_bow.transform.basis = player.transform.looking_at(end_point).basis
 
 	if Input.get_action_strength("shoot") >= 0.5:
-		var arrow: Node3D = packed_arrow.instantiate()
+		room.player_holding += dt
+	elif room.player_holding >= glib.v.get_shooting_min_seconds():
+		var arrow: Projectile = packed_arrow.instantiate()
+		var t = min(1, (room.player_holding - glib.v.get_shooting_min_seconds()) / glib.v.get_shooting_max_seconds())
+		arrow.speed = lerp(glib.v.get_arrow_speed_min(), glib.v.get_arrow_speed_max(), t)
+		arrow.damage = round(lerp(glib.v.get_arrow_damage_min(), glib.v.get_arrow_damage_max(), t))
 		arrow.transform.origin = player.transform.origin
 		arrow.transform.basis = player_bow.transform.basis
 		room.container_projectiles.add_child(arrow)
-
-	var projectile_step: Vector3 = Vector3(0, 0, -1) * (glib.v.get_arrow_speed() * dt)
+		room.player_holding = 0
+	elif room.player_holding > 0:
+		room.player_holding += dt
 
 	var space = world_3d.get_world_3d().direct_space_state
 	var param: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
@@ -230,7 +236,8 @@ func _physics_process(dt: float) -> void:
 	param.hit_from_inside = true
 	param.exclude = [player]
 
-	for projectile: Node3D in room.container_projectiles.get_children():
+	for projectile: Projectile in room.container_projectiles.get_children():
+		var projectile_step: Vector3 = Vector3(0, 0, -1) * (projectile.speed * dt)
 		projectile.translate_object_local(projectile_step)
 
 		param.from = projectile.transform.origin
@@ -244,12 +251,13 @@ func _physics_process(dt: float) -> void:
 				room.container_projectiles.remove_child(projectile)
 				if mask == CollisionMask.CREATURES:
 					var damaged_creature: Creature = d.collider
-					damaged_creature.this_frame_taken_damage += glib.v.get_arrow_damage()
+					damaged_creature.this_frame_taken_damage += projectile.damage
 				break
 
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.this_frame_taken_damage:
 			creature.hp -= creature.this_frame_taken_damage
+			creature.this_frame_taken_damage = 0
 
 		if creature.hp <= 0:
 			room.container_creatures.remove_child(creature)

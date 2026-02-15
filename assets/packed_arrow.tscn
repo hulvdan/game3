@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://cjk26kw0piudl"]
 
+[ext_resource type="Script" uid="uid://bfsuyjxdth4us" path="res://src/game/projectile.gd" id="1_m1wom"]
 [ext_resource type="Texture2D" uid="uid://dmvkulolq5k7p" path="res://assets/art/textures/removeme/arrow.png" id="1_quauw"]
 
 [node name="arrow" type="Node3D" unique_id=1961089291]
+script = ExtResource("1_m1wom")
 
 [node name="Node3D" type="Node3D" parent="." unique_id=1671833346]
 
