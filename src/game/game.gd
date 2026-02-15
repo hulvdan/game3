@@ -198,6 +198,8 @@ func get_mouse_world_point() -> Vector3:
 
 
 func _physics_process(dt: float) -> void:
+	room.elapsed += dt
+
 	if Meta.async_data_loaded and not async_scene_loaded:
 		async_scene_loaded = true
 		var r: PackedScene = load("res://assets/async_data.tscn")
@@ -205,12 +207,15 @@ func _physics_process(dt: float) -> void:
 
 	for creature: Creature in room.container_creatures.get_children():
 		creature.controller.move = Vector2(0, 0)
-		if creature.type <= glib.GCreatureType.PLAYER:
-			continue
-		var dir: Vector2 = bf.from_xz(player.transform.origin) - bf.from_xz(creature.transform.origin)
-		if dir != Vector2(0, 0):
-			dir = dir.normalized()
-		creature.controller.move = dir
+
+	if room.elapsed >= 1:
+		for creature: Creature in room.container_creatures.get_children():
+			if creature.type <= glib.GCreatureType.PLAYER:
+				continue
+			var dir: Vector2 = bf.from_xz(player.transform.origin) - bf.from_xz(creature.transform.origin)
+			if dir != Vector2(0, 0):
+				dir = dir.normalized()
+			creature.controller.move = dir
 
 	if !player_is_entering_door:
 		player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")

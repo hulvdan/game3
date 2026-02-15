@@ -21,6 +21,7 @@ x shooting hold time
 x player attacks using bow 
 x holding arrow slows down player
 x mobs move towards player
+x mobs start moving after 1 second
 
 * show player HP
 * show mob HP?

@@ -5,6 +5,8 @@ class_name Room
 var target_camera_elements: Array[Node3D]
 var player_holding: float = 0
 
+var elapsed: float = 0
+
 @onready var container_creatures: Node = $_container_creatures
 @onready var container_floor: Node = $_container_floor
 @onready var container_doors: Node = $_container_doors
