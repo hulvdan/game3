@@ -3,6 +3,13 @@ extends Node
 # const INT_MAX = 9223372036854775807 # 2^63 - 1
 # const INT_MIN = -9223372036854775808 # -2^63
 
+const DIRECTION_OFFSETS: Array[Vector2i] = [
+	Vector2i(1, 0),
+	Vector2i(0, 1),
+	Vector2i(-1, 0),
+	Vector2i(0, -1),
+]
+
 enum DirectionFlags {
 	NOT_SET = 0,
 	RIGHT = 1,
@@ -10,13 +17,6 @@ enum DirectionFlags {
 	LEFT = 4,
 	UP = 8,
 }
-
-const DIRECTION_OFFSETS: Array[Vector2i] = [
-	Vector2i(1, 0),
-	Vector2i(0, 1),
-	Vector2i(-1, 0),
-	Vector2i(0, -1),
-]
 
 
 func clear_children(node: Node) -> void:

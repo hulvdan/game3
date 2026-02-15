@@ -2,11 +2,6 @@ extends Node
 
 class_name Game
 
-enum CollisionMask {
-	WALLS = 1 << 0,
-	CREATURES = 1 << 1,
-}
-
 # Variables ##
 static var async_scene_loaded = false
 
@@ -39,6 +34,11 @@ var player_is_entering_door := false
 @onready var container_ui_minimap: Node2D = %_container_ui_minimap
 @onready var container_ui_progression: Node2D = %_container_ui_progression
 ##
+
+enum CollisionMask {
+	WALLS = 1 << 0,
+	CREATURES = 1 << 1,
+}
 
 
 class RoomData:
@@ -228,7 +228,7 @@ func _physics_process(dt: float) -> void:
 	for creature: Creature in room.container_creatures.get_children():
 		creature.controller.move = Vector2(0, 0)
 
-	# Mobs settings controller.move towards player ##
+	# Setting enemy controller.move towards player ##
 	if room.elapsed >= 1:
 		for creature: Creature in room.container_creatures.get_children():
 			if creature.type <= glib.GCreatureType.PLAYER:
