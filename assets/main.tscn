@@ -23,10 +23,11 @@ shader_parameter/flash = Color(1, 1, 1, 0)
 
 [node name="_main" type="Node3D" unique_id=958610633]
 
-[node name="_game" type="Node" parent="." unique_id=1695219218]
+[node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("world_3d")]
 script = ExtResource("1_ig7tw")
 camera_distance = 4.015
 camera_angle = 0.75
+world_3d = NodePath("../_meta/_world_3d")
 res_creature_player = ExtResource("2_h4xlo")
 packed_creature = ExtResource("6_qdlv5")
 packed_floor_tile = ExtResource("5_tkxyu")
@@ -86,3 +87,5 @@ game_secret = "1cccb4f791628c4a3d3bf49e30d9a139e81aa563"
 
 [node name="_platform_playgama" type="Node" parent="_meta" unique_id=680294843]
 script = ExtResource("2_ujfqy")
+
+[node name="_world_3d" type="Node3D" parent="_meta" unique_id=1366202170]

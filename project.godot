@@ -128,6 +128,12 @@ shoot={
 ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="walls"
+3d_physics/layer_2="creatures"
+3d_physics/layer_3="Layer 3"
+
 [physics]
 
 3d/default_gravity=0.0

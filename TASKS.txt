@@ -11,11 +11,11 @@ x bow sprite on player
 x bow aims towards mouse
 x spawn arrow on click
 x correct projectile translation direction
+x projectiles collide with walls (doesn't collide with other arrows)
 
 * player attacks using bow 
-  * projectile collidies with walls (doesn't collide with other arrows)
-  * projectile collides with creatures (except owner)
-  * cooldown 
+  * projectiles collide with creatures (except owner)
+  * shooting cooldown 
   * 
   * 
   * 

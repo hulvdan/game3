@@ -9,6 +9,7 @@ static var async_scene_loaded = false
 @export var camera_angle: float
 
 @export_category("Resources")
+@export var world_3d: Node3D
 @export var res_creature_player: ResCreature
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
@@ -213,9 +214,22 @@ func _physics_process(dt: float) -> void:
 		arrow.transform.basis = player_bow.transform.basis
 		room.container_projectiles.add_child(arrow)
 
+	var space = world_3d.get_world_3d().direct_space_state
+
+	var projectile_step: Vector3 = Vector3(0, 0, -1) * (glib.v.get_arrow_speed() * dt)
+
+	var param: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
+	param.collide_with_areas = false
+	param.collide_with_bodies = true
+	param.collision_mask = 1
+
 	for projectile: Node3D in room.container_projectiles.get_children():
-		projectile.translate(Vector3(0, 0, -1) * (glib.v.get_arrow_speed() * dt))
-		# projectile.transform = projectile.transform.translated()
+		projectile.translate_object_local(projectile_step)
+		param.from = projectile.transform.origin
+		param.to = projectile.transform.origin + projectile.transform.basis * projectile_step
+		var d: Dictionary = space.intersect_ray(param)
+		if d:
+			room.container_projectiles.remove_child(projectile)
 
 
 func _process(_dt: float) -> void:
