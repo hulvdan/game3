@@ -19,6 +19,7 @@ x validating not found / excessive tres files
 x pre shooting min time 
 x shooting hold time 
 x player attacks using bow 
+x holding arrow slows down player
 
 * mirror rooms vertically + horizontally
 * rolling stops bow

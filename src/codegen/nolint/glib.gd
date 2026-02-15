@@ -1768,6 +1768,11 @@ class Lib:
 		service.field = __player_speed
 		data[__player_speed.tag] = service
 
+		__player_speed_holding_arrow = PBField.new("player_speed_holding_arrow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_speed_holding_arrow
+		data[__player_speed_holding_arrow.tag] = service
+
 		__arrow_speed_min = PBField.new("arrow_speed_min", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arrow_speed_min
@@ -1905,6 +1910,28 @@ class Lib:
 
 	func set_player_speed(value: float) -> void:
 		__player_speed.value = value
+
+
+	var __player_speed_holding_arrow: PBField
+
+
+	func has_player_speed_holding_arrow() -> bool:
+		if __player_speed_holding_arrow.value != null:
+			return true
+		return false
+
+
+	func get_player_speed_holding_arrow() -> float:
+		return __player_speed_holding_arrow.value
+
+
+	func clear_player_speed_holding_arrow() -> void:
+		data[15].state = PB_SERVICE_STATE.UNFILLED
+		__player_speed_holding_arrow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_speed_holding_arrow(value: float) -> void:
+		__player_speed_holding_arrow.value = value
 
 
 	var __arrow_speed_min: PBField

@@ -59,6 +59,7 @@ message Lib {
   repeated GMobToSpawn mobs_to_spawn = 1;
   repeated GRoom rooms = 2;
   float player_speed = 3;
+  float player_speed_holding_arrow = 15;
   float arrow_speed_min = 9;
   float arrow_speed_max = 10;
   int32 arrow_damage_min = 11;

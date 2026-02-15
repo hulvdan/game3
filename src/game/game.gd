@@ -207,7 +207,7 @@ func _physics_process(dt: float) -> void:
 		bf.move_body_with_speed(
 			player.node_body,
 			Input.get_vector("move_l", "move_r", "move_u", "move_d"),
-			glib.v.get_player_speed(),
+			glib.v.get_player_speed_holding_arrow() if room.player_holding else glib.v.get_player_speed(),
 		)
 
 	var end_point: Vector3 = get_mouse_world_point()
@@ -219,7 +219,6 @@ func _physics_process(dt: float) -> void:
 	elif room.player_holding >= glib.v.get_shooting_min_seconds():
 		var arrow: Projectile = packed_arrow.instantiate()
 		var t = (room.player_holding - glib.v.get_shooting_min_seconds()) / glib.v.get_shooting_max_seconds()
-		t = min(1, t)
 		t = lerp(t, t * t, 0.25)
 		arrow.speed = lerp(glib.v.get_arrow_speed_min(), glib.v.get_arrow_speed_max(), t)
 		arrow.damage = round(lerp(glib.v.get_arrow_damage_min(), glib.v.get_arrow_damage_max(), t))
