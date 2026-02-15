@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://wg8ef4e6306p" path="res://assets/packed_room.tscn" id="7_vqaxa"]
 [ext_resource type="PackedScene" uid="uid://b3beehm2dl1yp" path="res://assets/packed_ui_minimap_room.tscn" id="9_otm8r"]
 [ext_resource type="PackedScene" uid="uid://cp0ir0onklq08" path="res://assets/packed_ui_progression_entry.tscn" id="9_vvw4a"]
+[ext_resource type="PackedScene" uid="uid://dt4q7rgbrwtxh" path="res://assets/packed_bow.tscn" id="10_ew6cl"]
 [ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/ui_flash.tres" id="10_h4xlo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vvw4a"]
@@ -33,6 +34,7 @@ packed_door = ExtResource("7_m5usj")
 packed_room = ExtResource("7_vqaxa")
 packed_ui_minimap_room = ExtResource("9_otm8r")
 packed_ui_progression_entry = ExtResource("9_vvw4a")
+packed_bow = ExtResource("10_ew6cl")
 
 [node name="_container_ui_minimap" type="Node2D" parent="_game" unique_id=229164054]
 unique_name_in_owner = true

@@ -4,11 +4,12 @@ class_name Game
 
 static var async_scene_loaded = false
 
+@export_category("Values")
 @export var camera_distance: float
 @export var camera_angle: float
 
+@export_category("Resources")
 @export var res_creature_player: ResCreature
-
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
 @export var packed_collider_tile: PackedScene
@@ -16,8 +17,10 @@ static var async_scene_loaded = false
 @export var packed_room: PackedScene
 @export var packed_ui_minimap_room: PackedScene
 @export var packed_ui_progression_entry: PackedScene
+@export var packed_bow: PackedScene
 
 var player: Creature
+var player_bow: Node3D
 var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
 var ui_minimap_rooms: Array[Sprite2D] = []
@@ -125,6 +128,8 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 			player_pos = glib.ToV2(door.get_center_pos()) + Vector2(bf.DIRECTION_OFFSETS[player_direction_index]) * 2
 
 	player = make_creature(res_creature_player, player_pos)
+	player_bow = packed_bow.instantiate()
+	player.add_child(player_bow)
 	for mob in glib.v.get_mobs_to_spawn():
 		var r: ResCreature = load(mob.get_res())
 		make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
@@ -170,7 +175,35 @@ func _ready() -> void:
 		var pos: Vector2i = glib.ToV2i(entry.get_pos())
 		node.transform.origin = (Vector2(pos.x, pos.y) - Vector2(progression_size) / 2.0) * 40.0
 
+	add_child(mesh_instance)
+
 	remake_room(Vector2i(Vector2(ws) / 2.0), -1)
+
+
+func get_mouse_world_point() -> Vector3:
+	var mouse_pos: Vector2 = get_viewport().get_mouse_position()
+	var ray_origin: Vector3 = camera.project_ray_origin(mouse_pos)
+	var ray_dir: Vector3 = camera.project_ray_normal(mouse_pos)
+	var hit_position = Plane(Vector3.UP, 0).intersects_ray(ray_origin, ray_dir)
+	if hit_position:
+		return hit_position
+	return Vector3.INF
+
+
+func _draw():
+	var immediate_mesh = ImmediateMesh.new()
+	immediate_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+	immediate_mesh.surface_add_vertex(start_point)
+	immediate_mesh.surface_add_vertex(end_point)
+	immediate_mesh.surface_end()
+
+	mesh_instance.mesh = immediate_mesh
+	add_child(mesh_instance)
+
+
+var mesh_instance := MeshInstance3D.new()
+var start_point: Vector3 = Vector3.INF
+var end_point: Vector3 = Vector3.INF
 
 
 func _physics_process(_dt: float) -> void:
@@ -186,6 +219,11 @@ func _physics_process(_dt: float) -> void:
 			Input.get_vector("move_l", "move_r", "move_u", "move_d"),
 			glib.v.get_player_speed(),
 		)
+
+	start_point = player.transform.origin
+	end_point = get_mouse_world_point()
+	if end_point != Vector3.INF:
+		player_bow.transform.basis = player.transform.looking_at(end_point).basis
 
 
 func _process(_dt: float) -> void:

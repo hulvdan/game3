@@ -7,24 +7,17 @@ BIG PLAN
 PLAN
 ============================================================
 
-x vial + ahk F24 fix
-x vscode space w -> save
-x vscode vim yank highlight
-x transition tween
-x vscode run f5/f6
-x tween: toggle minimap only after room changed (in the middle of tween)
-x removed submodules
-x vscodevim: ctrl j, ctrl k
-x vscode: space0 fold + good hjkl behavior for folds
-x format ldtk
-x vscode shrink tabs
-x progression: proto
-x progression: display in-game
-x spawning near door
-x f1 @a
+x bow sprite on player
+x bow aims towards mouse
 
 * player attacks using bow 
+  * spawn arrow on click
+  * arrow collidies with walls
+  * 
+  * 
+  * 
 * roll button?
+* mirror rooms vertically + horizontally
 * rolling stops bow
 * correct in front of door appearing
 * mob takes damage from bow
@@ -32,8 +25,11 @@ x f1 @a
 * long range by default + melee spells?
 * player hp bar 
 * mob hp bar
-* 
-* 
+* spikes (ref curse of the dead gods)
+* mob with shield
+  * can kill 
+    * ricochet wall
+    * piercing arrow 
 * 
 * 
 * 
