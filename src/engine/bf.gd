@@ -3,7 +3,7 @@ extends Node
 # const INT_MAX = 9223372036854775807 # 2^63 - 1
 # const INT_MIN = -9223372036854775808 # -2^63
 
-enum Direction {
+enum DirectionFlags {
 	NOT_SET = 0,
 	RIGHT = 1,
 	DOWN = 2,

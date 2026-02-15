@@ -5,7 +5,7 @@ world_size:
   y: 5
 
 player_speed: 4
-arrow_speed: 14
+arrow_speed: 10
 
 mobs_to_spawn:
   - res: res://src/game/res_creatures/player.tres

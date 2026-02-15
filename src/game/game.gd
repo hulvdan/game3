@@ -214,7 +214,7 @@ func _physics_process(dt: float) -> void:
 		room.container_projectiles.add_child(arrow)
 
 	for projectile: Node3D in room.container_projectiles.get_children():
-		projectile.translate(-projectile.basis.x * glib.v.get_arrow_speed() * dt)
+		projectile.translate(Vector3(0, 0, -1) * (glib.v.get_arrow_speed() * dt))
 		# projectile.transform = projectile.transform.translated()
 
 
