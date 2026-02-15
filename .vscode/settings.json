@@ -12,8 +12,13 @@
   },
   "runOnSave.commands": [
     {
-      "match": "glib.(proto|yaml)$",
+      "match": "glib.yaml$",
       "command": "uv run python cli/bf_cli.py codegen windows debug",
+      "runIn": "backend"
+    },
+    {
+      "match": "glib.proto$",
+      "command": "buf format -w ${file} && uv run python cli/bf_cli.py codegen windows debug",
       "runIn": "backend"
     },
     {

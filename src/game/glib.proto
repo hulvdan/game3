@@ -60,7 +60,11 @@ message Lib {
   repeated GRoom rooms = 2;
   float player_speed = 3;
   float arrow_speed = 9;
-  int32 arrow_damage = 10;
+  int32 arrow_damage = 15;
+  int32 arrow_damage_min = 10;
+  int32 arrow_damage_max = 11;
+  float shooting_pre_seconds = 13;
+  float shooting_hold_seconds = 14;
   GV2i world_size = 4;
   GV2i progression_size = 6;
   // TABLE_GEN_START

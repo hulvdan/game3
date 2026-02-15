@@ -14,9 +14,13 @@ x correct projectile translation direction
 x projectiles collide with walls (doesn't collide with other arrows)
 x ref collision masks
 x projectiles destroy enemy creatures
+x binding tres
+x validating not found / excessive tres files
 
 * player attacks using bow 
-  * shooting cooldown 
+  * pre shooting min time 
+  * shooting hold time 
+  * shooting yield time
   * 
   * 
   * 

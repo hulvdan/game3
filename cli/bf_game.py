@@ -132,7 +132,7 @@ def _process_glib(genline, glib) -> None:
     # Creatures.
     # ============================================================
     for x in glib["creatures"][1:]:
-        x["res"] = "res://src/game/res_creatures/{}.tres".format(x["type"].lower())
+        x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
 
     # Progression.
     # ============================================================
@@ -207,6 +207,10 @@ def _process_glib(genline, glib) -> None:
     for v in transforms:
         bf.recursive_replace_transform(glib, *(v[1:]))
 
+    required_to_be_bound_tres_filepaths = [
+        x.as_posix() for x in Path("src").rglob("**/_*.tres")
+    ]
+
     tres_errors = []
 
     def tres_callback(value: str) -> None:
@@ -217,9 +221,15 @@ def _process_glib(genline, glib) -> None:
         if not check_path.exists():
             tres_errors.append(("NOT FOUND", check_path))
             return
+        required_to_be_bound_tres_filepaths.remove(check_path.as_posix())
 
     bf.recursive_visiter(glib, "res", "ress", tres_callback)
     assert not tres_errors, tres_errors
+    assert not required_to_be_bound_tres_filepaths, (
+        "Found excessive tres files:\n{}".format(
+            "\n".join(f"- {x}" for x in required_to_be_bound_tres_filepaths)
+        )
+    )
     # }
 
 
