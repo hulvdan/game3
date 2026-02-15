@@ -175,8 +175,6 @@ func _ready() -> void:
 		var pos: Vector2i = glib.ToV2i(entry.get_pos())
 		node.transform.origin = (Vector2(pos.x, pos.y) - Vector2(progression_size) / 2.0) * 40.0
 
-	add_child(mesh_instance)
-
 	remake_room(Vector2i(Vector2(ws) / 2.0), -1)
 
 
@@ -188,22 +186,6 @@ func get_mouse_world_point() -> Vector3:
 	if hit_position:
 		return hit_position
 	return Vector3.INF
-
-
-func _draw():
-	var immediate_mesh = ImmediateMesh.new()
-	immediate_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
-	immediate_mesh.surface_add_vertex(start_point)
-	immediate_mesh.surface_add_vertex(end_point)
-	immediate_mesh.surface_end()
-
-	mesh_instance.mesh = immediate_mesh
-	add_child(mesh_instance)
-
-
-var mesh_instance := MeshInstance3D.new()
-var start_point: Vector3 = Vector3.INF
-var end_point: Vector3 = Vector3.INF
 
 
 func _physics_process(_dt: float) -> void:
@@ -220,8 +202,7 @@ func _physics_process(_dt: float) -> void:
 			glib.v.get_player_speed(),
 		)
 
-	start_point = player.transform.origin
-	end_point = get_mouse_world_point()
+	var end_point: Vector3 = get_mouse_world_point()
 	if end_point != Vector3.INF:
 		player_bow.transform.basis = player.transform.looking_at(end_point).basis
 
