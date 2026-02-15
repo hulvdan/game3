@@ -247,6 +247,13 @@ func _physics_process(dt: float) -> void:
 					damaged_creature.this_frame_taken_damage += glib.v.get_arrow_damage()
 				break
 
+	for creature: Creature in room.container_creatures.get_children():
+		if creature.this_frame_taken_damage:
+			creature.hp -= creature.this_frame_taken_damage
+
+		if creature.hp <= 0:
+			room.container_creatures.remove_child(creature)
+
 
 func _process(_dt: float) -> void:
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))

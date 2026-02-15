@@ -13,9 +13,9 @@ x spawn arrow on click
 x correct projectile translation direction
 x projectiles collide with walls (doesn't collide with other arrows)
 x ref collision masks
+x projectiles destroy enemy creatures
 
 * player attacks using bow 
-  * projectiles collide with creatures (except owner)
   * shooting cooldown 
   * 
   * 
