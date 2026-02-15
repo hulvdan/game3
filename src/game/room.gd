@@ -2,7 +2,10 @@ extends Node
 
 class_name Room
 
+var player: Creature
+var player_bow: Node3D
 var target_camera_elements: Array[Node3D]
+
 var player_holding: float = 0
 var elapsed: float = 0
 

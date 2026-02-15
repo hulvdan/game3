@@ -21,8 +21,6 @@ static var async_scene_loaded = false
 @export var packed_bow: PackedScene
 @export var packed_arrow: PackedScene
 
-var player: Creature
-var player_bow: Node3D
 var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
 var ui_minimap_rooms: Array[Sprite2D] = []
@@ -69,7 +67,7 @@ func room_index(pos: Vector2i) -> int:
 func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 	if player_is_entering_door:
 		return
-	if body != player:
+	if body != room.player:
 		return
 
 	var tween = create_tween()
@@ -146,9 +144,9 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	##
 
 	# Placing player and other creatures ##
-	player = make_creature(glib.GCreatureType.PLAYER, player_pos)
-	player_bow = packed_bow.instantiate()
-	player.add_child(player_bow)
+	room.player = make_creature(glib.GCreatureType.PLAYER, player_pos)
+	room.player_bow = packed_bow.instantiate()
+	room.player.add_child(room.player_bow)
 	for mob in glib.v.get_mobs_to_spawn():
 		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
 	##
@@ -233,14 +231,14 @@ func _physics_process(dt: float) -> void:
 		for creature: Creature in room.container_creatures.get_children():
 			if creature.type <= glib.GCreatureType.PLAYER:
 				continue
-			var dir: Vector2 = bf.from_xz(player.transform.origin) - bf.from_xz(creature.transform.origin)
+			var dir: Vector2 = bf.from_xz(room.player.transform.origin) - bf.from_xz(creature.transform.origin)
 			if dir != Vector2(0, 0):
 				dir = dir.normalized()
 			creature.controller.move = dir
 	##
 
 	if !player_is_entering_door:
-		player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
+		room.player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
 
 	# Creatures moving ##
 	var creatures = glib.v.get_creatures()
@@ -254,7 +252,7 @@ func _physics_process(dt: float) -> void:
 
 	var end_point: Vector3 = get_mouse_world_point()
 	if end_point != Vector3.INF:
-		player_bow.transform.basis = player.transform.looking_at(end_point).basis
+		room.player_bow.transform.basis = room.player.transform.looking_at(end_point).basis
 
 	# Player moving ##
 	if Input.get_action_strength("shoot") >= 0.5:
@@ -265,8 +263,8 @@ func _physics_process(dt: float) -> void:
 		t = lerp(t, t * t, 0.25)
 		arrow.speed = lerp(glib.v.get_arrow_speed_min(), glib.v.get_arrow_speed_max(), t)
 		arrow.damage = round(lerp(glib.v.get_arrow_damage_min(), glib.v.get_arrow_damage_max(), t))
-		arrow.transform.origin = player.transform.origin
-		arrow.transform.basis = player_bow.transform.basis
+		arrow.transform.origin = room.player.transform.origin
+		arrow.transform.basis = room.player_bow.transform.basis
 		room.container_projectiles.add_child(arrow)
 		room.player_holding = 0
 	elif room.player_holding > 0:
@@ -280,7 +278,7 @@ func _physics_process(dt: float) -> void:
 	param.collide_with_bodies = true
 	param.hit_back_faces = true
 	param.hit_from_inside = true
-	param.exclude = [player]
+	param.exclude = [room.player]
 
 	for projectile: Projectile in room.container_projectiles.get_children():
 		var projectile_step: Vector3 = Vector3(0, 0, -1) * (projectile.speed * dt)
@@ -315,8 +313,8 @@ func _physics_process(dt: float) -> void:
 func _process(_dt: float) -> void:
 	# Updating camera and stuff looking at camera ##
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
-	camera.transform.origin = player.transform.origin + camera_dir * camera_distance
-	camera.transform = camera.transform.looking_at(player.node_body.transform.origin)
+	camera.transform.origin = room.player.transform.origin + camera_dir * camera_distance
+	camera.transform = camera.transform.looking_at(room.player.node_body.transform.origin)
 
 	for e in room.target_camera_elements:
 		e.transform.basis = camera.transform.basis
