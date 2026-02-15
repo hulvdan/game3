@@ -22,6 +22,7 @@ x player attacks using bow
 x holding arrow slows down player
 x mobs move towards player
 x mobs start moving after 1 second
+x vscode C-u/C-d dont trigger unfold
 
 * show player HP
 * show mob HP?

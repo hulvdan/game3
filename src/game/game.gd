@@ -204,8 +204,7 @@ func _ready() -> void:
 	remake_room(Vector2i(Vector2(ws) / 2.0), -1)
 
 
-func get_mouse_world_point() -> Vector3:
-	##
+func get_mouse_world_point() -> Vector3: ##
 	var mouse_pos: Vector2 = get_viewport().get_mouse_position()
 	var ray_origin: Vector3 = camera.project_ray_origin(mouse_pos)
 	var ray_dir: Vector3 = camera.project_ray_normal(mouse_pos)
@@ -219,10 +218,12 @@ func get_mouse_world_point() -> Vector3:
 func _physics_process(dt: float) -> void:
 	room.elapsed += dt
 
+	# Async scene loading handler ##
 	if Meta.async_data_loaded and not async_scene_loaded:
 		async_scene_loaded = true
 		var r: PackedScene = load("res://assets/async_data.tscn")
 		add_child(r.instantiate())
+	##
 
 	for creature: Creature in room.container_creatures.get_children():
 		creature.controller.move = Vector2(0, 0)
