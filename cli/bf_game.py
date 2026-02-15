@@ -13,7 +13,7 @@ USAGE:
             t = tile["type"]
 """
 
-# Imports.  {  ###
+# Imports ##
 import json
 from pathlib import Path
 
@@ -21,12 +21,12 @@ import bf_lib as bf
 from bf_typer import command, timing
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
-# }
+##
 
 bf.game_settings.itch_target = "hulvdan/emberveil2"
 bf.game_settings.languages = ["russian", "english"]
 bf.game_settings.yandex_metrica_counter_id = 106388631
-bf.game_settings.colors = [  ###
+bf.game_settings.colors = [  ##
     "#ffffff",
     "#fb6b1d",
     "#e83b3b",
@@ -60,26 +60,25 @@ bf.game_settings.colors = [  ###
     "#30e1b9",
     "#8ff8e2",
     "#000000",
-]
+]  ##
 
 
 scoped_processing_args = ["None", "None"]
 
 
 @bf.glib_processor
-def process_glib(*args, **kwargs) -> None:
-    # {  ###
+def process_glib(*args, **kwargs) -> None:  ##
     try:
         _process_glib(*args, **kwargs)
     except Exception:
         print("ERROR HAPPENED DURING PROCESSING:", ", ".join(scoped_processing_args))
         raise
-    # }
+    ##
 
 
 def _process_glib(genline, glib) -> None:
     # def enumerate_table(field: str):
-    #     # {  ###
+    #     ##
     #     scoped_processing_args[0] = field
     #
     #     for i, x in enumerate(glib[field]):
@@ -88,10 +87,11 @@ def _process_glib(genline, glib) -> None:
     #
     #     scoped_processing_args[0] = "None"
     #     scoped_processing_args[1] = "None"
-    #     # }
+    #     ##
 
     transforms: list[tuple[str, str, str, dict[str, int]]] = []
 
+    # LDtk. Updating Enums ##
     ldtk_codegen_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
     for enum in ldtk_codegen_data["defs"]["enums"]:
         if enum["identifier"].startswith("CODEGEN_"):
@@ -103,7 +103,9 @@ def _process_glib(genline, glib) -> None:
         json.dumps(ldtk_codegen_data, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+    ##
 
+    # LDtk. Levels ##
     world = bf.ldtk_load("assets/level.ldtk")
     rooms = []
     for level in world.levels:
@@ -128,14 +130,14 @@ def _process_glib(genline, glib) -> None:
             }
         )
     glib["rooms"] = rooms
+    ##
 
-    # Creatures.
-    # ============================================================
+    # Creatures ##
     for x in glib["creatures"][1:]:
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
+    ##
 
-    # Progression.
-    # ============================================================
+    # Progression ##
     prog_type_2_prog = {x["type"]: x for x in glib["progression"][1:]}
     required_to_specify_progression_types = list(prog_type_2_prog.keys())
     level_progression = world.get_level("DONT_INCLUDE_Progression")
@@ -151,59 +153,56 @@ def _process_glib(genline, glib) -> None:
         f"The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
     )
     glib["progression_size"] = bf.as_dict(level_progression.size)
+    ##
 
-    # Tables.
-    # ============================================================
-    if 1:  # {  ###
-        with open(bf.SRC_DIR / "game" / "glib.proto", encoding="utf-8") as in_file:
-            glib_proto_lines = [l.strip() for l in in_file if l.strip()]
+    # Tables ##
+    with open(bf.SRC_DIR / "game" / "glib.proto", encoding="utf-8") as in_file:
+        glib_proto_lines = [l.strip() for l in in_file if l.strip()]
 
-        start = -1
-        end = -1
-        for i, line in enumerate(glib_proto_lines):
-            if "TABLE_GEN_START" in line:
-                start = i + 1
-            if "TABLE_GEN_END" in line:
-                end = i
-                break
-        assert start >= 0
-        assert end > start
+    start = -1
+    end = -1
+    for i, line in enumerate(glib_proto_lines):
+        if "TABLE_GEN_START" in line:
+            start = i + 1
+        if "TABLE_GEN_END" in line:
+            end = i
+            break
+    assert start >= 0
+    assert end > start
 
-        # tuples of field_name + type_name
-        # ex: [("hostilities", "Hostility")]
-        table_field_name_type_pairs: list[tuple[str, str]] = []
-        for i in range(start, end):
-            line = glib_proto_lines[i]  # ex: `repeated Hostility hostilities = 7;`
-            field_name = line.split(" =", 1)[0].rsplit(" ", 1)[-1].strip()
-            type_name = line.split(" =", 1)[0].rsplit(" ", 2)[-2].strip()
-            print(f"{field_name=} {type_name=}")
-            table_field_name_type_pairs.append((field_name, type_name))
+    # tuples of field_name + type_name
+    # ex: [("hostilities", "Hostility")]
+    table_field_name_type_pairs: list[tuple[str, str]] = []
+    for i in range(start, end):
+        line = glib_proto_lines[i]  # ex: `repeated Hostility hostilities = 7;`
+        field_name = line.split(" =", 1)[0].rsplit(" ", 1)[-1].strip()
+        type_name = line.split(" =", 1)[0].rsplit(" ", 2)[-2].strip()
+        print(f"{field_name=} {type_name=}")
+        table_field_name_type_pairs.append((field_name, type_name))
 
-        print(f"{table_field_name_type_pairs=}")
-        for field_name, type_name in table_field_name_type_pairs:
-            types = [x["type"] for x in glib[field_name]]
-            for t in types:
-                assert t.upper() == t, (
-                    "{}. {}. `type` fields must be in CONSTANT_CASE".format(field_name, t)
-                )
-            container = glib[field_name]
-            for i in range(len(container)):
-                container[i]["type"] = i
-            bf.check_duplicates(types)
-            bf.genenum(genline, type_name + "Type", types, add_count=True)
-            transforms.append(
-                (
-                    field_name,
-                    f"{type_name.lower()[1:]}_type",
-                    f"{type_name.lower()[1:]}_types",
-                    {v: i for i, v in enumerate(types)},
-                )
+    print(f"{table_field_name_type_pairs=}")
+    for field_name, type_name in table_field_name_type_pairs:
+        types = [x["type"] for x in glib[field_name]]
+        for t in types:
+            assert t.upper() == t, (
+                "{}. {}. `type` fields must be in CONSTANT_CASE".format(field_name, t)
             )
-    # }
+        container = glib[field_name]
+        for i in range(len(container)):
+            container[i]["type"] = i
+        bf.check_duplicates(types)
+        bf.genenum(genline, type_name + "Type", types, add_count=True)
+        transforms.append(
+            (
+                field_name,
+                f"{type_name.lower()[1:]}_type",
+                f"{type_name.lower()[1:]}_types",
+                {v: i for i, v in enumerate(types)},
+            )
+        )
+    ##
 
-    # Transforms.
-    # ============================================================
-    # {  ###
+    # Transforms ##
     for v in transforms:
         bf.recursive_replace_transform(glib, *(v[1:]))
 
@@ -230,13 +229,12 @@ def _process_glib(genline, glib) -> None:
             "\n".join(f"- {x}" for x in required_to_be_bound_tres_filepaths)
         )
     )
-    # }
+    ##
 
 
 @command
 @timing
-def process_images():
-    # {  ###
+def process_images():  ##
     for f in list(bf.ART_TEXTURES_DIR.rglob("_*.png")):
         f.unlink()
 
@@ -461,12 +459,9 @@ def process_images():
     bf_cli.do_generate(bf.BuildPlatform.Win, bf.BuildType.Debug)
     bf_cli.do_activate_game_ahk()
 
-    # }
+    ##
 
 
 @command
 def temp():
     pass
-
-
-###
