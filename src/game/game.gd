@@ -218,7 +218,9 @@ func _physics_process(dt: float) -> void:
 		room.player_holding += dt
 	elif room.player_holding >= glib.v.get_shooting_min_seconds():
 		var arrow: Projectile = packed_arrow.instantiate()
-		var t = min(1, (room.player_holding - glib.v.get_shooting_min_seconds()) / glib.v.get_shooting_max_seconds())
+		var t = (room.player_holding - glib.v.get_shooting_min_seconds()) / glib.v.get_shooting_max_seconds()
+		t = min(1, t)
+		t = lerp(t, t * t, 0.25)
 		arrow.speed = lerp(glib.v.get_arrow_speed_min(), glib.v.get_arrow_speed_max(), t)
 		arrow.damage = round(lerp(glib.v.get_arrow_damage_min(), glib.v.get_arrow_damage_max(), t))
 		arrow.transform.origin = player.transform.origin
