@@ -91,21 +91,21 @@ def _process_glib(genline, glib) -> None:
 
     transforms: list[tuple[str, str, str, dict[str, int]]] = []
 
-    # LDtk. Updating Enums ##
-    ldtk_codegen_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
-    for enum in ldtk_codegen_data["defs"]["enums"]:
+    # LDTK. Enums ##
+    ldtk_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
+    for enum in ldtk_data["defs"]["enums"]:
         if enum["identifier"].startswith("CODEGEN_"):
             enum["values"] = [
                 {"id": v["type"], "tileRect": None, "color": 0}
                 for v in glib["progression"]
             ]
     Path("assets/level.ldtk").write_text(
-        json.dumps(ldtk_codegen_data, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(ldtk_data, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     ##
 
-    # LDtk. Levels ##
+    # LDTK. Levels ##
     world = bf.ldtk_load("assets/level.ldtk")
     rooms = []
     for level in world.levels:
@@ -202,10 +202,11 @@ def _process_glib(genline, glib) -> None:
         )
     ##
 
-    # Transforms ##
+    # Transforms
     for v in transforms:
         bf.recursive_replace_transform(glib, *(v[1:]))
 
+    # Tres checks ##
     required_to_be_bound_tres_filepaths = [
         x.as_posix() for x in Path("src").rglob("**/_*.tres")
     ]

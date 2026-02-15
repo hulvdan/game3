@@ -24,6 +24,9 @@ x mobs move towards player
 x mobs start moving after 1 second
 x vscode C-u/C-d dont trigger unfold
 
+* creatures' bodies don't collide with each other
+* creatures' have forces that push each other in opposite directions
+* creatures' areas make you slower (no slowing down when rolling though)
 * show player HP
 * show mob HP?
 * mob strikes when player is nearby
