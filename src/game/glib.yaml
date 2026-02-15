@@ -6,13 +6,14 @@ world_size:
 
 player_speed: 4
 arrow_speed: 10
+arrow_damage: 1
 
 mobs_to_spawn:
-  - res: res://src/game/res_creatures/player.tres
+  - creature_type: MOB_SHOOTER
     pos:
       x: 2
       y: -2
-  - res: res://src/game/res_creatures/player.tres
+  - creature_type: MOB_BONKER
     pos:
       x: -2
       y: 2
@@ -33,5 +34,8 @@ progression:
 creatures:
   - type: INVALID
   - type: PLAYER
+    hp: 10
   - type: MOB_SHOOTER
+    hp: 3
   - type: MOB_BONKER
+    hp: 5

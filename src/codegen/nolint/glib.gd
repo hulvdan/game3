@@ -1154,10 +1154,10 @@ class GMobToSpawn:
 	func _init():
 		var service
 
-		__res = PBField.new("res", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		__creature_type = PBField.new("creature_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
-		service.field = __res
-		data[__res.tag] = service
+		service.field = __creature_type
+		data[__creature_type.tag] = service
 
 		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
@@ -1168,26 +1168,26 @@ class GMobToSpawn:
 
 	var data = { }
 
-	var __res: PBField
+	var __creature_type: PBField
 
 
-	func has_res() -> bool:
-		if __res.value != null:
+	func has_creature_type() -> bool:
+		if __creature_type.value != null:
 			return true
 		return false
 
 
-	func get_res() -> String:
-		return __res.value
+	func get_creature_type() -> int:
+		return __creature_type.value
 
 
-	func clear_res() -> void:
+	func clear_creature_type() -> void:
 		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__res.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+		__creature_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
-	func set_res(value: String) -> void:
-		__res.value = value
+	func set_creature_type(value: int) -> void:
+		__creature_type.value = value
 
 
 	var __pos: PBField
@@ -1588,6 +1588,21 @@ class GCreature:
 		service.field = __debug_name
 		data[__debug_name.tag] = service
 
+		__res = PBField.new("res", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __res
+		data[__res.tag] = service
+
+		__creature_type = PBField.new("creature_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __creature_type
+		data[__creature_type.tag] = service
+
+		__hp = PBField.new("hp", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __hp
+		data[__hp.tag] = service
+
 
 	var data = { }
 
@@ -1633,6 +1648,72 @@ class GCreature:
 
 	func set_debug_name(value: String) -> void:
 		__debug_name.value = value
+
+
+	var __res: PBField
+
+
+	func has_res() -> bool:
+		if __res.value != null:
+			return true
+		return false
+
+
+	func get_res() -> String:
+		return __res.value
+
+
+	func clear_res() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__res.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_res(value: String) -> void:
+		__res.value = value
+
+
+	var __creature_type: PBField
+
+
+	func has_creature_type() -> bool:
+		if __creature_type.value != null:
+			return true
+		return false
+
+
+	func get_creature_type() -> int:
+		return __creature_type.value
+
+
+	func clear_creature_type() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__creature_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_creature_type(value: int) -> void:
+		__creature_type.value = value
+
+
+	var __hp: PBField
+
+
+	func has_hp() -> bool:
+		if __hp.value != null:
+			return true
+		return false
+
+
+	func get_hp() -> int:
+		return __hp.value
+
+
+	func clear_hp() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__hp.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_hp(value: int) -> void:
+		__hp.value = value
 
 
 	func _to_string() -> String:
@@ -1691,6 +1772,11 @@ class Lib:
 		service = PBServiceField.new()
 		service.field = __arrow_speed
 		data[__arrow_speed.tag] = service
+
+		__arrow_damage = PBField.new("arrow_damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __arrow_damage
+		data[__arrow_damage.tag] = service
 
 		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
@@ -1823,6 +1909,28 @@ class Lib:
 		__arrow_speed.value = value
 
 
+	var __arrow_damage: PBField
+
+
+	func has_arrow_damage() -> bool:
+		if __arrow_damage.value != null:
+			return true
+		return false
+
+
+	func get_arrow_damage() -> int:
+		return __arrow_damage.value
+
+
+	func clear_arrow_damage() -> void:
+		data[10].state = PB_SERVICE_STATE.UNFILLED
+		__arrow_damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_arrow_damage(value: int) -> void:
+		__arrow_damage.value = value
+
+
 	var __world_size: PBField
 
 
@@ -1929,3 +2037,25 @@ class Lib:
 		return result
 
 ################ USER DATA END #################
+enum GProgressionType {
+	INVALID,
+	SKILL_HP,
+	SKILL_MANA,
+	SKILL_ATTACK,
+	SKILL_ARMOR,
+	SKILL_MAGIC_ATTACK,
+	CRAFT_BLACKSMITH,
+	CRAFT_WITCH,
+	CRAFT_ENGINEER,
+	CLASS_HEAVY_KNIGHT,
+	CLASS_BARBARIAN,
+	COUNT,
+}
+
+enum GCreatureType {
+	INVALID,
+	PLAYER,
+	MOB_SHOOTER,
+	MOB_BONKER,
+	COUNT,
+}

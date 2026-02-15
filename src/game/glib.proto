@@ -23,7 +23,7 @@ message GV3 {
 }
 
 message GMobToSpawn {
-  string res = 1;
+  int32 creature_type = 1;
   GV2 pos = 2;
 }
 
@@ -49,6 +49,9 @@ message GProgression {
 message GCreature {
   int32 type = 1;
   string debug_name = 2;
+  string res = 3;
+  int32 creature_type = 4;
+  int32 hp = 5;
 }
 
 message Lib {
@@ -57,6 +60,7 @@ message Lib {
   repeated GRoom rooms = 2;
   float player_speed = 3;
   float arrow_speed = 9;
+  int32 arrow_damage = 10;
   GV2i world_size = 4;
   GV2i progression_size = 6;
   // TABLE_GEN_START

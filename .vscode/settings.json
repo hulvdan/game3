@@ -12,18 +12,13 @@
   },
   "runOnSave.commands": [
     {
-      "match": "glib.yaml$",
+      "match": "glib.(proto|yaml)$",
       "command": "uv run python cli/bf_cli.py codegen windows debug",
       "runIn": "backend"
     },
     {
       "match": ".gd$",
       "command": "uv run gdscript-formatter ${file}",
-      "runIn": "backend"
-    },
-    {
-      "match": "glib.proto$",
-      "command": "uv run python cli/bf_cli.py regen_glib_proto && uv run python cli/bf_cli.py codegen windows debug",
       "runIn": "backend"
     },
     {

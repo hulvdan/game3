@@ -2,6 +2,11 @@ extends Node
 
 class_name Game
 
+enum CollisionMask {
+	WALLS = 1 << 0,
+	CREATURES = 1 << 1,
+}
+
 static var async_scene_loaded = false
 
 @export_category("Values")
@@ -10,7 +15,6 @@ static var async_scene_loaded = false
 
 @export_category("Resources")
 @export var world_3d: Node3D
-@export var res_creature_player: ResCreature
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
 @export var packed_collider_tile: PackedScene
@@ -34,21 +38,19 @@ var player_is_entering_door := false
 @onready var container_ui_minimap: Node2D = %_container_ui_minimap
 @onready var container_ui_progression: Node2D = %_container_ui_progression
 
-enum CollisionMask {
-	WALLS = 1 << 0,
-	CREATURES = 1 << 1,
-}
-
 
 class RoomData:
 	var gindex: int = -1
 
 
-func make_creature(res: ResCreature, pos: Vector2) -> Creature:
-	assert(res)
+func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature:
+	var data: glib.GCreature = glib.v.get_creatures()[type]
 	var creature: Creature = packed_creature.instantiate()
+	creature.res = load(data.get_res())
+	assert(creature.res)
 	bf.set_pos_2d(creature, pos)
-	creature.res = res
+
+	creature.hp = data.get_hp()
 	creature.node_sprite.texture = creature.res.texture
 
 	room.target_camera_elements.append(creature.node_target_camera)
@@ -134,12 +136,11 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		if (door.get_direction() + 2) % 4 == player_direction_index:
 			player_pos = glib.ToV2(door.get_center_pos()) + Vector2(bf.DIRECTION_OFFSETS[player_direction_index]) * 2
 
-	player = make_creature(res_creature_player, player_pos)
+	player = make_creature(glib.GCreatureType.PLAYER, player_pos)
 	player_bow = packed_bow.instantiate()
 	player.add_child(player_bow)
 	for mob in glib.v.get_mobs_to_spawn():
-		var r: ResCreature = load(mob.get_res())
-		make_creature(r, glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
+		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
 
 
 func _ready() -> void:
@@ -225,16 +226,26 @@ func _physics_process(dt: float) -> void:
 	var param: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 	param.collide_with_areas = false
 	param.collide_with_bodies = true
-	param.collision_mask = CollisionMask.WALLS
+	param.hit_back_faces = true
+	param.hit_from_inside = true
+	param.exclude = [player]
 
 	for projectile: Node3D in room.container_projectiles.get_children():
 		projectile.translate_object_local(projectile_step)
 
 		param.from = projectile.transform.origin
 		param.to = projectile.transform.origin + projectile.transform.basis * projectile_step
-		var d: Dictionary = space.intersect_ray(param)
-		if d:
-			room.container_projectiles.remove_child(projectile)
+
+		for mask in [CollisionMask.CREATURES, CollisionMask.WALLS]:
+			param.collision_mask = mask
+
+			var d: Dictionary = space.intersect_ray(param)
+			if d:
+				room.container_projectiles.remove_child(projectile)
+				if mask == CollisionMask.CREATURES:
+					var damaged_creature: Creature = d.collider
+					damaged_creature.this_frame_taken_damage += glib.v.get_arrow_damage()
+				break
 
 
 func _process(_dt: float) -> void:

@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cqxeo73lvmm07" path="res://src/game/game.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://bikh3frhaued2" path="res://src/engine/meta.gd" id="2_836ik"]
-[ext_resource type="Resource" uid="uid://bnfmpk4awxyu4" path="res://src/game/res_creatures/player.tres" id="2_h4xlo"]
 [ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
 [ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="5_m5usj"]
@@ -28,7 +27,6 @@ script = ExtResource("1_ig7tw")
 camera_distance = 4.015
 camera_angle = 0.75
 world_3d = NodePath("../_meta/_world_3d")
-res_creature_player = ExtResource("2_h4xlo")
 packed_creature = ExtResource("6_qdlv5")
 packed_floor_tile = ExtResource("5_tkxyu")
 packed_collider_tile = ExtResource("6_fphxj")

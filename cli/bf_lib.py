@@ -342,6 +342,54 @@ _call_stack: list[str | int] = []
 _recursive_replace_transform_patterns: Any = None
 
 
+def recursive_visiter(
+    glib_recursed,
+    key_postfix_single: str,
+    key_postfix_list: str,
+    callback: Callable[[str], None],
+    *,
+    root: bool = True,
+) -> None:
+    global _recursive_visiter_patterns
+
+    if not isinstance(glib_recursed, dict):
+        return
+
+    if root:
+        _recursive_visiter_patterns = (
+            re.compile(f"(.*_)?{key_postfix_single}(_\\d+)?$"),
+            re.compile(f"(.*_)?{key_postfix_list}(_\\d+)?$"),
+        )
+
+    for key, value in glib_recursed.items():
+        if isinstance(value, dict):
+            recursive_visiter(
+                value, key_postfix_single, key_postfix_list, callback, root=False
+            )
+
+        elif isinstance(key, str) and (
+            re.match(_recursive_visiter_patterns[0], key)
+            or re.match(_recursive_visiter_patterns[1], key)
+        ):
+            if re.match(_recursive_visiter_patterns[1], key):
+                assert isinstance(value, list)
+                for v in value:
+                    assert isinstance(v, str)
+                    callback(v)
+            else:
+                assert isinstance(value, str)
+                callback(value)
+
+        elif isinstance(value, list):
+            for v in value:
+                if not isinstance(v, dict):
+                    continue
+
+                recursive_visiter(
+                    v, key_postfix_single, key_postfix_list, callback, root=False
+                )
+
+
 def recursive_replace_transform(
     glib_recursed,
     key_postfix_single: str,

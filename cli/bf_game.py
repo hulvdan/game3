@@ -129,6 +129,11 @@ def _process_glib(genline, glib) -> None:
         )
     glib["rooms"] = rooms
 
+    # Creatures.
+    # ============================================================
+    for x in glib["creatures"][1:]:
+        x["res"] = "res://src/game/res_creatures/{}.tres".format(x["type"].lower())
+
     # Progression.
     # ============================================================
     prog_type_2_prog = {x["type"]: x for x in glib["progression"][1:]}
@@ -189,8 +194,8 @@ def _process_glib(genline, glib) -> None:
             transforms.append(
                 (
                     field_name,
-                    f"{type_name.lower()}_type",
-                    f"{type_name.lower()}_types",
+                    f"{type_name.lower()[1:]}_type",
+                    f"{type_name.lower()[1:]}_types",
                     {v: i for i, v in enumerate(types)},
                 )
             )
@@ -201,6 +206,20 @@ def _process_glib(genline, glib) -> None:
     # {  ###
     for v in transforms:
         bf.recursive_replace_transform(glib, *(v[1:]))
+
+    tres_errors = []
+
+    def tres_callback(value: str) -> None:
+        if not value.startswith("res://src/game/res_"):
+            tres_errors.append(("INVALID PREFIX", value))
+            return
+        check_path = Path(value.removeprefix("res://"))
+        if not check_path.exists():
+            tres_errors.append(("NOT FOUND", check_path))
+            return
+
+    bf.recursive_visiter(glib, "res", "ress", tres_callback)
+    assert not tres_errors, tres_errors
     # }
 
 

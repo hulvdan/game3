@@ -9,7 +9,7 @@ import bf_lib as bf
 import bf_swatch
 import colornames
 from bf_game import *  # noqa
-from bf_glib import do_generate, do_regen_glib_proto, get_sounds_that_reaper_would_export
+from bf_glib import do_generate, get_sounds_that_reaper_would_export
 from bf_typer import app, command, global_timing_manager_instance, timing
 
 # }
@@ -196,11 +196,6 @@ def profiles() -> None:
             continue
         do_profile(x)
     # }
-
-
-@command
-def regen_glib_proto():
-    do_regen_glib_proto()
 
 
 @command
