@@ -275,7 +275,6 @@ def genenum(
     name: str,
     values: Sequence[str],
     *,
-    enum_type: str | None = None,
     add_count: bool = False,
     hex_values: bool = False,
     override_values: Sequence[Any] | None = None,
@@ -291,8 +290,6 @@ def genenum(
         assert add_count != hex_values
 
     string = f"enum {name}"
-    if enum_type:
-        string += f" : {enum_type}"
     string += " {"
     genline(string)
 

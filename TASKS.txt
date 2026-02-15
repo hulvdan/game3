@@ -12,6 +12,7 @@ x bow aims towards mouse
 x spawn arrow on click
 x correct projectile translation direction
 x projectiles collide with walls (doesn't collide with other arrows)
+x ref collision masks
 
 * player attacks using bow 
   * projectiles collide with creatures (except owner)
@@ -19,10 +20,9 @@ x projectiles collide with walls (doesn't collide with other arrows)
   * 
   * 
   * 
-  * 
-* roll button?
 * mirror rooms vertically + horizontally
 * rolling stops bow
+* roll button?
 * correct in front of door appearing
 * mob takes damage from bow
 * swing attack?
