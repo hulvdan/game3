@@ -1805,10 +1805,10 @@ class Lib:
 		service.field = __player_roll_duration_seconds
 		data[__player_roll_duration_seconds.tag] = service
 
-		__player_roll_speed = PBField.new("player_roll_speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 19, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__player_roll_distance = PBField.new("player_roll_distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 22, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __player_roll_speed
-		data[__player_roll_speed.tag] = service
+		service.field = __player_roll_distance
+		data[__player_roll_distance.tag] = service
 
 		__player_stamina_regen_seconds = PBField.new("player_stamina_regen_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -2013,26 +2013,26 @@ class Lib:
 		__player_roll_duration_seconds.value = value
 
 
-	var __player_roll_speed: PBField
+	var __player_roll_distance: PBField
 
 
-	func has_player_roll_speed() -> bool:
-		if __player_roll_speed.value != null:
+	func has_player_roll_distance() -> bool:
+		if __player_roll_distance.value != null:
 			return true
 		return false
 
 
-	func get_player_roll_speed() -> float:
-		return __player_roll_speed.value
+	func get_player_roll_distance() -> float:
+		return __player_roll_distance.value
 
 
-	func clear_player_roll_speed() -> void:
-		data[19].state = PB_SERVICE_STATE.UNFILLED
-		__player_roll_speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+	func clear_player_roll_distance() -> void:
+		data[22].state = PB_SERVICE_STATE.UNFILLED
+		__player_roll_distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_roll_speed(value: float) -> void:
-		__player_roll_speed.value = value
+	func set_player_roll_distance(value: float) -> void:
+		__player_roll_distance.value = value
 
 
 	var __player_stamina_regen_seconds: PBField

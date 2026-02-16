@@ -23,6 +23,7 @@ x mob hp: despawning
 x mob hp: updating value
 x mob hp: smaller
 x mob hp: display under creature
+x player roll quadratic equation
 
 * mob hp: uncomment creature.hp_bar.visible = false
 * mob hp: more health -> bigger bar
