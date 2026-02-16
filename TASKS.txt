@@ -26,7 +26,13 @@ x mob hp: display under creature
 
 * mob hp: uncomment creature.hp_bar.visible = false
 * mob hp: more health -> bigger bar
+* mob hp: fix: don't display mob hp bars over transition
+  (create room inside room container; transition colorrect must be later in tree)
 * mob hp: 
+* mob hp: 
+* mob hp: 
+*
+*
 *
 * player hp bar: aspect ratio scaling
 * player hp bar:
