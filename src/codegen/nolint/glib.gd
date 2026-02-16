@@ -1795,6 +1795,21 @@ class Lib:
 		service.field = __player_speed_holding_scale
 		data[__player_speed_holding_scale.tag] = service
 
+		__player_speed_inside_enemies_scale = PBField.new("player_speed_inside_enemies_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_speed_inside_enemies_scale
+		data[__player_speed_inside_enemies_scale.tag] = service
+
+		__creatures_push_radius = PBField.new("creatures_push_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __creatures_push_radius
+		data[__creatures_push_radius.tag] = service
+
+		__creatures_push_force = PBField.new("creatures_push_force", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __creatures_push_force
+		data[__creatures_push_force.tag] = service
+
 		__arrow_speed_min = PBField.new("arrow_speed_min", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arrow_speed_min
@@ -1932,6 +1947,72 @@ class Lib:
 
 	func set_player_speed_holding_scale(value: float) -> void:
 		__player_speed_holding_scale.value = value
+
+
+	var __player_speed_inside_enemies_scale: PBField
+
+
+	func has_player_speed_inside_enemies_scale() -> bool:
+		if __player_speed_inside_enemies_scale.value != null:
+			return true
+		return false
+
+
+	func get_player_speed_inside_enemies_scale() -> float:
+		return __player_speed_inside_enemies_scale.value
+
+
+	func clear_player_speed_inside_enemies_scale() -> void:
+		data[17].state = PB_SERVICE_STATE.UNFILLED
+		__player_speed_inside_enemies_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_speed_inside_enemies_scale(value: float) -> void:
+		__player_speed_inside_enemies_scale.value = value
+
+
+	var __creatures_push_radius: PBField
+
+
+	func has_creatures_push_radius() -> bool:
+		if __creatures_push_radius.value != null:
+			return true
+		return false
+
+
+	func get_creatures_push_radius() -> float:
+		return __creatures_push_radius.value
+
+
+	func clear_creatures_push_radius() -> void:
+		data[15].state = PB_SERVICE_STATE.UNFILLED
+		__creatures_push_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_creatures_push_radius(value: float) -> void:
+		__creatures_push_radius.value = value
+
+
+	var __creatures_push_force: PBField
+
+
+	func has_creatures_push_force() -> bool:
+		if __creatures_push_force.value != null:
+			return true
+		return false
+
+
+	func get_creatures_push_force() -> float:
+		return __creatures_push_force.value
+
+
+	func clear_creatures_push_force() -> void:
+		data[16].state = PB_SERVICE_STATE.UNFILLED
+		__creatures_push_force.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_creatures_push_force(value: float) -> void:
+		__creatures_push_force.value = value
 
 
 	var __arrow_speed_min: PBField

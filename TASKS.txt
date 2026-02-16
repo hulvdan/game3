@@ -7,26 +7,12 @@ BIG PLAN
 PLAN
 ============================================================
 
-x bow sprite on player
-x bow aims towards mouse
-x spawn arrow on click
-x correct projectile translation direction
-x projectiles collide with walls (doesn't collide with other arrows)
-x ref collision masks
-x projectiles destroy enemy creatures
-x binding tres
-x validating not found / excessive tres files
-x pre shooting min time 
-x shooting hold time 
-x player attacks using bow 
-x holding arrow slows down player
-x mobs move towards player
-x mobs start moving after 1 second
-x vscode C-u/C-d dont trigger unfold
+x was fucking around with vscodium themes. I hate it))) There's no need for that actually
+x creatures' bodies don't collide with each other
+x creatures' areas make you slower (no slowing down when rolling though)
+  (ref dead cells)
+x creatures' have forces that push each other in opposite directions
 
-* creatures' bodies don't collide with each other
-* creatures' have forces that push each other in opposite directions
-* creatures' areas make you slower (no slowing down when rolling though)
 * show player HP
 * show mob HP?
 * mob strikes when player is nearby

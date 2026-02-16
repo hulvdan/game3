@@ -5,6 +5,9 @@ world_size:
   y: 5
 
 player_speed_holding_scale: 0.35
+creatures_push_radius: 1.0
+creatures_push_force: 4 
+player_speed_inside_enemies_scale: 0.5
 
 arrow_speed_min: 10
 arrow_speed_max: 50
@@ -13,7 +16,7 @@ shooting_max_seconds: 2
 arrow_damage_min: 1
 arrow_damage_max: 5
 
-mobs_to_spawn:
+mobs_to_spawn: 
   - creature_type: MOB_SHOOTER
     pos:
       x: 2

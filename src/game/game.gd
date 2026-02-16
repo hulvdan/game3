@@ -214,7 +214,7 @@ func get_mouse_world_point() -> Vector3: ##
 
 
 func _physics_process(dt: float) -> void:
-	room.elapsed += dt
+	room.start_elapsed += dt
 
 	# Async scene loading handler ##
 	if Meta.async_data_loaded and not async_scene_loaded:
@@ -227,7 +227,7 @@ func _physics_process(dt: float) -> void:
 		creature.controller.move = Vector2(0, 0)
 
 	# Setting enemy controller.move towards player ##
-	if room.elapsed >= 1:
+	if room.start_elapsed >= 1:
 		for creature: Creature in room.container_creatures.get_children():
 			if creature.type <= glib.GCreatureType.PLAYER:
 				continue
@@ -245,8 +245,11 @@ func _physics_process(dt: float) -> void:
 	for creature: Creature in room.container_creatures.get_children():
 		var data: glib.GCreature = creatures[creature.type]
 		var speed: float = data.get_speed()
-		if creature.type == glib.GCreatureType.PLAYER and room.player_holding:
-			speed *= glib.v.get_player_speed_holding_scale()
+
+		if creature.type == glib.GCreatureType.PLAYER:
+			if room.player_holding:
+				speed *= glib.v.get_player_speed_holding_scale()
+			speed *= lerp(1.0, glib.v.get_player_speed_inside_enemies_scale(), room.player_inside_enemy_t)
 		bf.move_body_with_speed(creature.node_body, creature.controller.move, speed)
 	##
 
@@ -297,6 +300,24 @@ func _physics_process(dt: float) -> void:
 					var damaged_creature: Creature = d.collider
 					damaged_creature.this_frame_taken_damage += projectile.damage
 				break
+	##
+
+	# Pushing creatures apart from each other ##
+	var creatures_push_radius: float = glib.v.get_creatures_push_radius()
+	var creatures_push_radius_sqr: float = creatures_push_radius * creatures_push_radius
+	room.player_inside_enemy_t = 0
+	for c1: Creature in room.container_creatures.get_children():
+		for c2: Creature in room.container_creatures.get_children():
+			if c1 == c2:
+				continue
+			var dir: Vector2 = bf.from_xz(c1.transform.origin - c2.transform.origin)
+			var d: float = dir.length_squared()
+			if d < creatures_push_radius_sqr:
+				var t: float = 1 - sqrt(d) / creatures_push_radius
+				bf.move_body_with_speed(c1.node_body, dir, t)
+				if c1.type == glib.GCreatureType.PLAYER:
+					room.player_inside_enemy_t = max(room.player_inside_enemy_t, t)
+	room.player_inside_enemy_t = min(1, room.player_inside_enemy_t)
 	##
 
 	# Updating damaged creatures ##

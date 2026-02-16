@@ -60,6 +60,9 @@ message Lib {
   repeated GMobToSpawn mobs_to_spawn = 1;
   repeated GRoom rooms = 2;
   float player_speed_holding_scale = 3;
+  float player_speed_inside_enemies_scale = 17;
+  float creatures_push_radius = 15;
+  float creatures_push_force = 16;
   float arrow_speed_min = 9;
   float arrow_speed_max = 10;
   int32 arrow_damage_min = 11;
