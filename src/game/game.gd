@@ -24,6 +24,7 @@ static var async_scene_loaded = false
 @export var packed_ui_progression_entry: PackedScene
 @export var packed_bow: PackedScene
 @export var packed_arrow: PackedScene
+@export var packed_creature_hp_bar: PackedScene
 
 var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
@@ -57,6 +58,12 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 
 	creature.hp = data.get_hp()
 	creature.node_sprite.texture = creature.res.texture
+
+	if type != glib.GCreatureType.PLAYER:
+		var bar: Bar = packed_creature_hp_bar.instantiate()
+		creature.hp_bar = bar
+		room.container_mob_hp_bars.add_child(bar)
+		# creature.hp_bar.visible = false
 
 	room.target_camera_elements.append(creature.node_target_camera)
 	room.container_creatures.add_child(creature)
@@ -359,10 +366,15 @@ func _physics_process(dt: float) -> void:
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.this_frame_taken_damage:
 			creature.hp -= creature.this_frame_taken_damage
+			creature.hp_bar.set_progress((creature.hp as float) / (glib.v.get_creatures()[creature.type].get_hp() as float))
 			creature.this_frame_taken_damage = 0
+			if creature.type != glib.GCreatureType.PLAYER:
+				creature.hp_bar.visible = true
 
 		if creature.hp <= 0:
 			room.container_creatures.remove_child(creature)
+			if creature.type != glib.GCreatureType.PLAYER:
+				room.container_mob_hp_bars.remove_child(creature.hp_bar)
 	##
 
 	## Updating player hp bar

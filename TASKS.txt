@@ -18,11 +18,19 @@ x adjusted collider sizes
 x show player HP
 x show player stamina
 x stamina regen + slow regen when holding + roll consumes it
+x mob hp: shown
+x mob hp: despawning
+x mob hp: updating value
 
+* mob hp: smaller
+* mob hp: display under creature
+* mob hp: uncomment creature.hp_bar.visible = false
+* mob hp: 
+* mob hp: 
+*
 * mob attacks
 * mob throws bomb
 *
-* show mob HP?
 * gravitate camera towards center
 * mob strikes when player is nearby
 * show arrow on player

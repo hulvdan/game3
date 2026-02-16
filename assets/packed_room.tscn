@@ -8,13 +8,20 @@
 script = ExtResource("1_3cfnp")
 
 [node name="_container_floor" type="Node" parent="." unique_id=1301900845]
+unique_name_in_owner = true
 
 [node name="Sprite3D" parent="_container_floor" unique_id=1975851868 instance=ExtResource("2_rljux")]
 
 [node name="_container_creatures" type="Node" parent="." unique_id=1160002427]
+unique_name_in_owner = true
 
 [node name="player" parent="_container_creatures" unique_id=1935514979 instance=ExtResource("3_3a6xa")]
 
 [node name="_container_doors" type="Node" parent="." unique_id=1436040055]
+unique_name_in_owner = true
 
 [node name="_container_projectiles" type="Node" parent="." unique_id=37047198]
+unique_name_in_owner = true
+
+[node name="_container_mob_hp_bars" type="Node" parent="." unique_id=1345720630]
+unique_name_in_owner = true

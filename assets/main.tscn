@@ -41,6 +41,7 @@ packed_ui_minimap_room = ExtResource("9_otm8r")
 packed_ui_progression_entry = ExtResource("9_vvw4a")
 packed_bow = ExtResource("10_ew6cl")
 packed_arrow = ExtResource("11_km2eh")
+packed_creature_hp_bar = ExtResource("13_km2eh")
 
 [node name="_container_ui_minimap" type="Node2D" parent="_game" unique_id=229164054]
 unique_name_in_owner = true

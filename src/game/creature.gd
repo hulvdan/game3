@@ -11,6 +11,8 @@ var res: ResCreature
 var hp: int
 var this_frame_taken_damage: int = 0
 
+var hp_bar: Bar
+
 
 class Controller:
 	var move: Vector2
