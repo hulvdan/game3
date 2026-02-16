@@ -21,12 +21,23 @@ x stamina regen + slow regen when holding + roll consumes it
 x mob hp: shown
 x mob hp: despawning
 x mob hp: updating value
+x mob hp: smaller
+x mob hp: display under creature
 
-* mob hp: smaller
-* mob hp: display under creature
 * mob hp: uncomment creature.hp_bar.visible = false
+* mob hp: more health -> bigger bar
 * mob hp: 
-* mob hp: 
+*
+* player hp bar: aspect ratio scaling
+* player hp bar:
+* player hp bar:
+* player hp bar:
+*
+* minimap: correct placement
+* minimap:
+* minimap:
+* minimap:
+* minimap:
 *
 * mob attacks
 * mob throws bomb

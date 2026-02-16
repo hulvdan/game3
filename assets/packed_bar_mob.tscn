@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://ty00766yaguu"]
+
+[ext_resource type="Script" uid="uid://cno6uc6lacooi" path="res://src/game/bar.gd" id="1_c0dhe"]
+
+[node name="ColorRect2" type="ColorRect" unique_id=1226248485]
+anchors_preset = -1
+anchor_right = 0.05
+anchor_bottom = 0.02
+offset_right = -0.17599487
+offset_bottom = -0.13600159
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_c0dhe")
+margin = 2
+
+[node name="_margin_container" type="MarginContainer" parent="." unique_id=2071194151]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="_bar" type="ColorRect" parent="_margin_container" unique_id=1787917485]
+unique_name_in_owner = true
+layout_mode = 2
+color = Color(1, 0, 0, 1)

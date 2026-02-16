@@ -408,3 +408,10 @@ func _process(_dt: float) -> void:
 	for e in room.target_camera_elements:
 		e.transform.basis = camera.transform.basis
 	##
+
+	## Updating creatures hp bar positions
+	for creature: Creature in room.container_creatures.get_children():
+		if creature.type <= glib.GCreatureType.PLAYER:
+			continue
+		creature.hp_bar.position = camera.unproject_position(creature.transform.origin) - creature.hp_bar.size / 2.0
+	##
