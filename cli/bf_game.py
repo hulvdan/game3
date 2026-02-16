@@ -13,7 +13,7 @@ USAGE:
             t = tile["type"]
 """
 
-# Imports ##
+## Imports
 import json
 from pathlib import Path
 
@@ -77,8 +77,7 @@ def process_glib(*args, **kwargs) -> None:  ##
 
 
 def _process_glib(genline, glib) -> None:
-    # def enumerate_table(field: str):
-    #     ##
+    # def enumerate_table(field: str): ##
     #     scoped_processing_args[0] = field
     #
     #     for i, x in enumerate(glib[field]):
@@ -91,7 +90,7 @@ def _process_glib(genline, glib) -> None:
 
     transforms: list[tuple[str, str, str, dict[str, int]]] = []
 
-    # LDTK. Enums ##
+    ## LDTK. Enums
     ldtk_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
     for enum in ldtk_data["defs"]["enums"]:
         if enum["identifier"].startswith("CODEGEN_"):
@@ -105,7 +104,7 @@ def _process_glib(genline, glib) -> None:
     )
     ##
 
-    # LDTK. Levels ##
+    ## LDTK. Levels
     world = bf.ldtk_load("assets/level.ldtk")
     rooms = []
     for level in world.levels:
@@ -132,12 +131,12 @@ def _process_glib(genline, glib) -> None:
     glib["rooms"] = rooms
     ##
 
-    # Creatures ##
+    ## Creatures
     for x in glib["creatures"][1:]:
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
     ##
 
-    # Progression ##
+    ## Progression
     prog_type_2_prog = {x["type"]: x for x in glib["progression"][1:]}
     required_to_specify_progression_types = list(prog_type_2_prog.keys())
     level_progression = world.get_level("DONT_INCLUDE_Progression")
@@ -155,7 +154,7 @@ def _process_glib(genline, glib) -> None:
     glib["progression_size"] = bf.as_dict(level_progression.size)
     ##
 
-    # Tables ##
+    ## Tables
     with open(bf.SRC_DIR / "game" / "glib.proto", encoding="utf-8") as in_file:
         glib_proto_lines = [l.strip() for l in in_file if l.strip()]
 
@@ -202,11 +201,12 @@ def _process_glib(genline, glib) -> None:
         )
     ##
 
-    # Transforms
+    ## Transforms
     for v in transforms:
         bf.recursive_replace_transform(glib, *(v[1:]))
+    ##
 
-    # Tres checks ##
+    ## Tres checks
     required_to_be_bound_tres_filepaths = [
         x.as_posix() for x in Path("src").rglob("**/_*.tres")
     ]

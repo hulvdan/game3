@@ -2,7 +2,7 @@ extends Node
 
 class_name Game
 
-# Variables ##
+## Variables
 static var async_scene_loaded = false
 
 @export_category("Values")
@@ -84,7 +84,7 @@ func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 
 
 func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
-	# Updating flash of ui minimap ##
+	## Updating flash of ui minimap
 	if current_room_pos != Vector2i.MAX:
 		var s1: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
 		s1.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
@@ -93,7 +93,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	s2.set_shader_parameter('flash', Vector4(1, 1, 1, 0.6))
 	##
 
-	# Reinstantiating room ##
+	## Reinstantiating room
 	player_is_entering_door = false
 	if room:
 		room.queue_free()
@@ -109,7 +109,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	var g_room = g_rooms[(current_room_pos.x + current_room_pos.y) % len(g_rooms)]
 	var size: Vector2i = glib.ToV2i(g_room.get_size())
 
-	# Placing floor tiles ##
+	## Placing floor tiles
 	bf.clear_children(room.container_floor)
 	var tiles = g_room.get_tiles()
 	for y in range(size.y):
@@ -129,7 +129,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 	var player_pos: Vector2 = Vector2(size) / 2
 
-	# Placing doors ##
+	## Placing doors
 	for door in g_room.get_doors():
 		var offset = bf.DIRECTION_OFFSETS[door.get_direction()]
 		var to_pos: Vector2i = current_room_pos + offset
@@ -147,7 +147,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 			player_pos = glib.ToV2(door.get_center_pos()) + Vector2(bf.DIRECTION_OFFSETS[player_direction_index]) * 2
 	##
 
-	# Placing player and other creatures ##
+	## Placing player and other creatures
 	room.player = make_creature(glib.GCreatureType.PLAYER, player_pos)
 	room.player_bow = packed_bow.instantiate()
 	room.player.add_child(room.player_bow)
@@ -175,7 +175,7 @@ func _ready() -> void:
 
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
 
-	# Filling ui minimap ##
+	## Filling ui minimap
 	for y_ in range(ws.y):
 		var y: int = ws.y - y_ - 1
 		var rooms_slice: Array[Sprite2D] = []
@@ -198,7 +198,7 @@ func _ready() -> void:
 		ui_minimap_rooms = rooms_slice + ui_minimap_rooms
 	##
 
-	# Filling ui progression ##
+	## Filling ui progression
 	var progression_size: Vector2i = glib.ToV2i(glib.v.get_progression_size())
 	for entry in glib.v.get_progression():
 		if !entry.get_type():
@@ -226,7 +226,7 @@ func get_mouse_world_point() -> Vector3: ##
 func _physics_process(dt: float) -> void:
 	room.start_elapsed += dt
 
-	# Async scene loading handler ##
+	## Async scene loading handler
 	if Meta.async_data_loaded and not async_scene_loaded:
 		async_scene_loaded = true
 		var r: PackedScene = load("res://assets/async_data.tscn")
@@ -236,7 +236,7 @@ func _physics_process(dt: float) -> void:
 	for creature: Creature in room.container_creatures.get_children():
 		creature.controller.move = Vector2(0, 0)
 
-	# Setting enemy controller.move towards player ##
+	## Setting enemy controller.move towards player
 	if room.start_elapsed >= 1:
 		for creature: Creature in room.container_creatures.get_children():
 			if creature.type <= glib.GCreatureType.PLAYER:
@@ -250,7 +250,7 @@ func _physics_process(dt: float) -> void:
 	if !player_is_entering_door:
 		room.player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
 
-	# Creatures moving ##
+	## Creatures moving
 	var creatures = glib.v.get_creatures()
 	for creature: Creature in room.container_creatures.get_children():
 		var data: glib.GCreature = creatures[creature.type]
@@ -274,7 +274,7 @@ func _physics_process(dt: float) -> void:
 	if end_point != Vector3.INF:
 		room.player_bow.transform.basis = room.player.transform.looking_at(end_point).basis
 
-	# Player shooting ##
+	## Player shooting
 	if not room.player_rolling:
 		if Input.get_action_strength("shoot") >= 0.5:
 			room.player_holding += dt
@@ -292,7 +292,7 @@ func _physics_process(dt: float) -> void:
 			room.player_holding += dt
 	##
 
-	# Player rolling ##
+	## Player rolling
 	if Input.get_action_strength("roll") >= 0.5 and not room.player_rolling and room.player_stamina > 0:
 		if room.player.controller.move != Vector2(0, 0):
 			room.player_rolling = dt
@@ -307,7 +307,7 @@ func _physics_process(dt: float) -> void:
 			room.player_rolling = 0
 	##
 
-	# Projectile collisions ##
+	## Projectile collisions
 	var space = world_3d.get_world_3d().direct_space_state
 	var param: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 	param.collide_with_areas = false
@@ -335,7 +335,7 @@ func _physics_process(dt: float) -> void:
 				break
 	##
 
-	# Pushing creatures apart from each other ##
+	## Pushing creatures apart from each other
 	var creatures_push_radius: float = glib.v.get_creatures_push_radius()
 	var creatures_push_radius_sqr: float = creatures_push_radius * creatures_push_radius
 	room.player_inside_enemy_t = 0
@@ -353,7 +353,7 @@ func _physics_process(dt: float) -> void:
 	room.player_inside_enemy_t = min(1, room.player_inside_enemy_t)
 	##
 
-	# Updating damaged creatures ##
+	## Updating damaged creatures
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.this_frame_taken_damage:
 			creature.hp -= creature.this_frame_taken_damage
@@ -363,10 +363,11 @@ func _physics_process(dt: float) -> void:
 			room.container_creatures.remove_child(creature)
 	##
 
-	# Updating player hp bar ##
+	## Updating player hp bar
 	hp_bar.set_progress((room.player.hp as float) / (glib.v.get_creatures()[room.player.type].get_hp() as float))
 	##
 
+	## Updating stamina bars
 	for i in range(len(stamina_bars) - room.player_stamina + 1):
 		stamina_bars[len(stamina_bars) - 1 - i].set_progress(0)
 	if len(stamina_bars) > room.player_stamina:
@@ -381,10 +382,11 @@ func _physics_process(dt: float) -> void:
 			room.player_stamina_elapsed = 0
 	for i in range(room.player_stamina):
 		stamina_bars[i].set_progress(1)
+	##
 
 
 func _process(_dt: float) -> void:
-	# Updating camera and stuff looking at camera ##
+	## Updating camera and stuff looking at camera
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	camera.transform.origin = room.player.transform.origin + camera_dir * camera_distance
 	camera.transform = camera.transform.looking_at(room.player.node_body.transform.origin)
