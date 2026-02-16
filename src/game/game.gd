@@ -306,17 +306,20 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Player rolling
-	if Input.get_action_strength("roll") >= 0.5 and not room.player_rolling and room.player_stamina > 0:
-		if room.player.controller.move != Vector2(0, 0):
-			room.player_rolling = dt
-			room.player_holding = 0
-			room.player_roll_direction = room.player.controller.move
-			room.player_stamina -= 1
-			room.player_stamina_elapsed = 0
-	elif room.player_rolling:
+	if room.player_rolling:
 		room.player_rolling += dt
 		if room.player_rolling >= glib.v.get_player_roll_duration_seconds():
 			room.player_rolling = 0
+	elif (
+		(room.player_stamina > 0)
+		&& (Input.get_action_strength("roll") >= 0.5)
+		&& (room.player.controller.move != Vector2(0, 0))
+	):
+		room.player_rolling = dt
+		room.player_holding = 0
+		room.player_roll_direction = room.player.controller.move
+		room.player_stamina -= 1
+		room.player_stamina_elapsed = 0
 	##
 
 	## Projectile collisions
