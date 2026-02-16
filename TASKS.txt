@@ -17,6 +17,7 @@ x roll
 x adjusted collider sizes
 x show player HP
 x show player stamina
+x stamina regen + slow regen when holding + roll consumes it
 
 * mob attacks
 * mob throws bomb
