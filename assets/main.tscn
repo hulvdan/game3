@@ -45,6 +45,7 @@ material = SubResource("ShaderMaterial_vvw4a")
 texture = ExtResource("5_m5usj")
 
 [node name="Control" type="Control" parent="_game" unique_id=929978051]
+visible = false
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5

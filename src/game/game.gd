@@ -295,7 +295,7 @@ func _physics_process(dt: float) -> void:
 			room.player_rolling = 0
 	##
 
-	# Projectiles collisions ##
+	# Projectile collisions ##
 	var space = world_3d.get_world_3d().direct_space_state
 	var param: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 	param.collide_with_areas = false

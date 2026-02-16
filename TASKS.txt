@@ -13,9 +13,12 @@ x creatures' areas make you slower (no slowing down when rolling though)
   (ref dead cells)
 x creatures' have forces that push each other in opposite directions
 x roll
+- can't roll during shooting
+x adjusted collider sizes
 
 * show player HP
 * show mob HP?
+* gravitate camera towards center
 * mob strikes when player is nearby
 * show arrow on player
 * mirror rooms vertically + horizontally

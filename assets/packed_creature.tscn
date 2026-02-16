@@ -18,6 +18,7 @@ node_target_camera = NodePath("rotate")
 node_sprite = NodePath("rotate/sprite")
 
 [node name="shape" type="CollisionShape3D" parent="." unique_id=904343699]
+transform = Transform3D(0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 0, 0, 0)
 shape = SubResource("CylinderShape3D_sw327")
 
 [node name="rotate" type="Node3D" parent="." unique_id=1444358610]

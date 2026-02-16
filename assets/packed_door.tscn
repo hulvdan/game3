@@ -9,6 +9,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=951168035]
+transform = Transform3D(0.61, 0, 0, 0, 0.61, 0, 0, 0, 0.61, 0, 0, 0)
 shape = SubResource("BoxShape3D_fphxj")
 
 [node name="Sprite3D" type="Sprite3D" parent="." unique_id=1244048617]
