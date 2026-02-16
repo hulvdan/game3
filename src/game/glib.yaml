@@ -7,9 +7,10 @@ world_size:
 player_speed_holding_scale: 0.35
 creatures_push_radius: 1.0
 creatures_push_force: 4 
-player_speed_inside_enemies_scale: 0.5
+player_speed_inside_enemies_scale: 0.3
 player_roll_distance: 3
 player_roll_duration_seconds: 0.4
+player_roll_pow: 0.1
 player_stamina_regen_seconds: 1.25
 player_holding_stamina_regen_scale: 0.33
 

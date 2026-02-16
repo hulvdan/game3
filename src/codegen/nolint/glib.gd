@@ -1810,6 +1810,11 @@ class Lib:
 		service.field = __player_roll_distance
 		data[__player_roll_distance.tag] = service
 
+		__player_roll_pow = PBField.new("player_roll_pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 23, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_roll_pow
+		data[__player_roll_pow.tag] = service
+
 		__player_stamina_regen_seconds = PBField.new("player_stamina_regen_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_stamina_regen_seconds
@@ -2033,6 +2038,28 @@ class Lib:
 
 	func set_player_roll_distance(value: float) -> void:
 		__player_roll_distance.value = value
+
+
+	var __player_roll_pow: PBField
+
+
+	func has_player_roll_pow() -> bool:
+		if __player_roll_pow.value != null:
+			return true
+		return false
+
+
+	func get_player_roll_pow() -> float:
+		return __player_roll_pow.value
+
+
+	func clear_player_roll_pow() -> void:
+		data[23].state = PB_SERVICE_STATE.UNFILLED
+		__player_roll_pow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_roll_pow(value: float) -> void:
+		__player_roll_pow.value = value
 
 
 	var __player_stamina_regen_seconds: PBField
