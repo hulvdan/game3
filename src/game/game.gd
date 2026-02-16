@@ -244,34 +244,55 @@ func _physics_process(dt: float) -> void:
 	var creatures = glib.v.get_creatures()
 	for creature: Creature in room.container_creatures.get_children():
 		var data: glib.GCreature = creatures[creature.type]
+
+		var dir: Vector2 = creature.controller.move
 		var speed: float = data.get_speed()
 
 		if creature.type == glib.GCreatureType.PLAYER:
-			if room.player_holding:
-				speed *= glib.v.get_player_speed_holding_scale()
-			speed *= lerp(1.0, glib.v.get_player_speed_inside_enemies_scale(), room.player_inside_enemy_t)
-		bf.move_body_with_speed(creature.node_body, creature.controller.move, speed)
+			if room.player_rolling:
+				speed = glib.v.get_player_roll_speed()
+				dir = room.player_roll_direction
+			else:
+				if room.player_holding:
+					speed *= glib.v.get_player_speed_holding_scale()
+				speed *= lerp(1.0, glib.v.get_player_speed_inside_enemies_scale(), room.player_inside_enemy_t)
+
+		bf.move_body_with_speed(creature.node_body, dir, speed)
 	##
 
 	var end_point: Vector3 = get_mouse_world_point()
 	if end_point != Vector3.INF:
 		room.player_bow.transform.basis = room.player.transform.looking_at(end_point).basis
 
-	# Player moving ##
-	if Input.get_action_strength("shoot") >= 0.5:
-		room.player_holding += dt
-	elif room.player_holding >= glib.v.get_shooting_min_seconds():
-		var arrow: Projectile = packed_arrow.instantiate()
-		var t = (room.player_holding - glib.v.get_shooting_min_seconds()) / glib.v.get_shooting_max_seconds()
-		t = lerp(t, t * t, 0.25)
-		arrow.speed = lerp(glib.v.get_arrow_speed_min(), glib.v.get_arrow_speed_max(), t)
-		arrow.damage = round(lerp(glib.v.get_arrow_damage_min(), glib.v.get_arrow_damage_max(), t))
-		arrow.transform.origin = room.player.transform.origin
-		arrow.transform.basis = room.player_bow.transform.basis
-		room.container_projectiles.add_child(arrow)
-		room.player_holding = 0
-	elif room.player_holding > 0:
-		room.player_holding += dt
+	# Player shooting ##
+	if not room.player_rolling:
+		if Input.get_action_strength("shoot") >= 0.5:
+			room.player_holding += dt
+		elif room.player_holding >= glib.v.get_shooting_min_seconds():
+			var arrow: Projectile = packed_arrow.instantiate()
+			var t = (room.player_holding - glib.v.get_shooting_min_seconds()) / glib.v.get_shooting_max_seconds()
+			t = lerp(t, t * t, 0.25)
+			arrow.speed = lerp(glib.v.get_arrow_speed_min(), glib.v.get_arrow_speed_max(), t)
+			arrow.damage = round(lerp(glib.v.get_arrow_damage_min(), glib.v.get_arrow_damage_max(), t))
+			arrow.transform.origin = room.player.transform.origin
+			arrow.transform.basis = room.player_bow.transform.basis
+			room.container_projectiles.add_child(arrow)
+			room.player_holding = 0
+		elif room.player_holding > 0:
+			room.player_holding += dt
+	##
+
+	# Player rolling ##
+	if Input.get_action_strength("roll") >= 0.5 and not room.player_rolling:
+		if room.player.controller.move != Vector2(0, 0):
+			room.player_rolling = dt
+			room.player_holding = 0
+			room.player_roll_direction = room.player.controller.move
+	elif room.player_rolling:
+		room.player_rolling += dt
+
+		if room.player_rolling >= glib.v.get_player_roll_duration_seconds():
+			room.player_rolling = 0
 	##
 
 	# Projectiles collisions ##

@@ -8,6 +8,8 @@ player_speed_holding_scale: 0.35
 creatures_push_radius: 1.0
 creatures_push_force: 4 
 player_speed_inside_enemies_scale: 0.5
+player_roll_duration_seconds: 0.2
+player_roll_speed: 12
 
 arrow_speed_min: 10
 arrow_speed_max: 50

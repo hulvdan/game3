@@ -61,6 +61,8 @@ message Lib {
   repeated GRoom rooms = 2;
   float player_speed_holding_scale = 3;
   float player_speed_inside_enemies_scale = 17;
+  float player_roll_duration_seconds = 18;
+  float player_roll_speed = 19;
   float creatures_push_radius = 15;
   float creatures_push_force = 16;
   float arrow_speed_min = 9;

@@ -1800,6 +1800,16 @@ class Lib:
 		service.field = __player_speed_inside_enemies_scale
 		data[__player_speed_inside_enemies_scale.tag] = service
 
+		__player_roll_duration_seconds = PBField.new("player_roll_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 18, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_roll_duration_seconds
+		data[__player_roll_duration_seconds.tag] = service
+
+		__player_roll_speed = PBField.new("player_roll_speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 19, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_roll_speed
+		data[__player_roll_speed.tag] = service
+
 		__creatures_push_radius = PBField.new("creatures_push_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __creatures_push_radius
@@ -1969,6 +1979,50 @@ class Lib:
 
 	func set_player_speed_inside_enemies_scale(value: float) -> void:
 		__player_speed_inside_enemies_scale.value = value
+
+
+	var __player_roll_duration_seconds: PBField
+
+
+	func has_player_roll_duration_seconds() -> bool:
+		if __player_roll_duration_seconds.value != null:
+			return true
+		return false
+
+
+	func get_player_roll_duration_seconds() -> float:
+		return __player_roll_duration_seconds.value
+
+
+	func clear_player_roll_duration_seconds() -> void:
+		data[18].state = PB_SERVICE_STATE.UNFILLED
+		__player_roll_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_roll_duration_seconds(value: float) -> void:
+		__player_roll_duration_seconds.value = value
+
+
+	var __player_roll_speed: PBField
+
+
+	func has_player_roll_speed() -> bool:
+		if __player_roll_speed.value != null:
+			return true
+		return false
+
+
+	func get_player_roll_speed() -> float:
+		return __player_roll_speed.value
+
+
+	func clear_player_roll_speed() -> void:
+		data[19].state = PB_SERVICE_STATE.UNFILLED
+		__player_roll_speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_roll_speed(value: float) -> void:
+		__player_roll_speed.value = value
 
 
 	var __creatures_push_radius: PBField

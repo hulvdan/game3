@@ -12,6 +12,7 @@ x creatures' bodies don't collide with each other
 x creatures' areas make you slower (no slowing down when rolling though)
   (ref dead cells)
 x creatures' have forces that push each other in opposite directions
+x roll
 
 * show player HP
 * show mob HP?
@@ -19,7 +20,6 @@ x creatures' have forces that push each other in opposite directions
 * show arrow on player
 * mirror rooms vertically + horizontally
 * rolling stops bow
-* roll button?
 * correct in front of door appearing
 * mob takes damage from bow
 * swing attack?
