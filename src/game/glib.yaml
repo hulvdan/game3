@@ -9,7 +9,7 @@ creatures_push_radius: 1.0
 creatures_push_force: 4 
 player_speed_inside_enemies_scale: 0.5
 player_roll_duration_seconds: 0.2
-player_stamina_regen_seconds: 1
+player_stamina_regen_seconds: 1.25
 player_holding_stamina_regen_scale: 0.33
 player_roll_speed: 12
 

@@ -159,6 +159,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 
 func _ready() -> void:
+	## Setup
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
 
@@ -172,6 +173,7 @@ func _ready() -> void:
 
 	bf.clear_children(container_ui_minimap)
 	bf.clear_children(container_ui_progression)
+	##
 
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
 

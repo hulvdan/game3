@@ -26,7 +26,7 @@ shader_parameter/flash = Color(1, 1, 1, 0)
 [node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("hp_bar", "stamina_bars", "world_3d")]
 script = ExtResource("1_ig7tw")
 camera_distance = 4.015
-camera_angle = 0.75
+camera_angle = 0.87
 hp_bar = NodePath("VBoxContainer/hp_bar")
 stamina_bars = [NodePath("VBoxContainer/HBoxContainer/stamina"), NodePath("VBoxContainer/HBoxContainer/stamina2"), NodePath("VBoxContainer/HBoxContainer/stamina3")]
 color_ui_hp = Color(0.9098039, 0.23137255, 0.23137255, 1)
