@@ -15,8 +15,12 @@ x creatures' have forces that push each other in opposite directions
 x roll
 - can't roll during shooting
 x adjusted collider sizes
+x show player HP
+x show player stamina
 
-* show player HP
+* mob attacks
+* mob throws bomb
+*
 * show mob HP?
 * gravitate camera towards center
 * mob strikes when player is nearby

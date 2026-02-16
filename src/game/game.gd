@@ -10,6 +10,10 @@ static var async_scene_loaded = false
 @export var camera_angle: float
 
 @export_category("Resources")
+@export var hp_bar: Bar
+@export var stamina_bars: Array[Bar]
+@export var color_ui_hp: Color
+@export var color_ui_stamina: Color
 @export var world_3d: Node3D
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
@@ -151,10 +155,16 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
 	##
 
+	room.player_stamina = len(stamina_bars)
+
 
 func _ready() -> void:
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
+
+	hp_bar.init(color_ui_hp, false)
+	for x in stamina_bars:
+		x.init(color_ui_stamina, true)
 
 	var transition_rect: Control = %_transition_rect
 	transition_rect.visible = true
@@ -283,11 +293,13 @@ func _physics_process(dt: float) -> void:
 	##
 
 	# Player rolling ##
-	if Input.get_action_strength("roll") >= 0.5 and not room.player_rolling:
+	if Input.get_action_strength("roll") >= 0.5 and not room.player_rolling and room.player_stamina > 0:
 		if room.player.controller.move != Vector2(0, 0):
 			room.player_rolling = dt
 			room.player_holding = 0
 			room.player_roll_direction = room.player.controller.move
+			room.player_stamina -= 1
+			room.player_stamina_elapsed = 0
 	elif room.player_rolling:
 		room.player_rolling += dt
 
@@ -350,6 +362,25 @@ func _physics_process(dt: float) -> void:
 		if creature.hp <= 0:
 			room.container_creatures.remove_child(creature)
 	##
+
+	# Updating player hp bar ##
+	hp_bar.set_progress((room.player.hp as float) / (glib.v.get_creatures()[room.player.type].get_hp() as float))
+	##
+
+	for i in range(len(stamina_bars) - room.player_stamina + 1):
+		stamina_bars[len(stamina_bars) - 1 - i].set_progress(0)
+	if len(stamina_bars) > room.player_stamina:
+		var regen_dt: float = dt
+		if room.player_holding:
+			regen_dt *= glib.v.get_player_holding_stamina_regen_scale()
+		room.player_stamina_elapsed += regen_dt
+		var t: float = min(1, room.player_stamina_elapsed / glib.v.get_player_stamina_regen_seconds())
+		stamina_bars[room.player_stamina].set_progress(t)
+		if t >= 1:
+			room.player_stamina += 1
+			room.player_stamina_elapsed = 0
+	for i in range(room.player_stamina):
+		stamina_bars[i].set_progress(1)
 
 
 func _process(_dt: float) -> void:

@@ -11,6 +11,8 @@ var player_inside_enemy_t: float = 0
 var player_holding: float = 0
 var player_rolling: float = 0
 var player_roll_direction: Vector2
+var player_stamina: int = 0
+var player_stamina_elapsed: float = 0
 
 @onready var container_creatures: Node = $_container_creatures
 @onready var container_floor: Node = $_container_floor

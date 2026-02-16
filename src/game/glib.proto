@@ -63,6 +63,8 @@ message Lib {
   float player_speed_inside_enemies_scale = 17;
   float player_roll_duration_seconds = 18;
   float player_roll_speed = 19;
+  float player_stamina_regen_seconds = 20;
+  float player_holding_stamina_regen_scale = 21;
   float creatures_push_radius = 15;
   float creatures_push_force = 16;
   float arrow_speed_min = 9;

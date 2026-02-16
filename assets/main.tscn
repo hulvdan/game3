@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://dt4q7rgbrwtxh" path="res://assets/packed_bow.tscn" id="10_ew6cl"]
 [ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/ui_flash.tres" id="10_h4xlo"]
 [ext_resource type="PackedScene" uid="uid://cjk26kw0piudl" path="res://assets/packed_arrow.tscn" id="11_km2eh"]
+[ext_resource type="PackedScene" uid="uid://c80peoxwlv0kn" path="res://assets/packed_bar.tscn" id="13_km2eh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vvw4a"]
 shader = ExtResource("10_h4xlo")
@@ -22,10 +23,14 @@ shader_parameter/flash = Color(1, 1, 1, 0)
 
 [node name="_main" type="Node3D" unique_id=958610633]
 
-[node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("world_3d")]
+[node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("hp_bar", "stamina_bars", "world_3d")]
 script = ExtResource("1_ig7tw")
 camera_distance = 4.015
 camera_angle = 0.75
+hp_bar = NodePath("VBoxContainer/hp_bar")
+stamina_bars = [NodePath("VBoxContainer/HBoxContainer/stamina"), NodePath("VBoxContainer/HBoxContainer/stamina2"), NodePath("VBoxContainer/HBoxContainer/stamina3")]
+color_ui_hp = Color(0.9098039, 0.23137255, 0.23137255, 1)
+color_ui_stamina = Color(0.5686275, 0.85882354, 0.4117647, 1)
 world_3d = NodePath("../_meta/_world_3d")
 packed_creature = ExtResource("6_qdlv5")
 packed_floor_tile = ExtResource("5_tkxyu")
@@ -39,9 +44,11 @@ packed_arrow = ExtResource("11_km2eh")
 
 [node name="_container_ui_minimap" type="Node2D" parent="_game" unique_id=229164054]
 unique_name_in_owner = true
+position = Vector2(800, 0)
 
 [node name="_minimap_room" type="Sprite2D" parent="_game/_container_ui_minimap" unique_id=960137371]
 material = SubResource("ShaderMaterial_vvw4a")
+position = Vector2(68.08, 0)
 texture = ExtResource("5_m5usj")
 
 [node name="Control" type="Control" parent="_game" unique_id=929978051]
@@ -63,6 +70,37 @@ unique_name_in_owner = true
 [node name="_camera" type="Camera3D" parent="_game" unique_id=1622424363]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="_game" unique_id=1787468414]
+anchors_preset = -1
+anchor_left = 0.0050000004
+anchor_top = 0.010000001
+anchor_right = 0.188
+anchor_bottom = 0.09
+offset_left = 0.23999977
+offset_right = 0.07199097
+offset_bottom = 0.23199844
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="hp_bar" parent="_game/VBoxContainer" unique_id=1719242791 instance=ExtResource("13_km2eh")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="_game/VBoxContainer" unique_id=1081022861]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="stamina" parent="_game/VBoxContainer/HBoxContainer" unique_id=465028417 instance=ExtResource("13_km2eh")]
+layout_mode = 2
+
+[node name="stamina2" parent="_game/VBoxContainer/HBoxContainer" unique_id=1949939318 instance=ExtResource("13_km2eh")]
+layout_mode = 2
+
+[node name="stamina3" parent="_game/VBoxContainer/HBoxContainer" unique_id=1774882788 instance=ExtResource("13_km2eh")]
+layout_mode = 2
 
 [node name="_transition_rect" type="ColorRect" parent="_game" unique_id=1997420545]
 unique_name_in_owner = true
