@@ -7,25 +7,6 @@ BIG PLAN
 PLAN
 ============================================================
 
-x was fucking around with vscodium themes. I hate it))) There's no need for that actually
-x creatures' bodies don't collide with each other
-x creatures' areas make you slower (no slowing down when rolling though)
-  (ref dead cells)
-x creatures' have forces that push each other in opposite directions
-x roll
-- can't roll during shooting
-x adjusted collider sizes
-x show player HP
-x show player stamina
-x stamina regen + slow regen when holding + roll consumes it
-x mob hp: shown
-x mob hp: despawning
-x mob hp: updating value
-x mob hp: smaller
-x mob hp: display under creature
-x player roll quadratic equation
-x player roll pow equation
-
 * mob hp: uncomment creature.hp_bar.visible = false
 * mob hp: more health -> bigger bar
 * mob hp: fix: don't display mob hp bars over transition
