@@ -16,8 +16,6 @@ x transition rect is always over everything
 x player hp and stamina correct scaling
 x minimap: correct placement
 
-* gamelib option to control 
-*
 * minimap:
 * minimap:
 * minimap:

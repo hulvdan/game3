@@ -1,8 +1,8 @@
 debug_collisions: 1
 
 world_size:
-  x: 7
-  y: 5
+  x: 5
+  y: 4
 
 player_speed_holding_scale: 0.35
 creatures_push_radius: 1.0

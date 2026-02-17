@@ -74,8 +74,8 @@ layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -264.0
-offset_right = -264.0
+offset_left = -200.0
+offset_right = -200.0
 grow_horizontal = 0
 
 [node name="_minimap_room" type="Sprite2D" parent="_game/CanvasLayer2/_container_ui_minimap" unique_id=960137371]
