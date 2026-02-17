@@ -83,7 +83,7 @@ func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 		return
 
 	var tween = create_tween()
-	var r: Node = $_transition_rect
+	var r: Node = %_transition
 	player_is_entering_door = true
 	tween.tween_property(r, "modulate:a", 1, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(remake_room.bind(current_room_pos + bf.DIRECTION_OFFSETS[direction_index], direction_index))
@@ -175,9 +175,9 @@ func _ready() -> void:
 	for x in stamina_bars:
 		x.init(color_ui_stamina, true)
 
-	var transition_rect: Control = %_transition_rect
-	transition_rect.visible = true
-	create_tween().tween_property(transition_rect, "modulate:a", 0, 0)
+	var transition: Control = %_transition
+	transition.visible = true
+	create_tween().tween_property(transition, "modulate:a", 0, 0)
 
 	bf.clear_children(container_ui_minimap)
 	bf.clear_children(container_ui_progression)

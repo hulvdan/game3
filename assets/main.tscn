@@ -28,8 +28,8 @@ shader_parameter/flash = Color(1, 1, 1, 0)
 script = ExtResource("1_ig7tw")
 camera_distance = 4.015
 camera_angle = 0.87
-hp_bar = NodePath("VBoxContainer/hp_bar")
-stamina_bars = [NodePath("VBoxContainer/HBoxContainer/stamina"), NodePath("VBoxContainer/HBoxContainer/stamina2"), NodePath("VBoxContainer/HBoxContainer/stamina3")]
+hp_bar = NodePath("CanvasLayer2/VBoxContainer/hp_bar")
+stamina_bars = [NodePath("CanvasLayer2/VBoxContainer/HBoxContainer/stamina"), NodePath("CanvasLayer2/VBoxContainer/HBoxContainer/stamina2"), NodePath("CanvasLayer2/VBoxContainer/HBoxContainer/stamina3")]
 color_ui_hp = Color(0.9098039, 0.23137255, 0.23137255, 1)
 color_ui_stamina = Color(0.5686275, 0.85882354, 0.4117647, 1)
 world_3d = NodePath("../_meta/_world_3d")
@@ -73,7 +73,12 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="_game" unique_id=1787468414]
+[node name="_container" type="Node" parent="_game" unique_id=1097532762]
+unique_name_in_owner = true
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="_game" unique_id=1260406669]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="_game/CanvasLayer2" unique_id=1787468414]
 anchors_preset = -1
 anchor_left = 0.0050000004
 anchor_top = 0.010000001
@@ -87,29 +92,38 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="hp_bar" parent="_game/VBoxContainer" unique_id=1719242791 instance=ExtResource("13_km2eh")]
+[node name="hp_bar" parent="_game/CanvasLayer2/VBoxContainer" unique_id=1719242791 instance=ExtResource("13_km2eh")]
 layout_mode = 2
 size_flags_horizontal = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="_game/VBoxContainer" unique_id=1081022861]
+[node name="HBoxContainer" type="HBoxContainer" parent="_game/CanvasLayer2/VBoxContainer" unique_id=1081022861]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="stamina" parent="_game/VBoxContainer/HBoxContainer" unique_id=465028417 instance=ExtResource("13_km2eh")]
+[node name="stamina" parent="_game/CanvasLayer2/VBoxContainer/HBoxContainer" unique_id=465028417 instance=ExtResource("13_km2eh")]
 layout_mode = 2
 
-[node name="stamina2" parent="_game/VBoxContainer/HBoxContainer" unique_id=1949939318 instance=ExtResource("13_km2eh")]
+[node name="stamina2" parent="_game/CanvasLayer2/VBoxContainer/HBoxContainer" unique_id=1949939318 instance=ExtResource("13_km2eh")]
 layout_mode = 2
 
-[node name="stamina3" parent="_game/VBoxContainer/HBoxContainer" unique_id=1774882788 instance=ExtResource("13_km2eh")]
+[node name="stamina3" parent="_game/CanvasLayer2/VBoxContainer/HBoxContainer" unique_id=1774882788 instance=ExtResource("13_km2eh")]
 layout_mode = 2
 
-[node name="_container" type="Node" parent="_game" unique_id=1097532762]
-unique_name_in_owner = true
+[node name="_transition" type="CanvasLayer" parent="_game" unique_id=1106916493]
+layer = 1000
 
-[node name="_transition_rect" type="ColorRect" parent="_game" unique_id=1997420545]
+[node name="_transition" type="Control" parent="_game/_transition" unique_id=1680602373]
 unique_name_in_owner = true
 visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="_transition_rect" type="ColorRect" parent="_game/_transition/_transition" unique_id=1997420545]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
