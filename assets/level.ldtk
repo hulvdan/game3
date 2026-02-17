@@ -11,7 +11,7 @@
   "iid": "27a80100-fa90-11f0-a600-6d791be30d7e",
   "jsonVersion": "1.5.3",
   "appBuildId": 473703,
-  "nextUid": 16,
+  "nextUid": 18,
   "identifierStyle": "Capitalize",
   "toc": [],
   "worldLayout": "Free",
@@ -183,7 +183,7 @@
         "hollow": false,
         "color": "#BE4A2F",
         "renderMode": "Rectangle",
-        "showName": true,
+        "showName": false,
         "tilesetId": null,
         "tileRenderMode": "FitInside",
         "tileRect": null,
@@ -345,6 +345,41 @@
             "tilesetUid": null
           }
         ]
+      },
+      {
+        "identifier": "Spike",
+        "uid": 17,
+        "tags": [],
+        "exportToToc": false,
+        "allowOutOfBounds": false,
+        "doc": null,
+        "width": 16,
+        "height": 16,
+        "resizableX": false,
+        "resizableY": false,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "keepAspectRatio": false,
+        "tileOpacity": 1,
+        "fillOpacity": 1,
+        "lineOpacity": 1,
+        "hollow": false,
+        "color": "#FF0044",
+        "renderMode": "Rectangle",
+        "showName": false,
+        "tilesetId": null,
+        "tileRenderMode": "FitInside",
+        "tileRect": null,
+        "uiTileRect": null,
+        "nineSliceBorders": [],
+        "maxCount": 0,
+        "limitScope": "PerLevel",
+        "limitBehavior": "MoveLastOne",
+        "pivotX": 0,
+        "pivotY": 0,
+        "fieldDefs": []
       }
     ],
     "tilesets": [
@@ -777,6 +812,31 @@
               ],
               "__worldX": 176,
               "__worldY": 80
+            },
+            {
+              "__identifier": "Spike",
+              "__grid": [
+                8,
+                3
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#FF0044",
+              "iid": "9971b9a0-fa90-11f0-b9ac-8fa8c7e2db84",
+              "width": 16,
+              "height": 16,
+              "defUid": 17,
+              "px": [
+                128,
+                48
+              ],
+              "fieldInstances": [],
+              "__worldX": 144,
+              "__worldY": 64
             }
           ]
         },
@@ -1210,6 +1270,31 @@
               ],
               "__worldX": 320,
               "__worldY": 144
+            },
+            {
+              "__identifier": "Spike",
+              "__grid": [
+                8,
+                3
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#FF0044",
+              "iid": "98149aa0-fa90-11f0-b9ac-35df1b61f7ec",
+              "width": 16,
+              "height": 16,
+              "defUid": 17,
+              "px": [
+                128,
+                48
+              ],
+              "fieldInstances": [],
+              "__worldX": 352,
+              "__worldY": 64
             }
           ]
         },
@@ -2183,6 +2268,609 @@
           ],
           "autoLayerTiles": [],
           "seed": 8906043,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": []
+        }
+      ],
+      "__neighbours": []
+    },
+    {
+      "identifier": "Level_3",
+      "iid": "f60f1870-fa90-11f0-b9ac-4b51fe1606ca",
+      "uid": 16,
+      "worldX": 432,
+      "worldY": 16,
+      "worldDepth": 0,
+      "pxWid": 304,
+      "pxHei": 160,
+      "__bgColor": "#696A79",
+      "bgColor": null,
+      "useAutoIdentifier": true,
+      "bgRelPath": null,
+      "bgPos": null,
+      "bgPivotX": 0.5,
+      "bgPivotY": 0.5,
+      "__smartColor": "#ADADB5",
+      "__bgPos": null,
+      "externalRelPath": null,
+      "fieldInstances": [],
+      "layerInstances": [
+        {
+          "__identifier": "Progression",
+          "__type": "Entities",
+          "__cWid": 19,
+          "__cHei": 10,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "f60f1871-fa90-11f0-b9ac-c52e4fc63e7f",
+          "levelId": 16,
+          "layerDefUid": 9,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [],
+          "autoLayerTiles": [],
+          "seed": 7608755,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": []
+        },
+        {
+          "__identifier": "Entities",
+          "__type": "Entities",
+          "__cWid": 19,
+          "__cHei": 10,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "f60f1872-fa90-11f0-b9ac-4752fa0e2f21",
+          "levelId": 16,
+          "layerDefUid": 3,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [],
+          "autoLayerTiles": [],
+          "seed": 9960768,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": [
+            {
+              "__identifier": "Door",
+              "__grid": [
+                0,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 288,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "0263d570-fa90-11f0-b9ac-6ff7af8db3ac",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                0,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Left_2",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 288,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Left_2"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 432,
+              "__worldY": 80
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                2,
+                8
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 272,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "072702d0-fa90-11f0-b9ac-43aa1d6fa190",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                32,
+                128
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Down_1",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 272,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Down_1"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 464,
+              "__worldY": 144
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                15,
+                0
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 256,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "07efd110-fa90-11f0-b9ac-5b0f0d346432",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                240,
+                0
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Up_3",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 256,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Up_3"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 672,
+              "__worldY": 16
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                17,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 304,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "08c1ee20-fa90-11f0-b9ac-5d7e424b73a0",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                272,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Right_0",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 304,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Right_0"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 704,
+              "__worldY": 80
+            },
+            {
+              "__identifier": "Spike",
+              "__grid": [
+                7,
+                3
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#FF0044",
+              "iid": "30434d90-fa90-11f0-b9ac-9171270a5497",
+              "width": 16,
+              "height": 16,
+              "defUid": 17,
+              "px": [
+                112,
+                48
+              ],
+              "fieldInstances": [],
+              "__worldX": 544,
+              "__worldY": 64
+            },
+            {
+              "__identifier": "Spike",
+              "__grid": [
+                7,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#FF0044",
+              "iid": "3094a1e0-fa90-11f0-b9ac-bba87661774e",
+              "width": 16,
+              "height": 16,
+              "defUid": 17,
+              "px": [
+                112,
+                64
+              ],
+              "fieldInstances": [],
+              "__worldX": 544,
+              "__worldY": 80
+            },
+            {
+              "__identifier": "Spike",
+              "__grid": [
+                7,
+                5
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#FF0044",
+              "iid": "30d6db00-fa90-11f0-b9ac-fdd6c4f513ab",
+              "width": 16,
+              "height": 16,
+              "defUid": 17,
+              "px": [
+                112,
+                80
+              ],
+              "fieldInstances": [],
+              "__worldX": 544,
+              "__worldY": 96
+            },
+            {
+              "__identifier": "Spike",
+              "__grid": [
+                7,
+                6
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#FF0044",
+              "iid": "31198950-fa90-11f0-b9ac-435ae93c1ad4",
+              "width": 16,
+              "height": 16,
+              "defUid": 17,
+              "px": [
+                112,
+                96
+              ],
+              "fieldInstances": [],
+              "__worldX": 544,
+              "__worldY": 112
+            }
+          ]
+        },
+        {
+          "__identifier": "Floor",
+          "__type": "IntGrid",
+          "__cWid": 19,
+          "__cHei": 10,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "f60f1873-fa90-11f0-b9ac-e7e89a19de34",
+          "levelId": 16,
+          "layerDefUid": 1,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "autoLayerTiles": [],
+          "seed": 7422141,
           "overrideTilesetUid": null,
           "gridTiles": [],
           "entityInstances": []

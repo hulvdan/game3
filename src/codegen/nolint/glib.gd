@@ -1353,6 +1353,66 @@ class GDoor:
 		return result
 
 
+class GSpike:
+	func _init():
+		var service
+
+		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __pos
+		service.func_ref = Callable(self, "new_pos")
+		data[__pos.tag] = service
+
+
+	var data = { }
+
+	var __pos: PBField
+
+
+	func has_pos() -> bool:
+		if __pos.value != null:
+			return true
+		return false
+
+
+	func get_pos() -> GV2:
+		return __pos.value
+
+
+	func clear_pos() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_pos() -> GV2:
+		__pos.value = GV2.new()
+		return __pos.value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GRoom:
 	func _init():
 		var service
@@ -1375,6 +1435,13 @@ class GRoom:
 		service = PBServiceField.new()
 		service.field = __tiles
 		data[__tiles.tag] = service
+
+		var __spikes_default: Array[GSpike] = []
+		__spikes = PBField.new("spikes", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 5, true, __spikes_default)
+		service = PBServiceField.new()
+		service.field = __spikes
+		service.func_ref = Callable(self, "add_spikes")
+		data[__spikes.tag] = service
 
 
 	var data = { }
@@ -1434,6 +1501,24 @@ class GRoom:
 
 	func add_tiles(value: int) -> void:
 		__tiles.value.append(value)
+
+
+	var __spikes: PBField
+
+
+	func get_spikes() -> Array[GSpike]:
+		return __spikes.value
+
+
+	func clear_spikes() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__spikes.value.clear()
+
+
+	func add_spikes() -> GSpike:
+		var element = GSpike.new()
+		__spikes.value.append(element)
+		return element
 
 
 	func _to_string() -> String:

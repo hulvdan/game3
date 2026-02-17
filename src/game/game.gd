@@ -8,22 +8,23 @@ static var async_scene_loaded = false
 @export_category("Values")
 @export var camera_distance: float
 @export var camera_angle: float
-
-@export_category("Resources")
 @export var color_ui_hp: Color
 @export var color_ui_stamina: Color
+
+@export_category("Resources")
 @export var world_3d: Node3D
+@export var packed_room: PackedScene
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
 @export var packed_collider_tile: PackedScene
 @export var packed_door: PackedScene
-@export var packed_room: PackedScene
-@export var packed_ui_minimap_room: PackedScene
-@export var packed_ui_progression_entry: PackedScene
 @export var packed_bow: PackedScene
 @export var packed_arrow: PackedScene
-@export var packed_bar_player: PackedScene
-@export var packed_bar_mob: PackedScene
+@export var packed_spike: PackedScene
+@export var packed_ui_bar_player: PackedScene
+@export var packed_ui_bar_mob: PackedScene
+@export var packed_ui_minimap_room: PackedScene
+@export var packed_ui_progression_entry: PackedScene
 
 var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
@@ -63,7 +64,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	creature.node_sprite.texture = creature.res.texture
 
 	if type != glib.GCreatureType.PLAYER:
-		var bar: Bar = packed_bar_mob.instantiate()
+		var bar: Bar = packed_ui_bar_mob.instantiate()
 		creature.hp_bar = bar
 		bar.anchor_right *= creature.hp / 3.0
 		room.container_mob_hp_bars.add_child(bar)
@@ -146,15 +147,22 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		if !bounds.has_point(to_pos):
 			continue
 
-		var door_node: Area3D = packed_door.instantiate()
-		bf.scale_2d(door_node, glib.ToV2(door.get_size()))
-		bf.set_pos_2d(door_node, glib.ToV2(door.get_center_pos()))
-		room.container_doors.add_child(door_node)
+		var node: Area3D = packed_door.instantiate()
+		bf.scale_2d(node, glib.ToV2(door.get_size()))
+		bf.set_pos_2d(node, glib.ToV2(door.get_center_pos()))
+		room.container_doors.add_child(node)
 
-		door_node.body_entered.connect(on_player_entered_door.bind(door.get_direction()))
+		node.body_entered.connect(on_player_entered_door.bind(door.get_direction()))
 
 		if (door.get_direction() + 2) % 4 == player_direction_index:
 			player_pos = glib.ToV2(door.get_center_pos()) + Vector2(bf.DIRECTION_OFFSETS[player_direction_index]) * 2
+	##
+
+	## Placing spikes
+	for spike in g_room.get_spikes():
+		var node: Spike = packed_spike.instantiate()
+		room.container_spikes.add_child(node)
+		node.set_progress(1)
 	##
 
 	## Placing player and other creatures
@@ -176,7 +184,7 @@ func _ready() -> void:
 	hp_bar.init(color_ui_hp, false)
 	bf.clear_children(container_stamina_bars)
 	for i in range(glib.v.get_player_stamina_charges()):
-		var bar: Bar = packed_bar_player.instantiate()
+		var bar: Bar = packed_ui_bar_player.instantiate()
 		stamina_bars.append(bar)
 		container_stamina_bars.add_child(bar)
 		bar.init(color_ui_stamina, true)

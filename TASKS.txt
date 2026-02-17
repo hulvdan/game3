@@ -15,7 +15,32 @@ x mob hp: more health -> bigger bar
 x transition rect is always over everything
 x player hp and stamina correct scaling
 x minimap: correct placement
+x spikes: display in-game
 
+* spikes: correct pos
+* spikes: set flash
+* spikes: add node with vertical spikes
+* spikes: toggle node upon activation (set_progress)
+* spikes: 
+* spikes: 
+* spikes: 
+* spikes: 
+*
+* items: can drop from mines (hollow knight like)
+* items: can drop from herbs on swing
+* items: can drop from bonepiles
+* items: can drop from mobs
+*
+* items: 
+* items: 
+* items: 
+*
+* progression: can upgrade HP
+* progression: upgrading costs items
+* progression: add screen?
+* progression:
+* progression:
+*
 * minimap:
 * minimap:
 * minimap:

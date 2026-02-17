@@ -112,20 +112,24 @@ def _process_glib(genline, glib) -> None:
             continue
         floor = level.get_layer("Floor")
         doors = []
+        spikes = []
         entities = level.get_layer("Entities")
-        for door in entities.entities("Door"):
+        for x in entities.entities("Door"):
             doors.append(
                 {
-                    "center_pos": bf.as_dict(door.pos_center),
-                    "size": bf.as_dict(door.size),
-                    "direction": int(door.field("Direction").split("_", 1)[-1]),
+                    "center_pos": bf.as_dict(x.pos_center),
+                    "size": bf.as_dict(x.size),
+                    "direction": int(x.field("Direction").split("_", 1)[-1]),
                 }
             )
+        for x in entities.entities("Spike"):
+            spikes.append({"pos": bf.as_dict(x.pos_center)})
         rooms.append(
             {
                 "tiles": floor.intGridCsv,
                 "size": bf.as_dict(floor.size),
                 "doors": doors,
+                "spikes": spikes,
             }
         )
     glib["rooms"] = rooms

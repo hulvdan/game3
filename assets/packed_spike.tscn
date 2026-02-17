@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://b8ouoy8vmdy1w"]
+
+[ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="1_mbjms"]
+[ext_resource type="Script" uid="uid://cwm05adv2l5yh" path="res://src/game/spike.gd" id="2_rqjwe"]
+[ext_resource type="Texture2D" uid="uid://dmvkulolq5k7p" path="res://assets/art/textures/removeme/arrow.png" id="3_rqjwe"]
+
+[node name="Node3D" type="Node3D" unique_id=1201653943]
+script = ExtResource("2_rqjwe")
+
+[node name="spike" type="Sprite3D" parent="." unique_id=48629862]
+transform = Transform3D(1.635, 0, 0, 0, -7.146812e-08, 1.635, 0, -1.635, -7.146812e-08, 0, 0, 0)
+texture = ExtResource("1_mbjms")
+
+[node name="_container_spikes" type="Node3D" parent="." unique_id=1875364367]
+unique_name_in_owner = true
+
+[node name="Sprite3D2" type="Sprite3D" parent="_container_spikes" unique_id=1185250912]
+transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, 0.343, 0.37600863, 0)
+texture = ExtResource("3_rqjwe")
+
+[node name="Sprite3D3" type="Sprite3D" parent="_container_spikes" unique_id=102171200]
+transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, -0.29534644, 0.37600863, 0)
+texture = ExtResource("3_rqjwe")
+
+[node name="Sprite3D4" type="Sprite3D" parent="_container_spikes" unique_id=1990403667]
+transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, 0.002725929, 0.37600863, 0)
+texture = ExtResource("3_rqjwe")
+
+[node name="Sprite3D6" type="Sprite3D" parent="_container_spikes" unique_id=1367092462]
+transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, -0.1635435, 0.37600863, 0.30266255)
+texture = ExtResource("3_rqjwe")
+
+[node name="Sprite3D7" type="Sprite3D" parent="_container_spikes" unique_id=424734206]
+transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, 0.13452888, 0.37600863, 0.30266255)
+texture = ExtResource("3_rqjwe")
+
+[node name="Sprite3D8" type="Sprite3D" parent="_container_spikes" unique_id=1076969440]
+transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, -0.1635435, 0.37600863, -0.26675552)
+texture = ExtResource("3_rqjwe")
+
+[node name="Sprite3D9" type="Sprite3D" parent="_container_spikes" unique_id=1986299979]
+transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, 0.13452888, 0.37600863, -0.26675552)
+texture = ExtResource("3_rqjwe")

@@ -25,3 +25,6 @@ unique_name_in_owner = true
 
 [node name="_container_mob_hp_bars" type="Node" parent="." unique_id=1345720630]
 unique_name_in_owner = true
+
+[node name="_container_spikes" type="Node" parent="." unique_id=1762579124]
+unique_name_in_owner = true
