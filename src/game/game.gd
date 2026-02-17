@@ -100,7 +100,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	s2.set_shader_parameter('flash', Vector4(1, 1, 1, 0.6))
 	##
 
-	## Reinstantiating room
+	## Reinstantiating room node
 	player_is_entering_door = false
 	if room:
 		room.queue_free()
@@ -242,10 +242,10 @@ func _physics_process(dt: float) -> void:
 		add_child(r.instantiate())
 	##
 
+	## Setting enemy controller.move towards player
 	for creature: Creature in room.container_creatures.get_children():
 		creature.controller.move = Vector2(0, 0)
 
-	## Setting enemy controller.move towards player
 	if room.start_elapsed >= 1:
 		for creature: Creature in room.container_creatures.get_children():
 			if creature.type <= glib.GCreatureType.PLAYER:
@@ -256,10 +256,10 @@ func _physics_process(dt: float) -> void:
 			creature.controller.move = dir
 	##
 
+	## Creatures moving
 	if !player_is_entering_door:
 		room.player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
 
-	## Creatures moving
 	var creatures = glib.v.get_creatures()
 	for creature: Creature in room.container_creatures.get_children():
 		var data: glib.GCreature = creatures[creature.type]
@@ -283,9 +283,11 @@ func _physics_process(dt: float) -> void:
 		bf.move_body_with_speed(creature.node_body, dir, speed)
 	##
 
+	## Updating player's bow direction
 	var end_point: Vector3 = get_mouse_world_point()
 	if end_point != Vector3.INF:
 		room.player_bow.transform.basis = room.player.transform.looking_at(end_point).basis
+	##
 
 	## Player shooting
 	if not room.player_rolling:
