@@ -72,6 +72,7 @@ message Lib {
   int32 player_stamina_charges = 24;
   float player_stamina_regen_seconds = 20;
   float player_holding_stamina_regen_scale = 21;
+  float spikes_duration_seconds = 25;
   float creatures_push_radius = 15;
   float creatures_push_force = 16;
   float arrow_speed_min = 9;

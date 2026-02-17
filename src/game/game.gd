@@ -161,8 +161,9 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	## Placing spikes
 	for spike in g_room.get_spikes():
 		var node: Spike = packed_spike.instantiate()
+		node.transform.origin = bf.to_xz(glib.ToV2(spike.get_pos()))
 		room.container_spikes.add_child(node)
-		node.set_progress(1)
+		node.init(room)
 	##
 
 	## Placing player and other creatures

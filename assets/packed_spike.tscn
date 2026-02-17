@@ -4,6 +4,8 @@
 [ext_resource type="Script" uid="uid://cwm05adv2l5yh" path="res://src/game/spike.gd" id="2_rqjwe"]
 [ext_resource type="Texture2D" uid="uid://dmvkulolq5k7p" path="res://assets/art/textures/removeme/arrow.png" id="3_rqjwe"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_rqjwe"]
+
 [node name="Node3D" type="Node3D" unique_id=1201653943]
 script = ExtResource("2_rqjwe")
 
@@ -13,31 +15,61 @@ texture = ExtResource("1_mbjms")
 
 [node name="_container_spikes" type="Node3D" parent="." unique_id=1875364367]
 unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.52, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="Sprite3D2" type="Sprite3D" parent="_container_spikes" unique_id=1185250912]
-transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, 0.343, 0.37600863, 0)
+[node name="Node3D" type="Node3D" parent="_container_spikes" unique_id=1000040789]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.15462416)
+
+[node name="Sprite3D" type="Sprite3D" parent="_container_spikes/Node3D" unique_id=2110871320]
+transform = Transform3D(-9.8350625e-09, -0.225, 0, 0.225, -9.8350625e-09, 0, 0, 0, 0.225, 0, 0.4093663, 0)
 texture = ExtResource("3_rqjwe")
 
-[node name="Sprite3D3" type="Sprite3D" parent="_container_spikes" unique_id=102171200]
-transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, -0.29534644, 0.37600863, 0)
+[node name="Node3D2" type="Node3D" parent="_container_spikes" unique_id=577989490]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.36888134, 0, 0.15462416)
+
+[node name="Sprite3D" type="Sprite3D" parent="_container_spikes/Node3D2" unique_id=377689861]
+transform = Transform3D(-9.8350625e-09, -0.225, 0, 0.225, -9.8350625e-09, 0, 0, 0, 0.225, 0, 0.4093663, 0)
 texture = ExtResource("3_rqjwe")
 
-[node name="Sprite3D4" type="Sprite3D" parent="_container_spikes" unique_id=1990403667]
-transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, 0.002725929, 0.37600863, 0)
+[node name="Node3D4" type="Node3D" parent="_container_spikes" unique_id=1031937147]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17083168, 0, -0.16166136)
+
+[node name="Sprite3D" type="Sprite3D" parent="_container_spikes/Node3D4" unique_id=848849944]
+transform = Transform3D(-9.8350625e-09, -0.225, 0, 0.225, -9.8350625e-09, 0, 0, 0, 0.225, 0, 0.4093663, 0)
 texture = ExtResource("3_rqjwe")
 
-[node name="Sprite3D6" type="Sprite3D" parent="_container_spikes" unique_id=1367092462]
-transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, -0.1635435, 0.37600863, 0.30266255)
+[node name="Node3D5" type="Node3D" parent="_container_spikes" unique_id=705364524]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19804966, 0, -0.16166136)
+
+[node name="Sprite3D" type="Sprite3D" parent="_container_spikes/Node3D5" unique_id=2089575951]
+transform = Transform3D(-9.8350625e-09, -0.225, 0, 0.225, -9.8350625e-09, 0, 0, 0, 0.225, 0, 0.4093663, 0)
 texture = ExtResource("3_rqjwe")
 
-[node name="Sprite3D7" type="Sprite3D" parent="_container_spikes" unique_id=424734206]
-transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, 0.13452888, 0.37600863, 0.30266255)
+[node name="Node3D6" type="Node3D" parent="_container_spikes" unique_id=1743465376]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17083168, 0, 0.50522137)
+
+[node name="Sprite3D" type="Sprite3D" parent="_container_spikes/Node3D6" unique_id=1509809048]
+transform = Transform3D(-9.8350625e-09, -0.225, 0, 0.225, -9.8350625e-09, 0, 0, 0, 0.225, 0, 0.4093663, 0)
 texture = ExtResource("3_rqjwe")
 
-[node name="Sprite3D8" type="Sprite3D" parent="_container_spikes" unique_id=1076969440]
-transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, -0.1635435, 0.37600863, -0.26675552)
+[node name="Node3D7" type="Node3D" parent="_container_spikes" unique_id=1734805412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19804966, 0, 0.50522137)
+
+[node name="Sprite3D" type="Sprite3D" parent="_container_spikes/Node3D7" unique_id=742358485]
+transform = Transform3D(-9.8350625e-09, -0.225, 0, 0.225, -9.8350625e-09, 0, 0, 0, 0.225, 0, 0.4093663, 0)
 texture = ExtResource("3_rqjwe")
 
-[node name="Sprite3D9" type="Sprite3D" parent="_container_spikes" unique_id=1986299979]
-transform = Transform3D(-9.397948e-09, -0.215, 0, 0.215, -9.397948e-09, 0, 0, 0, 0.215, 0.13452888, 0.37600863, -0.26675552)
+[node name="Node3D3" type="Node3D" parent="_container_spikes" unique_id=863505671]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3712579, 0, 0.15462416)
+
+[node name="Sprite3D" type="Sprite3D" parent="_container_spikes/Node3D3" unique_id=1595873754]
+transform = Transform3D(-9.8350625e-09, -0.225, 0, 0.225, -9.8350625e-09, 0, 0, 0, 0.225, 0, 0.4093663, 0)
 texture = ExtResource("3_rqjwe")
+
+[node name="_area" type="Area3D" parent="." unique_id=1500935489]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="_area" unique_id=1150814268]
+shape = SubResource("BoxShape3D_rqjwe")

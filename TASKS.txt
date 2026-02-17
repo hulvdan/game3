@@ -16,11 +16,11 @@ x transition rect is always over everything
 x player hp and stamina correct scaling
 x minimap: correct placement
 x spikes: display in-game
+x spikes: correct pos
+- spikes: set flash
+x spikes: add node with vertical spikes
 
-* spikes: correct pos
-* spikes: set flash
-* spikes: add node with vertical spikes
-* spikes: toggle node upon activation (set_progress)
+* spikes: activation when playes is nearby
 * spikes: 
 * spikes: 
 * spikes: 

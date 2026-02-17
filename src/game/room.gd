@@ -4,7 +4,6 @@ class_name Room
 
 var player: Creature
 var player_bow: Node3D
-var spikes: Array[Spike]
 var target_camera_elements: Array[Node3D]
 
 var start_elapsed: float = 0

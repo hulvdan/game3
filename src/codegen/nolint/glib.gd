@@ -1915,6 +1915,11 @@ class Lib:
 		service.field = __player_holding_stamina_regen_scale
 		data[__player_holding_stamina_regen_scale.tag] = service
 
+		__spikes_duration_seconds = PBField.new("spikes_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __spikes_duration_seconds
+		data[__spikes_duration_seconds.tag] = service
+
 		__creatures_push_radius = PBField.new("creatures_push_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __creatures_push_radius
@@ -2216,6 +2221,28 @@ class Lib:
 
 	func set_player_holding_stamina_regen_scale(value: float) -> void:
 		__player_holding_stamina_regen_scale.value = value
+
+
+	var __spikes_duration_seconds: PBField
+
+
+	func has_spikes_duration_seconds() -> bool:
+		if __spikes_duration_seconds.value != null:
+			return true
+		return false
+
+
+	func get_spikes_duration_seconds() -> float:
+		return __spikes_duration_seconds.value
+
+
+	func clear_spikes_duration_seconds() -> void:
+		data[25].state = PB_SERVICE_STATE.UNFILLED
+		__spikes_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_spikes_duration_seconds(value: float) -> void:
+		__spikes_duration_seconds.value = value
 
 
 	var __creatures_push_radius: PBField

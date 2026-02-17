@@ -26,9 +26,7 @@ func clear_children(node: Node) -> void:
 
 func move_body_with_speed(body: RigidBody3D, direction: Vector2, speed: float) -> void:
 	var offset: Vector2 = direction * speed
-	body.apply_central_force(
-		Vector3(offset.x, 0, offset.y) * body.linear_damp * body.mass,
-	)
+	body.apply_central_force(to_xz(offset) * body.linear_damp * body.mass)
 
 
 func set_pos_2d(node: Node3D, pos: Vector2) -> void:
@@ -40,11 +38,16 @@ func scale_2d(node: Node3D, scale: Vector2) -> void:
 	node.transform = node.transform.scaled(Vector3(scale.x, 1, scale.y))
 
 
-func duplicate_shader_material(sprite: Sprite2D) -> ShaderMaterial:
+func duplicate_shader_material(sprite: Sprite2D) -> ShaderMaterial: ##
 	var mat: ShaderMaterial = sprite.material.duplicate()
 	sprite.material = mat
 	return mat
+##
 
 
 func from_xz(value: Vector3) -> Vector2:
 	return Vector2(value.x, value.z)
+
+
+func to_xz(value: Vector2) -> Vector3:
+	return Vector3(value.x, 0, value.y)
