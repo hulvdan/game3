@@ -8,11 +8,11 @@ PLAN
 ============================================================
 
 x mob hp: scale based on mob's distance
-
-* mob hp: uncomment creature.hp_bar.visible = false
-* mob hp: more health -> bigger bar
-* mob hp: fix: don't display mob hp bars over transition
+- mob hp: uncomment creature.hp_bar.visible = false
+x mob hp: fix: don't display mob hp bars over transition
   (create room inside room container; transition colorrect must be later in tree)
+
+* mob hp: more health -> bigger bar
 * mob hp: 
 * mob hp: 
 *

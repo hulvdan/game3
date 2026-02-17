@@ -104,6 +104,9 @@ layout_mode = 2
 [node name="stamina3" parent="_game/VBoxContainer/HBoxContainer" unique_id=1774882788 instance=ExtResource("13_km2eh")]
 layout_mode = 2
 
+[node name="_container" type="Node" parent="_game" unique_id=1097532762]
+unique_name_in_owner = true
+
 [node name="_transition_rect" type="ColorRect" parent="_game" unique_id=1997420545]
 unique_name_in_owner = true
 visible = false

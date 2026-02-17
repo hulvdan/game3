@@ -36,6 +36,7 @@ var player_is_entering_door := false
 @onready var camera: Camera3D = %_camera
 @onready var container_ui_minimap: Node2D = %_container_ui_minimap
 @onready var container_ui_progression: Node2D = %_container_ui_progression
+@onready var container: Node = %_container
 ##
 
 enum CollisionMask {
@@ -63,7 +64,6 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 		var bar: Bar = packed_creature_hp_bar.instantiate()
 		creature.hp_bar = bar
 		room.container_mob_hp_bars.add_child(bar)
-		# creature.hp_bar.visible = false
 
 	room.target_camera_elements.append(creature.node_target_camera)
 	room.container_creatures.add_child(creature)
@@ -105,7 +105,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	if room:
 		room.queue_free()
 	room = packed_room.instantiate()
-	add_child(room)
+	container.add_child(room)
 
 	bf.clear_children(room.container_creatures)
 	for element in room.target_camera_elements:
