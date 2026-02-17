@@ -63,6 +63,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	if type != glib.GCreatureType.PLAYER:
 		var bar: Bar = packed_creature_hp_bar.instantiate()
 		creature.hp_bar = bar
+		bar.anchor_right *= creature.hp / 3.0
 		room.container_mob_hp_bars.add_child(bar)
 
 	room.target_camera_elements.append(creature.node_target_camera)
