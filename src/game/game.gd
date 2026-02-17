@@ -35,7 +35,7 @@ var player_is_entering_door := false
 
 @onready var camera: Camera3D = %_camera
 @onready var hp_bar: Bar = %_hp_bar
-@onready var container_ui_minimap: Node2D = %_container_ui_minimap
+@onready var container_ui_minimap: Control = %_container_ui_minimap
 @onready var container_ui_progression: Node2D = %_container_ui_progression
 @onready var container_stamina_bars: Control = %_container_stamina_bars
 @onready var container: Node = %_container

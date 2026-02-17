@@ -43,15 +43,6 @@ packed_arrow = ExtResource("11_km2eh")
 packed_bar_player = ExtResource("13_km2eh")
 packed_bar_mob = ExtResource("11_wpieh")
 
-[node name="_container_ui_minimap" type="Node2D" parent="_game" unique_id=229164054]
-unique_name_in_owner = true
-position = Vector2(800, 0)
-
-[node name="_minimap_room" type="Sprite2D" parent="_game/_container_ui_minimap" unique_id=960137371]
-material = SubResource("ShaderMaterial_vvw4a")
-position = Vector2(68.08, 0)
-texture = ExtResource("5_m5usj")
-
 [node name="Control" type="Control" parent="_game" unique_id=929978051]
 visible = false
 layout_mode = 3
@@ -76,6 +67,21 @@ transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.93244
 unique_name_in_owner = true
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="_game" unique_id=1260406669]
+
+[node name="_container_ui_minimap" type="Control" parent="_game/CanvasLayer2" unique_id=875592492]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -264.0
+offset_right = -264.0
+grow_horizontal = 0
+
+[node name="_minimap_room" type="Sprite2D" parent="_game/CanvasLayer2/_container_ui_minimap" unique_id=960137371]
+material = SubResource("ShaderMaterial_vvw4a")
+position = Vector2(68.08, 0)
+texture = ExtResource("5_m5usj")
 
 [node name="Control" type="Control" parent="_game/CanvasLayer2" unique_id=1098133901]
 layout_mode = 3

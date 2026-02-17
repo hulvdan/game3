@@ -14,10 +14,10 @@ x mob hp: fix: don't display mob hp bars over transition
 x mob hp: more health -> bigger bar
 x transition rect is always over everything
 x player hp and stamina correct scaling
+x minimap: correct placement
 
 * gamelib option to control 
 *
-* minimap: correct placement
 * minimap:
 * minimap:
 * minimap:
