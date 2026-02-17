@@ -1852,6 +1852,91 @@ class GCreature:
 		return result
 
 
+class GDamage:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class Lib:
 	func _init():
 		var service
@@ -1915,10 +2000,30 @@ class Lib:
 		service.field = __player_holding_stamina_regen_scale
 		data[__player_holding_stamina_regen_scale.tag] = service
 
+		__player_invincibility_after_hit_seconds = PBField.new("player_invincibility_after_hit_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_invincibility_after_hit_seconds
+		data[__player_invincibility_after_hit_seconds.tag] = service
+
+		__mob_invincibility_spikes_seconds = PBField.new("mob_invincibility_spikes_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 29, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __mob_invincibility_spikes_seconds
+		data[__mob_invincibility_spikes_seconds.tag] = service
+
 		__spikes_duration_seconds = PBField.new("spikes_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __spikes_duration_seconds
 		data[__spikes_duration_seconds.tag] = service
+
+		__spikes_damage_starts_at = PBField.new("spikes_damage_starts_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __spikes_damage_starts_at
+		data[__spikes_damage_starts_at.tag] = service
+
+		__spikes_damage = PBField.new("spikes_damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 30, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __spikes_damage
+		data[__spikes_damage.tag] = service
 
 		__creatures_push_radius = PBField.new("creatures_push_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -1971,6 +2076,13 @@ class Lib:
 		service.field = __progression_size
 		service.func_ref = Callable(self, "new_progression_size")
 		data[__progression_size.tag] = service
+
+		var __damages_default: Array[GDamage] = []
+		__damages = PBField.new("damages", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 27, true, __damages_default)
+		service = PBServiceField.new()
+		service.field = __damages
+		service.func_ref = Callable(self, "add_damages")
+		data[__damages.tag] = service
 
 		var __progression_default: Array[GProgression] = []
 		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 7, true, __progression_default)
@@ -2223,6 +2335,50 @@ class Lib:
 		__player_holding_stamina_regen_scale.value = value
 
 
+	var __player_invincibility_after_hit_seconds: PBField
+
+
+	func has_player_invincibility_after_hit_seconds() -> bool:
+		if __player_invincibility_after_hit_seconds.value != null:
+			return true
+		return false
+
+
+	func get_player_invincibility_after_hit_seconds() -> float:
+		return __player_invincibility_after_hit_seconds.value
+
+
+	func clear_player_invincibility_after_hit_seconds() -> void:
+		data[28].state = PB_SERVICE_STATE.UNFILLED
+		__player_invincibility_after_hit_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_invincibility_after_hit_seconds(value: float) -> void:
+		__player_invincibility_after_hit_seconds.value = value
+
+
+	var __mob_invincibility_spikes_seconds: PBField
+
+
+	func has_mob_invincibility_spikes_seconds() -> bool:
+		if __mob_invincibility_spikes_seconds.value != null:
+			return true
+		return false
+
+
+	func get_mob_invincibility_spikes_seconds() -> float:
+		return __mob_invincibility_spikes_seconds.value
+
+
+	func clear_mob_invincibility_spikes_seconds() -> void:
+		data[29].state = PB_SERVICE_STATE.UNFILLED
+		__mob_invincibility_spikes_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_mob_invincibility_spikes_seconds(value: float) -> void:
+		__mob_invincibility_spikes_seconds.value = value
+
+
 	var __spikes_duration_seconds: PBField
 
 
@@ -2243,6 +2399,50 @@ class Lib:
 
 	func set_spikes_duration_seconds(value: float) -> void:
 		__spikes_duration_seconds.value = value
+
+
+	var __spikes_damage_starts_at: PBField
+
+
+	func has_spikes_damage_starts_at() -> bool:
+		if __spikes_damage_starts_at.value != null:
+			return true
+		return false
+
+
+	func get_spikes_damage_starts_at() -> float:
+		return __spikes_damage_starts_at.value
+
+
+	func clear_spikes_damage_starts_at() -> void:
+		data[26].state = PB_SERVICE_STATE.UNFILLED
+		__spikes_damage_starts_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_spikes_damage_starts_at(value: float) -> void:
+		__spikes_damage_starts_at.value = value
+
+
+	var __spikes_damage: PBField
+
+
+	func has_spikes_damage() -> bool:
+		if __spikes_damage.value != null:
+			return true
+		return false
+
+
+	func get_spikes_damage() -> int:
+		return __spikes_damage.value
+
+
+	func clear_spikes_damage() -> void:
+		data[30].state = PB_SERVICE_STATE.UNFILLED
+		__spikes_damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_spikes_damage(value: int) -> void:
+		__spikes_damage.value = value
 
 
 	var __creatures_push_radius: PBField
@@ -2467,6 +2667,24 @@ class Lib:
 		return __progression_size.value
 
 
+	var __damages: PBField
+
+
+	func get_damages() -> Array[GDamage]:
+		return __damages.value
+
+
+	func clear_damages() -> void:
+		data[27].state = PB_SERVICE_STATE.UNFILLED
+		__damages.value.clear()
+
+
+	func add_damages() -> GDamage:
+		var element = GDamage.new()
+		__damages.value.append(element)
+		return element
+
+
 	var __progression: PBField
 
 
@@ -2527,6 +2745,12 @@ class Lib:
 		return result
 
 ################ USER DATA END #################
+enum GDamageType {
+	STRIKE,
+	SPIKE,
+	COUNT,
+}
+
 enum GProgressionType {
 	INVALID,
 	SKILL_HP,

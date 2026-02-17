@@ -66,10 +66,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3712579, 0, 0.15462416)
 transform = Transform3D(-9.8350625e-09, -0.225, 0, 0.225, -9.8350625e-09, 0, 0, 0, 0.225, 0, 0.4093663, 0)
 texture = ExtResource("3_rqjwe")
 
-[node name="_area" type="Area3D" parent="." unique_id=1500935489]
+[node name="_area_trigger" type="Area3D" parent="." unique_id=671773762]
 unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="_area" unique_id=1150814268]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="_area_trigger" unique_id=1267122867]
+shape = SubResource("BoxShape3D_rqjwe")
+
+[node name="_area_damage" type="Area3D" parent="." unique_id=1500935489]
+unique_name_in_owner = true
+transform = Transform3D(0.785, 0, 0, 0, 0.785, 0, 0, 0, 0.785, 0, 0, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="_area_damage" unique_id=1150814268]
 shape = SubResource("BoxShape3D_rqjwe")

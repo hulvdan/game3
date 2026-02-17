@@ -2,36 +2,52 @@ extends Node3D
 
 class_name Spike
 
-@onready var container_spikes: Node3D = %_container_spikes
-@onready var area: Area3D = %_area
-
 var is_active: bool = false
 var activation_elapsed: float = 0
 var player_is_inside: bool = false
+var creatures_to_damage: Array[Creature]
+
+@onready var container_spikes: Node3D = %_container_spikes
+@onready var area_trigger: Area3D = %_area_trigger
+@onready var area_damage: Area3D = %_area_damage
 
 
 func init(room: Room) -> void:
 	room.target_camera_elements.append_array(container_spikes.get_children())
 	container_spikes.visible = false
-	area.body_entered.connect(_on_body_entered)
-	area.body_exited.connect(_on_body_exited)
+	area_trigger.body_entered.connect(_on_body_entered_trigger)
+	area_trigger.body_exited.connect(_on_body_exited_trigger)
+	area_damage.body_entered.connect(_on_body_entered_damage)
+	area_damage.body_exited.connect(_on_body_exited_damage)
 
 
-func _on_body_entered(creature: Creature) -> void:
+func _on_body_entered_trigger(creature: Creature) -> void:
 	if creature.type == glib.GCreatureType.PLAYER:
 		player_is_inside = true
 
 
-func _on_body_exited(creature: Creature) -> void:
+func _on_body_exited_trigger(creature: Creature) -> void:
 	if creature.type == glib.GCreatureType.PLAYER:
 		player_is_inside = false
+
+
+func _on_body_entered_damage(creature: Creature) -> void:
+	assert(creature not in creatures_to_damage)
+	creatures_to_damage.append(creature)
+
+
+func _on_body_exited_damage(creature: Creature) -> void:
+	for i in range(len(creatures_to_damage)):
+		if creatures_to_damage[i] == creature:
+			creatures_to_damage.remove_at(i)
+			return
+	assert(false)
 
 
 func try_activate() -> void:
 	if not is_active:
 		is_active = true
 		container_spikes.visible = true
-		activation_elapsed = 0
 
 
 func _physics_process(dt: float) -> void:
@@ -43,3 +59,4 @@ func _physics_process(dt: float) -> void:
 		if activation_elapsed >= glib.v.get_spikes_duration_seconds():
 			is_active = false
 			container_spikes.visible = false
+			activation_elapsed = 0

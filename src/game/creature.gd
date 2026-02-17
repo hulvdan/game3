@@ -9,7 +9,8 @@ class_name Creature
 var type: glib.GCreatureType
 var res: ResCreature
 var hp: int
-var this_frame_taken_damage: int = 0
+
+var time_since_last_damage_taken: float = INF
 
 var hp_bar: Bar
 
@@ -19,3 +20,7 @@ class Controller:
 
 
 var controller: Controller = Controller.new()
+
+# func _ready() -> void:
+# 	time_since_last_damage_taken.resize(glib.GDamageType.COUNT)
+# 	time_since_last_damage_taken.fill(INF)

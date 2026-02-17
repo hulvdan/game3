@@ -19,9 +19,9 @@ x spikes: display in-game
 x spikes: correct pos
 - spikes: set flash
 x spikes: add node with vertical spikes
+x spikes: activation when playes is nearby
+x spikes: damaging player & mobs
 
-* spikes: activation when playes is nearby
-* spikes: 
 * spikes: 
 * spikes: 
 * spikes: 

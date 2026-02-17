@@ -4,6 +4,10 @@ world_size:
   x: 5
   y: 4
 
+damages:
+  - type: STRIKE
+  - type: SPIKE
+
 player_speed_holding_scale: 0.35
 creatures_push_radius: 1.0
 creatures_push_force: 4 
@@ -14,7 +18,11 @@ player_roll_pow: 0.1
 player_stamina_charges: 3
 player_stamina_regen_seconds: 1.25
 player_holding_stamina_regen_scale: 0.33
-spike_duration_seconds: 1
+player_invincibility_after_hit_seconds: 0.5
+mob_invincibility_spikes_seconds: 0.25
+spikes_duration_seconds: 1
+spikes_damage_starts_at: 0.25
+spikes_damage: 1
 
 arrow_speed_min: 10
 arrow_speed_max: 50

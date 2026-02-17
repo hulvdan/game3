@@ -3,6 +3,7 @@ extends Node
 class_name Game
 
 ## Variables
+static var v: Game = null
 static var async_scene_loaded = false
 
 @export_category("Values")
@@ -63,7 +64,9 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	creature.hp = data.get_hp()
 	creature.node_sprite.texture = creature.res.texture
 
-	if type != glib.GCreatureType.PLAYER:
+	if type == glib.GCreatureType.PLAYER:
+		creature.hp_bar = hp_bar
+	else:
 		var bar: Bar = packed_ui_bar_mob.instantiate()
 		creature.hp_bar = bar
 		bar.anchor_right *= creature.hp / 3.0
@@ -178,6 +181,8 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 
 func _ready() -> void:
+	v = self
+
 	## Setup
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
@@ -364,8 +369,15 @@ func _physics_process(dt: float) -> void:
 				room.container_projectiles.remove_child(projectile)
 				if mask == CollisionMask.CREATURES:
 					var damaged_creature: Creature = d.collider
-					damaged_creature.this_frame_taken_damage += projectile.damage
+					apply_damage(damaged_creature, projectile.damage)
 				break
+	##
+
+	## Spike collisions
+	for spike: Spike in room.container_spikes.get_children():
+		if spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at():
+			for creature: Creature in spike.creatures_to_damage:
+				apply_damage(creature, glib.v.get_spikes_damage(), glib.GDamageType.SPIKE)
 	##
 
 	## Pushing creatures apart from each other
@@ -386,20 +398,9 @@ func _physics_process(dt: float) -> void:
 	room.player_inside_enemy_t = min(1, room.player_inside_enemy_t)
 	##
 
-	## Updating damaged creatures
+	## Updating creatures time_since_last_damage_taken
 	for creature: Creature in room.container_creatures.get_children():
-		if creature.this_frame_taken_damage:
-			creature.hp -= creature.this_frame_taken_damage
-			creature.hp = max(0, creature.hp)
-			creature.hp_bar.set_progress((creature.hp as float) / (glib.v.get_creatures()[creature.type].get_hp() as float))
-			creature.this_frame_taken_damage = 0
-			if creature.type != glib.GCreatureType.PLAYER:
-				creature.hp_bar.visible = true
-
-		if creature.hp <= 0:
-			room.container_creatures.remove_child(creature)
-			if creature.type != glib.GCreatureType.PLAYER:
-				room.container_mob_hp_bars.remove_child(creature.hp_bar)
+		creature.time_since_last_damage_taken += dt
 	##
 
 	## Updating player hp bar
@@ -434,12 +435,36 @@ func _process(_dt: float) -> void:
 		e.transform.basis = camera.transform.basis
 	##
 
-	## Updating creatures hp bar positions
+	## Updating creature hp bar positions
 	var player_camera_dir: Vector3 = (camera.position - room.player.transform.origin).normalized()
 	var player_camera_dot: float = (camera.position - room.player.transform.origin).dot(player_camera_dir)
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.type <= glib.GCreatureType.PLAYER:
 			continue
-		creature.hp_bar.scale = Vector2(1, 1) * player_camera_dot / (camera.position - creature.transform.origin).dot(player_camera_dir)
+		var creature_camera_dot: float = (camera.position - creature.transform.origin).dot(player_camera_dir)
+		creature.hp_bar.scale = Vector2(1, 1) * (player_camera_dot / creature_camera_dot)
 		creature.hp_bar.position = camera.unproject_position(creature.transform.origin) - creature.hp_bar.size / 2.0 * creature.hp_bar.scale
+	##
+
+
+func apply_damage(creature: Creature, damage: int, type: glib.GDamageType = glib.GDamageType.STRIKE) -> void: ##
+	if creature.type == glib.GCreatureType.PLAYER:
+		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
+			return
+		creature.time_since_last_damage_taken = 0
+
+	else:
+		if type == glib.GDamageType.SPIKE:
+			if creature.time_since_last_damage_taken <= glib.v.get_mob_invincibility_spikes_seconds():
+				return
+			creature.time_since_last_damage_taken = 0
+
+	creature.hp -= damage
+	creature.hp = max(0, creature.hp)
+	creature.hp_bar.set_progress((creature.hp as float) / (glib.v.get_creatures()[creature.type].get_hp() as float))
+
+	if creature.hp <= 0:
+		room.container_creatures.remove_child(creature)
+		if creature.type != glib.GCreatureType.PLAYER:
+			room.container_mob_hp_bars.remove_child(creature.hp_bar)
 	##
