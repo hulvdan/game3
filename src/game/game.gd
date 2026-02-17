@@ -372,6 +372,7 @@ func _physics_process(dt: float) -> void:
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.this_frame_taken_damage:
 			creature.hp -= creature.this_frame_taken_damage
+			creature.hp = max(0, creature.hp)
 			creature.hp_bar.set_progress((creature.hp as float) / (glib.v.get_creatures()[creature.type].get_hp() as float))
 			creature.this_frame_taken_damage = 0
 			if creature.type != glib.GCreatureType.PLAYER:
