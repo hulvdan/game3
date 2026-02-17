@@ -387,7 +387,7 @@ func _physics_process(dt: float) -> void:
 	hp_bar.set_progress((room.player.hp as float) / (glib.v.get_creatures()[room.player.type].get_hp() as float))
 	##
 
-	## Updating stamina bars
+	## Updating player stamina bars
 	for i in range(len(stamina_bars) - room.player_stamina + 1):
 		stamina_bars[len(stamina_bars) - 1 - i].set_progress(0)
 	if len(stamina_bars) > room.player_stamina:
@@ -416,8 +416,11 @@ func _process(_dt: float) -> void:
 	##
 
 	## Updating creatures hp bar positions
+	var player_camera_dir: Vector3 = (camera.position - room.player.transform.origin).normalized()
+	var player_camera_dot: float = (camera.position - room.player.transform.origin).dot(player_camera_dir)
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.type <= glib.GCreatureType.PLAYER:
 			continue
-		creature.hp_bar.position = camera.unproject_position(creature.transform.origin) - creature.hp_bar.size / 2.0
+		creature.hp_bar.scale = Vector2(1, 1) * player_camera_dot / (camera.position - creature.transform.origin).dot(player_camera_dir)
+		creature.hp_bar.position = camera.unproject_position(creature.transform.origin) - creature.hp_bar.size / 2.0 * creature.hp_bar.scale
 	##
