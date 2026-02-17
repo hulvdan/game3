@@ -16,7 +16,7 @@
 [ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/ui_flash.tres" id="10_h4xlo"]
 [ext_resource type="PackedScene" uid="uid://cjk26kw0piudl" path="res://assets/packed_arrow.tscn" id="11_km2eh"]
 [ext_resource type="PackedScene" uid="uid://ty00766yaguu" path="res://assets/packed_bar_mob.tscn" id="11_wpieh"]
-[ext_resource type="PackedScene" uid="uid://c80peoxwlv0kn" path="res://assets/packed_bar.tscn" id="13_km2eh"]
+[ext_resource type="PackedScene" uid="uid://c80peoxwlv0kn" path="res://assets/packed_bar_player.tscn" id="13_km2eh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vvw4a"]
 shader = ExtResource("10_h4xlo")
@@ -24,12 +24,10 @@ shader_parameter/flash = Color(1, 1, 1, 0)
 
 [node name="_main" type="Node3D" unique_id=958610633]
 
-[node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("hp_bar", "stamina_bars", "world_3d")]
+[node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("world_3d")]
 script = ExtResource("1_ig7tw")
 camera_distance = 4.015
 camera_angle = 0.87
-hp_bar = NodePath("CanvasLayer2/VBoxContainer/hp_bar")
-stamina_bars = [NodePath("CanvasLayer2/VBoxContainer/HBoxContainer/stamina"), NodePath("CanvasLayer2/VBoxContainer/HBoxContainer/stamina2"), NodePath("CanvasLayer2/VBoxContainer/HBoxContainer/stamina3")]
 color_ui_hp = Color(0.9098039, 0.23137255, 0.23137255, 1)
 color_ui_stamina = Color(0.5686275, 0.85882354, 0.4117647, 1)
 world_3d = NodePath("../_meta/_world_3d")
@@ -42,7 +40,8 @@ packed_ui_minimap_room = ExtResource("9_otm8r")
 packed_ui_progression_entry = ExtResource("9_vvw4a")
 packed_bow = ExtResource("10_ew6cl")
 packed_arrow = ExtResource("11_km2eh")
-packed_creature_hp_bar = ExtResource("11_wpieh")
+packed_bar_player = ExtResource("13_km2eh")
+packed_bar_mob = ExtResource("11_wpieh")
 
 [node name="_container_ui_minimap" type="Node2D" parent="_game" unique_id=229164054]
 unique_name_in_owner = true
@@ -78,35 +77,31 @@ unique_name_in_owner = true
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="_game" unique_id=1260406669]
 
-[node name="VBoxContainer" type="VBoxContainer" parent="_game/CanvasLayer2" unique_id=1787468414]
-anchors_preset = -1
-anchor_left = 0.0050000004
-anchor_top = 0.010000001
-anchor_right = 0.188
-anchor_bottom = 0.09
-offset_left = 0.23999977
-offset_right = 0.07199097
-offset_bottom = 0.23199844
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+[node name="Control" type="Control" parent="_game/CanvasLayer2" unique_id=1098133901]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 56.0
+offset_bottom = 56.0
 
-[node name="hp_bar" parent="_game/CanvasLayer2/VBoxContainer" unique_id=1719242791 instance=ExtResource("13_km2eh")]
-layout_mode = 2
-size_flags_horizontal = 1
+[node name="_hp_bar" parent="_game/CanvasLayer2/Control" unique_id=1226248485 instance=ExtResource("13_km2eh")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 32)
+layout_mode = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="_game/CanvasLayer2/VBoxContainer" unique_id=1081022861]
-layout_mode = 2
-size_flags_vertical = 3
+[node name="_container_stamina_bars" type="HBoxContainer" parent="_game/CanvasLayer2/Control/_hp_bar" unique_id=1916445434]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = 8.0
+offset_right = 64.0
+offset_bottom = 48.0
+grow_vertical = 0
 
-[node name="stamina" parent="_game/CanvasLayer2/VBoxContainer/HBoxContainer" unique_id=465028417 instance=ExtResource("13_km2eh")]
-layout_mode = 2
-
-[node name="stamina2" parent="_game/CanvasLayer2/VBoxContainer/HBoxContainer" unique_id=1949939318 instance=ExtResource("13_km2eh")]
-layout_mode = 2
-
-[node name="stamina3" parent="_game/CanvasLayer2/VBoxContainer/HBoxContainer" unique_id=1774882788 instance=ExtResource("13_km2eh")]
+[node name="ColorRect2" parent="_game/CanvasLayer2/Control/_hp_bar/_container_stamina_bars" unique_id=502734556 instance=ExtResource("13_km2eh")]
 layout_mode = 2
 
 [node name="_transition" type="CanvasLayer" parent="_game" unique_id=1106916493]

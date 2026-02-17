@@ -10,8 +10,6 @@ static var async_scene_loaded = false
 @export var camera_angle: float
 
 @export_category("Resources")
-@export var hp_bar: Bar
-@export var stamina_bars: Array[Bar]
 @export var color_ui_hp: Color
 @export var color_ui_stamina: Color
 @export var world_3d: Node3D
@@ -24,18 +22,22 @@ static var async_scene_loaded = false
 @export var packed_ui_progression_entry: PackedScene
 @export var packed_bow: PackedScene
 @export var packed_arrow: PackedScene
-@export var packed_creature_hp_bar: PackedScene
+@export var packed_bar_player: PackedScene
+@export var packed_bar_mob: PackedScene
 
 var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
 var ui_minimap_rooms: Array[Sprite2D] = []
+var stamina_bars: Array[Bar]
 
 var room: Room
 var player_is_entering_door := false
 
 @onready var camera: Camera3D = %_camera
+@onready var hp_bar: Bar = %_hp_bar
 @onready var container_ui_minimap: Node2D = %_container_ui_minimap
 @onready var container_ui_progression: Node2D = %_container_ui_progression
+@onready var container_stamina_bars: Control = %_container_stamina_bars
 @onready var container: Node = %_container
 ##
 
@@ -61,7 +63,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	creature.node_sprite.texture = creature.res.texture
 
 	if type != glib.GCreatureType.PLAYER:
-		var bar: Bar = packed_creature_hp_bar.instantiate()
+		var bar: Bar = packed_bar_mob.instantiate()
 		creature.hp_bar = bar
 		bar.anchor_right *= creature.hp / 3.0
 		room.container_mob_hp_bars.add_child(bar)
@@ -163,7 +165,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
 	##
 
-	room.player_stamina = len(stamina_bars)
+	room.player_stamina = glib.v.get_player_stamina_charges()
 
 
 func _ready() -> void:
@@ -172,8 +174,12 @@ func _ready() -> void:
 	assert(camera_angle > 0)
 
 	hp_bar.init(color_ui_hp, false)
-	for x in stamina_bars:
-		x.init(color_ui_stamina, true)
+	bf.clear_children(container_stamina_bars)
+	for i in range(glib.v.get_player_stamina_charges()):
+		var bar: Bar = packed_bar_player.instantiate()
+		stamina_bars.append(bar)
+		container_stamina_bars.add_child(bar)
+		bar.init(color_ui_stamina, true)
 
 	var transition: Control = %_transition
 	transition.visible = true

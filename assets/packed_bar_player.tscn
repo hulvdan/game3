@@ -3,15 +3,11 @@
 [ext_resource type="Script" uid="uid://cno6uc6lacooi" path="res://src/game/bar.gd" id="1_e8nhe"]
 
 [node name="ColorRect2" type="ColorRect" unique_id=1226248485]
-anchors_preset = -1
-anchor_right = 0.363
-anchor_bottom = 0.082
-offset_right = -0.17599487
-offset_bottom = -0.13600159
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+custom_minimum_size = Vector2(64, 24)
+offset_right = 240.0
+offset_bottom = 24.0
+size_flags_horizontal = 2
+size_flags_vertical = 2
 script = ExtResource("1_e8nhe")
 
 [node name="_margin_container" type="MarginContainer" parent="." unique_id=2071194151]

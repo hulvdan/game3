@@ -11,6 +11,7 @@ player_speed_inside_enemies_scale: 0.3
 player_roll_distance: 3
 player_roll_duration_seconds: 0.4
 player_roll_pow: 0.1
+player_stamina_charges: 3
 player_stamina_regen_seconds: 1.25
 player_holding_stamina_regen_scale: 0.33
 

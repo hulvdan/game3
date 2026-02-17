@@ -1815,6 +1815,11 @@ class Lib:
 		service.field = __player_roll_pow
 		data[__player_roll_pow.tag] = service
 
+		__player_stamina_charges = PBField.new("player_stamina_charges", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __player_stamina_charges
+		data[__player_stamina_charges.tag] = service
+
 		__player_stamina_regen_seconds = PBField.new("player_stamina_regen_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_stamina_regen_seconds
@@ -2060,6 +2065,28 @@ class Lib:
 
 	func set_player_roll_pow(value: float) -> void:
 		__player_roll_pow.value = value
+
+
+	var __player_stamina_charges: PBField
+
+
+	func has_player_stamina_charges() -> bool:
+		if __player_stamina_charges.value != null:
+			return true
+		return false
+
+
+	func get_player_stamina_charges() -> int:
+		return __player_stamina_charges.value
+
+
+	func clear_player_stamina_charges() -> void:
+		data[24].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina_charges.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_player_stamina_charges(value: int) -> void:
+		__player_stamina_charges.value = value
 
 
 	var __player_stamina_regen_seconds: PBField
