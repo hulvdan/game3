@@ -40,7 +40,7 @@ var player_is_entering_door := false
 @onready var container_ui_minimap: Control = %_container_ui_minimap
 @onready var container_ui_progression: Node2D = %_container_ui_progression
 @onready var container_stamina_bars: Control = %_container_stamina_bars
-@onready var container: Node = %_container
+@onready var container_general: Node = %_container_general
 ##
 
 enum CollisionMask {
@@ -118,7 +118,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	if room:
 		room.queue_free()
 	room = packed_room.instantiate()
-	container.add_child(room)
+	container_general.add_child(room)
 
 	bf.clear_children(room.container_creatures)
 	for element in room.target_camera_elements:
@@ -322,7 +322,7 @@ func _physics_process(dt: float) -> void:
 			room.player_holding += dt
 		elif room.player_holding >= glib.v.get_shooting_min_seconds():
 			var arrow: Projectile = packed_arrow.instantiate()
-			var t = (room.player_holding - glib.v.get_shooting_min_seconds()) / glib.v.get_shooting_max_seconds()
+			var t = clamp(room.player_holding / glib.v.get_shooting_max_seconds(), 0, 1)
 			t = lerp(t, t * t, 0.25)
 			arrow.speed = lerp(glib.v.get_arrow_speed_min(), glib.v.get_arrow_speed_max(), t)
 			arrow.damage = round(lerp(glib.v.get_arrow_damage_min(), glib.v.get_arrow_damage_max(), t))
@@ -440,10 +440,11 @@ func _process(_dt: float) -> void:
 	## Updating camera and stuff looking at camera
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	camera.transform.origin = room.player.transform.origin + camera_dir * camera_distance
-	camera.transform = camera.transform.looking_at(room.player.node_body.transform.origin)
+	camera.transform = camera.transform.looking_at(room.player.transform.origin)
 
-	for e in room.target_camera_elements:
-		e.transform.basis = camera.transform.basis
+	for e: Node3D in room.target_camera_elements:
+		if e.visible:
+			e.rotation = camera.rotation
 	##
 
 	## Updating creature hp bar positions
@@ -475,8 +476,15 @@ func apply_damage(creature: Creature, damage: int, type: glib.GDamageType = glib
 	creature.hp_bar.set_progress((creature.hp as float) / (glib.v.get_creatures()[creature.type].get_hp() as float))
 	creature.time_since_last_damage_taken_visual = 0
 
-	if creature.hp <= 0:
-		room.container_creatures.remove_child(creature)
+	if (creature != room.player) && (creature.hp <= 0):
+		creature.queue_free()
+		var found: bool = false
+		for i in range(len(room.target_camera_elements)):
+			if room.target_camera_elements[i] == creature.node_target_camera:
+				room.target_camera_elements.remove_at(i)
+				found = true
+				break
+		assert(found)
 		if creature.type != glib.GCreatureType.PLAYER:
 			room.container_mob_hp_bars.remove_child(creature.hp_bar)
 	##

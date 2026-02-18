@@ -4,6 +4,7 @@ class_name Spike
 
 var is_active: bool = false
 var activation_elapsed: float = 0
+var activation_elapsed_visual: float = 0
 var player_is_inside: bool = false
 var creatures_to_damage: Array[Creature]
 
@@ -48,6 +49,7 @@ func try_activate() -> void:
 	if not is_active:
 		is_active = true
 		container_spikes.visible = true
+		#container_spikes_scale.scale.y = 0
 
 
 func _physics_process(dt: float) -> void:
@@ -60,3 +62,13 @@ func _physics_process(dt: float) -> void:
 			is_active = false
 			container_spikes.visible = false
 			activation_elapsed = 0
+			activation_elapsed_visual = 0
+
+
+func _process(dt: float) -> void:
+	if is_active:
+		activation_elapsed_visual += dt
+		var t: float = min(1, activation_elapsed_visual / glib.v.get_spikes_damage_starts_at())
+		t = t * t
+		for child: Node3D in container_spikes.get_children():
+			child.scale.y = t

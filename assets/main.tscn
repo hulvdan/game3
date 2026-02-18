@@ -65,7 +65,7 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.9324437, 0.3613154, 0, -0.3613154, 0.9324437, 0, 1.0713036, 2.1342618)
 
-[node name="_container" type="Node" parent="_game" unique_id=1097532762]
+[node name="_container_general" type="Node" parent="_game" unique_id=1097532762]
 unique_name_in_owner = true
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="_game" unique_id=1260406669]

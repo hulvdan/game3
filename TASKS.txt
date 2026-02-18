@@ -8,8 +8,8 @@ PLAN
 ============================================================
 
 x flash creature upon taking damage
+x spikes: scale dynamically
 
-* spikes: 
 * spikes: 
 * spikes: 
 *
