@@ -11,7 +11,7 @@
   "iid": "27a80100-fa90-11f0-a600-6d791be30d7e",
   "jsonVersion": "1.5.3",
   "appBuildId": 473703,
-  "nextUid": 18,
+  "nextUid": 21,
   "identifierStyle": "Capitalize",
   "toc": [],
   "worldLayout": "Free",
@@ -380,6 +380,79 @@
         "pivotX": 0,
         "pivotY": 0,
         "fieldDefs": []
+      },
+      {
+        "identifier": "Collectible",
+        "uid": 18,
+        "tags": [],
+        "exportToToc": false,
+        "allowOutOfBounds": false,
+        "doc": null,
+        "width": 16,
+        "height": 16,
+        "resizableX": false,
+        "resizableY": false,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "keepAspectRatio": false,
+        "tileOpacity": 1,
+        "fillOpacity": 1,
+        "lineOpacity": 1,
+        "hollow": false,
+        "color": "#63C74D",
+        "renderMode": "Ellipse",
+        "showName": true,
+        "tilesetId": null,
+        "tileRenderMode": "FitInside",
+        "tileRect": null,
+        "uiTileRect": null,
+        "nineSliceBorders": [],
+        "maxCount": 0,
+        "limitScope": "PerLevel",
+        "limitBehavior": "MoveLastOne",
+        "pivotX": 0,
+        "pivotY": 0,
+        "fieldDefs": [
+          {
+            "identifier": "collectible",
+            "doc": null,
+            "__type": "LocalEnum.CODEGEN_Collectibles",
+            "uid": 20,
+            "type": "F_Enum(19)",
+            "isArray": false,
+            "canBeNull": false,
+            "arrayMinLength": null,
+            "arrayMaxLength": null,
+            "editorDisplayMode": "Hidden",
+            "editorDisplayScale": 1,
+            "editorDisplayPos": "Above",
+            "editorLinkStyle": "StraightArrow",
+            "editorDisplayColor": null,
+            "editorAlwaysShow": false,
+            "editorShowInWorld": true,
+            "editorCutLongValues": true,
+            "editorTextSuffix": null,
+            "editorTextPrefix": null,
+            "useForSmartColor": false,
+            "exportToToc": false,
+            "searchable": false,
+            "min": null,
+            "max": null,
+            "regex": null,
+            "acceptFileTypes": null,
+            "defaultOverride": null,
+            "textLanguageMode": null,
+            "symmetricalRef": false,
+            "autoChainRef": true,
+            "allowOutOfLevelRef": true,
+            "allowedRefs": "OnlySame",
+            "allowedRefsEntityUid": null,
+            "allowedRefTags": [],
+            "tilesetUid": null
+          }
+        ]
       }
     ],
     "tilesets": [
@@ -466,11 +539,6 @@
         "uid": 14,
         "values": [
           {
-            "id": "INVALID",
-            "tileRect": null,
-            "color": 0
-          },
-          {
             "id": "SKILL_HP",
             "tileRect": null,
             "color": 0
@@ -517,6 +585,31 @@
           },
           {
             "id": "CLASS_BARBARIAN",
+            "tileRect": null,
+            "color": 0
+          }
+        ],
+        "iconTilesetUid": null,
+        "externalRelPath": null,
+        "externalFileChecksum": null,
+        "tags": []
+      },
+      {
+        "identifier": "CODEGEN_Collectibles",
+        "uid": 19,
+        "values": [
+          {
+            "id": "ORE",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "PLANT",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "BONE",
             "tileRect": null,
             "color": 0
           }
@@ -837,6 +930,129 @@
               "fieldInstances": [],
               "__worldX": 144,
               "__worldY": 64
+            },
+            {
+              "__identifier": "Collectible",
+              "__grid": [
+                2,
+                2
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#63C74D",
+              "iid": "cc6189f0-fa90-11f0-a889-a7fbbc4e84b3",
+              "width": 16,
+              "height": 16,
+              "defUid": 18,
+              "px": [
+                32,
+                32
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "collectible",
+                  "__type": "LocalEnum.CODEGEN_Collectibles",
+                  "__value": "PLANT",
+                  "__tile": null,
+                  "defUid": 20,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "PLANT"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 48,
+              "__worldY": 48
+            },
+            {
+              "__identifier": "Collectible",
+              "__grid": [
+                2,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#63C74D",
+              "iid": "d8003d60-fa90-11f0-a889-e98701cb3258",
+              "width": 16,
+              "height": 16,
+              "defUid": 18,
+              "px": [
+                32,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "collectible",
+                  "__type": "LocalEnum.CODEGEN_Collectibles",
+                  "__value": "ORE",
+                  "__tile": null,
+                  "defUid": 20,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "ORE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 48,
+              "__worldY": 128
+            },
+            {
+              "__identifier": "Collectible",
+              "__grid": [
+                9,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#63C74D",
+              "iid": "d981d450-fa90-11f0-a889-d9ce95f8a191",
+              "width": 16,
+              "height": 16,
+              "defUid": 18,
+              "px": [
+                144,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "collectible",
+                  "__type": "LocalEnum.CODEGEN_Collectibles",
+                  "__value": "BONE",
+                  "__tile": null,
+                  "defUid": 20,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "BONE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 160,
+              "__worldY": 128
             }
           ]
         },

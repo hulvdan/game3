@@ -1,4 +1,4 @@
-# Imports.  {  ###
+## Imports
 import colorsys
 import hashlib
 import math
@@ -22,7 +22,7 @@ from bf_typer import log
 from PIL import Image, ImageChops, ImageDraw, ImageEnhance
 from pydantic import BaseModel
 
-# }
+##
 
 T = TypeVar("T")
 
@@ -34,14 +34,14 @@ ConveyorCallable: TypeAlias = Callable[[Image.Image, Path], ConveyorDatum]
 
 @dataclass(slots=True)
 class _GameSettings:
-    # {  ###
+    ##
     itch_target: str = "hulvdan/game-template"
     languages: list[str] = field(default_factory=lambda: ["russian", "english"])
     yandex_metrica_counter_id: int | None = None
     colors: list[str] = field(default_factory=lambda: ["#ffffff", "#000000"])
 
     computed_color_names: list[str] = field(default_factory=list)
-    # }
+    ##
 
 
 game_settings = _GameSettings()
@@ -80,7 +80,7 @@ class BuildTarget(StrEnum):
     game = "game"
 
 
-ALLOWED_BUILDS = (  ###
+ALLOWED_BUILDS = (  ##
     (BuildTarget.game, BuildPlatform.Win, BuildType.Debug),
     (BuildTarget.game, BuildPlatform.Win, BuildType.Release),
     # (BuildTarget.game, BuildPlatform.Web, BuildType.Debug),
@@ -88,7 +88,7 @@ ALLOWED_BUILDS = (  ###
     # (BuildTarget.game, BuildPlatform.WebItch, BuildType.Release),
     # (BuildTarget.game, BuildPlatform.WebYandex, BuildType.Release),
     (BuildTarget.game, BuildPlatform.WebPlaygama, BuildType.Release),
-)
+)  ##
 
 
 REPLACING_SPACES_PATTERN = re.compile(r"\ +")
@@ -134,8 +134,7 @@ def replace_double_newlines(string: str) -> str:
     return re.sub(REPLACING_NEWLINES_PATTERN, "\n", string)
 
 
-def test_replace_double_spaces():
-    # {  ###
+def test_replace_double_spaces():  ##
     assert replace_double_spaces("") == ""
     assert replace_double_spaces(" ") == " "
     assert replace_double_spaces("  ") == " "
@@ -143,11 +142,10 @@ def test_replace_double_spaces():
     assert replace_double_spaces("\n") == "\n"
     assert replace_double_spaces("\n\n") == "\n\n"
     assert replace_double_spaces("\n\n\n") == "\n\n\n"
-    # }
+    ##
 
 
-def test_replace_double_newlines():
-    # {  ###
+def test_replace_double_newlines():  ##
     assert replace_double_newlines("") == ""
     assert replace_double_newlines(" ") == " "
     assert replace_double_newlines("  ") == "  "
@@ -155,7 +153,7 @@ def test_replace_double_newlines():
     assert replace_double_newlines("\n") == "\n"
     assert replace_double_newlines("\n\n") == "\n"
     assert replace_double_newlines("\n\n\n") == "\n"
-    # }
+    ##
 
 
 def remove_spaces(string: str) -> str:
@@ -167,8 +165,7 @@ def run_command(
     stdin_input: str | None = None,
     cwd=None,
     timeout_seconds: int | None = None,
-) -> None:
-    # {  ###
+) -> None:  ##
     if isinstance(cmd, str):
         cmd = replace_double_spaces(cmd.replace("\n", " ").strip())
 
@@ -193,7 +190,7 @@ def run_command(
     if p.returncode:
         log.critical(f'Failed to execute: "{c}"')
 
-    # }
+    ##
 
 
 def recursive_mkdir(path: Path | str) -> None:
@@ -205,16 +202,14 @@ def batched(list_: list[T], n: int) -> Iterator[list[T]]:
         yield list_[i : i + n]
 
 
-def check_duplicates(values: list | tuple) -> None:
-    # {  ###
+def check_duplicates(values: list | tuple) -> None:  ##
     for i in range(len(values)):
         for k in range(i + 1, len(values)):
             assert values[i] != values[k], f"Found duplicate value: {values[i]}"
-    # }
+    ##
 
 
-def only_one_is_not_none(values: Iterator | list | tuple) -> bool:
-    # {  ###
+def only_one_is_not_none(values: Iterator | list | tuple) -> bool:  ##
     found = False
     for v in values:
         if v:
@@ -222,16 +217,15 @@ def only_one_is_not_none(values: Iterator | list | tuple) -> bool:
                 return False
             found = True
     return found
-    # }
+    ##
 
 
-def test_only_one_is_not_none() -> None:
-    # {  ###
+def test_only_one_is_not_none() -> None:  ##
     assert only_one_is_not_none([2, None, None])
     assert only_one_is_not_none([2])
     assert not only_one_is_not_none([])
     assert not only_one_is_not_none([1, 2])
-    # }
+    ##
 
 
 def all_are_not_none(values: Iterator | list | tuple) -> bool:
@@ -242,12 +236,11 @@ def all_are_none(values: Iterator | list | tuple) -> bool:
     return all(v is None for v in values)
 
 
-def get_local_ip() -> str:
-    # {  ###
+def get_local_ip() -> str:  ##
     ip_address = socket.gethostbyname(socket.gethostname())
     assert ip_address != "127.0.0.1"
     return ip_address
-    # }
+    ##
 
 
 # !banner: codegen
@@ -259,15 +252,16 @@ def get_local_ip() -> str:
 #  ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝
 
 
-def generate_binary_file_header(genline, source_path: Path, variable_name: str) -> None:
-    # {  ###
+def generate_binary_file_header(
+    genline, source_path: Path, variable_name: str
+) -> None:  ##
     data = source_path.read_bytes()
     genline(f"const u8 {variable_name}[] = {{")
     for i in range(0, len(data), 12):
         chunk = ", ".join(f"0x{b:02x}" for b in data[i : i + 12])
         genline(f"    {chunk},")
     genline("};\n")
-    # }
+    ##
 
 
 def genenum(
@@ -281,8 +275,7 @@ def genenum(
     enumerate_values: bool = False,
     add_to_string: bool = False,
     comments: list[str] | None = None,
-) -> None:
-    # {  ###
+) -> None:  ##
     assert not (hex_values and enumerate_values)
     assert not (override_values and enumerate_values)
 
@@ -333,7 +326,7 @@ def genenum(
         genline("  };")
         genline("  return strings[type];")
         genline("};\n")
-    # }
+    ##
 
 
 _call_stack: list[str | int] = []
@@ -349,7 +342,7 @@ def recursive_visiter(
     callback: Callable[[str], None],
     *,
     root: bool = True,
-) -> None:
+) -> None:  ##
     global _recursive_visiter_patterns
 
     if not isinstance(glib_recursed, dict):
@@ -388,6 +381,7 @@ def recursive_visiter(
                 recursive_visiter(
                     v, key_postfix_single, key_postfix_list, callback, root=False
                 )
+    ##
 
 
 def recursive_replace_transform(
@@ -397,8 +391,7 @@ def recursive_replace_transform(
     codename_to_index: dict[str, int],
     *,
     root: bool = True,
-) -> list[str] | None:
-    # {  ###
+) -> list[str] | None:  ##
     global _recursive_replace_transform_patterns
     errors = None
 
@@ -500,7 +493,7 @@ def recursive_replace_transform(
         raise AssertionError(message)
 
     return errors
-    # }
+    ##
 
 
 def recursive_flattenizer(
@@ -510,8 +503,7 @@ def recursive_flattenizer(
     root_list_field: str,
     *,
     list_to_fill: list | None = None,
-) -> None:
-    # {  ###
+) -> None:  ##
     if not isinstance(glib_recursed, dict):
         return
 
@@ -558,7 +550,7 @@ def recursive_flattenizer(
 
     if should_emplace_list_in_glib:
         glib_recursed[root_list_field] = list_to_fill
-    # }
+    ##
 
 
 # !banner: git
@@ -570,17 +562,17 @@ def recursive_flattenizer(
 #  ╚═════╝ ╚═╝   ╚═╝
 
 
-def git_check_no_unstashed() -> None:
+def git_check_no_unstashed() -> None:  ##
     process = subprocess.run(
         "git status --porcelain", check=True, shell=True, capture_output=True, text=True
     )
     git_status_text = process.stdout.strip()
     assert not git_status_text, "You have unstashed changes! Won't proceed!"
+    ##
 
 
 @contextmanager
-def git_stash():
-    # {  ###
+def git_stash():  ##
     process = subprocess.run(
         "git status --porcelain", check=True, shell=True, capture_output=True, text=True
     )
@@ -601,11 +593,10 @@ def git_stash():
         if should_stash:
             log.info("git_stash: applying previously stashed changes...")
             subprocess.run("git stash apply", check=True, shell=True)
-    # }
+    ##
 
 
-def _git_get_current_commit_version_tag() -> str | None:
-    # {  ###
+def _git_get_current_commit_version_tag() -> str | None:  ##
     process = subprocess.run(
         'git tag -l "v1\\.*" --points-at HEAD',
         check=True,
@@ -614,11 +605,10 @@ def _git_get_current_commit_version_tag() -> str | None:
         text=True,
     )
     return process.stdout.strip()
-    # }
+    ##
 
 
-def _git_get_current_branch() -> str:
-    # {  ###
+def _git_get_current_branch() -> str:  ##
     return subprocess.run(
         "git branch --show-current",
         check=True,
@@ -626,11 +616,10 @@ def _git_get_current_branch() -> str:
         capture_output=True,
         text=True,
     ).stdout.strip()
-    # }
+    ##
 
 
-def git_bump_tag() -> str:
-    # {  ###
+def git_bump_tag() -> str:  ##
     assert _git_get_current_branch() in ("master", "main")
 
     if version := _git_get_current_commit_version_tag():
@@ -663,7 +652,7 @@ const VERSION: String = "1.{next_version}"
     # run_command("git push")
     # run_command(f"git push origin v1.{next_version}")
     return f"v1.{next_version}"
-    # }
+    ##
 
 
 # !banner: color
@@ -675,34 +664,31 @@ const VERSION: String = "1.{next_version}"
 #  ╚═════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝
 
 
-def hex_to_rgb_ints(hex_color: str) -> tuple[int, int, int]:
-    # {  ###
+def hex_to_rgb_ints(hex_color: str) -> tuple[int, int, int]:  ##
     hex_color = hex_color.lstrip("#")
     r = int(hex_color[0:2], 16)
     g = int(hex_color[2:4], 16)
     b = int(hex_color[4:6], 16)
     return (r, g, b)
-    # }
+    ##
 
 
-def hex_to_rgb_floats(hex_color: str) -> tuple[float, float, float]:
-    # {  ###
+def hex_to_rgb_floats(hex_color: str) -> tuple[float, float, float]:  ##
     hex_color = hex_color.lstrip("#")
     r = int(hex_color[0:2], 16)
     g = int(hex_color[2:4], 16)
     b = int(hex_color[4:6], 16)
     return (r / 255, g / 255, b / 255)
-    # }
+    ##
 
 
-def rgb_floats_to_hex(rgb_floats: tuple[float, float, float]) -> str:
-    # {  ###
+def rgb_floats_to_hex(rgb_floats: tuple[float, float, float]) -> str:  ##
     r, g, b = rgb_floats
     r_int = round(r * 255)
     g_int = round(g * 255)
     b_int = round(b * 255)
     return "#{:02X}{:02X}{:02X}".format(r_int, g_int, b_int)
-    # }
+    ##
 
 
 def transform_color(
@@ -710,8 +696,7 @@ def transform_color(
     *,
     saturation_scale: float = 1,
     value_scale: float = 1.0,
-) -> tuple[float, float, float]:
-    # {  ###
+) -> tuple[float, float, float]:  ##
     assert saturation_scale >= 0
     assert value_scale >= 0
     r, g, b = rgb
@@ -719,16 +704,15 @@ def transform_color(
     s = min(s * saturation_scale, 1.0)
     v = min(v * value_scale, 1.0)
     return colorsys.hsv_to_rgb(h, s, v)
-    # }
+    ##
 
 
-def palette_color_tuple3(name: str) -> tuple[int, int, int]:
-    # {  ###
+def palette_color_tuple3(name: str) -> tuple[int, int, int]:  ##
     for i, c in enumerate(game_settings.computed_color_names):
         if c.upper().replace(" ", "_") == name:
             return hex_to_rgb_ints(game_settings.colors[i])
     assert False
-    # }
+    ##
 
 
 # !banner: hashing
@@ -740,14 +724,13 @@ def palette_color_tuple3(name: str) -> tuple[int, int, int]:
 # ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝
 
 
-def stable_hash(value: str | int) -> int:
-    # {  ###
+def stable_hash(value: str | int) -> int:  ##
     if isinstance(value, int):
         value = str(value)
     if isinstance(value, str):
         return int(hashlib.md5(value.encode("utf-8")).hexdigest(), 16)
     assert False, "Not supported type of value"
-    # }
+    ##
 
 
 def hash32(value: str) -> int:
@@ -758,10 +741,11 @@ def hash32_utf8(value: str) -> int:
     return fnvhash.fnv1a_32(value.encode(encoding="utf-8"))
 
 
-def hash32_file_utf8(filepath) -> int:
+def hash32_file_utf8(filepath) -> int:  ##
     with open(filepath, encoding="utf-8") as in_file:
         d = in_file.read()
     return hash32_utf8(d)
+    ##
 
 
 # !banner: banners
@@ -772,11 +756,10 @@ def hash32_file_utf8(filepath) -> int:
 # ██████╔╝██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║███████║
 # ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚══════╝
 
-# {  ###
 BANNERIFY_PATTERN = "!" + "banner: "
 
 
-def bannerify(lines: list[str]) -> str:
+def bannerify(lines: list[str]) -> str:  ##
     out = ""
     bannering_prefix = ""
     current_line_index = 0
@@ -829,9 +812,10 @@ def bannerify(lines: list[str]) -> str:
         current_line_index += 1
 
     return out
+    ##
 
 
-def test_bannerify():
+def test_bannerify():  ##
     assert bannerify([]) == ""
     assert bannerify(["a"]) == "a\n"
     assert bannerify(["a", " b"]) == "a\n b\n"
@@ -884,9 +868,7 @@ def test_bannerify():
         print("\nGOT:")
         print(got)
     assert got == expected
-
-
-# }
+    ##
 
 
 # !banner: image
@@ -898,20 +880,17 @@ def test_bannerify():
 # ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
 
 
-def _change_matrix_outline(input_mat, radius: int):
-    # {  ###
-    # radius = radius - 1
+def _change_matrix_outline(input_mat, radius: int):  ##
     mat = np.ones(input_mat.shape)
     check_size = radius + 1.0
     mat[input_mat > check_size] = 0
     border = (input_mat > radius) & (input_mat <= check_size)
     mat[border] = 1.0 - (input_mat[border] - radius)
     return mat
-    # }
+    ##
 
 
-def _change_matrix_shadow(input_mat, radius: int):
-    # {  ###
+def _change_matrix_shadow(input_mat, radius: int):  ##
     mat = np.ones(input_mat.shape)
     mat[input_mat > radius] = 0
     border = input_mat <= radius
@@ -923,7 +902,7 @@ def _change_matrix_shadow(input_mat, radius: int):
         (radius - input_mat[border]) * (radius - input_mat[border]) / radius / radius
     )
     return mat
-    # }
+    ##
 
 
 def _cv2pil(cv_img):
@@ -939,8 +918,7 @@ def im_outline(
     threshold: int = 0,
     blend_image_on_top: bool = True,
     extend: bool = True,
-) -> Image.Image:
-    # {  ###
+) -> Image.Image:  ##
     assert threshold >= 0
 
     if len(color) == 3:
@@ -1002,11 +980,10 @@ def im_outline(
         bigger_img = _cv2pil(bigger_img)
         stroke = Image.alpha_composite(stroke, bigger_img)  # type: ignore
     return stroke
-    # }
+    ##
 
 
-def im_extract_white(grayscale_image: Image.Image) -> Image.Image:
-    # {  ###
+def im_extract_white(grayscale_image: Image.Image) -> Image.Image:  ##
     img = np.asarray(grayscale_image)
     h, w, _ = img.shape
     one = np.full((h, w), 255, np.uint8)
@@ -1014,11 +991,10 @@ def im_extract_white(grayscale_image: Image.Image) -> Image.Image:
     img_alpha = img[:, :, 3]
     img_front = cv2.merge((one, one, one, cv2.min(img_r, img_alpha)))
     return _cv2pil(img_front)
-    # }
+    ##
 
 
-def im_extract_black(grayscale_image: Image.Image) -> Image.Image:
-    # {  ###
+def im_extract_black(grayscale_image: Image.Image) -> Image.Image:  ##
     img = np.asarray(grayscale_image)
     h, w, _ = img.shape
     one = np.full((h, w), 255, np.uint8)
@@ -1027,11 +1003,10 @@ def im_extract_black(grayscale_image: Image.Image) -> Image.Image:
     alpha = cv2.min(255 - img_r, img_alpha)
     out_img = cv2.merge((one, one, one, alpha))
     return _cv2pil(out_img)
-    # }
+    ##
 
 
-def im_replace_color(image: Image.Image, color: tuple[int, int, int]) -> Image.Image:
-    # {  ###
+def im_replace_color(image: Image.Image, color: tuple[int, int, int]) -> Image.Image:  ##
     img = np.asarray(image)
     h, w, _ = img.shape
     alpha = img[:, :, 3]
@@ -1044,17 +1019,32 @@ def im_replace_color(image: Image.Image, color: tuple[int, int, int]) -> Image.I
         )
     )
     return _cv2pil(out_img)
-    # }
+    ##
 
 
-def imc_replace_color(color: tuple[int, int, int]) -> ConveyorCallable:
-    # {  ###
+def imc_replace_color(color: tuple[int, int, int]) -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         image = im_replace_color(image_, color)
         return image, path_
 
     return inner
-    # }
+    ##
+
+
+def im_multiply(
+    image: Image.Image, color: tuple[int, int, int] | tuple[int, int, int, int]
+) -> Image.Image:  ##
+    return ImageChops.multiply(image, Image.new("RGBA", image.size, color))
+    ##
+
+
+def imc_multiply(color: tuple[int, int, int]) -> ConveyorCallable:  ##
+    def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
+        image = im_multiply(image_, color)
+        return image, path_
+
+    return inner
+    ##
 
 
 im_red = lambda image: im_replace_color(image, (255, 0, 0))
@@ -1078,8 +1068,7 @@ def im_remap(
     grayscale_image: Image.Image,
     black_to: tuple[int, int, int],
     white_to: tuple[int, int, int],
-) -> Image.Image:
-    # {  ###
+) -> Image.Image:  ##
     img = np.asarray(grayscale_image)
     img_r = img[:, :, 0]
     img_g = img[:, :, 1]
@@ -1093,17 +1082,16 @@ def im_remap(
         )
     )
     return _cv2pil(out_img)
-    # }
+    ##
 
 
 def im_remap_grayscale(
     grayscale_image: Image.Image, black_to: int, white_to: int
-) -> Image.Image:
-    # {  ###
+) -> Image.Image:  ##
     return im_remap(
         grayscale_image, (black_to, black_to, black_to), (white_to, white_to, white_to)
     )
-    # }
+    ##
 
 
 def im_conveyor(
@@ -1111,8 +1099,7 @@ def im_conveyor(
     conveyor_name: str,
     *args: ConveyorCallable,
     out_dir: Path | str = ART_TEXTURES_DIR,
-) -> None:
-    # {  ###
+) -> None:  ##
     log.info(f"conveyor: `{folder_name}`: {conveyor_name}...")
     folder = ART_TEXTURES_DIR / folder_name
     assert folder.exists(), f"`{folder}` does not exist!"
@@ -1125,43 +1112,39 @@ def im_conveyor(
             img = img2
         img.save(Path(out_dir) / f.name)
     log.info(f"conveyor: `{folder_name}`: {conveyor_name}... Success!")
-    # }
+    ##
 
 
-def imc_prefix(prefix: str) -> ConveyorCallable:
-    # {  ###
+def imc_prefix(prefix: str) -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         extension = path_.name.rsplit(".", 1)[-1]
         path = path_.parent / "{}_{}.{}".format(prefix, path_.stem, extension)
         return image_, path
 
     return inner
-    # }
+    ##
 
 
-def imc_suffix(suffix: str) -> ConveyorCallable:
-    # {  ###
+def imc_suffix(suffix: str) -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         extension = path_.name.rsplit(".", 1)[-1]
         path = path_.parent / "{}_{}.{}".format(path_.stem, suffix, extension)
         return image_, path
 
     return inner
-    # }
+    ##
 
 
 def im_scale(
     image: Image.Image, scale: float, scale2: float = float("inf")
-) -> Image.Image:
-    # {  ###
+) -> Image.Image:  ##
     if scale2 == float("inf"):
         scale2 = scale
     return image.resize((round(image.size[0] * scale), round(image.size[1] * scale2)))
-    # }
+    ##
 
 
-def imc_scale(factor: float) -> ConveyorCallable:
-    # {  ###
+def imc_scale(factor: float) -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         image = image_.resize(
             (round(image_.size[0] * factor), round(image_.size[1] * factor))
@@ -1169,57 +1152,52 @@ def imc_scale(factor: float) -> ConveyorCallable:
         return image, path_
 
     return inner
-    # }
+    ##
 
 
-def imc_outline(**kwargs: Any) -> ConveyorCallable:
-    # {  ###
+def imc_outline(**kwargs: Any) -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         image = im_outline(image=image_, **kwargs)
         return image, path_
 
     return inner
-    # }
+    ##
 
 
 def imc_remap(
     black_to: tuple[int, int, int], white_to: tuple[int, int, int]
-) -> ConveyorCallable:
-    # {  ###
+) -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         image = im_remap(image_, black_to, white_to)
         return image, path_
 
     return inner
-    # }
+    ##
 
 
-def imc_extract_white() -> ConveyorCallable:
-    # {  ###
+def imc_extract_white() -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         return im_extract_white(image_), path_
 
     return inner
-    # }
+    ##
 
 
-def imc_extract_black() -> ConveyorCallable:
-    # {  ###
+def imc_extract_black() -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         return im_extract_black(image_), path_
 
     return inner
-    # }
+    ##
 
 
-def imc_brightness(factor: float) -> ConveyorCallable:
-    # {  ###
+def imc_brightness(factor: float) -> ConveyorCallable:  ##
     def inner(image_: Image.Image, path_: Path) -> ConveyorDatum:
         image = ImageEnhance.Brightness(image_).enhance(factor)
         return image, path_
 
     return inner
-    # }
+    ##
 
 
 def _shape(
@@ -1230,8 +1208,7 @@ def _shape(
     fill: tuple[int, int, int, int] = (255, 255, 255, 255),
     outline: tuple[int, int, int, int] = (0, 0, 0, 255),
     width: int = 0,
-) -> Image.Image:
-    # {  ###
+) -> Image.Image:  ##
     if isinstance(size, int):
         size = (size, size)
 
@@ -1259,7 +1236,7 @@ def _shape(
     getattr(d, func_name)(xy=(0, 0, *size), fill=fill, outline=outline, width=width, **kw)
 
     return image.resize(original_size)
-    # }
+    ##
 
 
 def im_rectangle(*args: Any, **kwargs: Any) -> Image.Image:
@@ -1270,8 +1247,7 @@ def im_ellipse(*args: Any, **kwargs: Any) -> Image.Image:
     return _shape("ellipse", *args, **kwargs)
 
 
-def im_star(size: int, inner_radius_scale: float = 0.5, color: ColorLike = "white"):
-    # {  ###
+def im_star(size: int, inner_radius_scale: float = 0.5, color: ColorLike = "white"):  ##
     points = []
 
     outer_r = size / 2
@@ -1289,7 +1265,7 @@ def im_star(size: int, inner_radius_scale: float = 0.5, color: ColorLike = "whit
 
     draw.polygon(points, fill=color)
     return img
-    # }
+    ##
 
 
 def im_spritesheetify(
@@ -1304,8 +1280,7 @@ def im_spritesheetify(
     out_filenames: list[str] | None = None,
     trim_transparent: bool = True,
     stop_on_finding_empty_sprite: bool = True,
-) -> None:
-    # {  ###
+) -> None:  ##
     recursive_mkdir(out_dir)
 
     image = Image.open(image_path)
@@ -1355,15 +1330,14 @@ def im_spritesheetify(
             img2.save(out_dir / (out_filename_prefix + filename + ".png"))
 
     log.info(f"spritesheetify: {image_path}... Success!")
-    # }
+    ##
 
 
 def im_draw_on_top(
     background: Image.Image,
     overlay: Image.Image,
     overlay_color: tuple[int, int, int, int] = (255, 255, 255, 255),
-) -> Image.Image:
-    # {  ###
+) -> Image.Image:  ##
     assert (
         background.size[0] / background.size[1] - overlay.size[0] / overlay.size[1]
     ) <= 0.0001, "Aspect ratios of images must be the same!"
@@ -1373,7 +1347,7 @@ def im_draw_on_top(
     o = Image.fromarray(arr.clip(0, 255).astype("uint8"), "RGBA")
 
     return Image.alpha_composite(background.convert("RGBA"), o)
-    # }
+    ##
 
 
 # !banner: ldtk
@@ -1389,8 +1363,7 @@ def as_dict(pos: tuple[int, int] | float) -> dict[str, int | float]:
     return {"x": pos[0], "y": pos[1]}
 
 
-class LdtkEntity(BaseModel):
-    # {  ###
+class LdtkEntity(BaseModel):  ##
     identifier: str
     # uid: int
     # tags: [str]
@@ -1424,25 +1397,22 @@ class LdtkEntity(BaseModel):
     # pivotX: 0.5
     # pivotY: 0.5
     # fieldDefs: []
-    # }
+    ##
 
 
-class LdtkTilesetTileCustomdata(BaseModel):
-    # {  ###
+class LdtkTilesetTileCustomdata(BaseModel):  ##
     data: str
     tileId: int
-    # }
+    ##
 
 
-class LdtkTilesetTileEnumTag(BaseModel):
-    # {  ###
+class LdtkTilesetTileEnumTag(BaseModel):  ##
     enumValueId: str
     tileIds: list[int]
-    # }
+    ##
 
 
-class LdtkTileset(BaseModel):
-    # {  ###
+class LdtkTileset(BaseModel):  ##
     identifier: str
     cHei_: int
     cWid_: int
@@ -1454,33 +1424,29 @@ class LdtkTileset(BaseModel):
     def size(self) -> list[int]:
         return [self.cWid_, self.cHei_]
 
-    # }
+    ##
 
 
-class LdtkIntGridValueDef(BaseModel):
-    # {  ###
+class LdtkIntGridValueDef(BaseModel):  ##
     value: int
     identifier: str | None
-    # }
+    ##
 
 
-class LdtkLayerDef(BaseModel):
-    # {  ###
+class LdtkLayerDef(BaseModel):  ##
     identifier: str
     intGridValues: list[LdtkIntGridValueDef]
-    # }
+    ##
 
 
-class LdtkDefs(BaseModel):
-    # {  ###
+class LdtkDefs(BaseModel):  ##
     entities: list[LdtkEntity]
     tilesets: list[LdtkTileset]
     layers: list[LdtkLayerDef]
-    # }
+    ##
 
 
-class LdtkFieldInstance(BaseModel):
-    # {  ###
+class LdtkFieldInstance(BaseModel):  ##
     identifier_: str  # direction
     type_: str
     # __type  :  LocalEnum.direction
@@ -1488,11 +1454,10 @@ class LdtkFieldInstance(BaseModel):
     # __tile  :  null
     # defUid  :  60
     # realEditorValues: list
-    # }
+    ##
 
 
-def ldtk_field_function(self, identifier: str, default: Any = None) -> Any:
-    # {  ###
+def ldtk_field_function(self, identifier: str, default: Any = None) -> Any:  ##
     try:
         value = next(
             field for field in self.fieldInstances if field.identifier_ == identifier
@@ -1508,11 +1473,10 @@ def ldtk_field_function(self, identifier: str, default: Any = None) -> Any:
             ", ".join(field.identifier_ for field in self.fieldInstances),
         )
 
-    # }
+    ##
 
 
-def ldtk_field_ref_function(self, identifier: str, reference_layer) -> Any:
-    # {  ###
+def ldtk_field_ref_function(self, identifier: str, reference_layer) -> Any:  ##
     try:
         value = next(
             field for field in self.fieldInstances if field.identifier_ == identifier
@@ -1529,11 +1493,10 @@ def ldtk_field_ref_function(self, identifier: str, reference_layer) -> Any:
             identifier,
             ", ".join(field.identifier_ for field in self.fieldInstances),
         )
-    # }
+    ##
 
 
-class LdtkEntityInstance(BaseModel):
-    # {  ###
+class LdtkEntityInstance(BaseModel):  ##
     identifier_: str  # "entities"
     grid_: tuple[int, int]
     pivot_: tuple[float, float]
@@ -1580,18 +1543,16 @@ class LdtkEntityInstance(BaseModel):
 
         return math.atan2(y - self.grid_[1], x - self.grid_[0])
 
-    # }
+    ##
 
 
-class LdtkLayerTile(BaseModel):
-    # {  ###
+class LdtkLayerTile(BaseModel):  ##
     px: tuple[int, int]
     # src: list[int]
-    # }
+    ##
 
 
-class LdtkLayerInstance(BaseModel):
-    # {  ###
+class LdtkLayerInstance(BaseModel):  ##
     identifier_: str  # "entities"
     # type_: str  # "Entities"
     cWid_: int  # 71
@@ -1623,11 +1584,10 @@ class LdtkLayerInstance(BaseModel):
     def entities(self, identifier: str) -> Iterator[LdtkEntityInstance, None, None]:
         return (x for x in self.entityInstances if x.identifier_ == identifier)
 
-    # }
+    ##
 
 
-class LdtkLevel(BaseModel):
-    # {  ###
+class LdtkLevel(BaseModel):  ##
     identifier: str
     iid: str
     uid: int
@@ -1663,11 +1623,10 @@ class LdtkLevel(BaseModel):
     def size(self) -> list[int]:
         return [self.pxWid // 16, self.pxHei // 16]
 
-    # }
+    ##
 
 
-class Ldtk(BaseModel):
-    # {  ###
+class Ldtk(BaseModel):  ##
     defs: LdtkDefs
     levels: list[LdtkLevel]
 
@@ -1677,7 +1636,7 @@ class Ldtk(BaseModel):
                 return level
         assert False, f"Level {name} not found"
 
-    # }
+    ##
 
 
 def ldtk_try_get_single_entity(
@@ -1711,7 +1670,7 @@ def ldtk_get_referenced_entity(
 
 def _ldtk_transform_field_names(data) -> None:
     """Перевод полей формата `__aboba` в `aboba_`."""
-    # {  ###
+    ##
     if not isinstance(data, dict):
         return
 
@@ -1726,20 +1685,16 @@ def _ldtk_transform_field_names(data) -> None:
             for v in value:
                 if isinstance(v, dict):
                     _ldtk_transform_field_names(v)
-    # }
+    ##
 
 
-def ldtk_load(filepath: Path | str) -> Ldtk:
-    # {  ###
+def ldtk_load(filepath: Path | str) -> Ldtk:  ##
     with open(filepath) as in_file:
         data = in_file.read()
     loaded_json = pydantic_core.from_json(data)
     _ldtk_transform_field_names(loaded_json)
     return Ldtk.model_validate(loaded_json)
-    # }
+    ##
 
 
 from bf_game import *  # noqa
-
-
-###

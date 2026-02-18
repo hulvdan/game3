@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dotetriask15v"]
 
-[ext_resource type="Texture2D" uid="uid://cb427chsjifdm" path="res://assets/art/textures/removeme/grass.png" id="1_hofgd"]
+[ext_resource type="Texture2D" uid="uid://bxr63wll43dfx" path="res://assets/art/textures/removeme/_tile_33_conifer_dark.png" id="1_hofgd"]
 
 [node name="Sprite3D" type="Sprite3D" unique_id=1975851868]
 transform = Transform3D(3.31, 0, 0, 0, -1.4468469e-07, -3.31, 0, 3.31, -1.4468469e-07, 0, 0, 0)

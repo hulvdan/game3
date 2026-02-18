@@ -258,8 +258,6 @@ func get_mouse_world_point() -> Vector3: ##
 	return Vector3.INF
 	##
 
-# static var previous_frame_shooting_action: bool = false
-
 
 func _physics_process(dt: float) -> void:
 	room.start_elapsed += dt

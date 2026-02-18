@@ -13,6 +13,7 @@ x spikes: curve
 x removed attack holding
 x can queue fast shooting after roll
 
+* colored placeholder textures
 * items: can drop from mines (hollow knight like)
 * items: can drop from herbs on swing
 * items: can drop from bonepiles

@@ -1937,6 +1937,203 @@ class GDamage:
 		return result
 
 
+class GItem:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GCollectible:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+		__item_type = PBField.new("item_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __item_type
+		data[__item_type.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	var __item_type: PBField
+
+
+	func has_item_type() -> bool:
+		if __item_type.value != null:
+			return true
+		return false
+
+
+	func get_item_type() -> int:
+		return __item_type.value
+
+
+	func clear_item_type() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__item_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_item_type(value: int) -> void:
+		__item_type.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class Lib:
 	func _init():
 		var service
@@ -2092,6 +2289,20 @@ class Lib:
 		service.field = __creatures
 		service.func_ref = Callable(self, "add_creatures")
 		data[__creatures.tag] = service
+
+		var __items_default: Array[GItem] = []
+		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 32, true, __items_default)
+		service = PBServiceField.new()
+		service.field = __items
+		service.func_ref = Callable(self, "add_items")
+		data[__items.tag] = service
+
+		var __collectibles_default: Array[GCollectible] = []
+		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 31, true, __collectibles_default)
+		service = PBServiceField.new()
+		service.field = __collectibles
+		service.func_ref = Callable(self, "add_collectibles")
+		data[__collectibles.tag] = service
 
 
 	var data = { }
@@ -2694,6 +2905,42 @@ class Lib:
 		return element
 
 
+	var __items: PBField
+
+
+	func get_items() -> Array[GItem]:
+		return __items.value
+
+
+	func clear_items() -> void:
+		data[32].state = PB_SERVICE_STATE.UNFILLED
+		__items.value.clear()
+
+
+	func add_items() -> GItem:
+		var element = GItem.new()
+		__items.value.append(element)
+		return element
+
+
+	var __collectibles: PBField
+
+
+	func get_collectibles() -> Array[GCollectible]:
+		return __collectibles.value
+
+
+	func clear_collectibles() -> void:
+		data[31].state = PB_SERVICE_STATE.UNFILLED
+		__collectibles.value.clear()
+
+
+	func add_collectibles() -> GCollectible:
+		var element = GCollectible.new()
+		__collectibles.value.append(element)
+		return element
+
+
 	func _to_string() -> String:
 		return PBPacker.message_to_string(data)
 
@@ -2744,5 +2991,21 @@ enum GCreatureType {
 	PLAYER,
 	MOB_SHOOTER,
 	MOB_BONKER,
+	COUNT,
+}
+
+enum GItemType {
+	INVALID,
+	ORE,
+	PLANT,
+	BONE,
+	COUNT,
+}
+
+enum GCollectibleType {
+	INVALID,
+	ORE,
+	PLANT,
+	BONE,
 	COUNT,
 }

@@ -65,6 +65,17 @@ message GDamage {
   string debug_name = 2;
 }
 
+message GItem {
+  int32 type = 1;
+  string debug_name = 2;
+}
+
+message GCollectible {
+  int32 type = 1;
+  string debug_name = 2;
+  int32 item_type = 3;
+}
+
 message Lib {
   int32 debug_collisions = 5;
   repeated GMobToSpawn mobs_to_spawn = 1;
@@ -95,5 +106,7 @@ message Lib {
   repeated GDamage damages = 27;
   repeated GProgression progression = 7;
   repeated GCreature creatures = 8;
+  repeated GItem items = 32;
+  repeated GCollectible collectibles = 31;
   // TABLE_GEN_END
 }

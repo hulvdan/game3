@@ -93,10 +93,12 @@ def _process_glib(genline, glib) -> None:
     ## LDTK. Enums
     ldtk_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
     for enum in ldtk_data["defs"]["enums"]:
-        if enum["identifier"].startswith("CODEGEN_"):
+        identifier = enum["identifier"].lower()
+        if identifier.startswith("codegen_"):
             enum["values"] = [
                 {"id": v["type"], "tileRect": None, "color": 0}
-                for v in glib["progression"]
+                for v in glib[identifier.removeprefix("codegen_")]
+                if v["type"] != "INVALID"
             ]
     Path("assets/level.ldtk").write_text(
         json.dumps(ldtk_data, ensure_ascii=False, indent=2) + "\n",
@@ -243,226 +245,237 @@ def process_images():  ##
     for f in list(bf.ART_TEXTURES_DIR.rglob("_*.png")):
         f.unlink()
 
-    OUTLINE_WIDTH = 10
-
-    bf.im_conveyor(
-        "volume_bands",
-        "volume_bands",
-        bf.imc_prefix(""),
-        bf.imc_scale(0.2127),
-        bf.imc_outline(radius=1, color=(0, 0, 0, 0)),
-        bf.imc_outline(radius=8),
-        out_dir=bf.ART_TEXTURES_DIR,
-    )
-
-    bf.im_conveyor(
-        "icons_audio",
-        "icons_audio",
-        bf.imc_prefix(""),
-        bf.imc_outline(radius=1, color=(0, 0, 0, 0)),
-        bf.imc_outline(radius=8),
-        # bf.imc_scale(0.5),
-        out_dir=bf.ART_TEXTURES_DIR,
-    )
-
-    # _ui_background_rect
-    bf.im_rectangle((412, 582), radius=30).save(
-        bf.ART_TEXTURES_DIR / "_ui_background_rect.png"
-    )
-
-    # _game_item_spot_shadow
-    bf.im_ellipse((120, 120)).save(bf.ART_TEXTURES_DIR / "_game_item_spot_shadow.png")
-
-    # _ui_button
-    bf.im_outline(
-        bf.im_remap(
-            Image.open(bf.ART_TEXTURES_DIR / "other" / "ui_button.png"),
-            bf.palette_color_tuple3("ORANGE"),
-            bf.palette_color_tuple3("CASABLANCA"),
-        ),
-        radius=OUTLINE_WIDTH,
-    ).save(bf.ART_TEXTURES_DIR / "_ui_button.png")
-
-    image_star = Image.open(bf.ART_TEXTURES_DIR / "other" / "ui_star.png")
-
-    # _ui_star_gold, _ui_star_gray, _ui_star_gold_small, _ui_star_gray_small
-    for suf, c1, c2 in (
-        ("gold", "ORANGE", "CASABLANCA"),
-        ("gray", "SCORPION", "SCORPION"),
+    tile = Image.open(bf.ART_SRC_DIR / "tile.png")
+    tile_index = -1
+    for name_, color in zip(
+        bf.game_settings.computed_color_names, bf.game_settings.colors, strict=True
     ):
-        image_star_processed = bf.im_outline(
-            bf.im_remap(
-                image_star, bf.palette_color_tuple3(c1), bf.palette_color_tuple3(c2)
-            ),
-            radius=int(OUTLINE_WIDTH * 1.4),
-        )
-        image_star_processed.save(bf.ART_TEXTURES_DIR / f"_ui_star_{suf}.png")
-
-        small_star_scale = 0.1
-        bf.im_outline(bf.im_scale(image_star_processed, small_star_scale), radius=2).save(
-            bf.ART_TEXTURES_DIR / f"_ui_star_small_{suf}.png"
+        tile_index += 1
+        name = name_.lower().replace(" ", "_")
+        bf.im_multiply(tile, color).save(
+            bf.ART_TEXTURES_DIR / "removeme" / f"_tile_{tile_index:02}_{name}.png"
         )
 
-    # _game_particle_star
-    bf.im_outline(bf.im_star(270), radius=20, color=(255, 255, 255, 255)).save(
-        bf.ART_TEXTURES_DIR / "_game_particle_star.png"
-    )
+    # OUTLINE_WIDTH = 10
 
-    # _game_particle_circle_outline
-    bf.im_ellipse(
-        180, width=int(20 * 7 / 8), fill=(0, 0, 0, 0), outline=(255, 255, 255)
-    ).save(bf.ART_TEXTURES_DIR / "_game_particle_circle_outline.png")
-
-    # _game_feedback_circle
-    bf.im_outline(
-        bf.im_ellipse(60), radius=100, is_shadow=True, color=(255, 255, 255, 255)
-    ).save(bf.ART_TEXTURES_DIR / "_game_feedback_circle.png")
-
-    # _game_particle_diamond
-    diamond_size = 320
-    rh = Image.new("RGBA", (diamond_size, diamond_size), (255, 255, 255, 255))
-    ell = bf.im_ellipse(diamond_size, fill=(0, 0, 0, 255))
-    for off in ((0, 0), (1, 0), (0, 1), (1, 1)):
-        rh.paste(
-            ell,
-            (
-                off[0] * diamond_size - diamond_size // 2,
-                off[1] * diamond_size - diamond_size // 2,
-            ),
-            ell,
-        )
-    bf.im_extract_white(rh).save(bf.ART_TEXTURES_DIR / "_game_particle_diamond.png")
-
-    # _ui_icon_ad_small
-    bf.im_outline(
-        bf.im_scale(Image.open(bf.ART_DIR / "src" / "icons" / "ic_video_fill.png"), 0.25),
-        radius=OUTLINE_WIDTH,
-    ).save(bf.ART_TEXTURES_DIR / "_ui_icon_ad_small.png")
-
-    # Spritesheetifying items.
-    bf.im_spritesheetify(
-        bf.ART_DIR / "src" / "main_001.png",
-        cell_size=480,
-        size=(7, 8),
-        gap=10,
-        out_dir=bf.ART_TEXTURES_DIR / "items",
-        out_filename_prefix="_game_item_",
-    )
-    for f in (bf.ART_TEXTURES_DIR / "items").glob("*.png"):
-        img = Image.open(f)
-        img.save(bf.ART_TEXTURES_DIR / f.name)
-        bf.im_white(img).save(bf.ART_TEXTURES_DIR / (f.stem + "_dark.png"))
-
-    bf.im_conveyor(
-        "icons",
-        "Icons",
-        bf.imc_prefix(""),
-        bf.imc_scale(0.55),
-        bf.imc_outline(radius=OUTLINE_WIDTH),
-    )
-
-    # Screenshots.
-    # if 1:
-    banner = Image.open(bf.ART_DIR / "src" / "dist_screenshot.png")
-    # banner =
-    # h = 185
-    # # margin = 20
-    # margin = 0
-    # outline_width = 7
-    # w = 1920 + 2 * outline_width
-    # rect = bf.im_rectangle(
-    #     (w - margin * 2, h - margin),
-    #     fill="white",
-    #     # radius=80,
-    #     width=outline_width,
-    #     outline="black",
+    # bf.im_conveyor(
+    #     "volume_bands",
+    #     "volume_bands",
+    #     bf.imc_prefix(""),
+    #     bf.imc_scale(0.2127),
+    #     bf.imc_outline(radius=1, color=(0, 0, 0, 0)),
+    #     bf.imc_outline(radius=8),
+    #     out_dir=bf.ART_TEXTURES_DIR,
     # )
-    # banner.paste(rect, ((1920 - w) // 2 + margin, 1080 - h + outline_width))
-    # # else:
-    # #     banner = Image.open(bf.ART_DIR / "src" / "screenshot_text_banner.png")
-    banner = bf.im_outline(
-        banner,
-        radius=40,
-        color=(0, 0, 0, int(255 * 4 / 16)),
-        is_shadow=True,
-        extend=False,
-    )
-    banner_colors = [
-        "8fd3ff",
-        "eaaded",
-        "91db69",
-        "8fd3ff",
-    ]
-    _result = bf.read_localization_csv()
-    screenshot_loc_id_indices = sorted(
-        i for i, x in enumerate(_result.loc_ids) if x.startswith("YANDEX_SCREENSHOT_")
-    )
-    font = ImageFont.truetype(
-        bf.ART_DIR / "src" / "screenshots" / "SeymourOne-Regular.ttf", size=150
-    )
 
-    for language, texts in _result.loc_by_languages.items():
-        out_dir = bf.ART_DIR / "src" / "screenshots_processed" / language
-        for f in out_dir.glob("*.png"):
-            f.unlink()
-        bf.recursive_mkdir(out_dir)
+    # bf.im_conveyor(
+    #     "icons_audio",
+    #     "icons_audio",
+    #     bf.imc_prefix(""),
+    #     bf.imc_outline(radius=1, color=(0, 0, 0, 0)),
+    #     bf.imc_outline(radius=8),
+    #     # bf.imc_scale(0.5),
+    #     out_dir=bf.ART_TEXTURES_DIR,
+    # )
 
-        for banner_color_, loc_id_index, f in zip(
-            banner_colors,
-            screenshot_loc_id_indices,
-            (bf.ART_DIR / "src" / "screenshots").glob("*.png"),
-            strict=True,
-        ):
-            banner_color = bf.hex_to_rgb_ints(banner_color_)
+    # # _ui_background_rect
+    # bf.im_rectangle((412, 582), radius=30).save(
+    #     bf.ART_TEXTURES_DIR / "_ui_background_rect.png"
+    # )
 
-            text_image = Image.new("RGBA", (3840, 1550))
-            draw = ImageDraw.Draw(text_image)
-            draw.text(
-                (1920, 1478),
-                texts[loc_id_index],
-                fill=tuple(
-                    int(x * 255)
-                    for x in bf.transform_color(
-                        bf.hex_to_rgb_floats(banner_color_),
-                        saturation_scale=0.23,
-                        value_scale=2.5,
-                    )
-                ),
-                anchor="ms",
-                font=font,
-                stroke_width=14,
-                stroke_fill="black",
-            )
-            text_image = bf.im_outline(
-                text_image,
-                radius=40,
-                color=(0, 0, 0, round(255 * 3 / 16)),
-                is_shadow=True,
-                extend=False,
-            )
+    # # _game_item_spot_shadow
+    # bf.im_ellipse((120, 120)).save(bf.ART_TEXTURES_DIR / "_game_item_spot_shadow.png")
 
-            brightness = 1.0
-            contrast = 1.0
-            if 1:
-                brightness = 1.06
-                contrast = 1.1
+    # # _ui_button
+    # bf.im_outline(
+    #     bf.im_remap(
+    #         Image.open(bf.ART_TEXTURES_DIR / "other" / "ui_button.png"),
+    #         bf.palette_color_tuple3("ORANGE"),
+    #         bf.palette_color_tuple3("CASABLANCA"),
+    #     ),
+    #     radius=OUTLINE_WIDTH,
+    # ).save(bf.ART_TEXTURES_DIR / "_ui_button.png")
 
-            img = Image.new("RGBA", (1920, 1080))
-            img.paste(
-                ImageEnhance.Brightness(
-                    ImageEnhance.Contrast(Image.open(f)).enhance(contrast)
-                ).enhance(brightness),
-                (0, -100),
-            )
-            bf.im_draw_on_top(
-                bf.im_draw_on_top(img, banner, (*banner_color, 255)),
-                text_image.resize((1920, 1080)),
-            ).save(out_dir / f.name)
+    # image_star = Image.open(bf.ART_TEXTURES_DIR / "other" / "ui_star.png")
 
-    import bf_cli  # noqa
+    # # _ui_star_gold, _ui_star_gray, _ui_star_gold_small, _ui_star_gray_small
+    # for suf, c1, c2 in (
+    #     ("gold", "ORANGE", "CASABLANCA"),
+    #     ("gray", "SCORPION", "SCORPION"),
+    # ):
+    #     image_star_processed = bf.im_outline(
+    #         bf.im_remap(
+    #             image_star, bf.palette_color_tuple3(c1), bf.palette_color_tuple3(c2)
+    #         ),
+    #         radius=int(OUTLINE_WIDTH * 1.4),
+    #     )
+    #     image_star_processed.save(bf.ART_TEXTURES_DIR / f"_ui_star_{suf}.png")
 
-    bf_cli.do_generate(bf.BuildPlatform.Win, bf.BuildType.Debug)
-    bf_cli.do_activate_game_ahk()
+    #     small_star_scale = 0.1
+    #     bf.im_outline(bf.im_scale(image_star_processed, small_star_scale), radius=2).save(
+    #         bf.ART_TEXTURES_DIR / f"_ui_star_small_{suf}.png"
+    #     )
+
+    # # _game_particle_star
+    # bf.im_outline(bf.im_star(270), radius=20, color=(255, 255, 255, 255)).save(
+    #     bf.ART_TEXTURES_DIR / "_game_particle_star.png"
+    # )
+
+    # # _game_particle_circle_outline
+    # bf.im_ellipse(
+    #     180, width=int(20 * 7 / 8), fill=(0, 0, 0, 0), outline=(255, 255, 255)
+    # ).save(bf.ART_TEXTURES_DIR / "_game_particle_circle_outline.png")
+
+    # # _game_feedback_circle
+    # bf.im_outline(
+    #     bf.im_ellipse(60), radius=100, is_shadow=True, color=(255, 255, 255, 255)
+    # ).save(bf.ART_TEXTURES_DIR / "_game_feedback_circle.png")
+
+    # # _game_particle_diamond
+    # diamond_size = 320
+    # rh = Image.new("RGBA", (diamond_size, diamond_size), (255, 255, 255, 255))
+    # ell = bf.im_ellipse(diamond_size, fill=(0, 0, 0, 255))
+    # for off in ((0, 0), (1, 0), (0, 1), (1, 1)):
+    #     rh.paste(
+    #         ell,
+    #         (
+    #             off[0] * diamond_size - diamond_size // 2,
+    #             off[1] * diamond_size - diamond_size // 2,
+    #         ),
+    #         ell,
+    #     )
+    # bf.im_extract_white(rh).save(bf.ART_TEXTURES_DIR / "_game_particle_diamond.png")
+
+    # # _ui_icon_ad_small
+    # bf.im_outline(
+    #     bf.im_scale(Image.open(bf.ART_DIR / "src" / "icons" / "ic_video_fill.png"), 0.25),
+    #     radius=OUTLINE_WIDTH,
+    # ).save(bf.ART_TEXTURES_DIR / "_ui_icon_ad_small.png")
+
+    # # Spritesheetifying items.
+    # bf.im_spritesheetify(
+    #     bf.ART_DIR / "src" / "main_001.png",
+    #     cell_size=480,
+    #     size=(7, 8),
+    #     gap=10,
+    #     out_dir=bf.ART_TEXTURES_DIR / "items",
+    #     out_filename_prefix="_game_item_",
+    # )
+    # for f in (bf.ART_TEXTURES_DIR / "items").glob("*.png"):
+    #     img = Image.open(f)
+    #     img.save(bf.ART_TEXTURES_DIR / f.name)
+    #     bf.im_white(img).save(bf.ART_TEXTURES_DIR / (f.stem + "_dark.png"))
+
+    # bf.im_conveyor(
+    #     "icons",
+    #     "Icons",
+    #     bf.imc_prefix(""),
+    #     bf.imc_scale(0.55),
+    #     bf.imc_outline(radius=OUTLINE_WIDTH),
+    # )
+
+    # # Screenshots.
+    # # if 1:
+    # banner = Image.open(bf.ART_DIR / "src" / "dist_screenshot.png")
+    # # banner =
+    # # h = 185
+    # # # margin = 20
+    # # margin = 0
+    # # outline_width = 7
+    # # w = 1920 + 2 * outline_width
+    # # rect = bf.im_rectangle(
+    # #     (w - margin * 2, h - margin),
+    # #     fill="white",
+    # #     # radius=80,
+    # #     width=outline_width,
+    # #     outline="black",
+    # # )
+    # # banner.paste(rect, ((1920 - w) // 2 + margin, 1080 - h + outline_width))
+    # # # else:
+    # # #     banner = Image.open(bf.ART_DIR / "src" / "screenshot_text_banner.png")
+    # banner = bf.im_outline(
+    #     banner,
+    #     radius=40,
+    #     color=(0, 0, 0, int(255 * 4 / 16)),
+    #     is_shadow=True,
+    #     extend=False,
+    # )
+    # banner_colors = [
+    #     "8fd3ff",
+    #     "eaaded",
+    #     "91db69",
+    #     "8fd3ff",
+    # ]
+    # _result = bf.read_localization_csv()
+    # screenshot_loc_id_indices = sorted(
+    #     i for i, x in enumerate(_result.loc_ids) if x.startswith("YANDEX_SCREENSHOT_")
+    # )
+    # font = ImageFont.truetype(
+    #     bf.ART_DIR / "src" / "screenshots" / "SeymourOne-Regular.ttf", size=150
+    # )
+
+    # for language, texts in _result.loc_by_languages.items():
+    #     out_dir = bf.ART_DIR / "src" / "screenshots_processed" / language
+    #     for f in out_dir.glob("*.png"):
+    #         f.unlink()
+    #     bf.recursive_mkdir(out_dir)
+
+    #     for banner_color_, loc_id_index, f in zip(
+    #         banner_colors,
+    #         screenshot_loc_id_indices,
+    #         (bf.ART_DIR / "src" / "screenshots").glob("*.png"),
+    #         strict=True,
+    #     ):
+    #         banner_color = bf.hex_to_rgb_ints(banner_color_)
+
+    #         text_image = Image.new("RGBA", (3840, 1550))
+    #         draw = ImageDraw.Draw(text_image)
+    #         draw.text(
+    #             (1920, 1478),
+    #             texts[loc_id_index],
+    #             fill=tuple(
+    #                 int(x * 255)
+    #                 for x in bf.transform_color(
+    #                     bf.hex_to_rgb_floats(banner_color_),
+    #                     saturation_scale=0.23,
+    #                     value_scale=2.5,
+    #                 )
+    #             ),
+    #             anchor="ms",
+    #             font=font,
+    #             stroke_width=14,
+    #             stroke_fill="black",
+    #         )
+    #         text_image = bf.im_outline(
+    #             text_image,
+    #             radius=40,
+    #             color=(0, 0, 0, round(255 * 3 / 16)),
+    #             is_shadow=True,
+    #             extend=False,
+    #         )
+
+    #         brightness = 1.0
+    #         contrast = 1.0
+    #         if 1:
+    #             brightness = 1.06
+    #             contrast = 1.1
+
+    #         img = Image.new("RGBA", (1920, 1080))
+    #         img.paste(
+    #             ImageEnhance.Brightness(
+    #                 ImageEnhance.Contrast(Image.open(f)).enhance(contrast)
+    #             ).enhance(brightness),
+    #             (0, -100),
+    #         )
+    #         bf.im_draw_on_top(
+    #             bf.im_draw_on_top(img, banner, (*banner_color, 255)),
+    #             text_image.resize((1920, 1080)),
+    #         ).save(out_dir / f.name)
+
+    # import bf_cli  # noqa
+
+    # bf_cli.do_generate(bf.BuildPlatform.Win, bf.BuildType.Debug)
+    # bf_cli.do_activate_game_ahk()
 
     ##
 
