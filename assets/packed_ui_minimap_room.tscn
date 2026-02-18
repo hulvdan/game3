@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b3beehm2dl1yp"]
 
-[ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="1_rh8ls"]
 [ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/ui_flash.tres" id="1_ylfs7"]
+[ext_resource type="Texture2D" uid="uid://do4msjbnowhrd" path="res://assets/art/textures/removeme/_tile_18_sandrift.png" id="2_ylfs7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_g2tp3"]
 resource_local_to_scene = true
@@ -10,4 +10,4 @@ shader_parameter/flash = Color(1, 1, 1, 0)
 
 [node name="_minimap_room" type="Sprite2D" unique_id=123282093]
 material = SubResource("ShaderMaterial_g2tp3")
-texture = ExtResource("1_rh8ls")
+texture = ExtResource("2_ylfs7")

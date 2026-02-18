@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cjuik3mmcwc3i"]
 
-[ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="1_pmrth"]
+[ext_resource type="Texture2D" uid="uid://cjfno7rgkd2y6" path="res://assets/art/textures/removeme/_tile_15_mona_lisa_dark.png" id="1_pmrth"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fphxj"]
 

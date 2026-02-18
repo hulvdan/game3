@@ -245,16 +245,17 @@ def process_images():  ##
     for f in list(bf.ART_TEXTURES_DIR.rglob("_*.png")):
         f.unlink()
 
-    tile = Image.open(bf.ART_SRC_DIR / "tile.png")
-    tile_index = -1
-    for name_, color in zip(
-        bf.game_settings.computed_color_names, bf.game_settings.colors, strict=True
-    ):
-        tile_index += 1
-        name = name_.lower().replace(" ", "_")
-        bf.im_multiply(tile, color).save(
-            bf.ART_TEXTURES_DIR / "removeme" / f"_tile_{tile_index:02}_{name}.png"
-        )
+    for f in ("tile", "circle"):
+        image = Image.open(bf.ART_SRC_DIR / f"{f}.png")
+        index = -1
+        for name_, color in zip(
+            bf.game_settings.computed_color_names, bf.game_settings.colors, strict=True
+        ):
+            index += 1
+            name = name_.lower().replace(" ", "_")
+            bf.im_multiply(image, color).save(
+                bf.ART_TEXTURES_DIR / "removeme" / f"_{f}_{index:02}_{name}.png"
+            )
 
     # OUTLINE_WIDTH = 10
 

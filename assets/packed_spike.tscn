@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b8ouoy8vmdy1w"]
 
-[ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="1_mbjms"]
 [ext_resource type="Script" uid="uid://cwm05adv2l5yh" path="res://src/game/spike.gd" id="2_rqjwe"]
+[ext_resource type="Texture2D" uid="uid://bvftuxvte5vqp" path="res://assets/art/textures/removeme/_tile_26_chathams_blue.png" id="2_wytqc"]
 [ext_resource type="Texture2D" uid="uid://dmvkulolq5k7p" path="res://assets/art/textures/removeme/arrow.png" id="3_rqjwe"]
 
 [sub_resource type="Curve" id="Curve_rqjwe"]
@@ -16,7 +16,7 @@ curve = SubResource("Curve_rqjwe")
 
 [node name="spike" type="Sprite3D" parent="." unique_id=48629862]
 transform = Transform3D(1.635, 0, 0, 0, -7.146812e-08, 1.635, 0, -1.635, -7.146812e-08, 0, 0, 0)
-texture = ExtResource("1_mbjms")
+texture = ExtResource("2_wytqc")
 
 [node name="_container_spikes_scale" type="Node3D" parent="." unique_id=2130552082]
 unique_name_in_owner = true
