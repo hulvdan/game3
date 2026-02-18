@@ -381,7 +381,7 @@ func _physics_process(dt: float) -> void:
 
 	## Spike collisions
 	for spike: Spike in room.container_spikes.get_children():
-		if spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at():
+		if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at()):
 			for creature: Creature in spike.creatures_to_damage:
 				apply_damage(creature, glib.v.get_spikes_damage(), glib.GDamageType.SPIKE)
 	##
