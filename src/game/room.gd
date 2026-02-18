@@ -9,6 +9,7 @@ var target_camera_elements: Array[Node3D]
 var start_elapsed: float = 0
 var player_inside_enemy_t: float = 0
 var player_holding: float = 0
+var player_shooting_after_roll_scheduled: bool = false
 var player_rolling: float = 0
 var player_roll_direction: Vector2
 var player_stamina: int = 0

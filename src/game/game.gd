@@ -258,6 +258,8 @@ func get_mouse_world_point() -> Vector3: ##
 	return Vector3.INF
 	##
 
+# static var previous_frame_shooting_action: bool = false
+
 
 func _physics_process(dt: float) -> void:
 	room.start_elapsed += dt
@@ -317,20 +319,27 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Player shooting
-	if not room.player_rolling:
-		if Input.get_action_strength("shoot") >= 0.5:
-			room.player_holding += dt
-		elif room.player_holding >= glib.v.get_shooting_min_seconds():
+	var shooting: bool = Input.get_action_strength("shoot") >= 0.5
+
+	if room.player_rolling and (room.player_rolling < glib.v.get_player_roll_can_shoot_after()):
+		if shooting:
+			room.player_shooting_after_roll_scheduled = true
+
+	else:
+		var dur: float = glib.v.get_shooting_seconds()
+		if room.player_shooting_after_roll_scheduled:
+			dur = glib.v.get_shooting_after_roll_seconds()
+
+		if room.player_holding >= dur:
 			var arrow: Projectile = packed_arrow.instantiate()
-			var t = clamp(room.player_holding / glib.v.get_shooting_max_seconds(), 0, 1)
-			t = lerp(t, t * t, 0.25)
-			arrow.speed = lerp(glib.v.get_arrow_speed_min(), glib.v.get_arrow_speed_max(), t)
-			arrow.damage = round(lerp(glib.v.get_arrow_damage_min(), glib.v.get_arrow_damage_max(), t))
+			arrow.speed = glib.v.get_arrow_speed()
+			arrow.damage = glib.v.get_arrow_damage()
 			arrow.transform.origin = room.player.transform.origin
 			arrow.transform.basis = room.player_bow.transform.basis
 			room.container_projectiles.add_child(arrow)
 			room.player_holding = 0
-		elif room.player_holding > 0:
+			room.player_shooting_after_roll_scheduled = false
+		elif shooting or room.player_holding or room.player_shooting_after_roll_scheduled:
 			room.player_holding += dt
 	##
 

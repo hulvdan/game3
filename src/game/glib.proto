@@ -72,6 +72,7 @@ message Lib {
   float player_speed_holding_scale = 3;
   float player_speed_inside_enemies_scale = 17;
   float player_roll_duration_seconds = 18;
+  float player_roll_can_shoot_after = 19;
   float player_roll_distance = 22;
   float player_roll_pow = 23;
   int32 player_stamina_charges = 24;
@@ -84,12 +85,10 @@ message Lib {
   int32 spikes_damage = 30;
   float creatures_push_radius = 15;
   float creatures_push_force = 16;
-  float arrow_speed_min = 9;
-  float arrow_speed_max = 10;
-  int32 arrow_damage_min = 11;
-  int32 arrow_damage_max = 12;
-  float shooting_min_seconds = 13;
-  float shooting_max_seconds = 14;
+  float arrow_speed = 9;
+  int32 arrow_damage = 11;
+  float shooting_seconds = 13;
+  float shooting_after_roll_seconds = 14;
   GV2i world_size = 4;
   GV2i progression_size = 6;
   // TABLE_GEN_START

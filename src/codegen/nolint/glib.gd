@@ -1975,6 +1975,11 @@ class Lib:
 		service.field = __player_roll_duration_seconds
 		data[__player_roll_duration_seconds.tag] = service
 
+		__player_roll_can_shoot_after = PBField.new("player_roll_can_shoot_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 19, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_roll_can_shoot_after
+		data[__player_roll_can_shoot_after.tag] = service
+
 		__player_roll_distance = PBField.new("player_roll_distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 22, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_roll_distance
@@ -2035,35 +2040,25 @@ class Lib:
 		service.field = __creatures_push_force
 		data[__creatures_push_force.tag] = service
 
-		__arrow_speed_min = PBField.new("arrow_speed_min", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arrow_speed = PBField.new("arrow_speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __arrow_speed_min
-		data[__arrow_speed_min.tag] = service
+		service.field = __arrow_speed
+		data[__arrow_speed.tag] = service
 
-		__arrow_speed_max = PBField.new("arrow_speed_max", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arrow_damage = PBField.new("arrow_damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
-		service.field = __arrow_speed_max
-		data[__arrow_speed_max.tag] = service
+		service.field = __arrow_damage
+		data[__arrow_damage.tag] = service
 
-		__arrow_damage_min = PBField.new("arrow_damage_min", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__shooting_seconds = PBField.new("shooting_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __arrow_damage_min
-		data[__arrow_damage_min.tag] = service
+		service.field = __shooting_seconds
+		data[__shooting_seconds.tag] = service
 
-		__arrow_damage_max = PBField.new("arrow_damage_max", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__shooting_after_roll_seconds = PBField.new("shooting_after_roll_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __arrow_damage_max
-		data[__arrow_damage_max.tag] = service
-
-		__shooting_min_seconds = PBField.new("shooting_min_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __shooting_min_seconds
-		data[__shooting_min_seconds.tag] = service
-
-		__shooting_max_seconds = PBField.new("shooting_max_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __shooting_max_seconds
-		data[__shooting_max_seconds.tag] = service
+		service.field = __shooting_after_roll_seconds
+		data[__shooting_after_roll_seconds.tag] = service
 
 		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
@@ -2223,6 +2218,28 @@ class Lib:
 
 	func set_player_roll_duration_seconds(value: float) -> void:
 		__player_roll_duration_seconds.value = value
+
+
+	var __player_roll_can_shoot_after: PBField
+
+
+	func has_player_roll_can_shoot_after() -> bool:
+		if __player_roll_can_shoot_after.value != null:
+			return true
+		return false
+
+
+	func get_player_roll_can_shoot_after() -> float:
+		return __player_roll_can_shoot_after.value
+
+
+	func clear_player_roll_can_shoot_after() -> void:
+		data[19].state = PB_SERVICE_STATE.UNFILLED
+		__player_roll_can_shoot_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_roll_can_shoot_after(value: float) -> void:
+		__player_roll_can_shoot_after.value = value
 
 
 	var __player_roll_distance: PBField
@@ -2489,136 +2506,92 @@ class Lib:
 		__creatures_push_force.value = value
 
 
-	var __arrow_speed_min: PBField
+	var __arrow_speed: PBField
 
 
-	func has_arrow_speed_min() -> bool:
-		if __arrow_speed_min.value != null:
+	func has_arrow_speed() -> bool:
+		if __arrow_speed.value != null:
 			return true
 		return false
 
 
-	func get_arrow_speed_min() -> float:
-		return __arrow_speed_min.value
+	func get_arrow_speed() -> float:
+		return __arrow_speed.value
 
 
-	func clear_arrow_speed_min() -> void:
+	func clear_arrow_speed() -> void:
 		data[9].state = PB_SERVICE_STATE.UNFILLED
-		__arrow_speed_min.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__arrow_speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_arrow_speed_min(value: float) -> void:
-		__arrow_speed_min.value = value
+	func set_arrow_speed(value: float) -> void:
+		__arrow_speed.value = value
 
 
-	var __arrow_speed_max: PBField
+	var __arrow_damage: PBField
 
 
-	func has_arrow_speed_max() -> bool:
-		if __arrow_speed_max.value != null:
+	func has_arrow_damage() -> bool:
+		if __arrow_damage.value != null:
 			return true
 		return false
 
 
-	func get_arrow_speed_max() -> float:
-		return __arrow_speed_max.value
+	func get_arrow_damage() -> int:
+		return __arrow_damage.value
 
 
-	func clear_arrow_speed_max() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
-		__arrow_speed_max.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_arrow_speed_max(value: float) -> void:
-		__arrow_speed_max.value = value
-
-
-	var __arrow_damage_min: PBField
-
-
-	func has_arrow_damage_min() -> bool:
-		if __arrow_damage_min.value != null:
-			return true
-		return false
-
-
-	func get_arrow_damage_min() -> int:
-		return __arrow_damage_min.value
-
-
-	func clear_arrow_damage_min() -> void:
+	func clear_arrow_damage() -> void:
 		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__arrow_damage_min.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+		__arrow_damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
-	func set_arrow_damage_min(value: int) -> void:
-		__arrow_damage_min.value = value
+	func set_arrow_damage(value: int) -> void:
+		__arrow_damage.value = value
 
 
-	var __arrow_damage_max: PBField
+	var __shooting_seconds: PBField
 
 
-	func has_arrow_damage_max() -> bool:
-		if __arrow_damage_max.value != null:
+	func has_shooting_seconds() -> bool:
+		if __shooting_seconds.value != null:
 			return true
 		return false
 
 
-	func get_arrow_damage_max() -> int:
-		return __arrow_damage_max.value
+	func get_shooting_seconds() -> float:
+		return __shooting_seconds.value
 
 
-	func clear_arrow_damage_max() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
-		__arrow_damage_max.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_arrow_damage_max(value: int) -> void:
-		__arrow_damage_max.value = value
-
-
-	var __shooting_min_seconds: PBField
-
-
-	func has_shooting_min_seconds() -> bool:
-		if __shooting_min_seconds.value != null:
-			return true
-		return false
-
-
-	func get_shooting_min_seconds() -> float:
-		return __shooting_min_seconds.value
-
-
-	func clear_shooting_min_seconds() -> void:
+	func clear_shooting_seconds() -> void:
 		data[13].state = PB_SERVICE_STATE.UNFILLED
-		__shooting_min_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__shooting_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_shooting_min_seconds(value: float) -> void:
-		__shooting_min_seconds.value = value
+	func set_shooting_seconds(value: float) -> void:
+		__shooting_seconds.value = value
 
 
-	var __shooting_max_seconds: PBField
+	var __shooting_after_roll_seconds: PBField
 
 
-	func has_shooting_max_seconds() -> bool:
-		if __shooting_max_seconds.value != null:
+	func has_shooting_after_roll_seconds() -> bool:
+		if __shooting_after_roll_seconds.value != null:
 			return true
 		return false
 
 
-	func get_shooting_max_seconds() -> float:
-		return __shooting_max_seconds.value
+	func get_shooting_after_roll_seconds() -> float:
+		return __shooting_after_roll_seconds.value
 
 
-	func clear_shooting_max_seconds() -> void:
+	func clear_shooting_after_roll_seconds() -> void:
 		data[14].state = PB_SERVICE_STATE.UNFILLED
-		__shooting_max_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__shooting_after_roll_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_shooting_max_seconds(value: float) -> void:
-		__shooting_max_seconds.value = value
+	func set_shooting_after_roll_seconds(value: float) -> void:
+		__shooting_after_roll_seconds.value = value
 
 
 	var __world_size: PBField

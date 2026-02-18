@@ -69,7 +69,8 @@ func _process(dt: float) -> void:
 	if is_active:
 		activation_elapsed_visual += dt
 		var t: float = activation_elapsed_visual / glib.v.get_spikes_damage_starts_at()
-		_set_scale(curve.sample(clamp(t, 0, 1)))
+		t = clamp(t, 0, 1)
+		_set_scale(curve.sample(t))
 
 
 func _set_scale(value: float) -> void:
