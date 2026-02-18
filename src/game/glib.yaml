@@ -20,8 +20,8 @@ player_stamina_regen_seconds: 1.25
 player_holding_stamina_regen_scale: 0.33
 player_invincibility_after_hit_seconds: 0.5
 mob_invincibility_spikes_seconds: 0.25
-spikes_duration_seconds: 1
-spikes_damage_starts_at: 0.25
+spikes_duration_seconds: 2
+spikes_damage_starts_at: 0.5
 spikes_damage: 1
 
 arrow_speed_min: 10

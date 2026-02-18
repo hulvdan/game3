@@ -4,10 +4,15 @@
 [ext_resource type="Script" uid="uid://cwm05adv2l5yh" path="res://src/game/spike.gd" id="2_rqjwe"]
 [ext_resource type="Texture2D" uid="uid://dmvkulolq5k7p" path="res://assets/art/textures/removeme/arrow.png" id="3_rqjwe"]
 
+[sub_resource type="Curve" id="Curve_rqjwe"]
+_data = [Vector2(0, 0.13199115), 0.0, 0.0, 0, 0, Vector2(0.109442055, 0.23042512), -1.0811172, -1.0811172, 0, 0, Vector2(0.32832617, 0.1409396), 0.0, 0.0, 0, 0, Vector2(0.7746781, 0.18568242), 0.22663212, 0.22663212, 0, 0, Vector2(1, 1), 5.814536, 0.0, 0, 0]
+point_count = 5
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_rqjwe"]
 
 [node name="Node3D" type="Node3D" unique_id=1201653943]
 script = ExtResource("2_rqjwe")
+curve = SubResource("Curve_rqjwe")
 
 [node name="spike" type="Sprite3D" parent="." unique_id=48629862]
 transform = Transform3D(1.635, 0, 0, 0, -7.146812e-08, 1.635, 0, -1.635, -7.146812e-08, 0, 0, 0)

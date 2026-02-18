@@ -9,8 +9,8 @@ PLAN
 
 x flash creature upon taking damage
 x spikes: scale dynamically
+x spikes: curve
 
-* spikes: 
 * spikes: 
 *
 * items: can drop from mines (hollow knight like)

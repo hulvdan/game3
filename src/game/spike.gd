@@ -2,6 +2,8 @@ extends Node3D
 
 class_name Spike
 
+@export var curve: Curve
+
 var is_active: bool = false
 var activation_elapsed: float = 0
 var activation_elapsed_visual: float = 0
@@ -15,11 +17,11 @@ var creatures_to_damage: Array[Creature]
 
 func init(room: Room) -> void:
 	room.target_camera_elements.append_array(container_spikes.get_children())
-	container_spikes.visible = false
 	area_trigger.body_entered.connect(_on_body_entered_trigger)
 	area_trigger.body_exited.connect(_on_body_exited_trigger)
 	area_damage.body_entered.connect(_on_body_entered_damage)
 	area_damage.body_exited.connect(_on_body_exited_damage)
+	_set_scale(curve.sample(0))
 
 
 func _on_body_entered_trigger(creature: Creature) -> void:
@@ -48,8 +50,6 @@ func _on_body_exited_damage(creature: Creature) -> void:
 func try_activate() -> void:
 	if not is_active:
 		is_active = true
-		container_spikes.visible = true
-		#container_spikes_scale.scale.y = 0
 
 
 func _physics_process(dt: float) -> void:
@@ -60,15 +60,18 @@ func _physics_process(dt: float) -> void:
 		activation_elapsed += dt
 		if activation_elapsed >= glib.v.get_spikes_duration_seconds():
 			is_active = false
-			container_spikes.visible = false
 			activation_elapsed = 0
 			activation_elapsed_visual = 0
+			_set_scale(curve.sample(0))
 
 
 func _process(dt: float) -> void:
 	if is_active:
 		activation_elapsed_visual += dt
-		var t: float = min(1, activation_elapsed_visual / glib.v.get_spikes_damage_starts_at())
-		t = t * t
-		for child: Node3D in container_spikes.get_children():
-			child.scale.y = t
+		var t: float = activation_elapsed_visual / glib.v.get_spikes_damage_starts_at()
+		_set_scale(curve.sample(clamp(t, 0, 1)))
+
+
+func _set_scale(value: float) -> void:
+	for child: Node3D in container_spikes.get_children():
+		child.scale.y = value
