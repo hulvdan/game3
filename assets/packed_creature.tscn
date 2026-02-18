@@ -2,10 +2,17 @@
 
 [ext_resource type="Script" uid="uid://cqs6gmu5sugyq" path="res://src/game/creature.gd" id="1_vvuob"]
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="2_qkfe7"]
+[ext_resource type="Shader" uid="uid://brnkb0h5rp0tn" path="res://assets/art/shaders/flash.tres" id="2_vbw5m"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_sw327"]
 
-[node name="body" type="RigidBody3D" unique_id=1935514979 node_paths=PackedStringArray("node_body", "node_target_camera", "node_sprite")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vbw5m"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_vbw5m")
+shader_parameter/flash = Color(0, 0, 0, 1)
+
+[node name="_body" type="RigidBody3D" unique_id=1935514979 node_paths=PackedStringArray("node_body")]
 collision_layer = 2
 axis_lock_linear_y = true
 axis_lock_angular_x = true
@@ -14,18 +21,19 @@ axis_lock_angular_z = true
 linear_damp = 16.0
 script = ExtResource("1_vvuob")
 node_body = NodePath(".")
-node_target_camera = NodePath("rotate")
-node_sprite = NodePath("rotate/sprite")
 
 [node name="shape" type="CollisionShape3D" parent="." unique_id=904343699]
 transform = Transform3D(0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 0, 0, 0)
 shape = SubResource("CylinderShape3D_sw327")
 
-[node name="rotate" type="Node3D" parent="." unique_id=1444358610]
+[node name="_rotate" type="Node3D" parent="." unique_id=1444358610]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.9645574, 0.26387304, 0, -0.26387304, 0.9645574, 0, 0, 0)
 
-[node name="sprite" type="Sprite3D" parent="rotate" unique_id=1416927643]
+[node name="_sprite" type="Sprite3D" parent="_rotate" unique_id=1416927643]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, -7.450581e-09)
+material_override = SubResource("ShaderMaterial_vbw5m")
 texture = ExtResource("2_qkfe7")
 
 [node name="creature" type="Node3D" parent="." unique_id=1748776430]

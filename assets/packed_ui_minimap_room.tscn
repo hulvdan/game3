@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/ui_flash.tres" id="1_ylfs7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_g2tp3"]
+resource_local_to_scene = true
 shader = ExtResource("1_ylfs7")
 shader_parameter/flash = Color(1, 1, 1, 0)
 

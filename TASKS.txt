@@ -21,6 +21,8 @@ x spikes: correct pos
 x spikes: add node with vertical spikes
 x spikes: activation when playes is nearby
 x spikes: damaging player & mobs
+x sprite3d flash shader
+x flash creature upon taking damage
 
 * spikes: 
 * spikes: 

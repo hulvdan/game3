@@ -38,13 +38,6 @@ func scale_2d(node: Node3D, scale: Vector2) -> void:
 	node.transform = node.transform.scaled(Vector3(scale.x, 1, scale.y))
 
 
-func duplicate_shader_material(sprite: Sprite2D) -> ShaderMaterial: ##
-	var mat: ShaderMaterial = sprite.material.duplicate()
-	sprite.material = mat
-	return mat
-##
-
-
 func from_xz(value: Vector3) -> Vector2:
 	return Vector2(value.x, value.z)
 

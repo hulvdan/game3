@@ -1,0 +1,56 @@
+[gd_resource type="VisualShader" format=3 uid="uid://brnkb0h5rp0tn"]
+
+[sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_g2diu"]
+default_input_values = [0, 0.0, 1, 0.0, 2, 0.0, 3, 1.0]
+op_type = 2
+
+[sub_resource type="VisualShaderNodeTexture2DParameter" id="VisualShaderNodeTexture2DParameter_g2diu"]
+parameter_name = "albedo"
+texture_type = 1
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_oxaui"]
+source = 5
+
+[sub_resource type="VisualShaderNodeColorConstant" id="VisualShaderNodeColorConstant_kldv1"]
+
+[sub_resource type="VisualShaderNodeFloatConstant" id="VisualShaderNodeFloatConstant_kldv1"]
+constant = 1.0
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_g2diu"]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeMix" id="VisualShaderNodeMix_udtgn"]
+output_port_for_preview = 0
+default_input_values = [0, Quaternion(0, 0, 0, 0), 1, Quaternion(1, 1, 1, 1), 2, Quaternion(0.5, 0.5, 0.5, 0.5)]
+expanded_output_ports = [0]
+op_type = 5
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_don5k"]
+output_port_for_preview = 0
+expanded_output_ports = [0]
+parameter_name = "flash"
+default_value_enabled = true
+default_value = Color(1, 0, 0, 0.5058824)
+
+[resource]
+modes/cull = 2
+flags/unshaded = true
+preview_params/albedo = "Resource(\"uid://cidcl8dyyvms\", \"res://assets/art/textures/undefined.png\")"
+preview_params/flash = "Color(1, 0, 0, 0)"
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorConstant_kldv1")
+nodes/fragment/2/position = Vector2(80, 144)
+nodes/fragment/3/node = SubResource("VisualShaderNodeFloatConstant_kldv1")
+nodes/fragment/3/position = Vector2(64, 320)
+nodes/fragment/4/node = SubResource("VisualShaderNodeInput_g2diu")
+nodes/fragment/4/position = Vector2(-1360, -320)
+nodes/fragment/7/node = SubResource("VisualShaderNodeMix_udtgn")
+nodes/fragment/7/position = Vector2(-400, 320)
+nodes/fragment/8/node = SubResource("VisualShaderNodeColorParameter_don5k")
+nodes/fragment/8/position = Vector2(-1600, 384)
+nodes/fragment/10/node = SubResource("VisualShaderNodeVectorCompose_g2diu")
+nodes/fragment/10/position = Vector2(-944, 224)
+nodes/fragment/12/node = SubResource("VisualShaderNodeTexture2DParameter_g2diu")
+nodes/fragment/12/position = Vector2(-1360, -64)
+nodes/fragment/13/node = SubResource("VisualShaderNodeTexture_oxaui")
+nodes/fragment/13/position = Vector2(-880, -96)
+nodes/fragment/connections = PackedInt32Array(2, 0, 0, 0, 3, 0, 0, 1, 7, 0, 0, 0, 10, 0, 7, 1, 7, 4, 0, 1, 8, 1, 10, 0, 8, 2, 10, 1, 8, 3, 10, 2, 8, 4, 7, 2, 12, 0, 13, 2, 4, 0, 13, 0, 13, 0, 7, 0)

@@ -56,6 +56,8 @@ class RoomData:
 func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	var data: glib.GCreature = glib.v.get_creatures()[type]
 	var creature: Creature = packed_creature.instantiate()
+	room.container_creatures.add_child(creature)
+
 	creature.type = type
 	creature.res = load(data.get_res())
 	assert(creature.res)
@@ -73,7 +75,11 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 		room.container_mob_hp_bars.add_child(bar)
 
 	room.target_camera_elements.append(creature.node_target_camera)
-	room.container_creatures.add_child(creature)
+
+	var sh: ShaderMaterial = creature.node_sprite.material_override
+	sh.set_shader_parameter("flash", Color(1, 1, 1, 0))
+	sh.set_shader_parameter("albedo", creature.res.texture)
+
 	return creature
 	##
 
@@ -171,6 +177,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 	## Placing player and other creatures
 	room.player = make_creature(glib.GCreatureType.PLAYER, player_pos)
+
 	room.player_bow = packed_bow.instantiate()
 	room.player.add_child(room.player_bow)
 	for mob in glib.v.get_mobs_to_spawn():
@@ -222,7 +229,6 @@ func _ready() -> void:
 			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale)
 			minimap_room.transform = minimap_room.transform.translated(Vector2(x + 1, y + 1) * 100 * scale)
 
-			bf.duplicate_shader_material(minimap_room)
 			container_ui_minimap.add_child(minimap_room)
 
 		ui_minimap_rooms = rooms_slice + ui_minimap_rooms
@@ -401,6 +407,11 @@ func _physics_process(dt: float) -> void:
 	## Updating creatures time_since_last_damage_taken
 	for creature: Creature in room.container_creatures.get_children():
 		creature.time_since_last_damage_taken += dt
+		creature.time_since_last_damage_taken_visual += dt
+
+		var sh: ShaderMaterial = creature.node_sprite.material_override
+		var t: float = max(0, lerp(1, 0, creature.time_since_last_damage_taken_visual))
+		sh.set_shader_parameter("flash", Color(1, 1, 1, t))
 	##
 
 	## Updating player hp bar
@@ -462,6 +473,7 @@ func apply_damage(creature: Creature, damage: int, type: glib.GDamageType = glib
 	creature.hp -= damage
 	creature.hp = max(0, creature.hp)
 	creature.hp_bar.set_progress((creature.hp as float) / (glib.v.get_creatures()[creature.type].get_hp() as float))
+	creature.time_since_last_damage_taken_visual = 0
 
 	if creature.hp <= 0:
 		room.container_creatures.remove_child(creature)
