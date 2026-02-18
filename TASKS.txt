@@ -7,21 +7,6 @@ BIG PLAN
 PLAN
 ============================================================
 
-x mob hp: scale based on mob's distance
-- mob hp: uncomment creature.hp_bar.visible = false
-x mob hp: fix: don't display mob hp bars over transition
-  (create room inside room container; transition colorrect must be later in tree)
-x mob hp: more health -> bigger bar
-x transition rect is always over everything
-x player hp and stamina correct scaling
-x minimap: correct placement
-x spikes: display in-game
-x spikes: correct pos
-- spikes: set flash
-x spikes: add node with vertical spikes
-x spikes: activation when playes is nearby
-x spikes: damaging player & mobs
-x sprite3d flash shader
 x flash creature upon taking damage
 
 * spikes: 
