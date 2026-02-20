@@ -1693,6 +1693,21 @@ class GCreature:
 		service.field = __speed
 		data[__speed.tag] = service
 
+		__attack_projectile_type = PBField.new("attack_projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __attack_projectile_type
+		data[__attack_projectile_type.tag] = service
+
+		__attack_projectile_spawn_at = PBField.new("attack_projectile_spawn_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __attack_projectile_spawn_at
+		data[__attack_projectile_spawn_at.tag] = service
+
+		__attack_duration = PBField.new("attack_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __attack_duration
+		data[__attack_duration.tag] = service
+
 
 	var data = { }
 
@@ -1826,6 +1841,72 @@ class GCreature:
 
 	func set_speed(value: float) -> void:
 		__speed.value = value
+
+
+	var __attack_projectile_type: PBField
+
+
+	func has_attack_projectile_type() -> bool:
+		if __attack_projectile_type.value != null:
+			return true
+		return false
+
+
+	func get_attack_projectile_type() -> int:
+		return __attack_projectile_type.value
+
+
+	func clear_attack_projectile_type() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__attack_projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_attack_projectile_type(value: int) -> void:
+		__attack_projectile_type.value = value
+
+
+	var __attack_projectile_spawn_at: PBField
+
+
+	func has_attack_projectile_spawn_at() -> bool:
+		if __attack_projectile_spawn_at.value != null:
+			return true
+		return false
+
+
+	func get_attack_projectile_spawn_at() -> float:
+		return __attack_projectile_spawn_at.value
+
+
+	func clear_attack_projectile_spawn_at() -> void:
+		data[8].state = PB_SERVICE_STATE.UNFILLED
+		__attack_projectile_spawn_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_attack_projectile_spawn_at(value: float) -> void:
+		__attack_projectile_spawn_at.value = value
+
+
+	var __attack_duration: PBField
+
+
+	func has_attack_duration() -> bool:
+		if __attack_duration.value != null:
+			return true
+		return false
+
+
+	func get_attack_duration() -> float:
+		return __attack_duration.value
+
+
+	func clear_attack_duration() -> void:
+		data[9].state = PB_SERVICE_STATE.UNFILLED
+		__attack_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_attack_duration(value: float) -> void:
+		__attack_duration.value = value
 
 
 	func _to_string() -> String:
@@ -2134,6 +2215,257 @@ class GCollectible:
 		return result
 
 
+class GProjectileFly:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GProjectile:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+		__res = PBField.new("res", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __res
+		data[__res.tag] = service
+
+		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __projectilefly_type
+		data[__projectilefly_type.tag] = service
+
+		__flytype_arc__height = PBField.new("flytype_arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __flytype_arc__height
+		data[__flytype_arc__height.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	var __res: PBField
+
+
+	func has_res() -> bool:
+		if __res.value != null:
+			return true
+		return false
+
+
+	func get_res() -> String:
+		return __res.value
+
+
+	func clear_res() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__res.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_res(value: String) -> void:
+		__res.value = value
+
+
+	var __projectilefly_type: PBField
+
+
+	func has_projectilefly_type() -> bool:
+		if __projectilefly_type.value != null:
+			return true
+		return false
+
+
+	func get_projectilefly_type() -> int:
+		return __projectilefly_type.value
+
+
+	func clear_projectilefly_type() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__projectilefly_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_projectilefly_type(value: int) -> void:
+		__projectilefly_type.value = value
+
+
+	var __flytype_arc__height: PBField
+
+
+	func has_flytype_arc__height() -> bool:
+		if __flytype_arc__height.value != null:
+			return true
+		return false
+
+
+	func get_flytype_arc__height() -> float:
+		return __flytype_arc__height.value
+
+
+	func clear_flytype_arc__height() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__flytype_arc__height.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_flytype_arc__height(value: float) -> void:
+		__flytype_arc__height.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class Lib:
 	func _init():
 		var service
@@ -2313,6 +2645,20 @@ class Lib:
 		service.field = __collectibles
 		service.func_ref = Callable(self, "add_collectibles")
 		data[__collectibles.tag] = service
+
+		var __projectile_fly_types_default: Array[GProjectileFly] = []
+		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 36, true, __projectile_fly_types_default)
+		service = PBServiceField.new()
+		service.field = __projectile_fly_types
+		service.func_ref = Callable(self, "add_projectile_fly_types")
+		data[__projectile_fly_types.tag] = service
+
+		var __projectiles_default: Array[GProjectile] = []
+		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 35, true, __projectiles_default)
+		service = PBServiceField.new()
+		service.field = __projectiles
+		service.func_ref = Callable(self, "add_projectiles")
+		data[__projectiles.tag] = service
 
 
 	var data = { }
@@ -2995,6 +3341,42 @@ class Lib:
 		return element
 
 
+	var __projectile_fly_types: PBField
+
+
+	func get_projectile_fly_types() -> Array[GProjectileFly]:
+		return __projectile_fly_types.value
+
+
+	func clear_projectile_fly_types() -> void:
+		data[36].state = PB_SERVICE_STATE.UNFILLED
+		__projectile_fly_types.value.clear()
+
+
+	func add_projectile_fly_types() -> GProjectileFly:
+		var element = GProjectileFly.new()
+		__projectile_fly_types.value.append(element)
+		return element
+
+
+	var __projectiles: PBField
+
+
+	func get_projectiles() -> Array[GProjectile]:
+		return __projectiles.value
+
+
+	func clear_projectiles() -> void:
+		data[35].state = PB_SERVICE_STATE.UNFILLED
+		__projectiles.value.clear()
+
+
+	func add_projectiles() -> GProjectile:
+		var element = GProjectile.new()
+		__projectiles.value.append(element)
+		return element
+
+
 	func _to_string() -> String:
 		return PBPacker.message_to_string(data)
 
@@ -3061,5 +3443,18 @@ enum GCollectibleType {
 	ORE,
 	PLANT,
 	BONE,
+	COUNT,
+}
+
+enum GProjectileFlyType {
+	STRAIGHT,
+	ARC,
+	COUNT,
+}
+
+enum GProjectileType {
+	INVALID,
+	ARROW,
+	BOMB,
 	COUNT,
 }

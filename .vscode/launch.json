@@ -23,6 +23,18 @@
         "process_images"
       ],
       "console": "integratedTerminal"
+    },
+    {
+      "name": "codegen",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "cli/bf_cli.py",
+      "args": [
+        "codegen",
+        "windows",
+        "debug"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }

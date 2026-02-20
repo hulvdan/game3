@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ResProjectile" format=3 uid="uid://b61vhiejqtcr1"]
+
+[ext_resource type="Script" uid="uid://ufgqvq6nhi3u" path="res://src/game/res_projectile.gd" id="1_5n3kn"]
+[ext_resource type="Texture2D" uid="uid://dmvkulolq5k7p" path="res://assets/art/textures/removeme/arrow.png" id="2_hbium"]
+
+[resource]
+script = ExtResource("1_5n3kn")
+texture = ExtResource("2_hbium")

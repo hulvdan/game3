@@ -142,6 +142,11 @@ def _process_glib(genline, glib) -> None:
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
     ##
 
+    ## Projectiles
+    for x in glib["projectiles"][1:]:
+        x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
+    ##
+
     ## Progression
     prog_type_2_prog = {x["type"]: x for x in glib["progression"][1:]}
     required_to_specify_progression_types = list(prog_type_2_prog.keys())

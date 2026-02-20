@@ -20,7 +20,7 @@ static var async_scene_loaded = false
 @export var packed_collider_tile: PackedScene
 @export var packed_door: PackedScene
 @export var packed_bow: PackedScene
-@export var packed_arrow: PackedScene
+@export var packed_projectile: PackedScene
 @export var packed_spike: PackedScene
 @export var packed_ui_bar_player: PackedScene
 @export var packed_ui_bar_mob: PackedScene
@@ -334,12 +334,9 @@ func _physics_process(dt: float) -> void:
 			dur = glib.v.get_shooting_after_roll_seconds()
 
 		if room.player_holding >= dur:
-			var arrow: Projectile = packed_arrow.instantiate()
-			arrow.speed = glib.v.get_arrow_speed()
-			arrow.damage = glib.v.get_arrow_damage()
-			arrow.transform.origin = room.player.transform.origin
-			arrow.transform.basis = room.player_bow.transform.basis
-			room.container_projectiles.add_child(arrow)
+			var from: Vector2 = bf.from_xz(room.player.transform.origin)
+			var to: Vector2 = from + bf.from_xz(room.player_bow.transform.basis.z)
+			make_projectile(glib.GProjectileType.ARROW, glib.GCreatureType.PLAYER, from, to)
 			room.player_holding = 0
 			room.player_shooting_after_roll_scheduled = false
 		elif shooting or room.player_holding or room.player_shooting_after_roll_scheduled:
@@ -475,7 +472,11 @@ func _process(_dt: float) -> void:
 	##
 
 
-func apply_damage(creature: Creature, damage: int, type: glib.GDamageType = glib.GDamageType.STRIKE) -> void: ##
+func apply_damage(
+		creature: Creature,
+		damage: int,
+		type: glib.GDamageType = glib.GDamageType.STRIKE,
+) -> void: ##
 	if creature.type == glib.GCreatureType.PLAYER:
 		if (
 			(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
@@ -509,3 +510,31 @@ func apply_damage(creature: Creature, damage: int, type: glib.GDamageType = glib
 		if creature.type != glib.GCreatureType.PLAYER:
 			room.container_mob_hp_bars.remove_child(creature.hp_bar)
 	##
+
+
+func make_projectile(
+		type: glib.GProjectileType,
+		owner: glib.GCreatureType,
+		pos: Vector2,
+		target: Vector2,
+) -> void: ##
+	var data: glib.GProjectile = glib.v.get_projectiles()[type]
+
+	var x: Projectile = packed_projectile.instantiate()
+	room.container_projectiles.add_child(x)
+
+	x.res = load(data.get_res())
+	x.sprite.texture = x.res.texture
+
+	x.owner_creature_type = owner
+	x.speed = glib.v.get_arrow_speed()
+	x.damage = glib.v.get_arrow_damage()
+	x.transform.origin = bf.to_xz(pos)
+
+	if !data.get_projectilefly_type():
+		if target == pos:
+			target = pos + Vector2(1, 0).rotated(randf() * 2.0 * PI)
+		var forward: Vector3 = bf.to_xz((target - pos).normalized())
+		x.transform.basis = Basis(forward, Vector3(0, 1, 0), Vector3(0, 1, 0).cross(forward))
+
+##

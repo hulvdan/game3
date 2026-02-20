@@ -10,11 +10,11 @@
 [ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/packed_creature.tscn" id="6_qdlv5"]
 [ext_resource type="PackedScene" uid="uid://cjuik3mmcwc3i" path="res://assets/packed_door.tscn" id="7_m5usj"]
 [ext_resource type="PackedScene" uid="uid://wg8ef4e6306p" path="res://assets/packed_room.tscn" id="7_vqaxa"]
+[ext_resource type="PackedScene" uid="uid://cjk26kw0piudl" path="res://assets/packed_projectile.tscn" id="8_2rvxm"]
 [ext_resource type="PackedScene" uid="uid://b3beehm2dl1yp" path="res://assets/packed_ui_minimap_room.tscn" id="9_otm8r"]
 [ext_resource type="PackedScene" uid="uid://cp0ir0onklq08" path="res://assets/packed_ui_progression_entry.tscn" id="9_vvw4a"]
 [ext_resource type="PackedScene" uid="uid://dt4q7rgbrwtxh" path="res://assets/packed_bow.tscn" id="10_ew6cl"]
 [ext_resource type="Shader" uid="uid://jbltw585yonl" path="res://assets/art/shaders/ui_flash.tres" id="10_h4xlo"]
-[ext_resource type="PackedScene" uid="uid://cjk26kw0piudl" path="res://assets/packed_arrow.tscn" id="11_km2eh"]
 [ext_resource type="PackedScene" uid="uid://ty00766yaguu" path="res://assets/packed_bar_mob.tscn" id="11_wpieh"]
 [ext_resource type="PackedScene" uid="uid://c80peoxwlv0kn" path="res://assets/packed_bar_player.tscn" id="13_km2eh"]
 [ext_resource type="PackedScene" uid="uid://cdgk6wnhs6w5d" path="res://assets/packed_ai_bomber.tscn" id="14_2rvxm"]
@@ -39,7 +39,7 @@ packed_floor_tile = ExtResource("5_tkxyu")
 packed_collider_tile = ExtResource("6_fphxj")
 packed_door = ExtResource("7_m5usj")
 packed_bow = ExtResource("10_ew6cl")
-packed_arrow = ExtResource("11_km2eh")
+packed_projectile = ExtResource("8_2rvxm")
 packed_spike = ExtResource("15_ul5qt")
 packed_ui_bar_player = ExtResource("13_km2eh")
 packed_ui_bar_mob = ExtResource("11_wpieh")

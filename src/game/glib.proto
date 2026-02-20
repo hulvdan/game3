@@ -58,6 +58,9 @@ message GCreature {
   int32 creature_type = 4;
   int32 hp = 5;
   float speed = 6;
+  int32 attack_projectile_type = 7;
+  float attack_projectile_spawn_at = 8;
+  float attack_duration = 9;
 }
 
 message GDamage {
@@ -74,6 +77,19 @@ message GCollectible {
   int32 type = 1;
   string debug_name = 2;
   int32 item_type = 3;
+}
+
+message GProjectileFly {
+  int32 type = 1;
+  string debug_name = 2;
+}
+
+message GProjectile {
+  int32 type = 1;
+  string debug_name = 2;
+  string res = 3;
+  int32 projectilefly_type = 4;
+  float flytype_arc__height = 5;
 }
 
 message Lib {
@@ -110,5 +126,7 @@ message Lib {
   repeated GCreature creatures = 8;
   repeated GItem items = 32;
   repeated GCollectible collectibles = 31;
+  repeated GProjectileFly projectile_fly_types = 36;
+  repeated GProjectile projectiles = 35;
   // TABLE_GEN_END
 }
