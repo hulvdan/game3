@@ -292,6 +292,8 @@ func _physics_process(dt: float) -> void:
 		var data: glib.GCreature = creatures[creature.type]
 
 		var dir: Vector2 = creature.controller.move
+		if dir != Vector2(0, 0):
+			creature.controller.last_move = dir
 		var speed: float = data.get_speed()
 
 		if creature.type == glib.GCreatureType.PLAYER:
@@ -349,11 +351,11 @@ func _physics_process(dt: float) -> void:
 	elif (
 		(room.player_stamina > 0)
 		&& (Input.get_action_strength("roll") >= 0.5)
-		&& (room.player.controller.move != Vector2(0, 0))
+		&& (room.player.controller.last_move != Vector2(0, 0))
 	):
 		room.player_rolling = dt
 		room.player_holding = 0
-		room.player_roll_direction = room.player.controller.move
+		room.player_roll_direction = room.player.controller.last_move
 		room.player_stamina -= 1
 		room.player_stamina_elapsed = 0
 	##
@@ -421,6 +423,10 @@ func _physics_process(dt: float) -> void:
 		sh.set_shader_parameter("flash", Color(1, 1, 1, t))
 	##
 
+	if room.player_rolling:
+		var sh: ShaderMaterial = room.player.node_sprite.material_override
+		sh.set_shader_parameter('flash', Color(0, 1, 0, 0.5))
+
 	## Updating player hp bar
 	hp_bar.set_progress((room.player.hp as float) / (glib.v.get_creatures()[room.player.type].get_hp() as float))
 	##
@@ -468,6 +474,11 @@ func _process(_dt: float) -> void:
 
 func apply_damage(creature: Creature, damage: int, type: glib.GDamageType = glib.GDamageType.STRIKE) -> void: ##
 	if creature.type == glib.GCreatureType.PLAYER:
+		if (
+			(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
+			&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
+		):
+			return
 		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
 			return
 		creature.time_since_last_damage_taken = 0

@@ -86,6 +86,8 @@ message Lib {
   float player_roll_can_shoot_after = 19;
   float player_roll_distance = 22;
   float player_roll_pow = 23;
+  float player_roll_invincibility_start = 33;
+  float player_roll_invincibility_end = 34;
   int32 player_stamina_charges = 24;
   float player_stamina_regen_seconds = 20;
   float player_holding_stamina_regen_scale = 21;

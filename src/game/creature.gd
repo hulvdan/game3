@@ -20,6 +20,7 @@ var hp_bar: Bar
 
 class Controller:
 	var move: Vector2
+	var last_move: Vector2
 
 
 var controller: Controller = Controller.new()

@@ -2187,6 +2187,16 @@ class Lib:
 		service.field = __player_roll_pow
 		data[__player_roll_pow.tag] = service
 
+		__player_roll_invincibility_start = PBField.new("player_roll_invincibility_start", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 33, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_roll_invincibility_start
+		data[__player_roll_invincibility_start.tag] = service
+
+		__player_roll_invincibility_end = PBField.new("player_roll_invincibility_end", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 34, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_roll_invincibility_end
+		data[__player_roll_invincibility_end.tag] = service
+
 		__player_stamina_charges = PBField.new("player_stamina_charges", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __player_stamina_charges
@@ -2495,6 +2505,50 @@ class Lib:
 
 	func set_player_roll_pow(value: float) -> void:
 		__player_roll_pow.value = value
+
+
+	var __player_roll_invincibility_start: PBField
+
+
+	func has_player_roll_invincibility_start() -> bool:
+		if __player_roll_invincibility_start.value != null:
+			return true
+		return false
+
+
+	func get_player_roll_invincibility_start() -> float:
+		return __player_roll_invincibility_start.value
+
+
+	func clear_player_roll_invincibility_start() -> void:
+		data[33].state = PB_SERVICE_STATE.UNFILLED
+		__player_roll_invincibility_start.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_roll_invincibility_start(value: float) -> void:
+		__player_roll_invincibility_start.value = value
+
+
+	var __player_roll_invincibility_end: PBField
+
+
+	func has_player_roll_invincibility_end() -> bool:
+		if __player_roll_invincibility_end.value != null:
+			return true
+		return false
+
+
+	func get_player_roll_invincibility_end() -> float:
+		return __player_roll_invincibility_end.value
+
+
+	func clear_player_roll_invincibility_end() -> void:
+		data[34].state = PB_SERVICE_STATE.UNFILLED
+		__player_roll_invincibility_end.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_roll_invincibility_end(value: float) -> void:
+		__player_roll_invincibility_end.value = value
 
 
 	var __player_stamina_charges: PBField

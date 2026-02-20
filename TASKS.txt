@@ -7,14 +7,12 @@ BIG PLAN
 PLAN
 ============================================================
 
-x flash creature upon taking damage
-x spikes: scale dynamically
-x spikes: curve
-x removed attack holding
-x can queue fast shooting after roll
-x colored placeholder textures
-x circle texture
+x roll: remember last direction
+x roll: invincibility + show dodge + track spikes attack id
 
+* floating spiky ball
+* mob throws bomb
+*
 * items: can drop from mines (hollow knight like)
 * items: can drop from herbs on swing
 * items: can drop from bonepiles
@@ -36,7 +34,6 @@ x circle texture
 * minimap:
 *
 * mob attacks
-* mob throws bomb
 *
 * gravitate camera towards center
 * mob strikes when player is nearby

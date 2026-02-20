@@ -12,10 +12,12 @@ player_speed_holding_scale: 0.35
 creatures_push_radius: 1.0
 creatures_push_force: 4 
 player_speed_inside_enemies_scale: 0.3
-player_roll_distance: 3
+player_roll_distance: 3.15
 player_roll_duration_seconds: 0.4
 player_roll_can_shoot_after: 0.25
 player_roll_pow: 0.1
+player_roll_invincibility_start: 0.05
+player_roll_invincibility_end: 0.36
 player_stamina_charges: 3
 player_stamina_regen_seconds: 1.25
 player_holding_stamina_regen_scale: 0.33
@@ -26,7 +28,7 @@ spikes_damage_starts_at: 0.5
 spikes_damage: 1
 
 arrow_speed: 14
-shooting_seconds: 0.5
+shooting_seconds: 0.25
 shooting_after_roll_seconds: 0.1
 arrow_damage: 1
 
