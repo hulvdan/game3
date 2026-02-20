@@ -2361,6 +2361,11 @@ class GProjectile:
 		service.field = __arc__duration
 		data[__arc__duration.tag] = service
 
+		__arc__aoe_radius = PBField.new("arc__aoe_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __arc__aoe_radius
+		data[__arc__aoe_radius.tag] = service
+
 		__straight__speed = PBField.new("straight__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __straight__speed
@@ -2504,6 +2509,28 @@ class GProjectile:
 
 	func set_arc__duration(value: float) -> void:
 		__arc__duration.value = value
+
+
+	var __arc__aoe_radius: PBField
+
+
+	func has_arc__aoe_radius() -> bool:
+		if __arc__aoe_radius.value != null:
+			return true
+		return false
+
+
+	func get_arc__aoe_radius() -> float:
+		return __arc__aoe_radius.value
+
+
+	func clear_arc__aoe_radius() -> void:
+		data[9].state = PB_SERVICE_STATE.UNFILLED
+		__arc__aoe_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_arc__aoe_radius(value: float) -> void:
+		__arc__aoe_radius.value = value
 
 
 	var __straight__speed: PBField

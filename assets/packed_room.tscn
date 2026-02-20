@@ -28,3 +28,6 @@ unique_name_in_owner = true
 
 [node name="_container_spikes" type="Node" parent="." unique_id=1762579124]
 unique_name_in_owner = true
+
+[node name="_container_zones" type="Node" parent="." unique_id=918849042]
+unique_name_in_owner = true

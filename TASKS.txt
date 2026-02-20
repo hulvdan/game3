@@ -20,9 +20,11 @@ x buf don't ignore excessive fields
   -> save binary
 x mob shooting: bomb despawns after time
 x mob shooting: bomb travel animated
+x mob shooting: show bomb target indicator on floor
 
 * mob shooting: mob projectiles deal damage to player
-* mob shooting: show bomb target indicator on floor
+  CIRCLE SHAPE
+  + CONTINUOUS CHECK ON ARROW
 * mob shooting: 
 * mob shooting: 
 * mob shooting: 

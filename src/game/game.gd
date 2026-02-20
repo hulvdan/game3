@@ -22,11 +22,12 @@ static var async_scene_loaded = false
 @export var packed_bow: PackedScene
 @export var packed_projectile: PackedScene
 @export var packed_spike: PackedScene
+@export var packed_zone_circle: PackedScene
+@export var packed_ai: PackedScene
 @export var packed_ui_bar_player: PackedScene
 @export var packed_ui_bar_mob: PackedScene
 @export var packed_ui_minimap_room: PackedScene
 @export var packed_ui_progression_entry: PackedScene
-@export var packed_ai: PackedScene
 
 var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
@@ -349,11 +350,19 @@ func _physics_process(dt: float) -> void:
 
 	## Updating projectiles + collisions + despawning
 	var space = world_3d.get_world_3d().direct_space_state
-	var param: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
-	param.collide_with_areas = false
-	param.collide_with_bodies = true
-	param.hit_back_faces = true
-	param.hit_from_inside = true
+	var param_ray: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
+	param_ray.collide_with_areas = false
+	param_ray.collide_with_bodies = true
+	param_ray.hit_back_faces = true
+	param_ray.hit_from_inside = true
+
+	# Execute physics queries here...
+
+	var param_shape: PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
+	param_shape.collide_with_areas = false
+	param_shape.collide_with_bodies = true
+	var shape_rid: RID = PhysicsServer3D.sphere_shape_create()
+	param_shape.shape_rid = shape_rid
 
 	var projectiles = glib.v.get_projectiles()
 	for projectile: Projectile in room.container_projectiles.get_children():
@@ -367,17 +376,17 @@ func _physics_process(dt: float) -> void:
 			var projectile_step: Vector3 = Vector3(0, 0, -1) * (data.get_straight__speed() * dt)
 			projectile.translate_object_local(projectile_step)
 
-			param.from = projectile.transform.origin
-			param.to = projectile.transform.origin + projectile.transform.basis * projectile_step
+			param_ray.from = projectile.transform.origin
+			param_ray.to = projectile.transform.origin + projectile.transform.basis * projectile_step
 
 			var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
 			for mask in [
 				glib.GCollisionType.WALLS,
 				glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
 			]:
-				param.collision_mask = mask
+				param_ray.collision_mask = mask
 
-				var d: Dictionary = space.intersect_ray(param)
+				var d: Dictionary = space.intersect_ray(param_ray)
 				if d:
 					should_be_removed = true
 					if mask != glib.GCollisionType.WALLS:
@@ -386,6 +395,8 @@ func _physics_process(dt: float) -> void:
 					break
 
 		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+			PhysicsServer3D.shape_set_data(shape_rid, data.get_arc__aoe_radius())
+
 			var t: float = projectile.elapsed / data.get_arc__duration()
 			var p: Vector2 = lerp(projectile.d.origin, projectile.d.target, t)
 			var pos: Vector3 = bf.to_xz(p)
@@ -400,6 +411,7 @@ func _physics_process(dt: float) -> void:
 					if v2 == projectile.sprite:
 						room.target_camera_elements.remove_at(i)
 						break
+				room.container_zones.remove_child(projectile.zone)
 
 		else:
 			bf.invalid_path()
@@ -407,6 +419,8 @@ func _physics_process(dt: float) -> void:
 		if should_be_removed:
 			room.container_projectiles.remove_child(projectile)
 			projectile.queue_free()
+
+	PhysicsServer3D.free_rid(shape_rid)
 	##
 
 	## Spike collisions
@@ -557,10 +571,24 @@ func make_projectile(
 
 	x.transform.origin = bf.to_xz(pos)
 
-	if !data.get_projectilefly_type():
+	if data.get_projectilefly_type() == glib.GProjectileFlyType.STRAIGHT:
 		if target == pos:
 			target = pos + Vector2(1, 0).rotated(randf() * 2.0 * PI)
 		var forward: Vector3 = bf.to_xz((target - pos).normalized())
 		x.transform.basis = Basis(Vector3(0, 1, 0).cross(forward), Vector3(0, 1, 0), forward)
+
+	elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+		var zone: Node3D = packed_zone_circle.instantiate()
+		room.container_zones.add_child(zone)
+		zone.transform.origin = bf.to_xz(x.d.target)
+
+		# create_tween().tween_property(zone, "modulate:scale", 1, 0.2)
+		var tween = create_tween()
+		tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
+		tween.tween_property(zone, "scale", Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		x.zone = zone
+
+	else:
+		bf.invalid_path()
 
 ##

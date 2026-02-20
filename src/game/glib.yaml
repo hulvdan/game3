@@ -103,4 +103,5 @@ projectiles:
     projectilefly_type: ARC
     arc__height: 1
     arc__duration: 2
+    arc__aoe_radius: 1
 
