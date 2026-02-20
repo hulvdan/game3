@@ -46,6 +46,11 @@ func to_xz(value: Vector2) -> Vector3:
 	return Vector3(value.x, 0, value.y)
 
 
+func get_roll_speed(dist: float, dur: float, elapsed: float, x: float) -> float:
+	# v(t) of player during roll = A - B * t^x
+	return dist * (x + 1) / (x * pow(dur, x) * dur) * (pow(dur, x) - pow(elapsed, x))
+
+
 func invalid_path() -> void:
 	@warning_ignore("assert_always_false")
 	assert(0)

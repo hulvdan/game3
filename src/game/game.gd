@@ -286,12 +286,13 @@ func _physics_process(dt: float) -> void:
 
 		if creature.type == glib.GCreatureType.PLAYER:
 			if room.player_rolling:
-				# v(t) of player during roll = A - B * t^x
-				var dist: float = glib.v.get_player_roll_distance()
-				var dur: float = glib.v.get_player_roll_duration_seconds()
-				var x: float = glib.v.get_player_roll_pow()
-				speed = dist * (x + 1) / (x * pow(dur, x) * dur) * (pow(dur, x) - pow(room.player_rolling, x))
 				dir = room.player_roll_direction
+				speed = bf.get_roll_speed(
+					glib.v.get_player_roll_distance(),
+					glib.v.get_player_roll_duration_seconds(),
+					room.player_rolling,
+					glib.v.get_player_roll_pow(),
+				)
 			else:
 				if room.player_holding:
 					speed *= glib.v.get_player_speed_holding_scale()
