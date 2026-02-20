@@ -22,6 +22,8 @@ x mob shooting: bomb despawns after time
 x mob shooting: bomb travel animated
 
 * mob shooting: mob projectiles deal damage to player
+* mob shooting: show bomb target indicator on floor
+* mob shooting: 
 * mob shooting: 
 * mob shooting: 
 * mob shooting: mob throws bomb and it works and looks ok

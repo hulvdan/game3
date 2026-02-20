@@ -444,9 +444,11 @@ func _physics_process(dt: float) -> void:
 		sh.set_shader_parameter("flash", Color(1, 1, 1, t))
 	##
 
+	## Flashing player green during rolls
 	if room.player_rolling:
 		var sh: ShaderMaterial = room.player.node_sprite.material_override
 		sh.set_shader_parameter('flash', Color(0, 1, 0, 0.5))
+	##
 
 	## Updating player hp bar
 	hp_bar.set_progress((room.player.hp as float) / (glib.v.get_creatures()[room.player.type].get_hp() as float))
