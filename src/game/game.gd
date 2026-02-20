@@ -357,30 +357,44 @@ func _physics_process(dt: float) -> void:
 
 	var projectiles = glib.v.get_projectiles()
 	for projectile: Projectile in room.container_projectiles.get_children():
+		projectile.elapsed += dt
+
+		var should_be_removed: bool = false
+
 		var data = projectiles[projectile.d.type]
-		if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-			continue
 
-		var projectile_step: Vector3 = Vector3(0, 0, -1) * (data.get_speed() * dt)
-		projectile.translate_object_local(projectile_step)
+		if data.get_projectilefly_type() == glib.GProjectileFlyType.STRAIGHT:
+			var projectile_step: Vector3 = Vector3(0, 0, -1) * (data.get_straight__speed() * dt)
+			projectile.translate_object_local(projectile_step)
 
-		param.from = projectile.transform.origin
-		param.to = projectile.transform.origin + projectile.transform.basis * projectile_step
+			param.from = projectile.transform.origin
+			param.to = projectile.transform.origin + projectile.transform.basis * projectile_step
 
-		var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
-		for mask in [
-			glib.GCollisionType.WALLS,
-			glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
-		]:
-			param.collision_mask = mask
+			var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
+			for mask in [
+				glib.GCollisionType.WALLS,
+				glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
+			]:
+				param.collision_mask = mask
 
-			var d: Dictionary = space.intersect_ray(param)
-			if d:
-				room.container_projectiles.remove_child(projectile)
-				if mask != glib.GCollisionType.WALLS:
-					var damaged_creature: Creature = d.collider
-					apply_damage(damaged_creature, data.get_damage())
-				break
+				var d: Dictionary = space.intersect_ray(param)
+				if d:
+					should_be_removed = true
+					if mask != glib.GCollisionType.WALLS:
+						var damaged_creature: Creature = d.collider
+						apply_damage(damaged_creature, data.get_damage())
+					break
+
+		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+			if projectile.elapsed >= data.get_arc__duration():
+				projectile.queue_free()
+
+		else:
+			bf.invalid_path()
+
+		if should_be_removed:
+			room.container_projectiles.remove_child(projectile)
+			projectile.queue_free()
 	##
 
 	## Spike collisions

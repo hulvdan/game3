@@ -103,12 +103,24 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         --output=.temp/glib.gd
     """)
     assert temp_glib_path.exists(), "Failed to generate glib.gd from glib.proto!"
-    bf.run_command("""
-        cli/protoc.exe
+    Path("src/game/glib_pb2.py").unlink(missing_ok=True)
+    bf.run_command(r"""
+        .\cli\protoc.exe
         --python_out=cli
         --proto_path=src/game
         src/game/glib.proto
     """)
+    # bf.run_command(
+    #     [
+    #         r".\cli\protoc.exe",
+    #         "--python_out=cli",
+    #         "--proto_path=./src/game",
+    #         "src/game/glib.proto",
+    #     ]
+    # )
+    assert Path("cli/glib_pb2.py").exists(), (
+        "Failed to generate glib_pb2.py from glib.proto!"
+    )
 
     with Path("src/codegen/nolint/glib.gd").open("w", encoding="utf-8") as codegen_file:
         codegen_file.write("""extends Node

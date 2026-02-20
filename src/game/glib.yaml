@@ -96,11 +96,11 @@ projectile_fly_types:
 projectiles:
   - type: INVALID
   - type: ARROW
-    speed: 14
     damage: 1
+    straight__speed: 14
   - type: BOMB
-    speed: 10
     damage: 2
     projectilefly_type: ARC
-    flytype_arc__height: 2
+    arc__height: 2
+    arc__duration: 2
 

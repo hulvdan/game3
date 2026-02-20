@@ -2351,17 +2351,22 @@ class GProjectile:
 		service.field = __projectilefly_type
 		data[__projectilefly_type.tag] = service
 
-		__flytype_arc__height = PBField.new("flytype_arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __flytype_arc__height
-		data[__flytype_arc__height.tag] = service
+		service.field = __arc__height
+		data[__arc__height.tag] = service
 
-		__speed = PBField.new("speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc__duration = PBField.new("arc__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __speed
-		data[__speed.tag] = service
+		service.field = __arc__duration
+		data[__arc__duration.tag] = service
 
-		__damage = PBField.new("damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__straight__speed = PBField.new("straight__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __straight__speed
+		data[__straight__speed.tag] = service
+
+		__damage = PBField.new("damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __damage
 		data[__damage.tag] = service
@@ -2457,48 +2462,70 @@ class GProjectile:
 		__projectilefly_type.value = value
 
 
-	var __flytype_arc__height: PBField
+	var __arc__height: PBField
 
 
-	func has_flytype_arc__height() -> bool:
-		if __flytype_arc__height.value != null:
+	func has_arc__height() -> bool:
+		if __arc__height.value != null:
 			return true
 		return false
 
 
-	func get_flytype_arc__height() -> float:
-		return __flytype_arc__height.value
+	func get_arc__height() -> float:
+		return __arc__height.value
 
 
-	func clear_flytype_arc__height() -> void:
+	func clear_arc__height() -> void:
 		data[5].state = PB_SERVICE_STATE.UNFILLED
-		__flytype_arc__height.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__arc__height.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_flytype_arc__height(value: float) -> void:
-		__flytype_arc__height.value = value
+	func set_arc__height(value: float) -> void:
+		__arc__height.value = value
 
 
-	var __speed: PBField
+	var __arc__duration: PBField
 
 
-	func has_speed() -> bool:
-		if __speed.value != null:
+	func has_arc__duration() -> bool:
+		if __arc__duration.value != null:
 			return true
 		return false
 
 
-	func get_speed() -> float:
-		return __speed.value
+	func get_arc__duration() -> float:
+		return __arc__duration.value
 
 
-	func clear_speed() -> void:
+	func clear_arc__duration() -> void:
 		data[6].state = PB_SERVICE_STATE.UNFILLED
-		__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__arc__duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_speed(value: float) -> void:
-		__speed.value = value
+	func set_arc__duration(value: float) -> void:
+		__arc__duration.value = value
+
+
+	var __straight__speed: PBField
+
+
+	func has_straight__speed() -> bool:
+		if __straight__speed.value != null:
+			return true
+		return false
+
+
+	func get_straight__speed() -> float:
+		return __straight__speed.value
+
+
+	func clear_straight__speed() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__straight__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_straight__speed(value: float) -> void:
+		__straight__speed.value = value
 
 
 	var __damage: PBField
@@ -2515,7 +2542,7 @@ class GProjectile:
 
 
 	func clear_damage() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 

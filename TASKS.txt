@@ -18,11 +18,11 @@ x buf don't ignore excessive fields
   -> use protoc to turn glib.proto into python classes
   -> in python Lib.parse(glib) and turn into binary
   -> save binary
+x mob shooting: bomb despawns after time
 
 * mob shooting: bomb travel animated
 * mob shooting: bomb damages player
 * mob shooting: mob projectiles deal damage to player
-* mob shooting: 
 * mob shooting: 
 * mob shooting: 
 * mob shooting: mob throws bomb and it works and looks ok

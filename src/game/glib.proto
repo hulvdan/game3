@@ -90,9 +90,10 @@ message GProjectile {
   string debug_name = 2;
   string res = 3;
   int32 projectilefly_type = 4;
-  float flytype_arc__height = 5;
-  float speed = 6;
-  int32 damage = 7;
+  float arc__height = 5;
+  float arc__duration = 6;
+  float straight__speed = 7;
+  int32 damage = 8;
 }
 
 message GCollision {

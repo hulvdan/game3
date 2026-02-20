@@ -44,3 +44,8 @@ func from_xz(value: Vector3) -> Vector2:
 
 func to_xz(value: Vector2) -> Vector3:
 	return Vector3(value.x, 0, value.y)
+
+
+func invalid_path() -> void:
+	@warning_ignore("assert_always_false")
+	assert(0)
