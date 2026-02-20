@@ -357,8 +357,6 @@ func _physics_process(dt: float) -> void:
 	param_ray.hit_back_faces = true
 	param_ray.hit_from_inside = true
 
-	# Execute physics queries here...
-
 	var param_shape: PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
 	param_shape.collide_with_areas = false
 	param_shape.collide_with_bodies = true
@@ -367,9 +365,11 @@ func _physics_process(dt: float) -> void:
 
 	var projectiles = glib.v.get_projectiles()
 	for projectile: Projectile in room.container_projectiles.get_children():
+		var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
+
 		projectile.elapsed += dt
 
-		var should_be_removed: bool = false
+		var should_remove: bool = false
 
 		var data = projectiles[projectile.d.type]
 
@@ -380,16 +380,14 @@ func _physics_process(dt: float) -> void:
 			param_ray.from = projectile.transform.origin
 			param_ray.to = projectile.transform.origin + projectile.transform.basis * projectile_step
 
-			var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
 			for mask in [
 				glib.GCollisionType.WALLS,
 				glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
 			]:
 				param_ray.collision_mask = mask
-
 				var d: Dictionary = space.intersect_ray(param_ray)
 				if d:
-					should_be_removed = true
+					should_remove = true
 					if mask != glib.GCollisionType.WALLS:
 						var damaged_creature: Creature = d.collider
 						apply_damage(damaged_creature, data.get_damage())
@@ -405,7 +403,14 @@ func _physics_process(dt: float) -> void:
 			projectile.transform.origin = pos
 
 			if projectile.elapsed >= data.get_arc__duration():
-				should_be_removed = true
+				param_shape.collision_mask = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
+				param_shape.transform.origin = bf.to_xz(projectile.d.target)
+
+				for d: Dictionary in space.intersect_shape(param_shape, 12):
+					var damaged_creature: Creature = d.collider
+					apply_damage(damaged_creature, data.get_damage())
+
+				should_remove = true
 				var i: int = -1
 				for v2: Node3D in room.target_camera_elements:
 					i += 1
@@ -417,7 +422,7 @@ func _physics_process(dt: float) -> void:
 		else:
 			bf.invalid_path()
 
-		if should_be_removed:
+		if should_remove:
 			room.container_projectiles.remove_child(projectile)
 			projectile.queue_free()
 
