@@ -387,8 +387,8 @@ func _physics_process(dt: float) -> void:
 
 		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
 			var t: float = projectile.elapsed / data.get_arc__duration()
-
-			var pos: Vector3 = bf.to_xz(lerp(projectile.d.origin, projectile.d.target, t))
+			var p: Vector2 = lerp(projectile.d.origin, projectile.d.target, t)
+			var pos: Vector3 = bf.to_xz(p)
 			pos.y = data.get_arc__height() * sin(t * PI)
 			projectile.transform.origin = pos
 
