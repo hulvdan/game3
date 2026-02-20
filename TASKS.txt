@@ -11,7 +11,17 @@ x roll: remember last direction
 x roll: invincibility + show dodge + track spikes attack id
 x basic beehave
 
-* mob throws bomb
+* mob projectiles: mob projectiles don't collide with mobs
+* mob projectiles: mob projectiles deal damage to player
+* mob projectiles: 
+* mob projectiles: 
+* mob projectiles: 
+* mob projectiles: 
+* mob projectiles: 
+* mob projectiles: 
+* mob projectiles: mob throws bomb and it works and looks ok
+* mob projectiles: 
+*
 * floating spiky ball trap
 *
 * items: can drop from mines (hollow knight like)
