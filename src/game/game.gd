@@ -44,11 +44,6 @@ var player_is_entering_door := false
 @onready var container_general: Node = %_container_general
 ##
 
-enum CollisionMask {
-	WALLS = 1 << 0,
-	CREATURES = 1 << 1,
-}
-
 
 class RoomData:
 	var gindex: int = -1
@@ -371,7 +366,6 @@ func _physics_process(dt: float) -> void:
 	param.collide_with_bodies = true
 	param.hit_back_faces = true
 	param.hit_from_inside = true
-	param.exclude = [room.player]
 
 	var projectiles = glib.v.get_projectiles()
 	for projectile: Projectile in room.container_projectiles.get_children():
@@ -382,13 +376,17 @@ func _physics_process(dt: float) -> void:
 		param.from = projectile.transform.origin
 		param.to = projectile.transform.origin + projectile.transform.basis * projectile_step
 
-		for mask in [CollisionMask.CREATURES, CollisionMask.WALLS]:
+		var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
+		for mask in [
+			glib.GCollisionLayerType.WALLS,
+			glib.GCollisionLayerType.MOBS if is_player else glib.GCollisionLayerType.PLAYER,
+		]:
 			param.collision_mask = mask
 
 			var d: Dictionary = space.intersect_ray(param)
 			if d:
 				room.container_projectiles.remove_child(projectile)
-				if mask == CollisionMask.CREATURES:
+				if mask != glib.GCollisionLayerType.WALLS:
 					var damaged_creature: Creature = d.collider
 					apply_damage(damaged_creature, data.get_damage())
 				break
