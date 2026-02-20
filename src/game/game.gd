@@ -582,7 +582,6 @@ func make_projectile(
 		room.container_zones.add_child(zone)
 		zone.transform.origin = bf.to_xz(x.d.target)
 
-		# create_tween().tween_property(zone, "modulate:scale", 1, 0.2)
 		var tween = create_tween()
 		tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
 		tween.tween_property(zone, "scale", Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
