@@ -7,6 +7,7 @@ import rpp
 import yaml
 from bf_game import *  # noqa
 from bf_typer import timing
+from google.protobuf import json_format
 
 # }
 
@@ -92,19 +93,23 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
     with open("src/game/glib.yaml", encoding="utf-8") as glib_file:
         glib = yaml.safe_load(glib_file)
 
-    # Validating correctness of `glib.proto`.
     temp_glib_path = Path(".temp/glib.gd")
     temp_glib_path.unlink(missing_ok=True)
-    bf.run_command(
-        """
+    bf.run_command("""
         godot
         --headless
         -s addons/protobuf/protobuf_cmdln.gd
         --input=src/game/glib.proto
         --output=.temp/glib.gd
-        """,
-    )
+    """)
     assert temp_glib_path.exists(), "Failed to generate glib.gd from glib.proto!"
+    bf.run_command("""
+        cli/protoc.exe
+        --python_out=cli
+        --proto_path=src/game
+        src/game/glib.proto
+    """)
+
     with Path("src/codegen/nolint/glib.gd").open("w", encoding="utf-8") as codegen_file:
         codegen_file.write("""extends Node
 static var v: Lib = Lib.new()
@@ -161,6 +166,14 @@ func _physics_process(_dt: float) -> void:
     bf.recursive_mkdir(out_path.parent)
     with open(out_path, "w", encoding="utf-8") as out_file:
         json.dump(glib, out_file, indent=2)
+
+    ## Validating no invalid fields specified in glib.
+    import glib_pb2  # noqa: PLC0415
+
+    lib = glib_pb2.Lib()
+    json_format.Parse(json.dumps(glib), lib)
+    ##
+
     bf.run_command(
         rf"buf convert src/game/glib.proto --type=Lib --from={out_path} --to=assets/glib.binpb --validate"
     )
