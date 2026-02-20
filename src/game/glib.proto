@@ -61,6 +61,7 @@ message GCreature {
   int32 attack_projectile_type = 7;
   float attack_projectile_spawn_at = 8;
   float attack_duration = 9;
+  int32 collisionlayer_type = 10;
 }
 
 message GDamage {
@@ -90,6 +91,13 @@ message GProjectile {
   string res = 3;
   int32 projectilefly_type = 4;
   float flytype_arc__height = 5;
+  float speed = 6;
+  int32 damage = 7;
+}
+
+message GCollisionLayer {
+  int32 type = 1;
+  string debug_name = 2;
 }
 
 message Lib {
@@ -128,5 +136,6 @@ message Lib {
   repeated GCollectible collectibles = 31;
   repeated GProjectileFly projectile_fly_types = 36;
   repeated GProjectile projectiles = 35;
+  repeated GCollisionLayer collision_layers = 37;
   // TABLE_GEN_END
 }

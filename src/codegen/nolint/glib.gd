@@ -1708,6 +1708,11 @@ class GCreature:
 		service.field = __attack_duration
 		data[__attack_duration.tag] = service
 
+		__collisionlayer_type = PBField.new("collisionlayer_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __collisionlayer_type
+		data[__collisionlayer_type.tag] = service
+
 
 	var data = { }
 
@@ -1907,6 +1912,28 @@ class GCreature:
 
 	func set_attack_duration(value: float) -> void:
 		__attack_duration.value = value
+
+
+	var __collisionlayer_type: PBField
+
+
+	func has_collisionlayer_type() -> bool:
+		if __collisionlayer_type.value != null:
+			return true
+		return false
+
+
+	func get_collisionlayer_type() -> int:
+		return __collisionlayer_type.value
+
+
+	func clear_collisionlayer_type() -> void:
+		data[10].state = PB_SERVICE_STATE.UNFILLED
+		__collisionlayer_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_collisionlayer_type(value: int) -> void:
+		__collisionlayer_type.value = value
 
 
 	func _to_string() -> String:
@@ -2329,6 +2356,16 @@ class GProjectile:
 		service.field = __flytype_arc__height
 		data[__flytype_arc__height.tag] = service
 
+		__speed = PBField.new("speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __speed
+		data[__speed.tag] = service
+
+		__damage = PBField.new("damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __damage
+		data[__damage.tag] = service
+
 
 	var data = { }
 
@@ -2440,6 +2477,135 @@ class GProjectile:
 
 	func set_flytype_arc__height(value: float) -> void:
 		__flytype_arc__height.value = value
+
+
+	var __speed: PBField
+
+
+	func has_speed() -> bool:
+		if __speed.value != null:
+			return true
+		return false
+
+
+	func get_speed() -> float:
+		return __speed.value
+
+
+	func clear_speed() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_speed(value: float) -> void:
+		__speed.value = value
+
+
+	var __damage: PBField
+
+
+	func has_damage() -> bool:
+		if __damage.value != null:
+			return true
+		return false
+
+
+	func get_damage() -> int:
+		return __damage.value
+
+
+	func clear_damage() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_damage(value: int) -> void:
+		__damage.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GCollisionLayer:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
 
 
 	func _to_string() -> String:
@@ -2659,6 +2825,13 @@ class Lib:
 		service.field = __projectiles
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
+
+		var __collision_layers_default: Array[GCollisionLayer] = []
+		__collision_layers = PBField.new("collision_layers", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 37, true, __collision_layers_default)
+		service = PBServiceField.new()
+		service.field = __collision_layers
+		service.func_ref = Callable(self, "add_collision_layers")
+		data[__collision_layers.tag] = service
 
 
 	var data = { }
@@ -3377,6 +3550,24 @@ class Lib:
 		return element
 
 
+	var __collision_layers: PBField
+
+
+	func get_collision_layers() -> Array[GCollisionLayer]:
+		return __collision_layers.value
+
+
+	func clear_collision_layers() -> void:
+		data[37].state = PB_SERVICE_STATE.UNFILLED
+		__collision_layers.value.clear()
+
+
+	func add_collision_layers() -> GCollisionLayer:
+		var element = GCollisionLayer.new()
+		__collision_layers.value.append(element)
+		return element
+
+
 	func _to_string() -> String:
 		return PBPacker.message_to_string(data)
 
@@ -3456,5 +3647,12 @@ enum GProjectileType {
 	INVALID,
 	ARROW,
 	BOMB,
+	COUNT,
+}
+
+enum GCollisionLayerType {
+	WALLS,
+	PLAYER,
+	MOBS,
 	COUNT,
 }

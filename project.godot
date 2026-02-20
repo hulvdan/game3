@@ -143,8 +143,8 @@ roll={
 [layer_names]
 
 3d_physics/layer_1="walls"
-3d_physics/layer_2="creatures"
-3d_physics/layer_3="Layer 3"
+3d_physics/layer_2="player"
+3d_physics/layer_3="mobs"
 
 [physics]
 

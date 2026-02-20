@@ -13,7 +13,7 @@ shader = ExtResource("2_vbw5m")
 shader_parameter/flash = Color(0, 0, 0, 1)
 
 [node name="_body" type="RigidBody3D" unique_id=1935514979 node_paths=PackedStringArray("node_body")]
-collision_layer = 2
+collision_layer = 0
 axis_lock_linear_y = true
 axis_lock_angular_x = true
 axis_lock_angular_y = true

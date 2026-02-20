@@ -27,10 +27,8 @@ spikes_duration_seconds: 2
 spikes_damage_starts_at: 0.5
 spikes_damage: 1
 
-arrow_speed: 14
 shooting_seconds: 0.25
 shooting_after_roll_seconds: 0.1
-arrow_damage: 1
 
 mobs_to_spawn: 
   - creature_type: MOB_SHOOTER
@@ -54,6 +52,11 @@ progression:
   - type: CRAFT_ENGINEER
   - type: CLASS_HEAVY_KNIGHT
   - type: CLASS_BARBARIAN
+
+collision_layers:
+  - type: WALLS
+  - type: PLAYER
+  - type: MOBS
 
 creatures:
   - type: INVALID
@@ -94,5 +97,9 @@ projectile_fly_types:
 projectiles:
   - type: INVALID
   - type: ARROW
+    speed: 14
+    damage: 1
   - type: BOMB
+    speed: 10
+    damage: 2
 

@@ -24,11 +24,14 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 		&& (data.get_attack_projectile_spawn_at() < elapsed_since_start)
 	):
 		projectile_spawned = true
+		var d: Projectile.Data = Projectile.Data.new()
+		d.type = data.get_attack_projectile_type() as glib.GProjectileType
+		d.owner = actor.type
 		Game.v.make_projectile(
 			data.get_attack_projectile_type(),
-			actor.type,
 			bf.from_xz(actor.transform.origin),
 			bf.from_xz(Room.v.player.transform.origin),
+			d,
 		)
 
 	if elapsed_since_start >= attack_duration:
