@@ -12,16 +12,16 @@ x roll: invincibility + show dodge + track spikes attack id
 x basic beehave
 x mob spawns bomb
 
-* mob projectiles: mob projectiles don't collide with mobs
-* mob projectiles: mob projectiles deal damage to player
-* mob projectiles: 
-* mob projectiles: 
-* mob projectiles: 
-* mob projectiles: 
-* mob projectiles: 
-* mob projectiles: 
-* mob projectiles: mob throws bomb and it works and looks ok
-* mob projectiles: 
+* mob shooting: mob projectiles don't collide with mobs
+* mob shooting: mob projectiles deal damage to player
+* mob shooting: 
+* mob shooting: 
+* mob shooting: 
+* mob shooting: 
+* mob shooting: 
+* mob shooting: 
+* mob shooting: mob throws bomb and it works and looks ok
+* mob shooting: 
 *
 * floating spiky ball trap
 *

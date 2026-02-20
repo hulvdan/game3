@@ -202,7 +202,14 @@ def _process_glib(genline, glib) -> None:
         for i in range(len(container)):
             container[i]["type"] = i
         bf.check_duplicates(types)
-        bf.genenum(genline, type_name + "Type", types, add_count=True)
+        flags = field_name.endswith("flags")
+        bf.genenum(
+            genline,
+            type_name + "Type",
+            types,
+            flag_values=flags,
+            add_count=not flags,
+        )
         transforms.append(
             (
                 field_name,

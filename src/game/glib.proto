@@ -95,7 +95,7 @@ message GProjectile {
   int32 damage = 7;
 }
 
-message GCollisionLayer {
+message GCollision {
   int32 type = 1;
   string debug_name = 2;
 }
@@ -136,6 +136,6 @@ message Lib {
   repeated GCollectible collectibles = 31;
   repeated GProjectileFly projectile_fly_types = 36;
   repeated GProjectile projectiles = 35;
-  repeated GCollisionLayer collision_layers = 37;
+  repeated GCollision collision_flags = 37;
   // TABLE_GEN_END
 }

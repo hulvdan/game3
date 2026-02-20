@@ -270,17 +270,17 @@ def genenum(
     values: Sequence[str],
     *,
     add_count: bool = False,
-    hex_values: bool = False,
+    flag_values: bool = False,
     override_values: Sequence[Any] | None = None,
     enumerate_values: bool = False,
     add_to_string: bool = False,
     comments: list[str] | None = None,
 ) -> None:  ##
-    assert not (hex_values and enumerate_values)
+    assert not (flag_values and enumerate_values)
     assert not (override_values and enumerate_values)
 
-    if add_count or hex_values:
-        assert add_count != hex_values
+    if add_count or flag_values:
+        assert add_count != flag_values
 
     string = f"enum {name}"
     string += " {"
@@ -291,7 +291,7 @@ def genenum(
             line += "  # " + comments[i]
         genline(line)
 
-    if hex_values:
+    if flag_values:
         for i, value in enumerate(values):
             genline_with_comment("    {} = {},".format(value, hex(2**i)), i)
     elif override_values:

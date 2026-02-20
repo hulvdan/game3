@@ -53,7 +53,7 @@ progression:
   - type: CLASS_HEAVY_KNIGHT
   - type: CLASS_BARBARIAN
 
-collision_layers:
+collision_flags:
   - type: WALLS
   - type: PLAYER
   - type: MOBS

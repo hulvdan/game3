@@ -268,21 +268,8 @@ func _physics_process(dt: float) -> void:
 		add_child(r.instantiate())
 	##
 
-	# ## Setting enemy controller.move towards player
-	# for creature: Creature in room.container_creatures.get_children():
-	# 	creature.controller.move = Vector2(0, 0)
-	#
-	# if room.start_elapsed >= 1:
-	# 	for creature: Creature in room.container_creatures.get_children():
-	# 		if creature.type <= glib.GCreatureType.PLAYER:
-	# 			continue
-	# 		var dir: Vector2 = bf.from_xz(room.player.transform.origin) - bf.from_xz(creature.transform.origin)
-	# 		if dir != Vector2(0, 0):
-	# 			dir = dir.normalized()
-	# 		creature.controller.move = dir
-	# ##
-
 	## Creatures moving
+	room.player.controller.move = Vector2(0, 0)
 	if !player_is_entering_door:
 		room.player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
 
@@ -370,6 +357,9 @@ func _physics_process(dt: float) -> void:
 	var projectiles = glib.v.get_projectiles()
 	for projectile: Projectile in room.container_projectiles.get_children():
 		var data = projectiles[projectile.d.type]
+		if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+			continue
+
 		var projectile_step: Vector3 = Vector3(0, 0, -1) * (data.get_speed() * dt)
 		projectile.translate_object_local(projectile_step)
 
@@ -378,15 +368,15 @@ func _physics_process(dt: float) -> void:
 
 		var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
 		for mask in [
-			glib.GCollisionLayerType.WALLS,
-			glib.GCollisionLayerType.MOBS if is_player else glib.GCollisionLayerType.PLAYER,
+			glib.GCollisionType.WALLS,
+			glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
 		]:
 			param.collision_mask = mask
 
 			var d: Dictionary = space.intersect_ray(param)
 			if d:
 				room.container_projectiles.remove_child(projectile)
-				if mask != glib.GCollisionLayerType.WALLS:
+				if mask != glib.GCollisionType.WALLS:
 					var damaged_creature: Creature = d.collider
 					apply_damage(damaged_creature, data.get_damage())
 				break

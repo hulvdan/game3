@@ -2547,7 +2547,7 @@ class GProjectile:
 		return result
 
 
-class GCollisionLayer:
+class GCollision:
 	func _init():
 		var service
 
@@ -2826,12 +2826,12 @@ class Lib:
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
 
-		var __collision_layers_default: Array[GCollisionLayer] = []
-		__collision_layers = PBField.new("collision_layers", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 37, true, __collision_layers_default)
+		var __collision_flags_default: Array[GCollision] = []
+		__collision_flags = PBField.new("collision_flags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 37, true, __collision_flags_default)
 		service = PBServiceField.new()
-		service.field = __collision_layers
-		service.func_ref = Callable(self, "add_collision_layers")
-		data[__collision_layers.tag] = service
+		service.field = __collision_flags
+		service.func_ref = Callable(self, "add_collision_flags")
+		data[__collision_flags.tag] = service
 
 
 	var data = { }
@@ -3550,21 +3550,21 @@ class Lib:
 		return element
 
 
-	var __collision_layers: PBField
+	var __collision_flags: PBField
 
 
-	func get_collision_layers() -> Array[GCollisionLayer]:
-		return __collision_layers.value
+	func get_collision_flags() -> Array[GCollision]:
+		return __collision_flags.value
 
 
-	func clear_collision_layers() -> void:
+	func clear_collision_flags() -> void:
 		data[37].state = PB_SERVICE_STATE.UNFILLED
-		__collision_layers.value.clear()
+		__collision_flags.value.clear()
 
 
-	func add_collision_layers() -> GCollisionLayer:
-		var element = GCollisionLayer.new()
-		__collision_layers.value.append(element)
+	func add_collision_flags() -> GCollision:
+		var element = GCollision.new()
+		__collision_flags.value.append(element)
 		return element
 
 
@@ -3650,9 +3650,8 @@ enum GProjectileType {
 	COUNT,
 }
 
-enum GCollisionLayerType {
-	WALLS,
-	PLAYER,
-	MOBS,
-	COUNT,
+enum GCollisionType {
+	WALLS = 0x1,
+	PLAYER = 0x2,
+	MOBS = 0x4,
 }
