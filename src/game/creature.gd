@@ -15,7 +15,12 @@ var hp_bar: Bar
 
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
-#@onready var node_mesh: MeshInstance3D = %_mesh
+
+enum MobState {
+	IDLE,
+	MOVING,
+	THROWING,
+}
 
 
 class Controller:
@@ -24,7 +29,3 @@ class Controller:
 
 
 var controller: Controller = Controller.new()
-
-# func _ready() -> void:
-# 	time_since_last_damage_taken.resize(glib.GDamageType.COUNT)
-# 	time_since_last_damage_taken.fill(INF)

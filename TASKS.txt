@@ -10,8 +10,8 @@ PLAN
 x roll: remember last direction
 x roll: invincibility + show dodge + track spikes attack id
 
-* floating spiky ball
 * mob throws bomb
+* floating spiky ball trap
 *
 * items: can drop from mines (hollow knight like)
 * items: can drop from herbs on swing
