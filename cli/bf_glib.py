@@ -110,14 +110,6 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         --proto_path=src/game
         src/game/glib.proto
     """)
-    # bf.run_command(
-    #     [
-    #         r".\cli\protoc.exe",
-    #         "--python_out=cli",
-    #         "--proto_path=./src/game",
-    #         "src/game/glib.proto",
-    #     ]
-    # )
     assert Path("cli/glib_pb2.py").exists(), (
         "Failed to generate glib_pb2.py from glib.proto!"
     )
