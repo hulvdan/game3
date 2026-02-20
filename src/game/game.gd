@@ -417,7 +417,8 @@ func _physics_process(dt: float) -> void:
 					if v2 == projectile.sprite:
 						room.target_camera_elements.remove_at(i)
 						break
-				room.container_zones.remove_child(projectile.zone)
+				for z: Node3D in projectile.zones:
+					room.container_zones.remove_child(z)
 
 		else:
 			bf.invalid_path()
@@ -584,14 +585,19 @@ func make_projectile(
 		x.transform.basis = Basis(Vector3(0, 1, 0).cross(forward), Vector3(0, 1, 0), forward)
 
 	elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-		var zone: Node3D = packed_zone_circle.instantiate()
-		room.container_zones.add_child(zone)
-		zone.transform.origin = bf.to_xz(x.d.target)
+		var target_scale: Vector3 = Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0
+		for i in range(2):
+			var zone: Node3D = packed_zone_circle.instantiate()
+			room.container_zones.add_child(zone)
+			zone.transform.origin = bf.to_xz(x.d.target) + Vector3(0, 0.1 * i, 0)
 
-		var tween = create_tween()
-		tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
-		tween.tween_property(zone, "scale", Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-		x.zone = zone
+			var tween = create_tween()
+			if i:
+				tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
+				tween.tween_property(zone, "scale", target_scale, data.get_arc__duration())
+			else:
+				tween.tween_property(zone, "scale", target_scale, 0)
+			x.zones.append(zone)
 
 	else:
 		bf.invalid_path()

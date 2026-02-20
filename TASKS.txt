@@ -23,9 +23,9 @@ x mob shooting: bomb travel animated
 x mob shooting: show bomb target indicator on floor
 x mob shooting: mob projectiles deal damage to player
   CIRCLE SHAPE
+x mob shooting: growing zones
 
 * mob shooting: CONTINUOUS CHECK ON ARROW through shape
-* mob shooting: 
 * mob shooting: 
 * mob shooting: mob throws bomb and it works and looks ok
 * mob shooting: 

@@ -12,6 +12,6 @@ class Data:
 var elapsed: float
 var d: Data
 var res: ResProjectile
-var zone: Node3D
+var zones: Array[Node3D]
 
 @onready var sprite: Sprite3D = %_sprite
