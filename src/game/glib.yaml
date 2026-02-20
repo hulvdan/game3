@@ -101,6 +101,6 @@ projectiles:
   - type: BOMB
     damage: 2
     projectilefly_type: ARC
-    arc__height: 2
+    arc__height: 1
     arc__duration: 2
 

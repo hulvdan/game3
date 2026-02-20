@@ -19,9 +19,8 @@ x buf don't ignore excessive fields
   -> in python Lib.parse(glib) and turn into binary
   -> save binary
 x mob shooting: bomb despawns after time
+x mob shooting: bomb travel animated
 
-* mob shooting: bomb travel animated
-* mob shooting: bomb damages player
 * mob shooting: mob projectiles deal damage to player
 * mob shooting: 
 * mob shooting: 

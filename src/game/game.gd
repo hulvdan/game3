@@ -347,7 +347,7 @@ func _physics_process(dt: float) -> void:
 		room.player_stamina_elapsed = 0
 	##
 
-	## Projectile collisions
+	## Updating projectiles + collisions + despawning
 	var space = world_3d.get_world_3d().direct_space_state
 	var param: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 	param.collide_with_areas = false
@@ -386,8 +386,20 @@ func _physics_process(dt: float) -> void:
 					break
 
 		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+			var t: float = projectile.elapsed / data.get_arc__duration()
+
+			var pos: Vector3 = bf.to_xz(lerp(projectile.d.origin, projectile.d.target, t))
+			pos.y = data.get_arc__height() * sin(t * PI)
+			projectile.transform.origin = pos
+
 			if projectile.elapsed >= data.get_arc__duration():
-				projectile.queue_free()
+				should_be_removed = true
+				var i: int = -1
+				for v2: Node3D in room.target_camera_elements:
+					i += 1
+					if v2 == projectile.sprite:
+						room.target_camera_elements.remove_at(i)
+						break
 
 		else:
 			bf.invalid_path()
@@ -532,8 +544,12 @@ func make_projectile(
 	var x: Projectile = packed_projectile.instantiate()
 	room.container_projectiles.add_child(x)
 
+	if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+		room.target_camera_elements.append(x.sprite)
+
 	x.d = d
-	x.d.arc__target = target
+	x.d.origin = pos
+	x.d.target = target
 	x.res = load(data.get_res())
 	x.sprite.texture = x.res.texture
 
