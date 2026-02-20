@@ -63,6 +63,7 @@ creatures:
   - type: PLAYER
     hp: 10
     speed: 4
+    collision_type: PLAYER
   - type: MOB_SHOOTER
     hp: 3
     speed: 0.4
@@ -91,8 +92,6 @@ collectibles:
 projectile_fly_types: 
   - type: STRAIGHT
   - type: ARC
-    projectilefly_type: ARC
-    flytype_arc__height: 2
 
 projectiles:
   - type: INVALID
@@ -102,4 +101,6 @@ projectiles:
   - type: BOMB
     speed: 10
     damage: 2
+    projectilefly_type: ARC
+    flytype_arc__height: 2
 

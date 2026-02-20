@@ -1708,10 +1708,10 @@ class GCreature:
 		service.field = __attack_duration
 		data[__attack_duration.tag] = service
 
-		__collisionlayer_type = PBField.new("collisionlayer_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__collision_type = PBField.new("collision_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
-		service.field = __collisionlayer_type
-		data[__collisionlayer_type.tag] = service
+		service.field = __collision_type
+		data[__collision_type.tag] = service
 
 
 	var data = { }
@@ -1914,26 +1914,26 @@ class GCreature:
 		__attack_duration.value = value
 
 
-	var __collisionlayer_type: PBField
+	var __collision_type: PBField
 
 
-	func has_collisionlayer_type() -> bool:
-		if __collisionlayer_type.value != null:
+	func has_collision_type() -> bool:
+		if __collision_type.value != null:
 			return true
 		return false
 
 
-	func get_collisionlayer_type() -> int:
-		return __collisionlayer_type.value
+	func get_collision_type() -> int:
+		return __collision_type.value
 
 
-	func clear_collisionlayer_type() -> void:
+	func clear_collision_type() -> void:
 		data[10].state = PB_SERVICE_STATE.UNFILLED
-		__collisionlayer_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+		__collision_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
-	func set_collisionlayer_type(value: int) -> void:
-		__collisionlayer_type.value = value
+	func set_collision_type(value: int) -> void:
+		__collision_type.value = value
 
 
 	func _to_string() -> String:

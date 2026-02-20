@@ -61,7 +61,7 @@ message GCreature {
   int32 attack_projectile_type = 7;
   float attack_projectile_spawn_at = 8;
   float attack_duration = 9;
-  int32 collisionlayer_type = 10;
+  int32 collision_type = 10;
 }
 
 message GDamage {

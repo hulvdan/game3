@@ -140,7 +140,7 @@ def _process_glib(genline, glib) -> None:
     ## Creatures
     for x in glib["creatures"][1:]:
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
-        x["collisionlayer_type"] = x.get("collisionlayer_type", "MOBS")
+        x["collision_type"] = x.get("collision_type", "MOBS")
     ##
 
     ## Projectiles

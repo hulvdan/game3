@@ -11,12 +11,12 @@ x roll: remember last direction
 x roll: invincibility + show dodge + track spikes attack id
 x basic beehave
 x mob spawns bomb
+x mob shooting: player arrow collides with mobs
+x mob shooting: mob projectiles don't collide with mobs
 
-* mob shooting: mob projectiles don't collide with mobs
+* mob shooting: bomb travel animated
+* mob shooting: bomb damages player
 * mob shooting: mob projectiles deal damage to player
-* mob shooting: 
-* mob shooting: 
-* mob shooting: 
 * mob shooting: 
 * mob shooting: 
 * mob shooting: 

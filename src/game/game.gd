@@ -54,7 +54,8 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	var creature: Creature = packed_creature.instantiate()
 	room.container_creatures.add_child(creature)
 
-	creature.node_body.collision_layer = data.get_collisionlayer_type()
+	var ctype: int = data.get_collision_type()
+	creature.node_body.collision_layer = 2 ** ctype
 	creature.type = type
 	creature.res = load(data.get_res())
 	assert(creature.res)
@@ -518,6 +519,7 @@ func make_projectile(
 	room.container_projectiles.add_child(x)
 
 	x.d = d
+	x.d.arc__target = target
 	x.res = load(data.get_res())
 	x.sprite.texture = x.res.texture
 
