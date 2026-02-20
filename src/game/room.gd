@@ -2,6 +2,8 @@ extends Node
 
 class_name Room
 
+static var v: Room
+
 var player: Creature
 var player_bow: Node3D
 var target_camera_elements: Array[Node3D]

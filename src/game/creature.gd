@@ -16,12 +16,6 @@ var hp_bar: Bar
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
 
-enum MobState {
-	IDLE,
-	MOVING,
-	THROWING,
-}
-
 
 class Controller:
 	var move: Vector2

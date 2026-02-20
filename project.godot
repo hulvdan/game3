@@ -43,6 +43,8 @@ buses/default_bus_layout="res://assets/default_bus_layout.tres"
 Bridge="*uid://cx4klxojbw6ck"
 bf="*uid://dj7syt5f528l6"
 glib="*uid://1jksc3q42eag"
+BeehaveGlobalMetrics="*uid://c3ktl6ontsdt7"
+BeehaveGlobalDebugger="*uid://bl3ma400hpvsh"
 
 [debug]
 
@@ -88,7 +90,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/playgama_bridge/plugin.cfg", "res://addons/protobuf/plugin.cfg", "res://addons/resources_spreadsheet_view/plugin.cfg")
+enabled=PackedStringArray("res://addons/beehave/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/playgama_bridge/plugin.cfg", "res://addons/protobuf/plugin.cfg", "res://addons/resources_spreadsheet_view/plugin.cfg")
 
 [file_customization]
 

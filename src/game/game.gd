@@ -26,6 +26,7 @@ static var async_scene_loaded = false
 @export var packed_ui_bar_mob: PackedScene
 @export var packed_ui_minimap_room: PackedScene
 @export var packed_ui_progression_entry: PackedScene
+@export var packed_ai: PackedScene
 
 var current_room_pos: Vector2i = Vector2i.MAX
 var rooms: Array[RoomData] = []
@@ -73,6 +74,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 		creature.hp_bar = bar
 		bar.anchor_right *= creature.hp / 3.0
 		room.container_mob_hp_bars.add_child(bar)
+		creature.add_child(packed_ai.instantiate())
 
 	room.target_camera_elements.append(creature.node_target_camera)
 
@@ -119,6 +121,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		room.queue_free()
 	room = packed_room.instantiate()
 	container_general.add_child(room)
+	Room.v = room
 
 	bf.clear_children(room.container_creatures)
 	for element in room.target_camera_elements:
@@ -269,19 +272,19 @@ func _physics_process(dt: float) -> void:
 		add_child(r.instantiate())
 	##
 
-	## Setting enemy controller.move towards player
-	for creature: Creature in room.container_creatures.get_children():
-		creature.controller.move = Vector2(0, 0)
-
-	if room.start_elapsed >= 1:
-		for creature: Creature in room.container_creatures.get_children():
-			if creature.type <= glib.GCreatureType.PLAYER:
-				continue
-			var dir: Vector2 = bf.from_xz(room.player.transform.origin) - bf.from_xz(creature.transform.origin)
-			if dir != Vector2(0, 0):
-				dir = dir.normalized()
-			creature.controller.move = dir
-	##
+	# ## Setting enemy controller.move towards player
+	# for creature: Creature in room.container_creatures.get_children():
+	# 	creature.controller.move = Vector2(0, 0)
+	#
+	# if room.start_elapsed >= 1:
+	# 	for creature: Creature in room.container_creatures.get_children():
+	# 		if creature.type <= glib.GCreatureType.PLAYER:
+	# 			continue
+	# 		var dir: Vector2 = bf.from_xz(room.player.transform.origin) - bf.from_xz(creature.transform.origin)
+	# 		if dir != Vector2(0, 0):
+	# 			dir = dir.normalized()
+	# 		creature.controller.move = dir
+	# ##
 
 	## Creatures moving
 	if !player_is_entering_door:

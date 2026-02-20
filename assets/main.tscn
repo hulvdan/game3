@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://cjk26kw0piudl" path="res://assets/packed_arrow.tscn" id="11_km2eh"]
 [ext_resource type="PackedScene" uid="uid://ty00766yaguu" path="res://assets/packed_bar_mob.tscn" id="11_wpieh"]
 [ext_resource type="PackedScene" uid="uid://c80peoxwlv0kn" path="res://assets/packed_bar_player.tscn" id="13_km2eh"]
+[ext_resource type="PackedScene" uid="uid://cdgk6wnhs6w5d" path="res://assets/packed_ai_bomber.tscn" id="14_2rvxm"]
 [ext_resource type="PackedScene" uid="uid://b8ouoy8vmdy1w" path="res://assets/packed_spike.tscn" id="15_ul5qt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vvw4a"]
@@ -44,6 +45,7 @@ packed_ui_bar_player = ExtResource("13_km2eh")
 packed_ui_bar_mob = ExtResource("11_wpieh")
 packed_ui_minimap_room = ExtResource("9_otm8r")
 packed_ui_progression_entry = ExtResource("9_vvw4a")
+packed_ai = ExtResource("14_2rvxm")
 
 [node name="Control" type="Control" parent="_game" unique_id=929978051]
 visible = false
