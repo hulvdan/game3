@@ -36,7 +36,7 @@ func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##
 	if opts.text:
 		node.node_label.text = tr(opts.text)
 		node.node_label.visible = true
-		node.node_label.add_theme_color_override('font_color', opts.color)
+		node.node_label.label_settings.font_color = opts.color
 	if opts.texture:
 		node.node_texture_rect.texture = opts.texture
 		node.node_texture_rect.visible = true

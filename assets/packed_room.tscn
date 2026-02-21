@@ -21,6 +21,7 @@ metadata/_custom_type_script = "uid://dhp1eiart43ss"
 [sub_resource type="Resource" id="Resource_ljbfl"]
 script = ExtResource("5_3a6xa")
 text = "DODGE"
+color = Color(0.67058825, 0.5803922, 0.47843137, 1)
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
 [node name="room" type="Node" unique_id=154726596]
@@ -65,4 +66,6 @@ _options = Dictionary[String, ExtResource("5_3a6xa")]({
 "enemy_started_attack": SubResource("Resource_um0rl"),
 "player_evaded": SubResource("Resource_ljbfl")
 })
+_damage_number_player_color = Color(0.9098039, 0.23137255, 0.23137255, 1)
+_damage_number_mob_color = Color(0.9843137, 1, 0.5254902, 1)
 _packed_label = ExtResource("7_um0rl")

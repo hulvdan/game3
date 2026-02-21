@@ -19,12 +19,8 @@ x DODGED localization
 x mob shooting: CONTINUOUS CHECK ON ARROW through shape
 x pierce: arrow damages each enemy once
 x damage numbers
+x damage numbers: color: yellow for mobs, red for player
 
-* damage numbers: color: yellow for mobs, red for player
-* damage numbers: 
-* damage numbers: 
-* damage numbers: 
-*
 * floating spiky ball trap
 *
 * items: can drop from mines (hollow knight like)

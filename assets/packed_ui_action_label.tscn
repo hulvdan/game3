@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://drnqbr80s2tb3" path="res://src/game/ui_action_label.gd" id="1_cs5o3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_cs5o3"]
+resource_local_to_scene = true
 font_size = 24
-font_color = Color(0.72584, 0.86, 0.6536, 1)
 outline_size = 10
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 0
