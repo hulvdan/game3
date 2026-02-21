@@ -2,6 +2,10 @@ extends Control
 
 class_name UIActionLabels
 
+@export var _label_curve_y: Curve
+@export var _label_offset_y_min: float = 0
+@export var _label_offset_y_max: float = 1
+@export var _label_duration: float = 1
 @export var _options: Dictionary[String, UIActionLabelOpts]
 @export var _packed_label: PackedScene
 
@@ -26,13 +30,19 @@ func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##
 
 func explicit_update(dt: float, player_camera_dir: Vector3, player_camera_dot: float) -> void: ##
 	for label: UIActionLabel in get_children():
-		var label_world_pos: Vector3 = label.get_world_pos()
-		var camera_dot: float = (Game.v.camera.position - label_world_pos).dot(player_camera_dir)
-		label.scale = Vector2(1, 1) * (player_camera_dot / camera_dot)
-		label.position = Game.v.camera.unproject_position(label_world_pos) - label.size / 2.0
+		var pos: Vector3 = label.pos
+		var camera_dot: float = (Game.v.camera.position - pos).dot(player_camera_dir)
+		var dot_scale: float = player_camera_dot / camera_dot
+		label.scale = Vector2(1, 1) * dot_scale
+		label.position = Game.v.camera.unproject_position(pos) - label.size / 2.0
+		label.position.y += lerp(
+			_label_offset_y_min,
+			_label_offset_y_max,
+			_label_curve_y.sample(label.elapsed / _label_duration),
+		) * dot_scale
 
 		label.elapsed += dt
-		if label.elapsed >= label.duration:
+		if label.elapsed >= _label_duration:
 			label.queue_free()
 			continue
 ##

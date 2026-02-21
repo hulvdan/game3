@@ -8,6 +8,11 @@
 [ext_resource type="Texture2D" uid="uid://xsdk6xchnbug" path="res://assets/art/textures/removeme/emoji_ai_attack_started.png" id="6_ljbfl"]
 [ext_resource type="PackedScene" uid="uid://4j4fov0tin46" path="res://assets/packed_ui_action_label.tscn" id="7_um0rl"]
 
+[sub_resource type="Curve" id="Curve_um0rl"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0.033557057), 0.0, 0.46107373, 0, 0, Vector2(0.1812227, 0.15883672), -0.08909629, -0.08909629, 0, 0, Vector2(1, -1), -1.8807881, 0.0, 0, 0]
+point_count = 3
+
 [sub_resource type="Resource" id="Resource_ljbfl"]
 script = ExtResource("5_3a6xa")
 text = "DODGED"
@@ -46,14 +51,14 @@ unique_name_in_owner = true
 [node name="_container_zones" type="Node" parent="." unique_id=918849042]
 unique_name_in_owner = true
 
-[node name="_container_action_labels" type="Node" parent="." unique_id=945620315]
-unique_name_in_owner = true
-
-[node name="_ui_action_labels" type="Control" parent="." unique_id=1939429615]
+[node name="_action_labels" type="Control" parent="." unique_id=1939429615]
 unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("4_rljux")
+_label_curve_y = SubResource("Curve_um0rl")
+_label_offset_y_min = -80.0
+_label_offset_y_max = -120.0
 _options = Dictionary[String, ExtResource("5_3a6xa")]({
 "enemy_started_attack": SubResource("Resource_um0rl"),
 "player_evaded": SubResource("Resource_ljbfl")
