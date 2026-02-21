@@ -57,3 +57,25 @@ func invalid_path() -> void: ##
 	@warning_ignore("assert_always_false")
 	assert(0)
 ##
+
+
+func remove(arr: Array, value: Variant) -> void: ##
+	var index: int = arr.find(value)
+	assert(index >= 0)
+	if index >= 0:
+		arr.remove_at(index)
+##
+
+
+func unstable_remove_at(arr: Array, index: int) -> void: ##
+	assert(index >= 0)
+	if index >= 0:
+		var last_index: int = arr.size() - 1
+		arr[index] = arr[last_index]
+		arr.remove_at(last_index)
+##
+
+
+func unstable_remove(arr: Array, value: Variant) -> void: ##
+	unstable_remove_at(arr, arr.find(value))
+##

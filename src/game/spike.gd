@@ -41,11 +41,7 @@ func _on_body_entered_damage(creature: Creature) -> void:
 
 
 func _on_body_exited_damage(creature: Creature) -> void:
-	for i in range(len(creatures_to_damage)):
-		if creatures_to_damage[i] == creature:
-			creatures_to_damage.remove_at(i)
-			return
-	assert(false)
+	bf.remove(creatures_to_damage, creature)
 
 
 func try_activate() -> void:

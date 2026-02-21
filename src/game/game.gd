@@ -358,12 +358,6 @@ func _physics_process(dt: float) -> void:
 
 	## Updating projectiles + collisions + despawning
 	var space = world_3d.get_world_3d().direct_space_state
-	# var param_ray: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
-	# param_ray.collide_with_areas = false
-	# param_ray.collide_with_bodies = true
-	# param_ray.hit_back_faces = true
-	# param_ray.hit_from_inside = true
-
 	var param_shape: PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
 	param_shape.collide_with_areas = false
 	param_shape.collide_with_bodies = true
@@ -444,12 +438,7 @@ func _physics_process(dt: float) -> void:
 					apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data)
 
 				should_remove = true
-				var i: int = -1
-				for v2: Node3D in room.target_camera_elements:
-					i += 1
-					if v2 == projectile.sprite:
-						room.target_camera_elements.remove_at(i)
-						break
+				bf.unstable_remove(room.target_camera_elements, projectile.sprite)
 				for z: Node3D in projectile.zones:
 					room.container_zones.remove_child(z)
 
@@ -593,13 +582,7 @@ func apply_damage(
 
 	if (creature != room.player) && (creature.hp <= 0):
 		creature.queue_free()
-		var found: bool = false
-		for i in range(len(room.target_camera_elements)):
-			if room.target_camera_elements[i] == creature.node_target_camera:
-				room.target_camera_elements.remove_at(i)
-				found = true
-				break
-		assert(found)
+		bf.remove(room.target_camera_elements, creature.node_target_camera)
 		if creature.type != glib.GCreatureType.PLAYER:
 			room.container_mob_hp_bars.remove_child(creature.hp_bar)
 	##
