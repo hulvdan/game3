@@ -391,7 +391,7 @@ func _physics_process(dt: float) -> void:
 					should_remove = true
 					if mask != glib.GCollisionType.WALLS:
 						var damaged_creature: Creature = d.collider
-						apply_damage(damaged_creature, data.get_damage())
+						apply_damage(damaged_creature, data.get_damage(), ApplyDamageData.new())
 					break
 
 		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
@@ -409,7 +409,7 @@ func _physics_process(dt: float) -> void:
 
 				for d: Dictionary in space.intersect_shape(param_shape, 12):
 					var damaged_creature: Creature = d.collider
-					apply_damage(damaged_creature, data.get_damage())
+					apply_damage(damaged_creature, data.get_damage(), ApplyDamageData.new())
 
 				should_remove = true
 				var i: int = -1
@@ -432,10 +432,14 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Spike collisions
+	var spike_damage: ApplyDamageData = ApplyDamageData.new()
+	spike_damage.type = glib.GDamageType.SPIKE
 	for spike: Spike in room.container_spikes.get_children():
 		if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at()):
+			spike_damage.immediate = !spike.striked
+			spike.striked = true
 			for creature: Creature in spike.creatures_to_damage:
-				apply_damage(creature, glib.v.get_spikes_damage(), glib.GDamageType.SPIKE)
+				apply_damage(creature, glib.v.get_spikes_damage(), spike_damage)
 	##
 
 	## Pushing creatures apart from each other
@@ -517,23 +521,30 @@ func _process(_dt: float) -> void:
 	##
 
 
+class ApplyDamageData:
+	var type: glib.GDamageType = glib.GDamageType.STRIKE
+	var immediate: bool = true
+
+
 func apply_damage(
 		creature: Creature,
 		damage: int,
-		type: glib.GDamageType = glib.GDamageType.STRIKE,
+		data: ApplyDamageData,
 ) -> void: ##
 	if creature.type == glib.GCreatureType.PLAYER:
 		if (
 			(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
 			&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
 		):
+			if data.immediate:
+				room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
 			return
 		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
 			return
 		creature.time_since_last_damage_taken = 0
 
 	else:
-		if type == glib.GDamageType.SPIKE:
+		if data.type == glib.GDamageType.SPIKE:
 			if creature.time_since_last_damage_taken <= glib.v.get_mob_invincibility_spikes_seconds():
 				return
 			creature.time_since_last_damage_taken = 0

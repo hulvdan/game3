@@ -10,6 +10,7 @@ PLAN
 x show «!» when mob starts attack
 x mob attack cooldown
 x controllable mob attack cooldowns (rand min max)
+x challenge: evade attack -> restore stamina
 
 * mob shooting: CONTINUOUS CHECK ON ARROW through shape
 * mob shooting: 
