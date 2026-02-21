@@ -6,6 +6,7 @@ class_name UIActionLabels
 @export var _label_offset_y_min: float = 0
 @export var _label_offset_y_max: float = 1
 @export var _label_duration: float = 1
+@export var _label_duration_fade: float = 0.1
 @export var _options: Dictionary[String, UIActionLabelOpts]
 @export var _packed_label: PackedScene
 
@@ -25,6 +26,13 @@ func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##
 	if opts.texture:
 		node.node_texture_rect.texture = opts.texture
 		node.node_texture_rect.visible = true
+	var tw = create_tween()
+	tw.set_trans(Tween.TRANS_SINE)
+	tw.set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(node, "modulate:a", 0, 0)
+	tw.tween_property(node, "modulate:a", 1, _label_duration_fade)
+	tw.tween_property(node, "modulate:a", 1, _label_duration - 2 * _label_duration_fade)
+	tw.tween_property(node, "modulate:a", 0, _label_duration_fade)
 ##
 
 
