@@ -365,6 +365,7 @@ func _physics_process(dt: float) -> void:
 	param_shape.shape_rid = shape_rid
 
 	var projectiles = glib.v.get_projectiles()
+	var apply_damage_projectile_data: ApplyDamageData = ApplyDamageData.new()
 	for projectile: Projectile in room.container_projectiles.get_children():
 		var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
 
@@ -391,7 +392,7 @@ func _physics_process(dt: float) -> void:
 					should_remove = true
 					if mask != glib.GCollisionType.WALLS:
 						var damaged_creature: Creature = d.collider
-						apply_damage(damaged_creature, data.get_damage(), ApplyDamageData.new())
+						apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data)
 					break
 
 		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
@@ -409,7 +410,7 @@ func _physics_process(dt: float) -> void:
 
 				for d: Dictionary in space.intersect_shape(param_shape, 12):
 					var damaged_creature: Creature = d.collider
-					apply_damage(damaged_creature, data.get_damage(), ApplyDamageData.new())
+					apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data)
 
 				should_remove = true
 				var i: int = -1
@@ -432,14 +433,14 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Spike collisions
-	var spike_damage: ApplyDamageData = ApplyDamageData.new()
-	spike_damage.type = glib.GDamageType.SPIKE
+	var apply_damage_spike_data: ApplyDamageData = ApplyDamageData.new()
+	apply_damage_spike_data.type = glib.GDamageType.SPIKE
 	for spike: Spike in room.container_spikes.get_children():
 		if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at()):
-			spike_damage.immediate = !spike.striked
+			apply_damage_spike_data.immediate = !spike.striked
 			spike.striked = true
 			for creature: Creature in spike.creatures_to_damage:
-				apply_damage(creature, glib.v.get_spikes_damage(), spike_damage)
+				apply_damage(creature, glib.v.get_spikes_damage(), apply_damage_spike_data)
 	##
 
 	## Pushing creatures apart from each other
