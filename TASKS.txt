@@ -8,8 +8,9 @@ PLAN
 ============================================================
 
 x show «!» when mob starts attack
+x mob attack cooldown
 
-* mob attack cooldown
+* controllable mob attack cooldowns
 * 
 * mob shooting: CONTINUOUS CHECK ON ARROW through shape
 * mob shooting: 

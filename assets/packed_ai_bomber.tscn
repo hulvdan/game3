@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://ymtow62jsqhi" path="res://src/game/ai_action_chase.gd" id="1_o73ly"]
 [ext_resource type="Script" uid="uid://cg016dbe7gs1x" path="res://addons/beehave/nodes/composites/sequence.gd" id="1_y73n4"]
 [ext_resource type="Script" uid="uid://dt23wmktkxljd" path="res://src/game/ai_action_attack.gd" id="2_y73n4"]
+[ext_resource type="Script" uid="uid://2qri6rrfv8ui" path="res://addons/beehave/nodes/decorators/cooldown.gd" id="4_pgegi"]
 [ext_resource type="Script" uid="uid://ppx06e3ctysl" path="res://src/game/ai_action_idle_after_attack.gd" id="5_ear5s"]
 [ext_resource type="PackedScene" uid="uid://dr5fwhfdayh3f" path="res://assets/packed_ai_emoji_attack.tscn" id="5_nlssn"]
 
@@ -26,13 +27,27 @@ metadata/_custom_type_script = "uid://cg016dbe7gs1x"
 script = ExtResource("1_o73ly")
 metadata/_custom_type_script = "uid://ymtow62jsqhi"
 
-[node name="ActionAttack" type="Node" parent="SequenceComposite" unique_id=648448099]
+[node name="CooldownDecorator" type="Node" parent="SequenceComposite" unique_id=950145343]
+script = ExtResource("4_pgegi")
+wait_time = 2.0
+metadata/_custom_type_script = "uid://2qri6rrfv8ui"
+
+[node name="SequenceComposite" type="Node" parent="SequenceComposite/CooldownDecorator" unique_id=33178098]
+script = ExtResource("1_y73n4")
+metadata/_custom_type_script = "uid://cg016dbe7gs1x"
+
+[node name="ActionAttack" type="Node" parent="SequenceComposite/CooldownDecorator/SequenceComposite" unique_id=648448099]
 script = ExtResource("2_y73n4")
+emoji_duration = 0.5
 emoji_y_curve = SubResource("Curve_ear5s")
+emoji_offset_x_max = -0.2
+emoji_offset_y_min = 0.3
+emoji_offset_y_max = 0.6
 packed_emoji_ai_attack = ExtResource("5_nlssn")
+cooldown = null
 metadata/_custom_type_script = "uid://dt23wmktkxljd"
 
-[node name="ActionIdleAfterAttack" type="Node" parent="SequenceComposite" unique_id=309857631]
+[node name="ActionIdleAfterAttack" type="Node" parent="SequenceComposite/CooldownDecorator/SequenceComposite" unique_id=309857631]
 script = ExtResource("5_ear5s")
 idle_for_min = 0.2
 idle_for_max = 1.0
