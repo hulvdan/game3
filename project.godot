@@ -41,12 +41,12 @@ buses/default_bus_layout="res://assets/default_bus_layout.tres"
 [autoload]
 
 Bridge="*uid://cx4klxojbw6ck"
-bf="*uid://dj7syt5f528l6"
 glib="*uid://1jksc3q42eag"
 BeehaveGlobalMetrics="*uid://c3ktl6ontsdt7"
 BeehaveGlobalDebugger="*uid://bl3ma400hpvsh"
 ImmediateGizmos2D="*uid://dy3uarox5dcqv"
 ImmediateGizmos3D="*uid://b1itedits8xid"
+bf="*uid://dj7syt5f528l6"
 
 [debug]
 
