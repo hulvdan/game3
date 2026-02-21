@@ -12,7 +12,6 @@ class_name ActionAttack
 @export var emoji_offset_y_min: float = 0
 @export var emoji_offset_y_max: float = 1
 @export var packed_emoji_ai_attack: PackedScene
-@export var cooldown: float = 2
 
 var elapsed_since_start: float = 0.0
 var projectile_spawned: bool

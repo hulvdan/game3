@@ -23,3 +23,12 @@ class Controller:
 
 
 var controller: Controller = Controller.new()
+
+
+func setup_ai(tree: BeehaveTree) -> void:
+	add_child(tree)
+	var cooldown_path: String = tree.get_meta("cooldown")
+	var cooldown: ActionRandCooldown = tree.get_node(cooldown_path)
+	var data: glib.GCreature = glib.v.get_creatures()[type]
+	cooldown.cooldown_min = data.get_attack_cooldown_min()
+	cooldown.cooldown_max = data.get_attack_cooldown_max()

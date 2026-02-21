@@ -1713,6 +1713,16 @@ class GCreature:
 		service.field = __collision_type
 		data[__collision_type.tag] = service
 
+		__attack_cooldown_min = PBField.new("attack_cooldown_min", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __attack_cooldown_min
+		data[__attack_cooldown_min.tag] = service
+
+		__attack_cooldown_max = PBField.new("attack_cooldown_max", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __attack_cooldown_max
+		data[__attack_cooldown_max.tag] = service
+
 
 	var data = { }
 
@@ -1934,6 +1944,50 @@ class GCreature:
 
 	func set_collision_type(value: int) -> void:
 		__collision_type.value = value
+
+
+	var __attack_cooldown_min: PBField
+
+
+	func has_attack_cooldown_min() -> bool:
+		if __attack_cooldown_min.value != null:
+			return true
+		return false
+
+
+	func get_attack_cooldown_min() -> float:
+		return __attack_cooldown_min.value
+
+
+	func clear_attack_cooldown_min() -> void:
+		data[11].state = PB_SERVICE_STATE.UNFILLED
+		__attack_cooldown_min.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_attack_cooldown_min(value: float) -> void:
+		__attack_cooldown_min.value = value
+
+
+	var __attack_cooldown_max: PBField
+
+
+	func has_attack_cooldown_max() -> bool:
+		if __attack_cooldown_max.value != null:
+			return true
+		return false
+
+
+	func get_attack_cooldown_max() -> float:
+		return __attack_cooldown_max.value
+
+
+	func clear_attack_cooldown_max() -> void:
+		data[12].state = PB_SERVICE_STATE.UNFILLED
+		__attack_cooldown_max.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_attack_cooldown_max(value: float) -> void:
+		__attack_cooldown_max.value = value
 
 
 	func _to_string() -> String:

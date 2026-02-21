@@ -62,6 +62,8 @@ message GCreature {
   float attack_projectile_spawn_at = 8;
   float attack_duration = 9;
   int32 collision_type = 10;
+  float attack_cooldown_min = 11;
+  float attack_cooldown_max = 12;
 }
 
 message GDamage {

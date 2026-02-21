@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://ymtow62jsqhi" path="res://src/game/ai_action_chase.gd" id="1_o73ly"]
 [ext_resource type="Script" uid="uid://cg016dbe7gs1x" path="res://addons/beehave/nodes/composites/sequence.gd" id="1_y73n4"]
 [ext_resource type="Script" uid="uid://dt23wmktkxljd" path="res://src/game/ai_action_attack.gd" id="2_y73n4"]
+[ext_resource type="Script" uid="uid://bewpedgk77a3n" path="res://src/game/ai_action_rand_cooldown.gd" id="4_bvqtc"]
 [ext_resource type="Script" uid="uid://2qri6rrfv8ui" path="res://addons/beehave/nodes/decorators/cooldown.gd" id="4_pgegi"]
 [ext_resource type="Script" uid="uid://ppx06e3ctysl" path="res://src/game/ai_action_idle_after_attack.gd" id="5_ear5s"]
 [ext_resource type="PackedScene" uid="uid://dr5fwhfdayh3f" path="res://assets/packed_ai_emoji_attack.tscn" id="5_nlssn"]
@@ -15,9 +16,10 @@ point_count = 3
 
 [node name="BeehaveTree" type="Node" unique_id=1576782657 node_paths=PackedStringArray("blackboard", "actor")]
 script = ExtResource("1_1ewhg")
-blackboard = NodePath("@Node@60439")
+blackboard = NodePath("@Node@28526")
 actor = NodePath("..")
 metadata/_custom_type_script = "uid://bb0t2ovl7wifo"
+metadata/cooldown = NodePath("SequenceComposite/CooldownDecorator/SequenceComposite/ActionRandCooldown")
 
 [node name="SequenceComposite" type="Node" parent="." unique_id=1945448031]
 script = ExtResource("1_y73n4")
@@ -29,7 +31,6 @@ metadata/_custom_type_script = "uid://ymtow62jsqhi"
 
 [node name="CooldownDecorator" type="Node" parent="SequenceComposite" unique_id=950145343]
 script = ExtResource("4_pgegi")
-wait_time = 2.0
 metadata/_custom_type_script = "uid://2qri6rrfv8ui"
 
 [node name="SequenceComposite" type="Node" parent="SequenceComposite/CooldownDecorator" unique_id=33178098]
@@ -44,7 +45,6 @@ emoji_offset_x_max = -0.2
 emoji_offset_y_min = 0.3
 emoji_offset_y_max = 0.6
 packed_emoji_ai_attack = ExtResource("5_nlssn")
-cooldown = null
 metadata/_custom_type_script = "uid://dt23wmktkxljd"
 
 [node name="ActionIdleAfterAttack" type="Node" parent="SequenceComposite/CooldownDecorator/SequenceComposite" unique_id=309857631]
@@ -52,3 +52,7 @@ script = ExtResource("5_ear5s")
 idle_for_min = 0.2
 idle_for_max = 1.0
 metadata/_custom_type_script = "uid://ppx06e3ctysl"
+
+[node name="ActionRandCooldown" type="Node" parent="SequenceComposite/CooldownDecorator/SequenceComposite" unique_id=63914073 node_paths=PackedStringArray("cooldown_decorator")]
+script = ExtResource("4_bvqtc")
+cooldown_decorator = NodePath("../..")

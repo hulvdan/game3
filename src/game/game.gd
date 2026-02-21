@@ -72,7 +72,8 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 		creature.hp_bar = bar
 		bar.anchor_right *= creature.hp / 3.0
 		room.container_mob_hp_bars.add_child(bar)
-		creature.add_child(packed_ai.instantiate())
+		var tree: BeehaveTree = packed_ai.instantiate()
+		creature.setup_ai(tree)
 
 	room.target_camera_elements.append(creature.node_target_camera)
 

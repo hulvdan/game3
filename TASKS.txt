@@ -9,9 +9,8 @@ PLAN
 
 x show «!» when mob starts attack
 x mob attack cooldown
+x controllable mob attack cooldowns (rand min max)
 
-* controllable mob attack cooldowns
-* 
 * mob shooting: CONTINUOUS CHECK ON ARROW through shape
 * mob shooting: 
 * mob shooting: mob throws bomb and it works and looks ok
