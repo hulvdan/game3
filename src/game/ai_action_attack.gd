@@ -11,8 +11,6 @@ class_name ActionAttack
 @export var emoji_offset_x_max: float = 1
 @export var emoji_offset_y_min: float = 0
 @export var emoji_offset_y_max: float = 1
-@export var packed_emoji_ai_attack: PackedScene
-@export var packed_ui_action_label: PackedScene
 
 var elapsed_since_start: float = 0.0
 var projectile_spawned: bool
@@ -33,24 +31,9 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	var actor: Creature = actor_
 	var data = glib.v.get_creatures()[actor.type]
 
-	if !elapsed_since_start && packed_emoji_ai_attack:
+	if !elapsed_since_start:
 		Game.v.enemy_started_attack.emit(actor.transform.origin)
-		# Game.v.make_action_label(bf.from_xz(actor.transform.origin), packed_ui_action_label)
-		# var emoji: Sprite3D = packed_emoji_ai_attack.instantiate()
-		# actor.node_sprite.add_child(emoji)
-		# var tw: Tween = create_tween()
-		# tw.tween_method(
-		# 	func(t: float) -> void:
-		# 		tween_method(emoji, t),
-		# 	0.0,
-		# 	1.0,
-		# 	emoji_duration,
-		# )
-		# tw.tween_callback(tween_method_destroy.bind(emoji))
 
-	# var target_pos: Vector2 = bf.from_xz(Room.v.player.transform.origin)
-	# var pos = bf.from_xz((actor as Node3D).transform.origin)
-	# var dpos: Vector2 = target_pos - pos
 	elapsed_since_start += get_physics_process_delta_time()
 
 	if (
