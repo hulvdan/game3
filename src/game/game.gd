@@ -193,6 +193,9 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 
 func _ready() -> void:
+	# TODO: REMOVEME
+	TranslationServer.set_locale('ru')
+
 	v = self
 
 	## Setup

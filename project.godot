@@ -138,6 +138,10 @@ roll={
 ]
 }
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://assets/localization.en.translation", "res://assets/localization.ru.translation")
+
 [layer_names]
 
 3d_physics/layer_1="walls"

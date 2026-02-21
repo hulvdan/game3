@@ -351,6 +351,13 @@ def make_swatch():
     # }
 
 
+@command
+def godot_reimport_localization():
+    bf.run_command("""
+        godot --headless --editor --import --quit assets/localization.csv
+    """)
+
+
 def main() -> None:
     # {  ###
     test_value = bf.hash32("test")

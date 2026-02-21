@@ -15,7 +15,7 @@ point_count = 3
 
 [sub_resource type="Resource" id="Resource_ljbfl"]
 script = ExtResource("5_3a6xa")
-text = "DODGED"
+text = "DODGE"
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
 [sub_resource type="Resource" id="Resource_um0rl"]

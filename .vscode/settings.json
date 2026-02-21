@@ -12,6 +12,11 @@
   },
   "runOnSave.commands": [
     {
+      "match": "localization.csv$",
+      "command": "uv run python cli/bf_cli.py godot_reimport_localization",
+      "runIn": "backend"
+    },
+    {
       "match": "glib.yaml$",
       "command": "uv run python cli/bf_cli.py codegen windows debug",
       "runIn": "backend"

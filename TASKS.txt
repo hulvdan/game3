@@ -15,9 +15,8 @@ x mob exclamation action label
 x player dodge action label
 x labels fade in/out
 x DODGED font outline
+x DODGED localization
 
-* DODGED localization
-* 
 * mob shooting: CONTINUOUS CHECK ON ARROW through shape
 * mob shooting: 
 * mob shooting: mob throws bomb and it works and looks ok
