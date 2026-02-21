@@ -14,4 +14,6 @@ var d: Data
 var res: ResProjectile
 var zones: Array[Node3D]
 
+var straight__pierced: int
+
 @onready var sprite: Sprite3D = %_sprite

@@ -2430,6 +2430,11 @@ class GProjectile:
 		service.field = __damage
 		data[__damage.tag] = service
 
+		__pierce = PBField.new("pierce", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __pierce
+		data[__pierce.tag] = service
+
 
 	var data = { }
 
@@ -2629,6 +2634,28 @@ class GProjectile:
 
 	func set_damage(value: int) -> void:
 		__damage.value = value
+
+
+	var __pierce: PBField
+
+
+	func has_pierce() -> bool:
+		if __pierce.value != null:
+			return true
+		return false
+
+
+	func get_pierce() -> int:
+		return __pierce.value
+
+
+	func clear_pierce() -> void:
+		data[10].state = PB_SERVICE_STATE.UNFILLED
+		__pierce.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_pierce(value: int) -> void:
+		__pierce.value = value
 
 
 	func _to_string() -> String:

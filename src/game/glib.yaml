@@ -102,6 +102,7 @@ projectiles:
   - type: ARROW
     damage: 1
     straight__speed: 14
+    pierce: 3
   - type: BOMB
     damage: 2
     projectilefly_type: ARC

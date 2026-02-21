@@ -358,51 +358,76 @@ func _physics_process(dt: float) -> void:
 
 	## Updating projectiles + collisions + despawning
 	var space = world_3d.get_world_3d().direct_space_state
-	var param_ray: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
-	param_ray.collide_with_areas = false
-	param_ray.collide_with_bodies = true
-	param_ray.hit_back_faces = true
-	param_ray.hit_from_inside = true
+	# var param_ray: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
+	# param_ray.collide_with_areas = false
+	# param_ray.collide_with_bodies = true
+	# param_ray.hit_back_faces = true
+	# param_ray.hit_from_inside = true
 
 	var param_shape: PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
 	param_shape.collide_with_areas = false
 	param_shape.collide_with_bodies = true
-	var shape_rid: RID = PhysicsServer3D.sphere_shape_create()
-	param_shape.shape_rid = shape_rid
+	var shape_rid_sphere: RID = PhysicsServer3D.sphere_shape_create()
+	var shape_rid_cylinder: RID = PhysicsServer3D.cylinder_shape_create()
+	var cylinder_shape_dict: Dictionary = { "height": 1.0, "radius": 0.01 }
 
 	var projectiles = glib.v.get_projectiles()
 	var apply_damage_projectile_data: ApplyDamageData = ApplyDamageData.new()
 	for projectile: Projectile in room.container_projectiles.get_children():
 		var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
-
 		projectile.elapsed += dt
 
 		var should_remove: bool = false
-
 		var data = projectiles[projectile.d.type]
+		var fly = data.get_projectilefly_type()
 
-		if data.get_projectilefly_type() == glib.GProjectileFlyType.STRAIGHT:
-			var projectile_step: Vector3 = Vector3(0, 0, -1) * (data.get_straight__speed() * dt)
+		if fly == glib.GProjectileFlyType.STRAIGHT:
+			var projectile_travelled = data.get_straight__speed() * dt
+			var projectile_step: Vector3 = Vector3(0, 0, -1) * projectile_travelled
+			cylinder_shape_dict.height = projectile_travelled
 			projectile.translate_object_local(projectile_step)
 
-			param_ray.from = projectile.transform.origin
-			param_ray.to = projectile.transform.origin + projectile.transform.basis * projectile_step
+			# ImmediateGizmos3D.set_transform(
+			# 	Transform3D(
+			# 		projectile.transform.basis
+			# 		* Basis.from_euler(Vector3(0.0, PI / 2, PI / 2)),
+			# 	),
+			# )
+			# ImmediateGizmos3D.line_capsule(
+			# 	Vector3(0, 0, 0),
+			# 	cylinder_shape_dict.radius,
+			# 	cylinder_shape_dict.height,
+			# 	Color.BLUE,
+			# )
+
+			PhysicsServer3D.shape_set_data(shape_rid_cylinder, cylinder_shape_dict)
+			param_shape.shape_rid = shape_rid_cylinder
+			param_shape.transform.origin = projectile.transform.origin
+			param_shape.transform.basis = projectile.transform.basis * Basis.from_euler(Vector3(0.0, PI / 2, PI / 2))
 
 			for mask in [
 				glib.GCollisionType.WALLS,
 				glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
 			]:
-				param_ray.collision_mask = mask
-				var d: Dictionary = space.intersect_ray(param_ray)
-				if d:
-					should_remove = true
-					if mask != glib.GCollisionType.WALLS:
-						var damaged_creature: Creature = d.collider
-						apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data)
+				param_shape.collision_mask = mask
+				for d: Dictionary in space.intersect_shape(param_shape, 12):
+					if mask == glib.GCollisionType.WALLS:
+						should_remove = true
+						break
+
+					var damaged_creature: Creature = d.collider
+					apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data)
+					projectile.straight__pierced += 1
+					if projectile.straight__pierced >= data.get_pierce():
+						should_remove = true
+						break
+
+				if should_remove:
 					break
 
-		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-			PhysicsServer3D.shape_set_data(shape_rid, data.get_arc__aoe_radius())
+		elif fly == glib.GProjectileFlyType.ARC:
+			PhysicsServer3D.shape_set_data(shape_rid_sphere, data.get_arc__aoe_radius())
+			param_shape.shape_rid = shape_rid_sphere
 
 			var t: float = projectile.elapsed / data.get_arc__duration()
 			var p: Vector2 = lerp(projectile.d.origin, projectile.d.target, t)
@@ -435,7 +460,8 @@ func _physics_process(dt: float) -> void:
 			room.container_projectiles.remove_child(projectile)
 			projectile.queue_free()
 
-	PhysicsServer3D.free_rid(shape_rid)
+	PhysicsServer3D.free_rid(shape_rid_sphere)
+	PhysicsServer3D.free_rid(shape_rid_cylinder)
 	##
 
 	## Spike collisions
@@ -467,7 +493,7 @@ func _physics_process(dt: float) -> void:
 	room.player_inside_enemy_t = min(1, room.player_inside_enemy_t)
 	##
 
-	## Updating creatures time_since_last_damage_taken
+	## Updating creatures time_since_last_damage_taken + flashing
 	for creature: Creature in room.container_creatures.get_children():
 		creature.time_since_last_damage_taken += dt
 		creature.time_since_last_damage_taken_visual += dt

@@ -36,7 +36,11 @@ func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##
 ##
 
 
-func explicit_update(dt: float, player_camera_dir: Vector3, player_camera_dot: float) -> void: ##
+func explicit_update(
+		dt: float,
+		player_camera_dir: Vector3,
+		player_camera_dot: float,
+) -> void: ##
 	for label: UIActionLabel in get_children():
 		var pos: Vector3 = label.pos
 		var camera_dot: float = (Game.v.camera.position - pos).dot(player_camera_dir)

@@ -13,14 +13,14 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0.033557057), 0.0, 0.46107373, 0, 0, Vector2(0.1812227, 0.15883672), -0.08909629, -0.08909629, 0, 0, Vector2(1, -1), -1.8807881, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="Resource" id="Resource_ljbfl"]
-script = ExtResource("5_3a6xa")
-text = "DODGE"
-metadata/_custom_type_script = "uid://dhp1eiart43ss"
-
 [sub_resource type="Resource" id="Resource_um0rl"]
 script = ExtResource("5_3a6xa")
 texture = ExtResource("6_ljbfl")
+metadata/_custom_type_script = "uid://dhp1eiart43ss"
+
+[sub_resource type="Resource" id="Resource_ljbfl"]
+script = ExtResource("5_3a6xa")
+text = "DODGE"
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
 [node name="room" type="Node" unique_id=154726596]
@@ -59,6 +59,7 @@ script = ExtResource("4_rljux")
 _label_curve_y = SubResource("Curve_um0rl")
 _label_offset_y_min = -80.0
 _label_offset_y_max = -120.0
+_label_duration = 0.8
 _label_duration_fade = 0.2
 _options = Dictionary[String, ExtResource("5_3a6xa")]({
 "enemy_started_attack": SubResource("Resource_um0rl"),

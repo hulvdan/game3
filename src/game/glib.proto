@@ -97,6 +97,7 @@ message GProjectile {
   float arc__aoe_radius = 9;
   float straight__speed = 7;
   int32 damage = 8;
+  int32 pierce = 10;
 }
 
 message GCollision {
