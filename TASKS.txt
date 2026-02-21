@@ -17,12 +17,8 @@ x labels fade in/out
 x DODGED font outline
 x DODGED localization
 x mob shooting: CONTINUOUS CHECK ON ARROW through shape
+x pierce: arrow damages each enemy once
 
-* pierce: arrow damages each enemy once
-* mob shooting: mob throws bomb and it works and looks ok
-* mob shooting: 
-* mob shooting: 
-*
 * floating spiky ball trap
 *
 * items: can drop from mines (hollow knight like)

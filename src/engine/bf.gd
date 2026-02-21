@@ -29,9 +29,10 @@ func move_body_with_speed(body: RigidBody3D, direction: Vector2, speed: float) -
 	body.apply_central_force(to_xz(offset) * body.linear_damp * body.mass)
 
 
-func set_pos_2d(node: Node3D, pos: Vector2) -> void:
+func set_pos_2d(node: Node3D, pos: Vector2) -> void: ##
 	node.transform.origin.x = pos.x
 	node.transform.origin.z = pos.y
+##
 
 
 func scale_2d(node: Node3D, scale: Vector2) -> void:

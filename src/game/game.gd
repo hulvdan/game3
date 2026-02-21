@@ -410,11 +410,15 @@ func _physics_process(dt: float) -> void:
 						break
 
 					var damaged_creature: Creature = d.collider
-					apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data)
-					projectile.straight__pierced += 1
-					if projectile.straight__pierced >= data.get_pierce():
-						should_remove = true
-						break
+					if damaged_creature in projectile.damaged_creatures:
+						continue
+
+					if apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data):
+						projectile.damaged_creatures.append(damaged_creature)
+						projectile.straight__pierced += 1
+						if projectile.straight__pierced > data.get_pierce():
+							should_remove = true
+							break
 
 				if should_remove:
 					break
@@ -435,7 +439,11 @@ func _physics_process(dt: float) -> void:
 
 				for d: Dictionary in space.intersect_shape(param_shape, 12):
 					var damaged_creature: Creature = d.collider
-					apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data)
+					if damaged_creature in projectile.damaged_creatures:
+						continue
+
+					if apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data):
+						projectile.damaged_creatures.append(damaged_creature)
 
 				should_remove = true
 				bf.unstable_remove(room.target_camera_elements, projectile.sprite)
@@ -555,7 +563,7 @@ func apply_damage(
 		creature: Creature,
 		damage: int,
 		data: ApplyDamageData,
-) -> void: ##
+) -> bool: ##
 	if creature.type == glib.GCreatureType.PLAYER:
 		if (
 			(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
@@ -564,15 +572,15 @@ func apply_damage(
 			if data.immediate:
 				room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
 				player_evaded.emit(creature.transform.origin)
-			return
+			return false
 		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
-			return
+			return false
 		creature.time_since_last_damage_taken = 0
 
 	else:
 		if data.type == glib.GDamageType.SPIKE:
 			if creature.time_since_last_damage_taken <= glib.v.get_mob_invincibility_spikes_seconds():
-				return
+				return false
 			creature.time_since_last_damage_taken = 0
 
 	creature.hp -= damage
@@ -585,6 +593,8 @@ func apply_damage(
 		bf.remove(room.target_camera_elements, creature.node_target_camera)
 		if creature.type != glib.GCreatureType.PLAYER:
 			room.container_mob_hp_bars.remove_child(creature.hp_bar)
+
+	return true
 	##
 
 
