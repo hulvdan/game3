@@ -21,7 +21,7 @@ func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##
 	add_child(node)
 	node.pos = pos
 	if opts.text:
-		node.node_label.text = opts.text
+		node.node_label.text = tr(opts.text)
 		node.node_label.visible = true
 	if opts.texture:
 		node.node_texture_rect.texture = opts.texture
