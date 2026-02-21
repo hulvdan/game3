@@ -12,6 +12,7 @@ var time_since_last_damage_taken: float = INF
 var time_since_last_damage_taken_visual: float = INF
 
 var hp_bar: Bar
+var controller: Controller = Controller.new()
 
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
@@ -20,9 +21,6 @@ var hp_bar: Bar
 class Controller:
 	var move: Vector2
 	var last_move: Vector2
-
-
-var controller: Controller = Controller.new()
 
 
 func setup_ai(tree: BeehaveTree) -> void:

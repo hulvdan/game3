@@ -12,6 +12,9 @@ x mob attack cooldown
 x controllable mob attack cooldowns (rand min max)
 x challenge: evade attack -> restore stamina
 
+* mob exclamation action label
+* player dodge action label
+*
 * mob shooting: CONTINUOUS CHECK ON ARROW through shape
 * mob shooting: 
 * mob shooting: mob throws bomb and it works and looks ok

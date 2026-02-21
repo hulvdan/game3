@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://c0kmq56hthfbp"]
+
+[ext_resource type="Script" uid="uid://drnqbr80s2tb3" path="res://src/game/ui_action_label.gd" id="2_fak7j"]
+
+[sub_resource type="Curve" id="Curve_wsdyw"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0.087248325), 0.0, 3.6744576, 0, 0, Vector2(0.1419214, 0.33780754), 0.0, 0.0, 0, 0, Vector2(1, -1), -2.897169, 0.0, 0, 0]
+point_count = 3
+
+[node name="TextureRect" type="Label" unique_id=1235574754]
+offset_right = 14.0
+offset_bottom = 45.0
+script = ExtResource("2_fak7j")
+curve_y = SubResource("Curve_wsdyw")
+offset_x_max = 0.0
+offset_y_min = 1.0
+offset_y_max = 2.0

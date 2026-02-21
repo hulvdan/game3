@@ -3,6 +3,9 @@ extends Node
 class_name Game
 
 ## Variables
+signal player_evaded(world_pos: Vector3)
+signal enemy_started_attack(world_pos: Vector3)
+
 static var v: Game = null
 static var async_scene_loaded = false
 
@@ -499,7 +502,7 @@ func _physics_process(dt: float) -> void:
 	##
 
 
-func _process(_dt: float) -> void:
+func _process(dt: float) -> void:
 	## Updating camera and stuff looking at camera
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	camera.transform.origin = room.player.transform.origin + camera_dir * camera_distance
@@ -510,9 +513,10 @@ func _process(_dt: float) -> void:
 			e.rotation = camera.rotation
 	##
 
-	## Updating creature hp bar positions
 	var player_camera_dir: Vector3 = (camera.position - room.player.transform.origin).normalized()
 	var player_camera_dot: float = (camera.position - room.player.transform.origin).dot(player_camera_dir)
+
+	## Updating creature hp bar positions
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.type <= glib.GCreatureType.PLAYER:
 			continue
@@ -520,6 +524,21 @@ func _process(_dt: float) -> void:
 		creature.hp_bar.scale = Vector2(1, 1) * (player_camera_dot / creature_camera_dot)
 		creature.hp_bar.position = camera.unproject_position(creature.transform.origin) - creature.hp_bar.size / 2.0 * creature.hp_bar.scale
 	##
+
+	## Updating action labels
+	for label: UIActionLabel in room.container_action_labels.get_children():
+		var label_world_pos: Vector3 = label.get_world_pos()
+		var camera_dot: float = (camera.position - label_world_pos).dot(player_camera_dir)
+		label.scale = Vector2(1, 1) * (player_camera_dot / camera_dot)
+		label.position = camera.unproject_position(label_world_pos) - label.size / 2.0
+
+		label.elapsed += dt
+		if label.elapsed >= label.duration:
+			label.queue_free()
+			continue
+	##
+
+	room.ui_action_labels.explicit_update(dt, player_camera_dir, player_camera_dot)
 
 
 class ApplyDamageData:
@@ -539,6 +558,8 @@ func apply_damage(
 		):
 			if data.immediate:
 				room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
+				player_evaded.emit(creature.transform.origin)
+				# make_action_label(bf.from_xz(room.player.transform.origin), packed_ui_action_label_dodge)
 			return
 		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
 			return
@@ -614,5 +635,4 @@ func make_projectile(
 
 	else:
 		bf.invalid_path()
-
 ##

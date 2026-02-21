@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://4j4fov0tin46"]
+
+[ext_resource type="Script" uid="uid://drnqbr80s2tb3" path="res://src/game/ui_action_label.gd" id="1_cs5o3"]
+
+[sub_resource type="Curve" id="Curve_ca2fg"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0.015659928), 0.0, 0.46179554, 0, 0, Vector2(0.1724891, 0.15883672), 0.0, 0.0, 0, 0, Vector2(1, -1), -1.927481, 0.0, 0, 0]
+point_count = 3
+
+[node name="Control" type="Control" unique_id=2054325393]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cs5o3")
+curve_y = SubResource("Curve_ca2fg")
+
+[node name="_texture_rect" type="TextureRect" parent="." unique_id=212253884]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 4
+
+[node name="_label" type="Label" parent="." unique_id=1481600625]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1

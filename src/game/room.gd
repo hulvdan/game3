@@ -25,3 +25,6 @@ var player_attack_queued: bool
 @onready var container_mob_hp_bars: Node = %_container_mob_hp_bars
 @onready var container_spikes: Node = %_container_spikes
 @onready var container_zones: Node = %_container_zones
+@onready var container_action_labels: Node = %_container_action_labels
+@onready var ui_action_labels: UIActionLabels = %_ui_action_labels
+# @onready var container_action_labels: Node = %_container_action_labels

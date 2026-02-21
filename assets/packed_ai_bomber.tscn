@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://2qri6rrfv8ui" path="res://addons/beehave/nodes/decorators/cooldown.gd" id="4_pgegi"]
 [ext_resource type="Script" uid="uid://ppx06e3ctysl" path="res://src/game/ai_action_idle_after_attack.gd" id="5_ear5s"]
 [ext_resource type="PackedScene" uid="uid://dr5fwhfdayh3f" path="res://assets/packed_ai_emoji_attack.tscn" id="5_nlssn"]
+[ext_resource type="PackedScene" uid="uid://c66ba5s52jmvu" path="res://assets/packed_ui_action_label_mob_attack.tscn" id="7_1li3f"]
 
 [sub_resource type="Curve" id="Curve_ear5s"]
 _limits = [-2.0, 1.0, 0.0, 1.0]
@@ -45,6 +46,7 @@ emoji_offset_x_max = -0.2
 emoji_offset_y_min = 0.3
 emoji_offset_y_max = 0.6
 packed_emoji_ai_attack = ExtResource("5_nlssn")
+packed_ui_action_label = ExtResource("7_1li3f")
 metadata/_custom_type_script = "uid://dt23wmktkxljd"
 
 [node name="ActionIdleAfterAttack" type="Node" parent="SequenceComposite/CooldownDecorator/SequenceComposite" unique_id=309857631]

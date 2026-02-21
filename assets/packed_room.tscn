@@ -3,6 +3,20 @@
 [ext_resource type="Script" uid="uid://btwrl160dqpi2" path="res://src/game/room.gd" id="1_3cfnp"]
 [ext_resource type="PackedScene" uid="uid://dotetriask15v" path="res://assets/packed_floor_tile.tscn" id="2_rljux"]
 [ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/packed_creature.tscn" id="3_3a6xa"]
+[ext_resource type="Script" uid="uid://ckgxyrpc4gewc" path="res://src/game/ui_action_labels.gd" id="4_rljux"]
+[ext_resource type="Script" uid="uid://dhp1eiart43ss" path="res://src/game/ui_action_label_opts.gd" id="5_3a6xa"]
+[ext_resource type="Texture2D" uid="uid://xsdk6xchnbug" path="res://assets/art/textures/removeme/emoji_ai_attack_started.png" id="6_ljbfl"]
+[ext_resource type="PackedScene" uid="uid://4j4fov0tin46" path="res://assets/packed_ui_action_label.tscn" id="7_um0rl"]
+
+[sub_resource type="Resource" id="Resource_ljbfl"]
+script = ExtResource("5_3a6xa")
+text = "DODGED"
+metadata/_custom_type_script = "uid://dhp1eiart43ss"
+
+[sub_resource type="Resource" id="Resource_um0rl"]
+script = ExtResource("5_3a6xa")
+texture = ExtResource("6_ljbfl")
+metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
 [node name="room" type="Node" unique_id=154726596]
 script = ExtResource("1_3cfnp")
@@ -31,3 +45,17 @@ unique_name_in_owner = true
 
 [node name="_container_zones" type="Node" parent="." unique_id=918849042]
 unique_name_in_owner = true
+
+[node name="_container_action_labels" type="Node" parent="." unique_id=945620315]
+unique_name_in_owner = true
+
+[node name="_ui_action_labels" type="Control" parent="." unique_id=1939429615]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("4_rljux")
+_options = Dictionary[String, ExtResource("5_3a6xa")]({
+"enemy_started_attack": SubResource("Resource_um0rl"),
+"player_evaded": SubResource("Resource_ljbfl")
+})
+_packed_label = ExtResource("7_um0rl")
