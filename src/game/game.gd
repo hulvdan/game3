@@ -3,8 +3,11 @@ extends Node
 class_name Game
 
 ## Variables
+enum WhoGotDamagedType { PLAYER, MOB }
+
 signal player_evaded(world_pos: Vector3)
 signal enemy_started_attack(world_pos: Vector3)
+signal damaged(world_pos: Vector3, value: int, type: WhoGotDamagedType)
 
 static var v: Game = null
 static var async_scene_loaded = false
@@ -564,7 +567,8 @@ func apply_damage(
 		damage: int,
 		data: ApplyDamageData,
 ) -> bool: ##
-	if creature.type == glib.GCreatureType.PLAYER:
+	var player_got_damaged: bool = creature.type == glib.GCreatureType.PLAYER
+	if player_got_damaged:
 		if (
 			(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
 			&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
@@ -593,6 +597,12 @@ func apply_damage(
 		bf.remove(room.target_camera_elements, creature.node_target_camera)
 		if creature.type != glib.GCreatureType.PLAYER:
 			room.container_mob_hp_bars.remove_child(creature.hp_bar)
+
+	damaged.emit(
+		creature.transform.origin,
+		damage,
+		WhoGotDamagedType.PLAYER if player_got_damaged else WhoGotDamagedType.MOB,
+	)
 
 	return true
 	##

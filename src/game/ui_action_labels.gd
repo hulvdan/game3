@@ -8,12 +8,25 @@ class_name UIActionLabels
 @export var _label_duration: float = 1
 @export var _label_duration_fade: float = 0.1
 @export var _options: Dictionary[String, UIActionLabelOpts]
+@export var _damage_number_player_color: Color = Color(1, 0, 0, 1)
+@export var _damage_number_mob_color: Color = Color(1, 1, 0, 1)
 @export var _packed_label: PackedScene
+
+var _damage_opts: UIActionLabelOpts = UIActionLabelOpts.new()
 
 
 func _ready() -> void:
 	Game.v.player_evaded.connect(_make_action_label.bind(_options["player_evaded"]))
 	Game.v.enemy_started_attack.connect(_make_action_label.bind(_options["enemy_started_attack"]))
+	Game.v.damaged.connect(
+		func(world_pos: Vector3, value: int, type: Game.WhoGotDamagedType) -> void:
+			_damage_opts.text = str(value)
+			if type == Game.WhoGotDamagedType.PLAYER:
+				_damage_opts.color = _damage_number_player_color
+			else:
+				_damage_opts.color = _damage_number_mob_color
+			_make_action_label(world_pos, _damage_opts)
+	)
 
 
 func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##
@@ -23,6 +36,7 @@ func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##
 	if opts.text:
 		node.node_label.text = tr(opts.text)
 		node.node_label.visible = true
+		node.node_label.add_theme_color_override('font_color', opts.color)
 	if opts.texture:
 		node.node_texture_rect.texture = opts.texture
 		node.node_texture_rect.visible = true
