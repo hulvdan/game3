@@ -14,8 +14,8 @@ x challenge: evade attack -> restore stamina
 x mob exclamation action label
 x player dodge action label
 x labels fade in/out
+x DODGED font outline
 
-* DODGED font outline
 * DODGED localization
 * 
 * mob shooting: CONTINUOUS CHECK ON ARROW through shape
