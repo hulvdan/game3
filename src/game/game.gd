@@ -589,7 +589,7 @@ func make_projectile(
 		for i in range(2):
 			var zone: Node3D = packed_zone_circle.instantiate()
 			room.container_zones.add_child(zone)
-			zone.transform.origin = bf.to_xz(x.d.target) + Vector3(0, 0.1 * i, 0)
+			zone.transform.origin = bf.to_xz(x.d.target) + Vector3(0, 0.01 * i, 0)
 
 			var tween = create_tween()
 			if i:

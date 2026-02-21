@@ -7,24 +7,10 @@ BIG PLAN
 PLAN
 ============================================================
 
-x roll: remember last direction
-x roll: invincibility + show dodge + track spikes attack id
-x basic beehave
-x mob spawns bomb
-x mob shooting: player arrow collides with mobs
-x mob shooting: mob projectiles don't collide with mobs
-x buf don't ignore excessive fields
-  https://buf.build/docs/reference/cli/buf/generate/#description
-  -> use protoc to turn glib.proto into python classes
-  -> in python Lib.parse(glib) and turn into binary
-  -> save binary
-x mob shooting: bomb despawns after time
-x mob shooting: bomb travel animated
-x mob shooting: show bomb target indicator on floor
-x mob shooting: mob projectiles deal damage to player
-  CIRCLE SHAPE
-x mob shooting: growing zones
+x show «!» when mob starts attack
 
+* mob attack cooldown
+* 
 * mob shooting: CONTINUOUS CHECK ON ARROW through shape
 * mob shooting: 
 * mob shooting: mob throws bomb and it works and looks ok

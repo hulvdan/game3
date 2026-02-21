@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dr5fwhfdayh3f"]
+
+[ext_resource type="Texture2D" uid="uid://xsdk6xchnbug" path="res://assets/art/textures/removeme/emoji_ai_attack_started.png" id="1_x8cx3"]
+
+[node name="Sprite3D" type="Sprite3D" unique_id=289124829]
+texture = ExtResource("1_x8cx3")

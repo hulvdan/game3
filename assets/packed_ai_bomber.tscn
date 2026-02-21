@@ -5,10 +5,16 @@
 [ext_resource type="Script" uid="uid://cg016dbe7gs1x" path="res://addons/beehave/nodes/composites/sequence.gd" id="1_y73n4"]
 [ext_resource type="Script" uid="uid://dt23wmktkxljd" path="res://src/game/ai_action_attack.gd" id="2_y73n4"]
 [ext_resource type="Script" uid="uid://ppx06e3ctysl" path="res://src/game/ai_action_idle_after_attack.gd" id="5_ear5s"]
+[ext_resource type="PackedScene" uid="uid://dr5fwhfdayh3f" path="res://assets/packed_ai_emoji_attack.tscn" id="5_nlssn"]
+
+[sub_resource type="Curve" id="Curve_ear5s"]
+_limits = [-2.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0.35570478), 0.0, 1.9819374, 0, 0, Vector2(0.14130436, 0.6510067), 0.2806589, 0.2806589, 0, 0, Vector2(0.9847826, -2), -5.6464143, 0.0, 0, 0]
+point_count = 3
 
 [node name="BeehaveTree" type="Node" unique_id=1576782657 node_paths=PackedStringArray("blackboard", "actor")]
 script = ExtResource("1_1ewhg")
-blackboard = NodePath("@Node@45585")
+blackboard = NodePath("@Node@60439")
 actor = NodePath("..")
 metadata/_custom_type_script = "uid://bb0t2ovl7wifo"
 
@@ -22,6 +28,8 @@ metadata/_custom_type_script = "uid://ymtow62jsqhi"
 
 [node name="ActionAttack" type="Node" parent="SequenceComposite" unique_id=648448099]
 script = ExtResource("2_y73n4")
+emoji_y_curve = SubResource("Curve_ear5s")
+packed_emoji_ai_attack = ExtResource("5_nlssn")
 metadata/_custom_type_script = "uid://dt23wmktkxljd"
 
 [node name="ActionIdleAfterAttack" type="Node" parent="SequenceComposite" unique_id=309857631]
