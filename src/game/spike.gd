@@ -5,6 +5,7 @@ class_name Spike
 @export var curve: Curve
 
 var is_active: bool = false
+var attack_id: int = 0
 var striked: bool = false
 var activation_elapsed: float = 0
 var activation_elapsed_visual: float = 0
@@ -49,6 +50,7 @@ func _on_body_exited_damage(creature: Creature) -> void:
 func try_activate() -> void:
 	if not is_active:
 		is_active = true
+		attack_id = Room.v.get_next_attack_id()
 
 
 func _physics_process(dt: float) -> void:
@@ -60,6 +62,7 @@ func _physics_process(dt: float) -> void:
 		if activation_elapsed >= glib.v.get_spikes_duration_seconds():
 			striked = false
 			is_active = false
+			attack_id = 0
 			activation_elapsed = 0
 			activation_elapsed_visual = 0
 			_set_scale(curve.sample(0))

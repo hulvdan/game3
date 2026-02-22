@@ -166,7 +166,7 @@ def _process_glib(genline, glib) -> None:
                 size = level.size
                 for _ in range(rotation_index):
                     arr = np.array(value).reshape(size[1], size[0])
-                    rotated = np.rot90(arr, k=1)
+                    rotated = np.rot90(arr, k=-1)
                     value = rotated.ravel().tolist()
                     size = (size[1], size[0])
                 return value

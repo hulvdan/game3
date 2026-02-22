@@ -132,7 +132,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	##
 
 	var g_rooms = glib.v.get_rooms()
-	var g_room = g_rooms[(current_room_pos.x + current_room_pos.y) % len(g_rooms)]
+	var g_room = g_rooms[(current_room_pos.x + current_room_pos.y * glib.v.get_world_size().get_x()) % len(g_rooms)]
 	var size: Vector2i = glib.ToV2i(g_room.get_size())
 
 	## Placing floor tiles
@@ -531,6 +531,7 @@ func _physics_process(dt: float) -> void:
 	for spike: Spike in room.container_spikes.get_children():
 		if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at()):
 			apply_damage_spike_data.immediate = !spike.striked
+			apply_damage_spike_data.attack_id = spike.attack_id
 			spike.striked = true
 			for creature: Creature in spike.creatures_to_damage:
 				apply_damage(creature, glib.v.get_spikes_damage(), apply_damage_spike_data)
@@ -626,6 +627,7 @@ class ApplyDamageData: ##
 
 
 func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> bool: ##
+	assert(data.attack_id)
 	if data.attack_id in creature.evaded_attack_ids:
 		return false
 
@@ -638,9 +640,8 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			):
 				if data.immediate:
 					room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
-				player_perfectly_evaded.emit(creature.transform.origin)
-				if data.attack_id:
-					creature.evaded_attack_ids.append(data.attack_id)
+					player_perfectly_evaded.emit(creature.transform.origin)
+				creature.evaded_attack_ids.append(data.attack_id)
 				return false
 		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
 			return false
