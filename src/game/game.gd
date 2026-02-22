@@ -330,12 +330,12 @@ func _physics_process(dt: float) -> void:
 			dur = glib.v.get_shooting_after_roll_seconds()
 
 		if room.player_holding >= dur:
-			var from: Vector2 = bf.from_xz(room.player.transform.origin)
-			var to: Vector2 = from + bf.from_xz(room.player_bow.transform.basis.z)
 			var d: Projectile.Data = Projectile.Data.new()
 			d.type = glib.GProjectileType.ARROW
 			d.owner = glib.GCreatureType.PLAYER
-			make_projectile(glib.GProjectileType.ARROW, from, to, d)
+			d.pos = bf.from_xz(room.player.transform.origin)
+			d.target = d.pos - bf.from_xz(room.player_bow.transform.basis.z)
+			make_projectile(glib.GProjectileType.ARROW, d)
 			room.player_holding = 0
 			room.player_shooting_after_roll_scheduled = false
 		elif shooting or room.player_holding or room.player_shooting_after_roll_scheduled:
@@ -430,7 +430,7 @@ func _physics_process(dt: float) -> void:
 
 		if fly == glib.GProjectileFlyType.STRAIGHT:
 			var projectile_travelled = data.get_straight__speed() * dt
-			var projectile_step: Vector3 = Vector3(0, 0, -1) * projectile_travelled
+			var projectile_step: Vector3 = Vector3(0, 0, 1) * projectile_travelled
 			cylinder_shape_dict.height = projectile_travelled
 			projectile.translate_object_local(projectile_step)
 
@@ -477,7 +477,7 @@ func _physics_process(dt: float) -> void:
 			param_shape.shape_rid = shape_rid_sphere
 
 			var t: float = projectile.elapsed / data.get_arc__duration()
-			var p: Vector2 = lerp(projectile.d.origin, projectile.d.target, t)
+			var p: Vector2 = lerp(projectile.d.pos, projectile.d.target, t)
 			var pos: Vector3 = bf.to_xz(p)
 			pos.y = data.get_arc__height() * sin(t * PI)
 			projectile.transform.origin = pos
@@ -612,11 +612,7 @@ class ApplyDamageData:
 	var attack_id: int = 0
 
 
-func apply_damage(
-		creature: Creature,
-		damage: int,
-		data: ApplyDamageData,
-) -> bool: ##
+func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> bool: ##
 	if data.attack_id in creature.evaded_attack_ids:
 		return false
 
@@ -663,32 +659,26 @@ func apply_damage(
 	##
 
 
-func make_projectile(
-		type: glib.GProjectileType,
-		pos: Vector2,
-		target: Vector2,
-		d: Projectile.Data,
-) -> void: ##
+func make_projectile(type: glib.GProjectileType, d: Projectile.Data) -> void: ##
 	var data: glib.GProjectile = glib.v.get_projectiles()[type]
 
 	var x: Projectile = packed_projectile.instantiate()
 	room.container_projectiles.add_child(x)
 
+	if data.get_collider_radius():
+		x.sprite.scale = Vector3(1, 1, 1) * (data.get_collider_radius() * 1.53 * 2)
+
 	if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
 		room.target_camera_elements.append(x.sprite)
 
 	x.d = d
-	x.d.origin = pos
-	x.d.target = target
 	x.res = load(data.get_res())
 	x.sprite.texture = x.res.texture
 
-	x.transform.origin = bf.to_xz(pos)
+	x.transform.origin = bf.to_xz(d.pos)
 
 	if data.get_projectilefly_type() == glib.GProjectileFlyType.STRAIGHT:
-		if target == pos:
-			target = pos + Vector2(1, 0).rotated(randf() * 2.0 * PI)
-		var forward: Vector3 = bf.to_xz((target - pos).normalized())
+		var forward: Vector3 = bf.to_xz(bf.vector2_direction_or_random(d.target, d.pos))
 		x.transform.basis = Basis(Vector3(0, 1, 0).cross(forward), Vector3(0, 1, 0), forward)
 
 	elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:

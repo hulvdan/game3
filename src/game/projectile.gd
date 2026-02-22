@@ -5,7 +5,7 @@ class_name Projectile
 class Data:
 	var type: glib.GProjectileType
 	var owner: glib.GCreatureType
-	var origin: Vector2
+	var pos: Vector2
 	var target: Vector2
 
 

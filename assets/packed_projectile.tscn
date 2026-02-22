@@ -10,5 +10,5 @@ script = ExtResource("1_m1wom")
 
 [node name="_sprite" type="Sprite3D" parent="Node3D" unique_id=779208082]
 unique_name_in_owner = true
-transform = Transform3D(-1.5298985e-08, 0.35, -1.5298985e-08, 0, -1.5298985e-08, -0.35, -0.35, -1.5298985e-08, 6.687399e-16, 0, 0, 0)
+transform = Transform3D(-1.5298985e-08, -0.35, 1.5298985e-08, 0, -1.5298985e-08, -0.35, 0.35, -1.5298985e-08, 6.687399e-16, 0, 0, 0)
 texture = ExtResource("1_quauw")

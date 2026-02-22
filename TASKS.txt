@@ -14,9 +14,10 @@ x melee mob: can dodge once
 x melee mob: stops tracking player after starting attacking
 x pre-commit: stylua + editorconfig
 x mob throwing 3 fireballs
+x arrow rotated correctly
 
-* mob mage:  
-* mob mage:  
+* mob mage: projectile collision sphere
+* mob mage: projectile looks at camera
 * mob mage:  
 * mob mage:  
 * mob mage:  

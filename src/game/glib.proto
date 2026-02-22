@@ -108,6 +108,7 @@ message GProjectile {
   float straight__speed = 7;
   int32 damage = 8;
   int32 pierce = 10;
+  float collider_radius = 11;
 }
 
 message GCollision {

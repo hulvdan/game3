@@ -137,7 +137,8 @@ projectiles: ##
     straight__speed: 14
   - type: BALL
     damage: 1
-    straight__speed: 9
+    straight__speed: 6
+    collider_radius: 0.5
   - type: BOMB
     damage: 2
     projectilefly_type: ARC

@@ -19,9 +19,17 @@ enum DirectionFlags {
 }
 
 
-func clear_children(node: Node) -> void:
+func vector2_direction_or_random(from: Vector2, to: Vector2) -> Vector2: ##
+	if from == to:
+		return Vector2(1, 0).rotated(randf() * 2.0 * PI)
+	return to.direction_to(from)
+##
+
+
+func clear_children(node: Node) -> void: ##
 	for c in node.get_children():
 		c.queue_free()
+##
 
 
 func move_body_with_speed(body: RigidBody3D, direction: Vector2, speed: float) -> void:

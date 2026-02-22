@@ -2652,6 +2652,11 @@ class GProjectile:
 		service.field = __pierce
 		data[__pierce.tag] = service
 
+		__collider_radius = PBField.new("collider_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __collider_radius
+		data[__collider_radius.tag] = service
+
 
 	var data = { }
 
@@ -2873,6 +2878,28 @@ class GProjectile:
 
 	func set_pierce(value: int) -> void:
 		__pierce.value = value
+
+
+	var __collider_radius: PBField
+
+
+	func has_collider_radius() -> bool:
+		if __collider_radius.value != null:
+			return true
+		return false
+
+
+	func get_collider_radius() -> float:
+		return __collider_radius.value
+
+
+	func clear_collider_radius() -> void:
+		data[11].state = PB_SERVICE_STATE.UNFILLED
+		__collider_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_collider_radius(value: float) -> void:
+		__collider_radius.value = value
 
 
 	func _to_string() -> String:
