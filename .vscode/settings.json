@@ -12,6 +12,11 @@
   },
   "runOnSave.commands": [
     {
+      "match": ".(yml|yaml|yamlfmt)$",
+      "command": "yamlfmt ${file}",
+      "runIn": "backend"
+    },
+    {
       "match": "localization.csv$",
       "command": "uv run python cli/bf_cli.py godot_reimport_localization",
       "runIn": "backend"
