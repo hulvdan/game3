@@ -24,6 +24,7 @@ static var async_scene_loaded = false
 @export var packed_room: PackedScene
 @export var packed_creature: PackedScene
 @export var packed_floor_tile: PackedScene
+@export var packed_floor_void_tile: PackedScene
 @export var packed_collider_tile: PackedScene
 @export var packed_door: PackedScene
 @export var packed_bow: PackedScene
@@ -142,8 +143,10 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		for x in range(size.x):
 			var t = y * size.x + x
 			var node: Node3D
-			if tiles[t]:
+			if tiles[t] == 1:
 				node = packed_floor_tile.instantiate()
+			elif tiles[t] == 2:
+				node = packed_floor_void_tile.instantiate()
 			else:
 				node = packed_collider_tile.instantiate()
 			bf.set_pos_2d(node, Vector2(x, y) + Vector2(0.5, 0.5))
@@ -598,6 +601,7 @@ func _process(dt: float) -> void:
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	camera.transform.origin = room.player.transform.origin + camera_dir * camera_distance
 	camera.transform = camera.transform.looking_at(room.player.transform.origin)
+	camera.transform.origin += Vector3(0, 0, .3)
 
 	for e: Node3D in get_tree().get_nodes_in_group(GROUP_TARGET_CAMERA):
 		if e.visible:

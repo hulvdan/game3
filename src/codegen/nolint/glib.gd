@@ -36,7 +36,7 @@ func _reload_gamelib() -> void:
 
 func _ready() -> void:
 	_reload_gamelib()
-	get_tree().debug_collisions_hint = glib.v.get_debug_collisions() != 0
+	# get_tree().debug_collisions_hint = glib.v.get_debug_collisions() != 0
 
 
 func _physics_process(_dt: float) -> void:

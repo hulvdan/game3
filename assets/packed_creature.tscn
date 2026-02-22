@@ -14,6 +14,7 @@ shader_parameter/flash = Color(0, 0, 0, 1)
 
 [node name="_body" type="RigidBody3D" unique_id=1935514979 node_paths=PackedStringArray("node_body")]
 collision_layer = 0
+collision_mask = 9
 axis_lock_linear_y = true
 axis_lock_angular_x = true
 axis_lock_angular_y = true
@@ -34,6 +35,7 @@ transform = Transform3D(1, 0, 0, 0, 0.9645574, 0.26387304, 0, -0.26387304, 0.964
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, -7.450581e-09)
 material_override = SubResource("ShaderMaterial_vbw5m")
+cast_shadow = 0
 texture = ExtResource("2_qkfe7")
 
 [node name="creature" type="Node3D" parent="." unique_id=1748776430]

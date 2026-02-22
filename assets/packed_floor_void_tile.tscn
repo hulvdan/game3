@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://c6a8ssc28flag"]
+
+[ext_resource type="Texture2D" uid="uid://d2dqdiol0yetv" path="res://assets/art/textures/removeme/_tile_45_cosmic_dark.png" id="1_2x6el"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2x6el"]
+
+[node name="Node3D" type="Node3D" unique_id=1767279111]
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=1975851868]
+transform = Transform3D(1.65, 0, 0, 0, -7.212379e-08, -1.65, 0, 1.65, -7.212379e-08, 0, 0, 0)
+visible = false
+sorting_offset = -100.0
+texture = ExtResource("1_2x6el")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1347629714]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=841648004]
+shape = SubResource("BoxShape3D_2x6el")

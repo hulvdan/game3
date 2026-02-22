@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://d234a3ltwvjdx" path="res://src/engine/metrics_ga.gd" id="2_j2eim"]
 [ext_resource type="Script" uid="uid://brvrxpsaqrxl1" path="res://src/engine/platform_playgama.gd" id="2_ujfqy"]
 [ext_resource type="Texture2D" uid="uid://cidcl8dyyvms" path="res://assets/art/textures/undefined.png" id="5_m5usj"]
+[ext_resource type="PackedScene" uid="uid://c6a8ssc28flag" path="res://assets/packed_floor_void_tile.tscn" id="5_t6sda"]
 [ext_resource type="PackedScene" uid="uid://dotetriask15v" path="res://assets/packed_floor_tile.tscn" id="5_tkxyu"]
 [ext_resource type="PackedScene" uid="uid://bccjnav8tefj3" path="res://assets/packed_collider_tile.tscn" id="6_fphxj"]
 [ext_resource type="PackedScene" uid="uid://b5bwvai2t1ngr" path="res://assets/packed_creature.tscn" id="6_qdlv5"]
@@ -30,13 +31,14 @@ shader_parameter/flash = Color(1, 1, 1, 0)
 [node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("world_3d")]
 script = ExtResource("1_ig7tw")
 camera_distance = 4.015
-camera_angle = 0.87
+camera_angle = 1.065
 color_ui_hp = Color(0.9098039, 0.23137255, 0.23137255, 1)
 color_ui_stamina = Color(0.5686275, 0.85882354, 0.4117647, 1)
 world_3d = NodePath("../_meta/_world_3d")
 packed_room = ExtResource("7_vqaxa")
 packed_creature = ExtResource("6_qdlv5")
 packed_floor_tile = ExtResource("5_tkxyu")
+packed_floor_void_tile = ExtResource("5_t6sda")
 packed_collider_tile = ExtResource("6_fphxj")
 packed_door = ExtResource("7_m5usj")
 packed_bow = ExtResource("10_ew6cl")

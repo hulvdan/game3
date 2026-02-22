@@ -3,6 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://bxr63wll43dfx" path="res://assets/art/textures/removeme/_tile_33_conifer_dark.png" id="1_hofgd"]
 
 [node name="Sprite3D" type="Sprite3D" unique_id=1975851868]
-transform = Transform3D(1.65, 0, 0, 0, -7.212379e-08, -1.65, 0, 1.65, -7.212379e-08, 0, 0, 0)
+transform = Transform3D(1.58, 0, 0, 0, -6.9063994e-08, -1.58, 0, 1.58, -6.9063994e-08, 0, 0, 0)
 sorting_offset = -100.0
 texture = ExtResource("1_hofgd")
