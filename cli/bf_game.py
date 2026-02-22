@@ -18,6 +18,7 @@ import json
 from pathlib import Path
 
 import bf_lib as bf
+import numpy as np
 from bf_typer import command, timing
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
@@ -76,7 +77,29 @@ def process_glib(*args, **kwargs) -> None:  ##
     ##
 
 
+def outer_transpose_pos(
+    object_pos: tuple[int, int], object_size: tuple[int, int], level_size: tuple[int, int]
+) -> tuple[int, int]:  ##
+    x, y = object_pos
+    _w, h = object_size
+    _level_w, level_h = level_size
+    new_x = level_h - h - y
+    new_y = x
+    return new_x, new_y
+    ##
+
+
+def test_outer_transpose_pos() -> None:  ##
+    assert outer_transpose_pos((0, 0), (1, 1), (3, 2)) == (1, 0)
+    assert outer_transpose_pos((2, 1), (1, 1), (3, 2)) == (0, 2)
+    assert outer_transpose_pos((0, 0), (2, 2), (4, 3)) == (1, 0)
+    assert outer_transpose_pos((2, 1), (2, 2), (4, 3)) == (0, 2)
+    ##
+
+
 def _process_glib(genline, glib) -> None:
+    test_outer_transpose_pos()
+
     # def enumerate_table(field: str): ##
     #     scoped_processing_args[0] = field
     #
@@ -114,23 +137,35 @@ def _process_glib(genline, glib) -> None:
             continue
         if level.identifier.startswith("DONT_INCLUDE"):
             continue
+
         for rotation_index in range(4):
 
             def transpose_pos(
-                value: tuple[int, int], size: tuple[int, int] = (1, 1)
+                value: tuple[int, int], size: tuple[int, int]
             ) -> tuple[int, int]:
-                return
+                outer_size = level.size
+                for _ in range(rotation_index):
+                    value = outer_transpose_pos(value, size, outer_size)
+                    size = (size[1], size[0])
+                    outer_size = (outer_size[1], outer_size[0])
+                return value
 
             def transpose_size(value: tuple[int, int]) -> tuple[int, int]:
-                if rotation_index % 2:  # noqa: B023
+                if rotation_index % 2:
                     return (value[1], value[0])
                 return value
 
             def transpose_direction(value: int) -> int:
-                return (value + rotation_index) % 4  # noqa: B023
+                return (value + rotation_index) % 4
 
             def transpose_array(value: list[int]) -> list[int]:
-                pass
+                size = level.size
+                for _ in range(rotation_index):
+                    arr = np.array(value).reshape(size[1], size[0])
+                    rotated = np.rot90(arr, k=1)
+                    value = rotated.ravel().tolist()
+                    size = (size[1], size[0])
+                return value
 
             floor = level.get_layer("Floor")
             doors = []
@@ -139,17 +174,19 @@ def _process_glib(genline, glib) -> None:
             for x in entities.entities("Door"):
                 doors.append(
                     {
-                        "center_pos": transpose_pos(bf.as_dict(x.pos_center)),
-                        "size": transpose_size(bf.as_dict(x.size)),
-                        "direction": int(x.field("Direction").split("_", 1)[-1]),
+                        "center_pos": bf.as_dict(transpose_pos(x.pos_center, x.size)),
+                        "size": bf.as_dict(transpose_size(x.size)),
+                        "direction": transpose_direction(
+                            int(x.field("Direction").split("_", 1)[-1])
+                        ),
                     }
                 )
             for x in entities.entities("Spike"):
-                spikes.append({"pos": transpose_pos(bf.as_dict(x.pos_center))})
+                spikes.append({"pos": bf.as_dict(transpose_pos(x.pos_center, x.size))})
             rooms.append(
                 {
                     "tiles": transpose_array(floor.intGridCsv),
-                    "size": transpose_size(bf.as_dict(floor.size)),
+                    "size": bf.as_dict(transpose_size(floor.size)),
                     "doors": doors,
                     "spikes": spikes,
                 }
@@ -506,7 +543,7 @@ def process_images():  ##
     #             text_image.resize((1920, 1080)),
     #         ).save(out_dir / f.name)
 
-    # import bf_cli  # noqa
+    # import bf_cli
 
     # bf_cli.do_generate(bf.BuildPlatform.Win, bf.BuildType.Debug)
     # bf_cli.do_activate_game_ahk()
