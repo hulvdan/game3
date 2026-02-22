@@ -23,8 +23,9 @@ x creature drop proto
 x ldtk disable export flag 
 x room generation: room rotation (+ don't forget to rotate direction enums)
 x fix spikes dodge 
+x room generation: void tiles on which player can't step but projectiles can fly over
+x prototyping cubes
 
-* room generation: void tiles on which player can't step but projectiles can fly over
 * room generation: remove connections
 * room generation:  
 * room generation:  
