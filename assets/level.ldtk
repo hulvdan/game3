@@ -11,7 +11,7 @@
   "iid": "27a80100-fa90-11f0-a600-6d791be30d7e",
   "jsonVersion": "1.5.3",
   "appBuildId": 473703,
-  "nextUid": 28,
+  "nextUid": 32,
   "identifierStyle": "Capitalize",
   "toc": [],
   "worldLayout": "Free",
@@ -146,7 +146,7 @@
           {
             "value": 1,
             "identifier": "floor",
-            "color": "#000000",
+            "color": "#2F1816",
             "tile": null,
             "groupUid": 0
           },
@@ -568,6 +568,79 @@
         "pivotX": 0,
         "pivotY": 0,
         "fieldDefs": []
+      },
+      {
+        "identifier": "Creature",
+        "uid": 30,
+        "tags": [],
+        "exportToToc": false,
+        "allowOutOfBounds": false,
+        "doc": null,
+        "width": 16,
+        "height": 16,
+        "resizableX": false,
+        "resizableY": false,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "keepAspectRatio": false,
+        "tileOpacity": 1,
+        "fillOpacity": 1,
+        "lineOpacity": 1,
+        "hollow": false,
+        "color": "#EAD4AA",
+        "renderMode": "Ellipse",
+        "showName": true,
+        "tilesetId": null,
+        "tileRenderMode": "FitInside",
+        "tileRect": null,
+        "uiTileRect": null,
+        "nineSliceBorders": [],
+        "maxCount": 0,
+        "limitScope": "PerLevel",
+        "limitBehavior": "MoveLastOne",
+        "pivotX": 0,
+        "pivotY": 0,
+        "fieldDefs": [
+          {
+            "identifier": "Type",
+            "doc": null,
+            "__type": "LocalEnum.CODEGEN_Creatures",
+            "uid": 31,
+            "type": "F_Enum(29)",
+            "isArray": false,
+            "canBeNull": false,
+            "arrayMinLength": null,
+            "arrayMaxLength": null,
+            "editorDisplayMode": "ValueOnly",
+            "editorDisplayScale": 1,
+            "editorDisplayPos": "Center",
+            "editorLinkStyle": "StraightArrow",
+            "editorDisplayColor": null,
+            "editorAlwaysShow": false,
+            "editorShowInWorld": true,
+            "editorCutLongValues": true,
+            "editorTextSuffix": null,
+            "editorTextPrefix": null,
+            "useForSmartColor": false,
+            "exportToToc": false,
+            "searchable": false,
+            "min": null,
+            "max": null,
+            "regex": null,
+            "acceptFileTypes": null,
+            "defaultOverride": null,
+            "textLanguageMode": null,
+            "symmetricalRef": false,
+            "autoChainRef": true,
+            "allowOutOfLevelRef": true,
+            "allowedRefs": "OnlySame",
+            "allowedRefsEntityUid": null,
+            "allowedRefTags": [],
+            "tilesetUid": null
+          }
+        ]
       }
     ],
     "tilesets": [
@@ -733,6 +806,36 @@
         "externalRelPath": null,
         "externalFileChecksum": null,
         "tags": []
+      },
+      {
+        "identifier": "CODEGEN_Creatures",
+        "uid": 29,
+        "values": [
+          {
+            "id": "PLAYER",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "MOB_SHOOTER",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "MOB_MAGE",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "MOB_BONKER",
+            "tileRect": null,
+            "color": 0
+          }
+        ],
+        "iconTilesetUid": null,
+        "externalRelPath": null,
+        "externalFileChecksum": null,
+        "tags": []
       }
     ],
     "externalEnums": [],
@@ -747,8 +850,8 @@
         "canBeNull": false,
         "arrayMinLength": null,
         "arrayMaxLength": null,
-        "editorDisplayMode": "NameAndValue",
-        "editorDisplayScale": 1,
+        "editorDisplayMode": "ValueOnly",
+        "editorDisplayScale": 2,
         "editorDisplayPos": "Above",
         "editorLinkStyle": "StraightArrow",
         "editorDisplayColor": null,
@@ -764,7 +867,12 @@
         "max": null,
         "regex": null,
         "acceptFileTypes": null,
-        "defaultOverride": null,
+        "defaultOverride": {
+          "id": "V_Bool",
+          "params": [
+            false
+          ]
+        },
         "textLanguageMode": null,
         "symmetricalRef": false,
         "autoChainRef": true,
@@ -1221,6 +1329,129 @@
                 }
               ],
               "__worldX": 160,
+              "__worldY": 128
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                3,
+                2
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "e2861b00-fa90-11f0-a5e2-df9087b6927b",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                48,
+                32
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SHOOTER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SHOOTER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 64,
+              "__worldY": 48
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                9,
+                2
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "e4946190-fa90-11f0-a5e2-b909a1f5e1d2",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                144,
+                32
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_MAGE",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_MAGE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 160,
+              "__worldY": 48
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                3,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "e6506970-fa90-11f0-a5e2-5bba5612113f",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                48,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_BONKER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_BONKER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 64,
               "__worldY": 128
             }
           ]
@@ -1691,6 +1922,129 @@
               "fieldInstances": [],
               "__worldX": 352,
               "__worldY": 64
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                4,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "e8a025d0-fa90-11f0-a5e2-5bc2158ec85c",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                64,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SHOOTER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SHOOTER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 288,
+              "__worldY": 80
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                9,
+                5
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "e9e7c100-fa90-11f0-a5e2-dd86fcdf5596",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                144,
+                80
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SHOOTER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SHOOTER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 368,
+              "__worldY": 96
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                3,
+                8
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "eb29b6e0-fa90-11f0-a5e2-d957dc2f257d",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                48,
+                128
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_MAGE",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_MAGE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 272,
+              "__worldY": 144
             }
           ]
         },
@@ -2706,7 +3060,9 @@
           "__value": false,
           "__tile": null,
           "defUid": 27,
-          "realEditorValues": []
+          "realEditorValues": [
+            null
+          ]
         }
       ],
       "layerInstances": [
@@ -3070,6 +3426,170 @@
               "fieldInstances": [],
               "__worldX": 544,
               "__worldY": 112
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                11,
+                3
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "ed6cf020-fa90-11f0-a5e2-c33da01f2d11",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                176,
+                48
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_BONKER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_BONKER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 608,
+              "__worldY": 64
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                10,
+                6
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "eeb575b0-fa90-11f0-a5e2-3d0ca125722a",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                160,
+                96
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_BONKER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_BONKER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 592,
+              "__worldY": 112
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                5,
+                2
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "efc3b160-fa90-11f0-a5e2-8bee482843c0",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                80,
+                32
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_MAGE",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_MAGE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 512,
+              "__worldY": 48
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                16,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "f12a9460-fa90-11f0-a5e2-b95a0bb0a450",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                256,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_MAGE",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_MAGE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 688,
+              "__worldY": 128
             }
           ]
         },
@@ -3318,7 +3838,9 @@
           "__value": false,
           "__tile": null,
           "defUid": 27,
-          "realEditorValues": []
+          "realEditorValues": [
+            null
+          ]
         }
       ],
       "layerInstances": [
@@ -3939,7 +4461,9 @@
           "__value": false,
           "__tile": null,
           "defUid": 27,
-          "realEditorValues": []
+          "realEditorValues": [
+            null
+          ]
         }
       ],
       "layerInstances": [
@@ -4203,6 +4727,170 @@
               ],
               "__worldX": 384,
               "__worldY": 336
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                10,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "f3d91290-fa90-11f0-a5e2-6b86fe1a65f4",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                160,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SHOOTER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SHOOTER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 544,
+              "__worldY": 304
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                3,
+                3
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "f53c4c10-fa90-11f0-a5e2-ab4535218bd8",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                48,
+                48
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_MAGE",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_MAGE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 432,
+              "__worldY": 288
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                3,
+                10
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "f6bcaa80-fa90-11f0-a5e2-2fba309592f3",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                48,
+                160
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SHOOTER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SHOOTER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 432,
+              "__worldY": 400
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                9,
+                10
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "f7e23ec0-fa90-11f0-a5e2-21c7c117120c",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                144,
+                160
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_MAGE",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_MAGE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 528,
+              "__worldY": 400
             }
           ]
         },
@@ -4424,6 +5112,395 @@
           ],
           "autoLayerTiles": [],
           "seed": 5888856,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": []
+        }
+      ],
+      "__neighbours": []
+    },
+    {
+      "identifier": "Level_6",
+      "iid": "bb493410-fa90-11f0-a5e2-8d2d409a6c16",
+      "uid": 28,
+      "worldX": 704,
+      "worldY": 336,
+      "worldDepth": 0,
+      "pxWid": 160,
+      "pxHei": 96,
+      "__bgColor": "#696A79",
+      "bgColor": null,
+      "useAutoIdentifier": true,
+      "bgRelPath": null,
+      "bgPos": null,
+      "bgPivotX": 0.5,
+      "bgPivotY": 0.5,
+      "__smartColor": "#ADADB5",
+      "__bgPos": null,
+      "externalRelPath": null,
+      "fieldInstances": [
+        {
+          "__identifier": "disable_export",
+          "__type": "Bool",
+          "__value": true,
+          "__tile": null,
+          "defUid": 27,
+          "realEditorValues": [
+            {
+              "id": "V_Bool",
+              "params": [
+                true
+              ]
+            }
+          ]
+        }
+      ],
+      "layerInstances": [
+        {
+          "__identifier": "Progression",
+          "__type": "Entities",
+          "__cWid": 10,
+          "__cHei": 6,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "bb495b20-fa90-11f0-a5e2-e71f269d3506",
+          "levelId": 28,
+          "layerDefUid": 9,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [],
+          "autoLayerTiles": [],
+          "seed": 6739104,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": []
+        },
+        {
+          "__identifier": "Entities",
+          "__type": "Entities",
+          "__cWid": 10,
+          "__cHei": 6,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "bb495b21-fa90-11f0-a5e2-af277eab44db",
+          "levelId": 28,
+          "layerDefUid": 3,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [],
+          "autoLayerTiles": [],
+          "seed": 1468672,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": [
+            {
+              "__identifier": "Door",
+              "__grid": [
+                6,
+                0
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 256,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "c7289a00-fa90-11f0-a5e2-05e31f13f238",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                96,
+                0
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Up_3",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 256,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Up_3"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 800,
+              "__worldY": 336
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                8,
+                2
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 304,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "c7cf1330-fa90-11f0-a5e2-919b5b51cb23",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                128,
+                32
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Right_0",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 304,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Right_0"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 832,
+              "__worldY": 368
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                2,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 272,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "c84099b0-fa90-11f0-a5e2-95fc1d842b22",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                32,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Down_1",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 272,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Down_1"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 736,
+              "__worldY": 400
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                0,
+                2
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 288,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "c8cef700-fa90-11f0-a5e2-2930b4f2f47e",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                0,
+                32
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Left_2",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 288,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Left_2"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 704,
+              "__worldY": 368
+            }
+          ]
+        },
+        {
+          "__identifier": "Floor",
+          "__type": "IntGrid",
+          "__cWid": 10,
+          "__cHei": 6,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "bb495b22-fa90-11f0-a5e2-d9e9d19a546f",
+          "levelId": 28,
+          "layerDefUid": 1,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "autoLayerTiles": [],
+          "seed": 3284034,
           "overrideTilesetUid": null,
           "gridTiles": [],
           "entityInstances": []

@@ -21,8 +21,8 @@ x mob mage: dodging projectile once
 x can't dash bomb
 x creature drop proto
 x ldtk disable export flag 
+x room generation: room rotation (+ don't forget to rotate direction enums)
 
-* room generation: room rotation (+ don't forget to rotate direction enums)
 * room generation: remove connections
 * room generation: 
 * room generation:  

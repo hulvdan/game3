@@ -1150,7 +1150,7 @@ class GV3:
 		return result
 
 
-class GMobToSpawn:
+class GCreatureToSpawn:
 	func _init():
 		var service
 
@@ -1443,6 +1443,13 @@ class GRoom:
 		service.func_ref = Callable(self, "add_spikes")
 		data[__spikes.tag] = service
 
+		var __creatures_default: Array[GCreatureToSpawn] = []
+		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 6, true, __creatures_default)
+		service = PBServiceField.new()
+		service.field = __creatures
+		service.func_ref = Callable(self, "add_creatures")
+		data[__creatures.tag] = service
+
 
 	var data = { }
 
@@ -1518,6 +1525,24 @@ class GRoom:
 	func add_spikes() -> GSpike:
 		var element = GSpike.new()
 		__spikes.value.append(element)
+		return element
+
+
+	var __creatures: PBField
+
+
+	func get_creatures() -> Array[GCreatureToSpawn]:
+		return __creatures.value
+
+
+	func clear_creatures() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__creatures.value.clear()
+
+
+	func add_creatures() -> GCreatureToSpawn:
+		var element = GCreatureToSpawn.new()
+		__creatures.value.append(element)
 		return element
 
 
@@ -3157,13 +3182,6 @@ class Lib:
 		service.field = __debug_collisions
 		data[__debug_collisions.tag] = service
 
-		var __mobs_to_spawn_default: Array[GMobToSpawn] = []
-		__mobs_to_spawn = PBField.new("mobs_to_spawn", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 1, true, __mobs_to_spawn_default)
-		service = PBServiceField.new()
-		service.field = __mobs_to_spawn
-		service.func_ref = Callable(self, "add_mobs_to_spawn")
-		data[__mobs_to_spawn.tag] = service
-
 		var __rooms_default: Array[GRoom] = []
 		__rooms = PBField.new("rooms", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 2, true, __rooms_default)
 		service = PBServiceField.new()
@@ -3372,24 +3390,6 @@ class Lib:
 
 	func set_debug_collisions(value: int) -> void:
 		__debug_collisions.value = value
-
-
-	var __mobs_to_spawn: PBField
-
-
-	func get_mobs_to_spawn() -> Array[GMobToSpawn]:
-		return __mobs_to_spawn.value
-
-
-	func clear_mobs_to_spawn() -> void:
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__mobs_to_spawn.value.clear()
-
-
-	func add_mobs_to_spawn() -> GMobToSpawn:
-		var element = GMobToSpawn.new()
-		__mobs_to_spawn.value.append(element)
-		return element
 
 
 	var __rooms: PBField

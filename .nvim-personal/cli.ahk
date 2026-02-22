@@ -42,7 +42,7 @@ case "run_in_godot":
         if RegExMatch(exe, "Godot_.*_win64\.exe") {
             WinActivate, ahk_id %this_id%
             Send, {ctrl down}s{ctrl up}
-            sleep 300
+            sleep 500
             Send, {f5}
             break
         }

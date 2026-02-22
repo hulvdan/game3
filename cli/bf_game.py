@@ -141,13 +141,17 @@ def _process_glib(genline, glib) -> None:
         for rotation_index in range(4):
 
             def transpose_pos(
-                value: tuple[int, int], size: tuple[int, int]
-            ) -> tuple[int, int]:
+                value: tuple[int, int] | tuple[float, float], size: tuple[int, int]
+            ) -> tuple[int, int] | tuple[float, float]:
                 outer_size = level.size
                 for _ in range(rotation_index):
                     value = outer_transpose_pos(value, size, outer_size)
                     size = (size[1], size[0])
                     outer_size = (outer_size[1], outer_size[0])
+                if rotation_index // 2:
+                    value = (value[0], value[1] + size[1])
+                if rotation_index in (1, 2):
+                    value = (value[0] + size[0], value[1])
                 return value
 
             def transpose_size(value: tuple[int, int]) -> tuple[int, int]:
@@ -169,6 +173,7 @@ def _process_glib(genline, glib) -> None:
 
             floor = level.get_layer("Floor")
             doors = []
+            creatures = []
             spikes = []
             entities = level.get_layer("Entities")
             for x in entities.entities("Door"):
@@ -183,12 +188,20 @@ def _process_glib(genline, glib) -> None:
                 )
             for x in entities.entities("Spike"):
                 spikes.append({"pos": bf.as_dict(transpose_pos(x.pos_center, x.size))})
+            for x in entities.entities("Creature"):
+                creatures.append(
+                    {
+                        "creature_type": x.field("Type"),
+                        "pos": bf.as_dict(transpose_pos(x.pos_center, x.size)),
+                    }
+                )
             rooms.append(
                 {
                     "tiles": transpose_array(floor.intGridCsv),
                     "size": bf.as_dict(transpose_size(floor.size)),
                     "doors": doors,
                     "spikes": spikes,
+                    "creatures": creatures,
                 }
             )
     glib["rooms"] = rooms

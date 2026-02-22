@@ -22,7 +22,7 @@ message GV3 {
   float z = 3;
 }
 
-message GMobToSpawn {
+message GCreatureToSpawn {
   int32 creature_type = 1;
   GV2 pos = 2;
 }
@@ -43,6 +43,7 @@ message GRoom {
   GV2i size = 3;
   repeated int32 tiles = 4;
   repeated GSpike spikes = 5;
+  repeated GCreatureToSpawn creatures = 6;
 }
 
 message GProgression {
@@ -125,7 +126,6 @@ message GCollision {
 
 message Lib {
   int32 debug_collisions = 5;
-  repeated GMobToSpawn mobs_to_spawn = 1;
   repeated GRoom rooms = 2;
   float player_speed_holding_scale = 3;
   float player_speed_inside_enemies_scale = 17;

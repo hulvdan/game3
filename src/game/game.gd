@@ -186,8 +186,8 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 	room.player_bow = packed_bow.instantiate()
 	room.player.add_child(room.player_bow)
-	for mob in glib.v.get_mobs_to_spawn():
-		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()) + Vector2(size) / 2)
+	for mob in g_room.get_creatures():
+		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()))
 	##
 
 	room.player_stamina = glib.v.get_player_stamina_charges()

@@ -33,21 +33,6 @@ spikes_damage: 1
 shooting_seconds: 0.25
 shooting_after_roll_seconds: 0.1
 
-mobs_to_spawn: ##
-  - creature_type: MOB_SHOOTER
-    pos:
-      x: 2
-      y: -2
-  - creature_type: MOB_BONKER
-    pos:
-      x: -2
-      y: 2
-  - creature_type: MOB_MAGE
-    pos:
-      x: 0
-      y: 2
-##
-
 progression: ##
   - type: INVALID
   - type: SKILL_HP
