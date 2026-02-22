@@ -25,8 +25,6 @@
 shader = ExtResource("10_h4xlo")
 shader_parameter/flash = Color(1, 1, 1, 0)
 
-[sub_resource type="PrismMesh" id="PrismMesh_6eca0"]
-
 [node name="_main" type="Node3D" unique_id=958610633]
 
 [node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("world_3d")]
@@ -154,7 +152,3 @@ game_secret = "1cccb4f791628c4a3d3bf49e30d9a139e81aa563"
 script = ExtResource("2_ujfqy")
 
 [node name="_world_3d" type="Node3D" parent="_meta" unique_id=1366202170]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=236398579]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
-mesh = SubResource("PrismMesh_6eca0")

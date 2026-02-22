@@ -360,6 +360,7 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Collisions setup
+	var debug_collisions: bool = glib.v.get_debug_collisions()
 	var space = world_3d.get_world_3d().direct_space_state
 	var param_shape: PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
 	param_shape.collide_with_areas = false
@@ -371,7 +372,7 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## - Melee attacks collisions
-	# var apply_damage_melee_data: ApplyDamageData = ApplyDamageData.new()
+	var apply_damage_melee_data: ApplyDamageData = ApplyDamageData.new()
 	for creature: Creature in room.container_creatures.get_children():
 		if !creature.melee_attacking:
 			continue
@@ -382,7 +383,8 @@ func _physics_process(dt: float) -> void:
 		if creature.attack_elapsed > data.get_melee__attack_polygon_end_at():
 			continue
 
-		PhysicsServer3D.shape_set_data(shape_rid_polygon, cylinder_shape_dict)
+		var is_player: bool = creature.type == glib.GCreatureType.PLAYER
+
 		param_shape.shape_rid = shape_rid_polygon
 
 		var points: PackedVector3Array
@@ -395,42 +397,22 @@ func _physics_process(dt: float) -> void:
 		points.append(Vector3(dist * cos(angle / 2.0), 0, -dist * sin(angle / 2.0)))
 
 		var trr: Transform3D = creature.transform
-		trr.basis = Basis.from_euler(
-			Vector3(
-				0,
-				-bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(room.player.transform.origin)),
-				0,
-			),
-		)
-		ImmediateGizmos3D.set_transform(trr)
-		ImmediateGizmos3D.line_polygon(points)
+		var angle_y: float = -bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(room.player.transform.origin))
+		trr.basis = Basis.from_euler(Vector3(0, angle_y, 0))
+		param_shape.transform = trr
+		if debug_collisions:
+			ImmediateGizmos3D.set_transform(param_shape.transform)
+			ImmediateGizmos3D.line_polygon(points)
+		PhysicsServer3D.shape_set_data(shape_rid_polygon, points)
 
-		# param_shape.transform.origin = projectile.transform.origin
-		# param_shape.transform.basis = projectile.transform.basis * Basis.from_euler(Vector3(0.0, PI / 2, PI / 2))
+		param_shape.collision_mask = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
+		for d: Dictionary in space.intersect_shape(param_shape, 12):
+			var damaged_creature: Creature = d.collider
+			if damaged_creature in creature.melee_damaged_creatures:
+				continue
 
-		# for mask in [
-		# 	glib.GCollisionType.WALLS,
-		# 	glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
-		# ]:
-		# 	param_shape.collision_mask = mask
-		# 	for d: Dictionary in space.intersect_shape(param_shape, 12):
-		# 		if mask == glib.GCollisionType.WALLS:
-		# 			should_remove = true
-		# 			break
-
-		# 		var damaged_creature: Creature = d.collider
-		# 		if damaged_creature in projectile.damaged_creatures:
-		# 			continue
-
-		# 		if apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data):
-		# 			projectile.damaged_creatures.append(damaged_creature)
-		# 			projectile.straight__pierced += 1
-		# 			if projectile.straight__pierced > data.get_pierce():
-		# 				should_remove = true
-		# 				break
-
-		# 	if should_remove:
-		# 		break
+			if apply_damage(damaged_creature, data.get_melee__damage(), apply_damage_melee_data):
+				creature.melee_damaged_creatures.append(damaged_creature)
 	##
 
 	## - Updating projectiles + collisions + despawning
@@ -450,24 +432,19 @@ func _physics_process(dt: float) -> void:
 			cylinder_shape_dict.height = projectile_travelled
 			projectile.translate_object_local(projectile_step)
 
-			# ImmediateGizmos3D.line_polygon()
-			# ImmediateGizmos3D.set_transform(
-			# 	Transform3D(
-			# 		projectile.transform.basis
-			# 		* Basis.from_euler(Vector3(0.0, PI / 2, PI / 2)),
-			# 	),
-			# )
-			# ImmediateGizmos3D.line_capsule(
-			# 	Vector3(0, 0, 0),
-			# 	cylinder_shape_dict.radius,
-			# 	cylinder_shape_dict.height,
-			# 	Color.BLUE,
-			# )
-
 			PhysicsServer3D.shape_set_data(shape_rid_cylinder, cylinder_shape_dict)
 			param_shape.shape_rid = shape_rid_cylinder
 			param_shape.transform.origin = projectile.transform.origin
 			param_shape.transform.basis = projectile.transform.basis * Basis.from_euler(Vector3(0.0, PI / 2, PI / 2))
+
+			if debug_collisions:
+				ImmediateGizmos3D.set_transform(param_shape.transform)
+				ImmediateGizmos3D.line_capsule(
+					Vector3(0, 0, 0),
+					cylinder_shape_dict.radius as float,
+					cylinder_shape_dict.height as float,
+					Color.BLUE,
+				)
 
 			for mask in [
 				glib.GCollisionType.WALLS,

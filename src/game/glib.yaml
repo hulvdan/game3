@@ -83,6 +83,7 @@ creatures: ##
     attack_cooldown_min: 1.5
     attack_cooldown_max: 2.2
     attack_duration: 0.8
+    melee__damage: 1
     melee__attack_polygon_start_at: 0.2
     melee__attack_polygon_end_at: 0.6
     melee__attack_polygon:

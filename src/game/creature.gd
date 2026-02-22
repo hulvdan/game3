@@ -15,6 +15,7 @@ var hp_bar: Bar
 var controller: Controller = Controller.new()
 var attack_elapsed: float
 var melee_attacking: bool
+var melee_damaged_creatures: Array[Creature]
 
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
