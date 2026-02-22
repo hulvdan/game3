@@ -1,4 +1,8 @@
 # https://pre-commit.com/
+default_install_hook_types:
+  - pre-commit
+  - pre-push
+
 repos:
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
@@ -9,6 +13,11 @@ repos:
         files: ^(?!.pre-commit-config).*.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
         exclude: ^addons/.*$
         types: []
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.19.0
+    hooks:
+      - id: yamlfmt
+        language: system
   # - repo: https://github.com/Scony/godot-gdscript-toolkit
   #   rev: 4.5.0
   #   hooks:
