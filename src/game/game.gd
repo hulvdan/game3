@@ -422,6 +422,8 @@ func _physics_process(dt: float) -> void:
 		var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
 		projectile.elapsed += dt
 
+		apply_damage_projectile_data.attack_id = projectile.attack_id
+
 		var should_remove: bool = false
 		var data = projectiles[projectile.d.type]
 		var fly = data.get_projectilefly_type()
@@ -615,10 +617,11 @@ func _process(dt: float) -> void:
 	room.action_labels.explicit_update(dt, player_camera_dir, player_camera_dot)
 
 
-class ApplyDamageData:
+class ApplyDamageData: ##
 	var type: glib.GDamageType = glib.GDamageType.STRIKE
 	var immediate: bool = true
 	var attack_id: int = 0
+##
 
 
 func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> bool: ##
