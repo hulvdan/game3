@@ -3,12 +3,11 @@ extends Node
 class_name Game
 
 ## Variables
-const GROUP_TARGET_CAMERA: String = "target_camera"
-enum WhoGotDamagedType { PLAYER, MOB }
-
 signal player_perfectly_evaded(world_pos: Vector3)
 signal enemy_started_attack(world_pos: Vector3)
 signal damaged(world_pos: Vector3, value: int, type: WhoGotDamagedType)
+
+const GROUP_TARGET_CAMERA: String = "target_camera"
 
 static var v: Game = null
 static var async_scene_loaded = false
@@ -46,6 +45,10 @@ var stamina_bars: Array[Bar]
 var room: Room
 var player_is_entering_door := false
 
+var current_room_index:
+	get:
+		return room_index(current_room_pos)
+
 @onready var camera: Camera3D = %_camera
 @onready var hp_bar: Bar = %_hp_bar
 @onready var container_ui_minimap: Control = %_container_ui_minimap
@@ -54,14 +57,11 @@ var player_is_entering_door := false
 @onready var container_general: Node = %_container_general
 ##
 
+enum WhoGotDamagedType { PLAYER, MOB }
+
 
 class RoomData:
 	var gindex: int = -1
-
-
-var current_room_index:
-	get:
-		return room_index(current_room_pos)
 
 
 func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
