@@ -12,14 +12,15 @@ x melee mob: shown collider
 x melee mob: does damage
 x melee mob: can dodge once
 x melee mob: stops tracking player after starting attacking
+x pre-commit: stylua + editorconfig
+x mob throwing 3 fireballs
 
-* mob throwing 3 fireballs
-* 
-* 
-* 
-* 
-* 
-* 
+* mob mage:  
+* mob mage:  
+* mob mage:  
+* mob mage:  
+* mob mage:  
+* mob mage:  
 * 
 * floating spiky ball trap
 *

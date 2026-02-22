@@ -1783,10 +1783,11 @@ class GCreature:
 		service.field = __attack_projectile_type
 		data[__attack_projectile_type.tag] = service
 
-		__attack_projectile_spawn_at = PBField.new("attack_projectile_spawn_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		var __attack_projectiles_spawn_at_default: Array[float] = []
+		__attack_projectiles_spawn_at = PBField.new("attack_projectiles_spawn_at", PB_DATA_TYPE.FLOAT, PB_RULE.REPEATED, 8, true, __attack_projectiles_spawn_at_default)
 		service = PBServiceField.new()
-		service.field = __attack_projectile_spawn_at
-		data[__attack_projectile_spawn_at.tag] = service
+		service.field = __attack_projectiles_spawn_at
+		data[__attack_projectiles_spawn_at.tag] = service
 
 		__attack_duration = PBField.new("attack_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -1991,26 +1992,20 @@ class GCreature:
 		__attack_projectile_type.value = value
 
 
-	var __attack_projectile_spawn_at: PBField
+	var __attack_projectiles_spawn_at: PBField
 
 
-	func has_attack_projectile_spawn_at() -> bool:
-		if __attack_projectile_spawn_at.value != null:
-			return true
-		return false
+	func get_attack_projectiles_spawn_at() -> Array[float]:
+		return __attack_projectiles_spawn_at.value
 
 
-	func get_attack_projectile_spawn_at() -> float:
-		return __attack_projectile_spawn_at.value
-
-
-	func clear_attack_projectile_spawn_at() -> void:
+	func clear_attack_projectiles_spawn_at() -> void:
 		data[8].state = PB_SERVICE_STATE.UNFILLED
-		__attack_projectile_spawn_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__attack_projectiles_spawn_at.value.clear()
 
 
-	func set_attack_projectile_spawn_at(value: float) -> void:
-		__attack_projectile_spawn_at.value = value
+	func add_attack_projectiles_spawn_at(value: float) -> void:
+		__attack_projectiles_spawn_at.value.append(value)
 
 
 	var __attack_duration: PBField
@@ -3974,6 +3969,7 @@ enum GCreatureType {
 	INVALID,
 	PLAYER,
 	MOB_SHOOTER,
+	MOB_MAGE,
 	MOB_BONKER,
 	COUNT,
 }
@@ -4003,6 +3999,7 @@ enum GProjectileFlyType {
 enum GProjectileType {
 	INVALID,
 	ARROW,
+	BALL,
 	BOMB,
 	COUNT,
 }

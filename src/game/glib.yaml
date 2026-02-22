@@ -41,6 +41,10 @@ mobs_to_spawn: ##
     pos:
       x: -2
       y: 2
+  - creature_type: MOB_MAGE
+    pos:
+      x: 0
+      y: 2
 ##
 
 progression: ##
@@ -73,10 +77,22 @@ creatures: ##
     hp: 3
     speed: 0.4
     attack_projectile_type: BOMB
-    attack_projectile_spawn_at: 0.5
+    attack_projectiles_spawn_at:
+      - 0.5
     attack_duration: 0.8
     attack_cooldown_min: 0.7
     attack_cooldown_max: 1.2
+  - type: MOB_MAGE
+    hp: 2
+    speed: 0.4
+    attack_projectile_type: BALL
+    attack_projectiles_spawn_at:
+      - 0.5
+      - 1.0
+      - 1.5
+    attack_duration: 2
+    attack_cooldown_min: 2.0
+    attack_cooldown_max: 3.0
   - type: MOB_BONKER
     hp: 5
     speed: 1
@@ -119,7 +135,9 @@ projectiles: ##
   - type: ARROW
     damage: 1
     straight__speed: 14
-    pierce: 0
+  - type: BALL
+    damage: 1
+    straight__speed: 9
   - type: BOMB
     damage: 2
     projectilefly_type: ARC

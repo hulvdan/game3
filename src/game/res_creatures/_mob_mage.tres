@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ResCreature" format=3 uid="uid://njneo7od8fsv"]
+
+[ext_resource type="Script" uid="uid://dql1ibeyvp13e" path="res://src/game/res_creature.gd" id="1_fmf5s"]
+[ext_resource type="Texture2D" uid="uid://cioey3ohms7of" path="res://assets/art/textures/removeme/_tile_54_havelock_blue.png" id="2_ycunv"]
+
+[resource]
+script = ExtResource("1_fmf5s")
+texture = ExtResource("2_ycunv")
+metadata/_custom_type_script = "uid://dql1ibeyvp13e"

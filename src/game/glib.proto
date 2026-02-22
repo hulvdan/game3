@@ -64,7 +64,7 @@ message GCreature {
   int32 hp = 5;
   float speed = 6;
   int32 attack_projectile_type = 7;
-  float attack_projectile_spawn_at = 8;
+  repeated float attack_projectiles_spawn_at = 8;
   float attack_duration = 9;
   float melee__attack_polygon_start_at = 14;
   float melee__attack_polygon_end_at = 15;
