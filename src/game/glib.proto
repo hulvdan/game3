@@ -56,6 +56,12 @@ message GAttackPolygon {
   float angle = 2;
 }
 
+message GCreatureDrop {
+  int32 item_type = 1;
+  int32 min = 2;
+  int32 max = 3;
+}
+
 message GCreature {
   int32 type = 1;
   string debug_name = 2;
@@ -74,6 +80,7 @@ message GCreature {
   float attack_cooldown_min = 11;
   float attack_cooldown_max = 12;
   GAttackPolygon melee__attack_polygon = 13;
+  repeated GCreatureDrop drops = 18;
 }
 
 message GDamage {

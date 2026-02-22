@@ -1744,6 +1744,118 @@ class GAttackPolygon:
 		return result
 
 
+class GCreatureDrop:
+	func _init():
+		var service
+
+		__item_type = PBField.new("item_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __item_type
+		data[__item_type.tag] = service
+
+		__min = PBField.new("min", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __min
+		data[__min.tag] = service
+
+		__max = PBField.new("max", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __max
+		data[__max.tag] = service
+
+
+	var data = { }
+
+	var __item_type: PBField
+
+
+	func has_item_type() -> bool:
+		if __item_type.value != null:
+			return true
+		return false
+
+
+	func get_item_type() -> int:
+		return __item_type.value
+
+
+	func clear_item_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__item_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_item_type(value: int) -> void:
+		__item_type.value = value
+
+
+	var __min: PBField
+
+
+	func has_min() -> bool:
+		if __min.value != null:
+			return true
+		return false
+
+
+	func get_min() -> int:
+		return __min.value
+
+
+	func clear_min() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__min.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_min(value: int) -> void:
+		__min.value = value
+
+
+	var __max: PBField
+
+
+	func has_max() -> bool:
+		if __max.value != null:
+			return true
+		return false
+
+
+	func get_max() -> int:
+		return __max.value
+
+
+	func clear_max() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__max.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_max(value: int) -> void:
+		__max.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GCreature:
 	func _init():
 		var service
@@ -1834,6 +1946,13 @@ class GCreature:
 		service.field = __melee__attack_polygon
 		service.func_ref = Callable(self, "new_melee__attack_polygon")
 		data[__melee__attack_polygon.tag] = service
+
+		var __drops_default: Array[GCreatureDrop] = []
+		__drops = PBField.new("drops", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __drops_default)
+		service = PBServiceField.new()
+		service.field = __drops
+		service.func_ref = Callable(self, "add_drops")
+		data[__drops.tag] = service
 
 
 	var data = { }
@@ -2205,6 +2324,24 @@ class GCreature:
 	func new_melee__attack_polygon() -> GAttackPolygon:
 		__melee__attack_polygon.value = GAttackPolygon.new()
 		return __melee__attack_polygon.value
+
+
+	var __drops: PBField
+
+
+	func get_drops() -> Array[GCreatureDrop]:
+		return __drops.value
+
+
+	func clear_drops() -> void:
+		data[18].state = PB_SERVICE_STATE.UNFILLED
+		__drops.value.clear()
+
+
+	func add_drops() -> GCreatureDrop:
+		var element = GCreatureDrop.new()
+		__drops.value.append(element)
+		return element
 
 
 	func _to_string() -> String:
@@ -4004,6 +4141,7 @@ enum GCreatureType {
 
 enum GItemType {
 	INVALID,
+	GOLD,
 	ORE,
 	PLANT,
 	BONE,

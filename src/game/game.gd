@@ -516,7 +516,6 @@ func _physics_process(dt: float) -> void:
 			bf.invalid_path()
 
 		if should_remove:
-			room.container_projectiles.remove_child(projectile)
 			projectile.queue_free()
 	##
 

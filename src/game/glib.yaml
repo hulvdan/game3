@@ -83,6 +83,10 @@ creatures: ##
     attack_duration: 0.8
     attack_cooldown_min: 0.7
     attack_cooldown_max: 1.2
+    drops:
+      - item_type: GOLD
+        min: 3
+        max: 4
   - type: MOB_MAGE
     hp: 2
     speed: 0.4
@@ -94,6 +98,10 @@ creatures: ##
     attack_duration: 2
     attack_cooldown_min: 2.0
     attack_cooldown_max: 3.0
+    drops:
+      - item_type: GOLD
+        min: 10
+        max: 16
   - type: MOB_BONKER
     hp: 5
     speed: 1
@@ -107,10 +115,15 @@ creatures: ##
     melee__attack_polygon:
       distance: 2
       angle_degrees: 90
+    drops:
+      - item_type: GOLD
+        min: 1
+        max: 2
 ##
 
 items: ##
   - type: INVALID
+  - type: GOLD
   - type: ORE
   - type: PLANT
   - type: BONE
