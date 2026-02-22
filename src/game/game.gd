@@ -434,19 +434,31 @@ func _physics_process(dt: float) -> void:
 			cylinder_shape_dict.height = projectile_travelled
 			projectile.translate_object_local(projectile_step)
 
-			PhysicsServer3D.shape_set_data(shape_rid_cylinder, cylinder_shape_dict)
-			param_shape.shape_rid = shape_rid_cylinder
+			if data.get_collider_radius():
+				PhysicsServer3D.shape_set_data(shape_rid_sphere, data.get_collider_radius())
+				param_shape.shape_rid = shape_rid_sphere
+			else:
+				PhysicsServer3D.shape_set_data(shape_rid_cylinder, cylinder_shape_dict)
+				param_shape.shape_rid = shape_rid_cylinder
 			param_shape.transform.origin = projectile.transform.origin
 			param_shape.transform.basis = projectile.transform.basis * Basis.from_euler(Vector3(0.0, PI / 2, PI / 2))
 
 			if debug_collisions:
 				ImmediateGizmos3D.set_transform(param_shape.transform)
-				ImmediateGizmos3D.line_capsule(
-					Vector3(0, 0, 0),
-					cylinder_shape_dict.radius as float,
-					cylinder_shape_dict.height as float,
-					Color.BLUE,
-				)
+				if data.get_collider_radius():
+					ImmediateGizmos3D.line_circle(
+						Vector3(0, 0, 0),
+						Vector3(1, 0, 0),
+						data.get_collider_radius(),
+						Color.BLUE,
+					)
+				else:
+					ImmediateGizmos3D.line_capsule(
+						Vector3(0, 0, 0),
+						cylinder_shape_dict.radius as float,
+						cylinder_shape_dict.height as float,
+						Color.BLUE,
+					)
 
 			for mask in [
 				glib.GCollisionType.WALLS,
