@@ -429,6 +429,7 @@ func _physics_process(dt: float) -> void:
 		var fly = data.get_projectilefly_type()
 
 		if fly == glib.GProjectileFlyType.STRAIGHT:
+			apply_damage_projectile_data.type = glib.GDamageType.DEFAULT
 			var projectile_travelled = data.get_straight__speed() * dt
 			cylinder_shape_dict.height = projectile_travelled
 			var moved: Vector2 = projectile.calculated__dir * projectile_travelled
@@ -485,6 +486,7 @@ func _physics_process(dt: float) -> void:
 					break
 
 		elif fly == glib.GProjectileFlyType.ARC:
+			apply_damage_projectile_data.type = glib.GDamageType.AOE
 			PhysicsServer3D.shape_set_data(shape_rid_sphere, data.get_arc__aoe_radius())
 			param_shape.shape_rid = shape_rid_sphere
 
@@ -618,7 +620,7 @@ func _process(dt: float) -> void:
 
 
 class ApplyDamageData: ##
-	var type: glib.GDamageType = glib.GDamageType.STRIKE
+	var type: glib.GDamageType = glib.GDamageType.DEFAULT
 	var immediate: bool = true
 	var attack_id: int = 0
 ##
@@ -630,16 +632,17 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 
 	var player_got_damaged: bool = creature.type == glib.GCreatureType.PLAYER
 	if player_got_damaged:
-		if (
-			(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
-			&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
-		):
-			if data.immediate:
-				room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
+		if data.type != glib.GDamageType.AOE:
+			if (
+				(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
+				&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
+			):
+				if data.immediate:
+					room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
 				player_evaded.emit(creature.transform.origin)
 				if data.attack_id:
 					creature.evaded_attack_ids.append(data.attack_id)
-			return false
+				return false
 		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
 			return false
 		creature.time_since_last_damage_taken = 0

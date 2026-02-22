@@ -18,6 +18,7 @@ x arrow rotated correctly
 x mob mage: projectile collision sphere
 x mob mage: projectile looks at camera
 x mob mage: dodging projectile once
+x can't dash bomb
 
 * floating spiky ball trap
 *

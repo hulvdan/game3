@@ -3972,8 +3972,9 @@ class Lib:
 
 ################ USER DATA END #################
 enum GDamageType {
-	STRIKE,
+	DEFAULT,
 	SPIKE,
+	AOE,
 	COUNT,
 }
 

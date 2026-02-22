@@ -6,8 +6,9 @@ world_size: ##
 ##
 
 damages: ##
-  - type: STRIKE
+  - type: DEFAULT
   - type: SPIKE
+  - type: AOE
     ##
 
 player_speed_holding_scale: 0.35
