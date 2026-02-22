@@ -7,7 +7,6 @@
 [ext_resource type="Script" uid="uid://dhp1eiart43ss" path="res://src/game/ui_action_label_opts.gd" id="5_3a6xa"]
 [ext_resource type="Texture2D" uid="uid://xsdk6xchnbug" path="res://assets/art/textures/removeme/emoji_ai_attack_started.png" id="6_ljbfl"]
 [ext_resource type="PackedScene" uid="uid://4j4fov0tin46" path="res://assets/packed_ui_action_label.tscn" id="7_um0rl"]
-[ext_resource type="Texture2D" uid="uid://psqtox1xy7n5" path="res://assets/art/src/circle.png" id="8_ca2fg"]
 
 [sub_resource type="Curve" id="Curve_um0rl"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -70,7 +69,3 @@ _options = Dictionary[String, ExtResource("5_3a6xa")]({
 _damage_number_player_color = Color(0.9098039, 0.23137255, 0.23137255, 1)
 _damage_number_mob_color = Color(0.9843137, 1, 0.5254902, 1)
 _packed_label = ExtResource("7_um0rl")
-
-[node name="Sprite3D" type="Sprite3D" parent="." unique_id=453770899]
-transform = Transform3D(1.53, 0, 0, 0, -6.687842e-08, -1.53, 0, 1.53, -6.687842e-08, 0.5, 0, 1.5)
-texture = ExtResource("8_ca2fg")
