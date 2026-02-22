@@ -59,6 +59,11 @@ class RoomData:
 	var gindex: int = -1
 
 
+var current_room_index:
+	get:
+		return room_index(current_room_pos)
+
+
 func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	var data: glib.GCreature = glib.v.get_creatures()[type]
 	var creature: Creature = packed_creature.instantiate()
@@ -115,10 +120,10 @@ func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	## Updating flash of ui minimap
 	if current_room_pos != Vector2i.MAX:
-		var s1: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
+		var s1: ShaderMaterial = ui_minimap_rooms[current_room_index].material
 		s1.set_shader_parameter('flash', Vector4(1, 1, 1, 0))
 	current_room_pos = new_room_pos
-	var s2: ShaderMaterial = ui_minimap_rooms[room_index(current_room_pos)].material
+	var s2: ShaderMaterial = ui_minimap_rooms[current_room_index].material
 	s2.set_shader_parameter('flash', Vector4(1, 1, 1, 0.6))
 	##
 
@@ -134,7 +139,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	##
 
 	var g_rooms = glib.v.get_rooms()
-	var g_room = g_rooms[rooms[room_index(current_room_pos)].gindex]
+	var g_room = g_rooms[rooms[current_room_index].gindex]
 	var size: Vector2i = glib.ToV2i(g_room.get_size())
 
 	## Placing floor tiles
@@ -604,7 +609,7 @@ func _physics_process(dt: float) -> void:
 
 func _process(dt: float) -> void:
 	## Updating camera and stuff looking at camera
-	var g_room: glib.GRoom = glib.v.get_rooms()[rooms[room_index(current_room_pos)].gindex]
+	var g_room: glib.GRoom = glib.v.get_rooms()[rooms[current_room_index].gindex]
 	var room_size: Vector2 = Vector2(glib.ToV2i(g_room.get_size()))
 
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
