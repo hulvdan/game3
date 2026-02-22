@@ -30,7 +30,7 @@ shader_parameter/flash = Color(1, 1, 1, 0)
 
 [node name="_game" type="Node" parent="." unique_id=1695219218 node_paths=PackedStringArray("world_3d")]
 script = ExtResource("1_ig7tw")
-camera_distance = 4.015
+camera_distance = 5.0
 camera_angle = 1.065
 color_ui_hp = Color(0.9098039, 0.23137255, 0.23137255, 1)
 color_ui_stamina = Color(0.5686275, 0.85882354, 0.4117647, 1)

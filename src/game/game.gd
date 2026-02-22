@@ -16,6 +16,7 @@ static var async_scene_loaded = false
 @export_category("Values")
 @export var camera_distance: float
 @export var camera_angle: float
+@export var camera_z_offset: float = 0.3
 @export var color_ui_hp: Color
 @export var color_ui_stamina: Color
 
@@ -133,7 +134,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	##
 
 	var g_rooms = glib.v.get_rooms()
-	var g_room = g_rooms[(current_room_pos.x + current_room_pos.y * glib.v.get_world_size().get_x()) % len(g_rooms)]
+	var g_room = g_rooms[rooms[room_index(current_room_pos)].gindex]
 	var size: Vector2i = glib.ToV2i(g_room.get_size())
 
 	## Placing floor tiles
@@ -223,6 +224,7 @@ func _ready() -> void:
 	##
 
 	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
+	var g_rooms = glib.v.get_rooms()
 
 	## Filling ui minimap
 	for y_ in range(ws.y):
@@ -231,7 +233,8 @@ func _ready() -> void:
 
 		for x in range(ws.x):
 			var room_data = RoomData.new()
-			room_data.gindex = hash(room_index(Vector2i(x, y))) % len(glib.v.get_rooms())
+			room_data.gindex = (x + y * ws.x) % len(g_rooms)
+
 			rooms.append(room_data)
 
 			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
@@ -598,29 +601,40 @@ func _physics_process(dt: float) -> void:
 
 func _process(dt: float) -> void:
 	## Updating camera and stuff looking at camera
+	var g_room: glib.GRoom = glib.v.get_rooms()[rooms[room_index(current_room_pos)].gindex]
+	var room_size: Vector2 = Vector2(glib.ToV2i(g_room.get_size()))
+
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
-	camera.transform.origin = room.player.transform.origin + camera_dir * camera_distance
-	camera.transform = camera.transform.looking_at(room.player.transform.origin)
-	camera.transform.origin += Vector3(0, 0, .3)
+	var target: Vector3 = lerp(
+		room.player.transform.origin,
+		Vector3(room_size.x / 2, 0, room_size.y * 2 / 3),
+		# bf.to_xz(ws.x / 2,),
+		0.15,
+	) + Vector3(0, 0, camera_z_offset)
+	camera.transform.origin = target + camera_dir * camera_distance
+	camera.transform = camera.transform.looking_at(target)
+	# camera.transform.origin += Vector3(0, 0, .3)
+
+	# camera.transform.origin = lerp(camera.transform.origin, bf.to_xz(ws), 0.2)
 
 	for e: Node3D in get_tree().get_nodes_in_group(GROUP_TARGET_CAMERA):
 		if e.visible:
 			e.rotation = camera.rotation
 	##
 
-	var player_camera_dir: Vector3 = (camera.position - room.player.transform.origin).normalized()
-	var player_camera_dot: float = (camera.position - room.player.transform.origin).dot(player_camera_dir)
+	var target_camera_dir: Vector3 = (camera.position - target).normalized()
+	var target_camera_dot: float = (camera.position - target).dot(target_camera_dir)
 
 	## Updating creature hp bar positions
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.type <= glib.GCreatureType.PLAYER:
 			continue
-		var creature_camera_dot: float = (camera.position - creature.transform.origin).dot(player_camera_dir)
-		creature.hp_bar.scale = Vector2(1, 1) * (player_camera_dot / creature_camera_dot)
+		var creature_camera_dot: float = (camera.position - creature.transform.origin).dot(target_camera_dir)
+		creature.hp_bar.scale = Vector2(1, 1) * (target_camera_dot / creature_camera_dot)
 		creature.hp_bar.position = camera.unproject_position(creature.transform.origin) - creature.hp_bar.size / 2.0 * creature.hp_bar.scale
 	##
 
-	room.action_labels.explicit_update(dt, player_camera_dir, player_camera_dot)
+	room.action_labels.explicit_update(dt, target_camera_dir, target_camera_dot)
 
 
 class ApplyDamageData: ##

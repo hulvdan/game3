@@ -33,7 +33,7 @@ transform = Transform3D(1, 0, 0, 0, 0.9645574, 0.26387304, 0, -0.26387304, 0.964
 
 [node name="_sprite" type="Sprite3D" parent="_rotate" unique_id=1416927643]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, -7.450581e-09)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.321, 0)
 material_override = SubResource("ShaderMaterial_vbw5m")
 cast_shadow = 0
 texture = ExtResource("2_qkfe7")

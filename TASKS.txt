@@ -25,7 +25,13 @@ x room generation: room rotation (+ don't forget to rotate direction enums)
 x fix spikes dodge 
 x room generation: void tiles on which player can't step but projectiles can fly over
 x prototyping cubes
+x camera: gravitates towards room's center
 
+* camera: 
+* camera: 
+* camera: 
+* camera: 
+*
 * room generation: remove connections
 * room generation:  
 * room generation:  
