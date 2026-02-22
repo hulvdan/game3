@@ -26,6 +26,7 @@ x fix spikes dodge
 x room generation: void tiles on which player can't step but projectiles can fly over
 x prototyping cubes
 x camera: gravitates towards room's center
+x flashing player green only during invincibility frames
 
 * camera: 
 * camera: 

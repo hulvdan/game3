@@ -572,7 +572,10 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Flashing player green during rolls
-	if room.player_rolling:
+	if (
+		(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
+		&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
+	):
 		var sh: ShaderMaterial = room.player.node_sprite.material_override
 		sh.set_shader_parameter('flash', Color(0, 1, 0, 0.5))
 	##
