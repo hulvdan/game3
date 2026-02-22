@@ -20,7 +20,16 @@ x mob mage: projectile looks at camera
 x mob mage: dodging projectile once
 x can't dash bomb
 x creature drop proto
+x ldtk disable export flag 
 
+* room generation: room rotation (+ don't forget to rotate direction enums)
+* room generation: remove connections
+* room generation: 
+* room generation:  
+* room generation:  
+* room generation:  
+* 
+* 
 * drop items 
 * 
 * 

@@ -110,30 +110,50 @@ def _process_glib(genline, glib) -> None:
     world = bf.ldtk_load("assets/level.ldtk")
     rooms = []
     for level in world.levels:
+        if level.field("disable_export"):
+            continue
         if level.identifier.startswith("DONT_INCLUDE"):
             continue
-        floor = level.get_layer("Floor")
-        doors = []
-        spikes = []
-        entities = level.get_layer("Entities")
-        for x in entities.entities("Door"):
-            doors.append(
+        for rotation_index in range(4):
+
+            def transpose_pos(
+                value: tuple[int, int], size: tuple[int, int] = (1, 1)
+            ) -> tuple[int, int]:
+                return
+
+            def transpose_size(value: tuple[int, int]) -> tuple[int, int]:
+                if rotation_index % 2:  # noqa: B023
+                    return (value[1], value[0])
+                return value
+
+            def transpose_direction(value: int) -> int:
+                return (value + rotation_index) % 4  # noqa: B023
+
+            def transpose_array(value: list[int]) -> list[int]:
+                pass
+
+            floor = level.get_layer("Floor")
+            doors = []
+            spikes = []
+            entities = level.get_layer("Entities")
+            for x in entities.entities("Door"):
+                doors.append(
+                    {
+                        "center_pos": transpose_pos(bf.as_dict(x.pos_center)),
+                        "size": transpose_size(bf.as_dict(x.size)),
+                        "direction": int(x.field("Direction").split("_", 1)[-1]),
+                    }
+                )
+            for x in entities.entities("Spike"):
+                spikes.append({"pos": transpose_pos(bf.as_dict(x.pos_center))})
+            rooms.append(
                 {
-                    "center_pos": bf.as_dict(x.pos_center),
-                    "size": bf.as_dict(x.size),
-                    "direction": int(x.field("Direction").split("_", 1)[-1]),
+                    "tiles": transpose_array(floor.intGridCsv),
+                    "size": transpose_size(bf.as_dict(floor.size)),
+                    "doors": doors,
+                    "spikes": spikes,
                 }
             )
-        for x in entities.entities("Spike"):
-            spikes.append({"pos": bf.as_dict(x.pos_center)})
-        rooms.append(
-            {
-                "tiles": floor.intGridCsv,
-                "size": bf.as_dict(floor.size),
-                "doors": doors,
-                "spikes": spikes,
-            }
-        )
     glib["rooms"] = rooms
     ##
 
