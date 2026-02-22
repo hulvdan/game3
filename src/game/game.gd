@@ -6,7 +6,7 @@ class_name Game
 const GROUP_TARGET_CAMERA: String = "target_camera"
 enum WhoGotDamagedType { PLAYER, MOB }
 
-signal player_evaded(world_pos: Vector3)
+signal player_perfectly_evaded(world_pos: Vector3)
 signal enemy_started_attack(world_pos: Vector3)
 signal damaged(world_pos: Vector3, value: int, type: WhoGotDamagedType)
 
@@ -639,7 +639,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			):
 				if data.immediate:
 					room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
-				player_evaded.emit(creature.transform.origin)
+				player_perfectly_evaded.emit(creature.transform.origin)
 				if data.attack_id:
 					creature.evaded_attack_ids.append(data.attack_id)
 				return false

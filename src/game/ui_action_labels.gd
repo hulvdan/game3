@@ -16,7 +16,7 @@ var _damage_opts: UIActionLabelOpts = UIActionLabelOpts.new()
 
 
 func _ready() -> void:
-	Game.v.player_evaded.connect(_make_action_label.bind(_options["player_evaded"]))
+	Game.v.player_perfectly_evaded.connect(_make_action_label.bind(_options["player_perfectly_evaded"]))
 	Game.v.enemy_started_attack.connect(_make_action_label.bind(_options["enemy_started_attack"]))
 	Game.v.damaged.connect(
 		func(world_pos: Vector3, value: int, type: Game.WhoGotDamagedType) -> void:
