@@ -371,11 +371,66 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## - Melee attacks collisions
-	var apply_damage_melee_data: ApplyDamageData = ApplyDamageData.new()
+	# var apply_damage_melee_data: ApplyDamageData = ApplyDamageData.new()
 	for creature: Creature in room.container_creatures.get_children():
 		if !creature.melee_attacking:
 			continue
+
 		var data: glib.GCreature = glib.v.get_creatures()[creature.type]
+		if creature.attack_elapsed < data.get_melee__attack_polygon_start_at():
+			continue
+		if creature.attack_elapsed > data.get_melee__attack_polygon_end_at():
+			continue
+
+		PhysicsServer3D.shape_set_data(shape_rid_polygon, cylinder_shape_dict)
+		param_shape.shape_rid = shape_rid_polygon
+
+		var points: PackedVector3Array
+		var attack_polygon: glib.GAttackPolygon = data.get_melee__attack_polygon()
+		var dist: float = attack_polygon.get_distance()
+		var angle: float = attack_polygon.get_angle()
+		points.append(Vector3(0, 0, 0))
+		points.append(Vector3(dist * cos(angle / 2.0), 0, dist * sin(angle / 2.0)))
+		points.append(Vector3(dist, 0, 0))
+		points.append(Vector3(dist * cos(angle / 2.0), 0, -dist * sin(angle / 2.0)))
+
+		var trr: Transform3D = creature.transform
+		trr.basis = Basis.from_euler(
+			Vector3(
+				0,
+				-bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(room.player.transform.origin)),
+				0,
+			),
+		)
+		ImmediateGizmos3D.set_transform(trr)
+		ImmediateGizmos3D.line_polygon(points)
+
+		# param_shape.transform.origin = projectile.transform.origin
+		# param_shape.transform.basis = projectile.transform.basis * Basis.from_euler(Vector3(0.0, PI / 2, PI / 2))
+
+		# for mask in [
+		# 	glib.GCollisionType.WALLS,
+		# 	glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
+		# ]:
+		# 	param_shape.collision_mask = mask
+		# 	for d: Dictionary in space.intersect_shape(param_shape, 12):
+		# 		if mask == glib.GCollisionType.WALLS:
+		# 			should_remove = true
+		# 			break
+
+		# 		var damaged_creature: Creature = d.collider
+		# 		if damaged_creature in projectile.damaged_creatures:
+		# 			continue
+
+		# 		if apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data):
+		# 			projectile.damaged_creatures.append(damaged_creature)
+		# 			projectile.straight__pierced += 1
+		# 			if projectile.straight__pierced > data.get_pierce():
+		# 				should_remove = true
+		# 				break
+
+		# 	if should_remove:
+		# 		break
 	##
 
 	## - Updating projectiles + collisions + despawning

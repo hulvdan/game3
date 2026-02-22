@@ -1,5 +1,6 @@
 # Imports.  {  ###
 import json
+from math import radians
 from pathlib import Path
 
 import bf_lib as bf
@@ -93,6 +94,7 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
     with open("src/game/glib.yaml", encoding="utf-8") as glib_file:
         glib = yaml.safe_load(glib_file)
 
+    ## Codegen glib.gd + glib.binpb + glib itself
     temp_glib_path = Path(".temp/glib.gd")
     temp_glib_path.unlink(missing_ok=True)
     bf.run_command("""
@@ -165,6 +167,9 @@ func _physics_process(_dt: float) -> void:
             func(genline, glib)
 
     bf.run_command("gdscript-formatter src/codegen/nolint/glib.gd")
+    ##
+
+    degrees_to_radians_recursive_transform(glib)
 
     out_path = Path(".temp") / "glib.json"
     bf.recursive_mkdir(out_path.parent)
@@ -183,4 +188,26 @@ func _physics_process(_dt: float) -> void:
     )
 
 
-###
+def degrees_to_radians_recursive_transform(gamelib_recursed) -> None:  ##
+    if not isinstance(gamelib_recursed, dict):
+        return
+
+    keys_to_replace = [key for key in gamelib_recursed if key.endswith("_degrees")]
+
+    for key in keys_to_replace:
+        new_key = key.removesuffix("_degrees")
+        value = gamelib_recursed.pop(key)
+        assert isinstance(value, (int, float))
+        gamelib_recursed[new_key] = radians(value)
+
+    del keys_to_replace
+
+    for value in gamelib_recursed.values():
+        if isinstance(value, dict):
+            degrees_to_radians_recursive_transform(value)
+
+        elif isinstance(value, list):
+            for v in value:
+                if isinstance(v, dict):
+                    degrees_to_radians_recursive_transform(v)
+    ##

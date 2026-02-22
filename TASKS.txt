@@ -8,8 +8,12 @@ PLAN
 ============================================================
 
 x yamlfmt good config
+x melee mob: shown collider
 
-* melee mob
+* melee mob: 
+* melee mob: 
+* melee mob: 
+* melee mob: 
 * mob throwing 3 fireballs
 * 
 * 

@@ -12,7 +12,6 @@ class_name ActionAttack
 @export var emoji_offset_y_min: float = 0
 @export var emoji_offset_y_max: float = 1
 
-var elapsed_since_start: float = 0.0
 var projectile_spawned: bool
 
 
@@ -31,16 +30,16 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	var actor: Creature = actor_
 	var data = glib.v.get_creatures()[actor.type]
 
-	if !elapsed_since_start:
+	if !actor.attack_elapsed:
 		Game.v.enemy_started_attack.emit(actor.transform.origin)
 		actor.melee_attacking = true
 
-	elapsed_since_start += get_physics_process_delta_time()
+	actor.attack_elapsed += get_physics_process_delta_time()
 
 	if (
 		!projectile_spawned
 		&& data.get_attack_projectile_type()
-		&& (data.get_attack_projectile_spawn_at() < elapsed_since_start)
+		&& (data.get_attack_projectile_spawn_at() < actor.attack_elapsed)
 	):
 		projectile_spawned = true
 		var d: Projectile.Data = Projectile.Data.new()
@@ -53,9 +52,9 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 			d,
 		)
 
-	if elapsed_since_start >= attack_duration:
+	if actor.attack_elapsed >= attack_duration:
 		# Finished attacking.
-		elapsed_since_start = 0.0
+		actor.attack_elapsed = 0.0
 		projectile_spawned = false
 		actor.melee_attacking = false
 		return SUCCESS

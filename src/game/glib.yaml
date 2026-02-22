@@ -87,7 +87,7 @@ creatures: ##
     melee__attack_polygon_end_at: 0.6
     melee__attack_polygon:
       distance: 2
-      angle: 90
+      angle_degrees: 90
 ##
 
 items: ##
