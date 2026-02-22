@@ -19,17 +19,25 @@
     {
       "match": "localization.csv$",
       "command": "uv run python cli/bf_cli.py godot_reimport_localization",
-      "runIn": "backend"
+      "runIn": "backend",
+      "runningStatusMessage": "Localizing..."
     },
     {
       "match": "glib.yaml$",
       "command": "uv run python cli/bf_cli.py codegen windows debug",
+      "runIn": "backend",
+      "runningStatusMessage": "glibbing..."
+    },
+    {
+      "match": ".proto$",
+      "command": "buf format -w ${file}",
       "runIn": "backend"
     },
     {
       "match": "glib.proto$",
-      "command": "buf format -w ${file} && uv run python cli/bf_cli.py codegen windows debug",
-      "runIn": "backend"
+      "command": "uv run python cli/bf_cli.py codegen windows debug",
+      "runIn": "backend",
+      "runningStatusMessage": "glibbing..."
     },
     {
       "match": ".gd$",
@@ -37,9 +45,7 @@
       "runIn": "backend"
     },
     {
-      "languages": [
-        "python"
-      ],
+      "match": ".py$",
       "command": "uv run ruff check --select I ${file} --fix",
       "runIn": "backend"
     }
