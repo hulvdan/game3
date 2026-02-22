@@ -347,6 +347,7 @@ func _physics_process(dt: float) -> void:
 		room.player_rolling += dt
 		if room.player_rolling >= glib.v.get_player_roll_duration_seconds():
 			room.player_rolling = 0
+			room.player.evaded_attack_ids.clear()
 	elif (
 		(room.player_stamina > 0)
 		&& (Input.get_action_strength("roll") >= 0.5)
@@ -397,7 +398,7 @@ func _physics_process(dt: float) -> void:
 		points.append(Vector3(dist * cos(angle / 2.0), 0, -dist * sin(angle / 2.0)))
 
 		var trr: Transform3D = creature.transform
-		var angle_y: float = -bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(room.player.transform.origin))
+		var angle_y: float = -bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(creature.melee_target_pos))
 		trr.basis = Basis.from_euler(Vector3(0, angle_y, 0))
 		param_shape.transform = trr
 		if debug_collisions:
@@ -405,6 +406,7 @@ func _physics_process(dt: float) -> void:
 			ImmediateGizmos3D.line_polygon(points)
 		PhysicsServer3D.shape_set_data(shape_rid_polygon, points)
 
+		apply_damage_melee_data.attack_id = creature.melee_attack_id
 		param_shape.collision_mask = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
 		for d: Dictionary in space.intersect_shape(param_shape, 12):
 			var damaged_creature: Creature = d.collider
@@ -607,6 +609,7 @@ func _process(dt: float) -> void:
 class ApplyDamageData:
 	var type: glib.GDamageType = glib.GDamageType.STRIKE
 	var immediate: bool = true
+	var attack_id: int = 0
 
 
 func apply_damage(
@@ -614,6 +617,9 @@ func apply_damage(
 		damage: int,
 		data: ApplyDamageData,
 ) -> bool: ##
+	if data.attack_id in creature.evaded_attack_ids:
+		return false
+
 	var player_got_damaged: bool = creature.type == glib.GCreatureType.PLAYER
 	if player_got_damaged:
 		if (
@@ -623,6 +629,8 @@ func apply_damage(
 			if data.immediate:
 				room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
 				player_evaded.emit(creature.transform.origin)
+				if data.attack_id:
+					creature.evaded_attack_ids.append(data.attack_id)
 			return false
 		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
 			return false

@@ -1803,6 +1803,11 @@ class GCreature:
 		service.field = __melee__attack_polygon_end_at
 		data[__melee__attack_polygon_end_at.tag] = service
 
+		__melee__attack_stops_tracking_at = PBField.new("melee__attack_stops_tracking_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __melee__attack_stops_tracking_at
+		data[__melee__attack_stops_tracking_at.tag] = service
+
 		__melee__damage = PBField.new("melee__damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __melee__damage
@@ -2072,6 +2077,28 @@ class GCreature:
 
 	func set_melee__attack_polygon_end_at(value: float) -> void:
 		__melee__attack_polygon_end_at.value = value
+
+
+	var __melee__attack_stops_tracking_at: PBField
+
+
+	func has_melee__attack_stops_tracking_at() -> bool:
+		if __melee__attack_stops_tracking_at.value != null:
+			return true
+		return false
+
+
+	func get_melee__attack_stops_tracking_at() -> float:
+		return __melee__attack_stops_tracking_at.value
+
+
+	func clear_melee__attack_stops_tracking_at() -> void:
+		data[17].state = PB_SERVICE_STATE.UNFILLED
+		__melee__attack_stops_tracking_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_melee__attack_stops_tracking_at(value: float) -> void:
+		__melee__attack_stops_tracking_at.value = value
 
 
 	var __melee__damage: PBField

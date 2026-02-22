@@ -68,6 +68,7 @@ message GCreature {
   float attack_duration = 9;
   float melee__attack_polygon_start_at = 14;
   float melee__attack_polygon_end_at = 15;
+  float melee__attack_stops_tracking_at = 17;
   int32 melee__damage = 16;
   int32 collision_type = 10;
   float attack_cooldown_min = 11;

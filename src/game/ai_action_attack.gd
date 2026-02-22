@@ -33,7 +33,11 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	if !actor.attack_elapsed:
 		Game.v.enemy_started_attack.emit(actor.transform.origin)
 		actor.melee_attacking = true
+		actor.melee_attack_id = Room.v.get_next_attack_id()
 		actor.melee_damaged_creatures.clear()
+
+	if actor.melee_attacking and actor.attack_elapsed <= data.get_melee__attack_stops_tracking_at():
+		actor.melee_target_pos = Room.v.player.transform.origin
 
 	actor.attack_elapsed += get_physics_process_delta_time()
 

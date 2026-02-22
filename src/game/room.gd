@@ -17,6 +17,7 @@ var player_roll_direction: Vector2
 var player_stamina: int = 0
 var player_stamina_elapsed: float = 0
 var player_attack_queued: bool
+var _next_attack_id: int = 0
 
 @onready var container_creatures: Node = %_container_creatures
 @onready var container_floor: Node = %_container_floor
@@ -27,3 +28,8 @@ var player_attack_queued: bool
 @onready var container_zones: Node = %_container_zones
 @onready var action_labels: UIActionLabels = %_action_labels
 # @onready var container_action_labels: Node = %_container_action_labels
+
+
+func get_next_attack_id() -> int:
+	_next_attack_id += 1
+	return _next_attack_id

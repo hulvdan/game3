@@ -10,10 +10,9 @@ PLAN
 x yamlfmt good config
 x melee mob: shown collider
 x melee mob: does damage
+x melee mob: can dodge once
+x melee mob: stops tracking player after starting attacking
 
-* melee mob: can dodge once
-* melee mob: 
-* melee mob: 
 * mob throwing 3 fireballs
 * 
 * 
