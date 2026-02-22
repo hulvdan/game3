@@ -14,14 +14,16 @@ repos:
         exclude: ^addons/.*$
         types: []
   - repo: https://github.com/google/yamlfmt
-    rev: v0.19.0
+    rev: v0.21.0
     hooks:
       - id: yamlfmt
         language: system
-  - repo: https://github.com/editorconfig-checker/editorconfig-checker
-    rev: v3.6.1
+        exclude: ^addons/.*$
+  - repo: https://github.com/JohnnyMorganz/StyLua
+    rev: v2.3.1
     hooks:
-      - id: editorconfig-checker
+      - id: stylua
+        exclude: ^addons/.*$
   # - repo: https://github.com/Scony/godot-gdscript-toolkit
   #   rev: 4.5.0
   #   hooks:
@@ -43,6 +45,7 @@ repos:
         always_run: true
         language: system
         types: [gdscript]
+        exclude: ^addons/.*$
       - id: prettier
         name: prettier
         entry: prettier --parser json --write
@@ -50,3 +53,9 @@ repos:
         require_serial: true
         files: \.(json|ldtk)$
         stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        exclude: ^addons/.*$
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker
+    rev: v3.6.1
+    hooks:
+      - id: editorconfig-checker
+        exclude: ^(addons|assets)/.*$

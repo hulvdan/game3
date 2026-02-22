@@ -116,7 +116,9 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
         "Failed to generate glib_pb2.py from glib.proto!"
     )
 
-    with Path("src/codegen/nolint/glib.gd").open("w", encoding="utf-8") as codegen_file:
+    with Path("src/codegen/nolint/glib.gd").open(
+        "w", encoding="utf-8", newline="\n"
+    ) as codegen_file:
         codegen_file.write("""extends Node
 static var v: Lib = Lib.new()
 
@@ -138,12 +140,12 @@ const glib_binary_path: String = "res://assets/glib.binpb"
 
 func _reload_gamelib() -> void:
     _glib_mtime = FileAccess.get_modified_time(glib_binary_path)
-	var glib_file = FileAccess.open(glib_binary_path, FileAccess.READ)
-	assert(glib_file)
-	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
-	glib_file.close()
-	var err = v.from_bytes(glib_bytes)
-	assert(not err)
+    var glib_file = FileAccess.open(glib_binary_path, FileAccess.READ)
+    assert(glib_file)
+    var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
+    glib_file.close()
+    var err = v.from_bytes(glib_bytes)
+    assert(not err)
 
 func _ready() -> void:
     _reload_gamelib()
