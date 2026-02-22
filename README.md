@@ -21,6 +21,8 @@
     ```
     npm install -g serve
     ```
+- (for stylua pre-commit) Install rust
+  https://rust-lang.org/tools/install/
 
 ## Bootstrap A New Repo
 
