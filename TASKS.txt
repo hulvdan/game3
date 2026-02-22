@@ -7,20 +7,17 @@ BIG PLAN
 PLAN
 ============================================================
 
-x show «!» when mob starts attack
-x mob attack cooldown
-x controllable mob attack cooldowns (rand min max)
-x challenge: evade attack -> restore stamina
-x mob exclamation action label
-x player dodge action label
-x labels fade in/out
-x DODGED font outline
-x DODGED localization
-x mob shooting: CONTINUOUS CHECK ON ARROW through shape
-x pierce: arrow damages each enemy once
-x damage numbers
-x damage numbers: color: yellow for mobs, red for player
+x yamlfmt good config
 
+* melee mob
+* mob throwing 3 fireballs
+* 
+* 
+* 
+* 
+* 
+* 
+* 
 * floating spiky ball trap
 *
 * items: can drop from mines (hollow knight like)

@@ -359,15 +359,26 @@ func _physics_process(dt: float) -> void:
 		room.player_stamina_elapsed = 0
 	##
 
-	## Updating projectiles + collisions + despawning
+	## Collisions setup
 	var space = world_3d.get_world_3d().direct_space_state
 	var param_shape: PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
 	param_shape.collide_with_areas = false
 	param_shape.collide_with_bodies = true
 	var shape_rid_sphere: RID = PhysicsServer3D.sphere_shape_create()
 	var shape_rid_cylinder: RID = PhysicsServer3D.cylinder_shape_create()
+	var shape_rid_polygon: RID = PhysicsServer3D.convex_polygon_shape_create()
 	var cylinder_shape_dict: Dictionary = { "height": 1.0, "radius": 0.01 }
+	##
 
+	## - Melee attacks collisions
+	var apply_damage_melee_data: ApplyDamageData = ApplyDamageData.new()
+	for creature: Creature in room.container_creatures.get_children():
+		if !creature.melee_attacking:
+			continue
+		var data: glib.GCreature = glib.v.get_creatures()[creature.type]
+	##
+
+	## - Updating projectiles + collisions + despawning
 	var projectiles = glib.v.get_projectiles()
 	var apply_damage_projectile_data: ApplyDamageData = ApplyDamageData.new()
 	for projectile: Projectile in room.container_projectiles.get_children():
@@ -384,6 +395,7 @@ func _physics_process(dt: float) -> void:
 			cylinder_shape_dict.height = projectile_travelled
 			projectile.translate_object_local(projectile_step)
 
+			# ImmediateGizmos3D.line_polygon()
 			# ImmediateGizmos3D.set_transform(
 			# 	Transform3D(
 			# 		projectile.transform.basis
@@ -459,9 +471,12 @@ func _physics_process(dt: float) -> void:
 		if should_remove:
 			room.container_projectiles.remove_child(projectile)
 			projectile.queue_free()
+	##
 
+	## Collisions end
 	PhysicsServer3D.free_rid(shape_rid_sphere)
 	PhysicsServer3D.free_rid(shape_rid_cylinder)
+	PhysicsServer3D.free_rid(shape_rid_polygon)
 	##
 
 	## Spike collisions

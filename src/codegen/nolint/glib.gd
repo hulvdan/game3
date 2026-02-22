@@ -1659,6 +1659,91 @@ class GProgression:
 		return result
 
 
+class GAttackPolygon:
+	func _init():
+		var service
+
+		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __distance
+		data[__distance.tag] = service
+
+		__angle = PBField.new("angle", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __angle
+		data[__angle.tag] = service
+
+
+	var data = { }
+
+	var __distance: PBField
+
+
+	func has_distance() -> bool:
+		if __distance.value != null:
+			return true
+		return false
+
+
+	func get_distance() -> float:
+		return __distance.value
+
+
+	func clear_distance() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_distance(value: float) -> void:
+		__distance.value = value
+
+
+	var __angle: PBField
+
+
+	func has_angle() -> bool:
+		if __angle.value != null:
+			return true
+		return false
+
+
+	func get_angle() -> float:
+		return __angle.value
+
+
+	func clear_angle() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__angle.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_angle(value: float) -> void:
+		__angle.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GCreature:
 	func _init():
 		var service
@@ -1708,6 +1793,16 @@ class GCreature:
 		service.field = __attack_duration
 		data[__attack_duration.tag] = service
 
+		__melee__attack_polygon_start_at = PBField.new("melee__attack_polygon_start_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __melee__attack_polygon_start_at
+		data[__melee__attack_polygon_start_at.tag] = service
+
+		__melee__attack_polygon_end_at = PBField.new("melee__attack_polygon_end_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __melee__attack_polygon_end_at
+		data[__melee__attack_polygon_end_at.tag] = service
+
 		__collision_type = PBField.new("collision_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __collision_type
@@ -1722,6 +1817,12 @@ class GCreature:
 		service = PBServiceField.new()
 		service.field = __attack_cooldown_max
 		data[__attack_cooldown_max.tag] = service
+
+		__melee__attack_polygon = PBField.new("melee__attack_polygon", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __melee__attack_polygon
+		service.func_ref = Callable(self, "new_melee__attack_polygon")
+		data[__melee__attack_polygon.tag] = service
 
 
 	var data = { }
@@ -1924,6 +2025,50 @@ class GCreature:
 		__attack_duration.value = value
 
 
+	var __melee__attack_polygon_start_at: PBField
+
+
+	func has_melee__attack_polygon_start_at() -> bool:
+		if __melee__attack_polygon_start_at.value != null:
+			return true
+		return false
+
+
+	func get_melee__attack_polygon_start_at() -> float:
+		return __melee__attack_polygon_start_at.value
+
+
+	func clear_melee__attack_polygon_start_at() -> void:
+		data[14].state = PB_SERVICE_STATE.UNFILLED
+		__melee__attack_polygon_start_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_melee__attack_polygon_start_at(value: float) -> void:
+		__melee__attack_polygon_start_at.value = value
+
+
+	var __melee__attack_polygon_end_at: PBField
+
+
+	func has_melee__attack_polygon_end_at() -> bool:
+		if __melee__attack_polygon_end_at.value != null:
+			return true
+		return false
+
+
+	func get_melee__attack_polygon_end_at() -> float:
+		return __melee__attack_polygon_end_at.value
+
+
+	func clear_melee__attack_polygon_end_at() -> void:
+		data[15].state = PB_SERVICE_STATE.UNFILLED
+		__melee__attack_polygon_end_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_melee__attack_polygon_end_at(value: float) -> void:
+		__melee__attack_polygon_end_at.value = value
+
+
 	var __collision_type: PBField
 
 
@@ -1988,6 +2133,29 @@ class GCreature:
 
 	func set_attack_cooldown_max(value: float) -> void:
 		__attack_cooldown_max.value = value
+
+
+	var __melee__attack_polygon: PBField
+
+
+	func has_melee__attack_polygon() -> bool:
+		if __melee__attack_polygon.value != null:
+			return true
+		return false
+
+
+	func get_melee__attack_polygon() -> GAttackPolygon:
+		return __melee__attack_polygon.value
+
+
+	func clear_melee__attack_polygon() -> void:
+		data[13].state = PB_SERVICE_STATE.UNFILLED
+		__melee__attack_polygon.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_melee__attack_polygon() -> GAttackPolygon:
+		__melee__attack_polygon.value = GAttackPolygon.new()
+		return __melee__attack_polygon.value
 
 
 	func _to_string() -> String:

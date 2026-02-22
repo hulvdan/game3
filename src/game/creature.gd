@@ -13,6 +13,7 @@ var time_since_last_damage_taken_visual: float = INF
 
 var hp_bar: Bar
 var controller: Controller = Controller.new()
+var melee_attacking: bool
 
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite

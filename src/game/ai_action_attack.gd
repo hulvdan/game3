@@ -33,6 +33,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 
 	if !elapsed_since_start:
 		Game.v.enemy_started_attack.emit(actor.transform.origin)
+		actor.melee_attacking = true
 
 	elapsed_since_start += get_physics_process_delta_time()
 
@@ -56,6 +57,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 		# Finished attacking.
 		elapsed_since_start = 0.0
 		projectile_spawned = false
+		actor.melee_attacking = false
 		return SUCCESS
 
 	return RUNNING
