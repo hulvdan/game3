@@ -3,6 +3,7 @@ extends Node
 class_name Game
 
 ## Variables
+const GROUP_TARGET_CAMERA: String = "target_camera"
 enum WhoGotDamagedType { PLAYER, MOB }
 
 signal player_evaded(world_pos: Vector3)
@@ -80,8 +81,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 		room.container_mob_hp_bars.add_child(bar)
 		var tree: BeehaveTree = packed_ai.instantiate()
 		creature.setup_ai(tree)
-
-	room.target_camera_elements.append(creature.node_target_camera)
+	creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 
 	var sh: ShaderMaterial = creature.node_sprite.material_override
 	sh.set_shader_parameter("flash", Color(1, 1, 1, 0))
@@ -129,8 +129,6 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	Room.v = room
 
 	bf.clear_children(room.container_creatures)
-	for element in room.target_camera_elements:
-		assert(element)
 	##
 
 	var g_rooms = glib.v.get_rooms()
@@ -430,9 +428,9 @@ func _physics_process(dt: float) -> void:
 
 		if fly == glib.GProjectileFlyType.STRAIGHT:
 			var projectile_travelled = data.get_straight__speed() * dt
-			var projectile_step: Vector3 = Vector3(0, 0, 1) * projectile_travelled
 			cylinder_shape_dict.height = projectile_travelled
-			projectile.translate_object_local(projectile_step)
+			var moved: Vector2 = projectile.calculated__dir * projectile_travelled
+			projectile.transform.origin += bf.to_xz(moved)
 
 			if data.get_collider_radius():
 				PhysicsServer3D.shape_set_data(shape_rid_sphere, data.get_collider_radius())
@@ -507,7 +505,6 @@ func _physics_process(dt: float) -> void:
 						projectile.damaged_creatures.append(damaged_creature)
 
 				should_remove = true
-				bf.unstable_remove(room.target_camera_elements, projectile.sprite)
 				for z: Node3D in projectile.zones:
 					room.container_zones.remove_child(z)
 
@@ -598,7 +595,7 @@ func _process(dt: float) -> void:
 	camera.transform.origin = room.player.transform.origin + camera_dir * camera_distance
 	camera.transform = camera.transform.looking_at(room.player.transform.origin)
 
-	for e: Node3D in room.target_camera_elements:
+	for e: Node3D in get_tree().get_nodes_in_group(GROUP_TARGET_CAMERA):
 		if e.visible:
 			e.rotation = camera.rotation
 	##
@@ -657,7 +654,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 
 	if (creature != room.player) && (creature.hp <= 0):
 		creature.queue_free()
-		bf.remove(room.target_camera_elements, creature.node_target_camera)
+		creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 		if creature.type != glib.GCreatureType.PLAYER:
 			room.container_mob_hp_bars.remove_child(creature.hp_bar)
 
@@ -677,21 +674,28 @@ func make_projectile(type: glib.GProjectileType, d: Projectile.Data) -> void: ##
 	var x: Projectile = packed_projectile.instantiate()
 	room.container_projectiles.add_child(x)
 
+	x.attack_id = room.get_next_attack_id()
 	if data.get_collider_radius():
 		x.sprite.scale = Vector3(1, 1, 1) * (data.get_collider_radius() * 1.53 * 2)
+		x.sprite.add_to_group(GROUP_TARGET_CAMERA)
 
 	if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-		room.target_camera_elements.append(x.sprite)
+		x.sprite.add_to_group(GROUP_TARGET_CAMERA)
 
 	x.d = d
+	x.calculated__dir = bf.vector2_direction_or_random(d.pos, d.target)
 	x.res = load(data.get_res())
 	x.sprite.texture = x.res.texture
 
 	x.transform.origin = bf.to_xz(d.pos)
 
 	if data.get_projectilefly_type() == glib.GProjectileFlyType.STRAIGHT:
-		var forward: Vector3 = bf.to_xz(bf.vector2_direction_or_random(d.target, d.pos))
-		x.transform.basis = Basis(Vector3(0, 1, 0).cross(forward), Vector3(0, 1, 0), forward)
+		if !data.get_collider_radius():
+			x.transform.basis = Basis(
+				Vector3(0, 1, 0).cross(bf.to_xz(x.calculated__dir)),
+				Vector3(0, 1, 0),
+				bf.to_xz(x.calculated__dir),
+			)
 
 	elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
 		var target_scale: Vector3 = Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0

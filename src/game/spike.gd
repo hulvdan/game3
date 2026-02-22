@@ -16,13 +16,15 @@ var creatures_to_damage: Array[Creature]
 @onready var area_damage: Area3D = %_area_damage
 
 
-func init(room: Room) -> void:
-	room.target_camera_elements.append_array(container_spikes.get_children())
+func init(_room: Room) -> void: ##
+	for node: Node3D in container_spikes.get_children():
+		node.add_to_group(Game.GROUP_TARGET_CAMERA)
 	area_trigger.body_entered.connect(_on_body_entered_trigger)
 	area_trigger.body_exited.connect(_on_body_exited_trigger)
 	area_damage.body_entered.connect(_on_body_entered_damage)
 	area_damage.body_exited.connect(_on_body_exited_damage)
 	_set_scale(curve.sample(0))
+##
 
 
 func _on_body_entered_trigger(creature: Creature) -> void:

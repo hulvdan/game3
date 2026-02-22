@@ -6,7 +6,6 @@ static var v: Room
 
 var player: Creature
 var player_bow: Node3D
-var target_camera_elements: Array[Node3D]
 
 var start_elapsed: float = 0
 var player_inside_enemy_t: float = 0

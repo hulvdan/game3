@@ -15,5 +15,7 @@ var res: ResProjectile
 var zones: Array[Node3D]
 var damaged_creatures: Array[Creature]
 var straight__pierced: int
+var attack_id: int
+var calculated__dir: Vector2
 
 @onready var sprite: Sprite3D = %_sprite

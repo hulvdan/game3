@@ -22,7 +22,7 @@ enum DirectionFlags {
 func vector2_direction_or_random(from: Vector2, to: Vector2) -> Vector2: ##
 	if from == to:
 		return Vector2(1, 0).rotated(randf() * 2.0 * PI)
-	return to.direction_to(from)
+	return from.direction_to(to)
 ##
 
 
