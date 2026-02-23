@@ -3269,6 +3269,11 @@ class Lib:
 		service.field = __player_stamina_attack_rally_scale
 		data[__player_stamina_attack_rally_scale.tag] = service
 
+		__player_ki_min_duration = PBField.new("player_ki_min_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 45, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_ki_min_duration
+		data[__player_ki_min_duration.tag] = service
+
 		__player_holding_stamina_regen_scale = PBField.new("player_holding_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_holding_stamina_regen_scale
@@ -3790,6 +3795,28 @@ class Lib:
 
 	func set_player_stamina_attack_rally_scale(value: float) -> void:
 		__player_stamina_attack_rally_scale.value = value
+
+
+	var __player_ki_min_duration: PBField
+
+
+	func has_player_ki_min_duration() -> bool:
+		if __player_ki_min_duration.value != null:
+			return true
+		return false
+
+
+	func get_player_ki_min_duration() -> float:
+		return __player_ki_min_duration.value
+
+
+	func clear_player_ki_min_duration() -> void:
+		data[45].state = PB_SERVICE_STATE.UNFILLED
+		__player_ki_min_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_ki_min_duration(value: float) -> void:
+		__player_ki_min_duration.value = value
 
 
 	var __player_holding_stamina_regen_scale: PBField

@@ -23,7 +23,13 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="_rally" type="ColorRect" parent="_margin_container" unique_id=1311333392]
+[node name="_rally_back" type="ColorRect" parent="_margin_container" unique_id=1311333392]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+color = Color(1, 0, 0, 1)
+
+[node name="_rally_front" type="ColorRect" parent="_margin_container" unique_id=1628534943]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2

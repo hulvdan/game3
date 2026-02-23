@@ -19,6 +19,7 @@ static var async_scene_loaded := false
 @export var color_ui_hp: Color
 @export var color_ui_stamina: Color
 @export var color_ui_stamina_rally: Color
+@export var color_ui_stamina_ki: Color
 
 @export_category("Resources")
 @export var world_3d: Node3D
@@ -217,7 +218,11 @@ func _ready() -> void:
 	assert(camera_angle > 0)
 
 	hp_bar.init(color_ui_hp, false)
-	stamina_bar.init(color_ui_stamina, false, Bar.Opts.new().with_rally(color_ui_stamina_rally))
+	stamina_bar.init(
+		color_ui_stamina,
+		false,
+		Bar.Opts.new().with_rally_back(color_ui_stamina_rally).with_rally_front(color_ui_stamina_ki),
+	)
 
 	var transition: Control = %_transition
 	transition.visible = true
@@ -620,7 +625,7 @@ func _physics_process(dt: float) -> void:
 		assert(room.player_stamina_rally <= glib.v.get_player_stamina())
 
 		stamina_bar.set_progress(room.player_stamina / glib.v.get_player_stamina())
-		stamina_bar.set_rally_progress(room.player_stamina_rally / glib.v.get_player_stamina())
+		stamina_bar.set_rally_front_progress(room.player_stamina_rally / glib.v.get_player_stamina())
 	##
 
 
