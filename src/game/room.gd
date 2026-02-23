@@ -65,3 +65,132 @@ func consume_stamina(value: float, drop_rally: bool) -> void: ##
 			glib.v.get_player_stamina_attack_rally_scale(),
 		)
 ##
+
+enum PlayerStateType { DEFAULT, SHOOT, ROLL, BLOCK }
+enum PlayerActionType { NONE, SHOOT, ROLL, BLOCK }
+
+
+class PlayerAction:
+	var type: PlayerActionType
+	var shoot_or_roll__dir: Vector2
+
+
+var player_current_state := PlayerStateType.DEFAULT
+static var player_action_buffer: Array[PlayerAction]
+
+
+func _ready() -> void:
+	_player_states[player_current_state].on_enter()
+
+
+func player_change_state(
+		to: PlayerStateType,
+		action_type: PlayerActionType,
+		action: PlayerAction,
+) -> void:
+	assert(to != player_current_state)
+	_player_states[player_current_state].on_exit()
+	player_current_state = to
+	_player_states[player_current_state].on_enter()
+
+
+var _player_states: Array[PlayerBase] = [
+	PlayerDefault.new(),
+	PlayerShoot.new(),
+	PlayerRoll.new(),
+	PlayerBlock.new(),
+]
+
+
+@abstract
+class PlayerBase:
+	var elapsed: float
+
+
+	@abstract func on_enter() -> void
+
+
+	@abstract func on_exit() -> void
+
+
+	@abstract func process(dt: float) -> void
+
+
+	func base_on_enter() -> void:
+		elapsed = 0
+
+
+	func base_on_exit() -> void:
+		pass
+
+
+	func base_process(dt: float) -> void:
+		elapsed += dt
+
+
+class PlayerDefault extends PlayerBase:
+	func on_enter() -> void:
+		base_on_enter()
+
+
+	func on_exit() -> void:
+		base_on_exit()
+
+
+	func process(dt: float) -> void:
+		base_process(dt)
+		if !Room.player_action_buffer:
+			return
+		var action := Room.player_action_buffer[0]
+		match action.type:
+			PlayerActionType.SHOOT:
+				Room.v.player_change_state(PlayerStateType.SHOOT, action)
+			PlayerActionType.ROLL:
+				Room.v.player_change_state(PlayerStateType.ROLL, action)
+			PlayerActionType.BLOCK:
+				Room.v.player_change_state(PlayerStateType.BLOCK, action)
+
+
+class PlayerShoot extends PlayerBase:
+	func on_enter() -> void:
+		base_on_enter()
+
+
+	func on_exit() -> void:
+		base_on_exit()
+
+
+	func process(dt: float) -> void:
+		base_process(dt)
+		if elapsed >= glib.v.get_shooting_seconds():
+			Room.v.player_change_state(PlayerStateType.DEFAULT)
+
+
+class PlayerRoll extends PlayerBase:
+	func on_enter() -> void:
+		base_on_enter()
+
+
+	func on_exit() -> void:
+		base_on_exit()
+
+
+	func process(dt: float) -> void:
+		base_process(dt)
+		if elapsed >= glib.v.get_player_roll_duration_seconds():
+			Room.v.player_change_state(PlayerStateType.DEFAULT)
+
+
+class PlayerBlock extends PlayerBase:
+	func on_enter() -> void:
+		base_on_enter()
+
+
+	func on_exit() -> void:
+		base_on_exit()
+
+
+	func process(dt: float) -> void:
+		base_process(dt)
+		if elapsed >= glib.v.get_player_ki_state_min_duration():
+			Room.v.player_change_state(PlayerStateType.DEFAULT)
