@@ -15,7 +15,7 @@ static var async_scene_loaded := false
 @export_category("Values")
 @export var camera_distance: float
 @export var camera_angle: float
-@export var camera_z_offset := 0.3
+@export var camera_z_offset: float = 0.3
 @export var color_ui_hp: Color
 @export var color_ui_stamina: Color
 @export var color_ui_stamina_rally: Color
@@ -45,6 +45,8 @@ var ui_minimap_rooms: Array[Sprite2D] = []
 
 var room: Room
 var player_is_entering_door := false
+
+var projectiles_to_make: Array[Projectile.Data]
 
 var current_room_index:
 	get:
@@ -77,6 +79,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	creature.node_body.collision_layer = 2 ** ctype
 	creature.type = type
 	creature.res = load(data.get_res())
+	creature.speed_modifiers.base = data.get_speed()
 	assert(creature.res)
 	bf.set_pos_2d(creature, pos)
 
@@ -238,7 +241,7 @@ func _ready() -> void:
 		var rooms_slice: Array[Sprite2D] = []
 
 		for x in range(ws.x):
-			var room_data = RoomData.new()
+			var room_data := RoomData.new()
 			room_data.gindex = (x + y * ws.x) % len(g_rooms)
 
 			rooms.append(room_data)
@@ -299,28 +302,10 @@ func _physics_process(dt: float) -> void:
 		room.player.creature.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
 
 	for creature: Creature in room.container_creatures.get_children():
-		var data := g_creatures[creature.type]
-
 		var dir := creature.controller.move
 		if dir != Vector2(0, 0):
 			creature.controller.last_move = dir
-		var speed := data.get_speed()
-
-		if creature.type == glib.GCreatureType.PLAYER:
-			if room.player.rolling:
-				dir = room.player.roll_direction
-				speed = bf.get_roll_speed(
-					glib.v.get_player_roll_distance(),
-					glib.v.get_player_roll_duration_seconds(),
-					room.player.rolling,
-					glib.v.get_player_roll_pow(),
-				)
-			else:
-				if room.player.holding:
-					speed *= glib.v.get_player_speed_holding_scale()
-				speed *= lerp(1.0, glib.v.get_player_speed_inside_enemies_scale(), room.player.inside_enemy_t)
-
-		bf.move_body_with_speed(creature.node_body, dir, speed)
+		bf.move_body_with_speed(creature.node_body, dir, creature.get_speed())
 	##
 
 	## Updating player's bow direction
@@ -348,7 +333,7 @@ func _physics_process(dt: float) -> void:
 			d.owner = glib.GCreatureType.PLAYER
 			d.pos = bf.from_xz(room.player.creature.transform.origin)
 			d.target = d.pos - bf.from_xz(room.player.bow.transform.basis.z)
-			make_projectile(glib.GProjectileType.ARROW, d)
+			make_projectile(d)
 			room.player.holding = 0
 			room.player.shooting_after_roll_scheduled = false
 		elif room.player.holding or (
@@ -376,6 +361,8 @@ func _physics_process(dt: float) -> void:
 		room.player.consume_stamina(glib.v.get_player_stamina_roll_cost(), true)
 		room.player.rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
 	##
+
+	spawn_projectiles()
 
 	## Collisions setup
 	var debug_collisions := glib.v.get_debug_collisions()
@@ -545,7 +532,7 @@ func _physics_process(dt: float) -> void:
 
 	## Spike collisions
 	if 1:
-		var apply_damage_spike_data: ApplyDamageData = ApplyDamageData.new()
+		var apply_damage_spike_data := ApplyDamageData.new()
 		apply_damage_spike_data.type = glib.GDamageType.SPIKE
 		for spike: Spike in room.container_spikes.get_children():
 			if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at()):
@@ -558,17 +545,17 @@ func _physics_process(dt: float) -> void:
 
 	## Pushing creatures apart from each other
 	if 1:
-		var creatures_push_radius: float = glib.v.get_creatures_push_radius()
-		var creatures_push_radius_sqr: float = creatures_push_radius * creatures_push_radius
+		var creatures_push_radius := glib.v.get_creatures_push_radius()
+		var creatures_push_radius_sqr := creatures_push_radius * creatures_push_radius
 		room.player.inside_enemy_t = 0
 		for c1: Creature in room.container_creatures.get_children():
 			for c2: Creature in room.container_creatures.get_children():
 				if c1 == c2:
 					continue
-				var dir: Vector2 = bf.from_xz(c1.transform.origin - c2.transform.origin)
-				var d: float = dir.length_squared()
+				var dir := bf.from_xz(c1.transform.origin - c2.transform.origin)
+				var d := dir.length_squared()
 				if d < creatures_push_radius_sqr:
-					var t: float = 1 - sqrt(d) / creatures_push_radius
+					var t := 1.0 - sqrt(d) / creatures_push_radius
 					bf.move_body_with_speed(c1.node_body, dir, t)
 					if c1.type == glib.GCreatureType.PLAYER:
 						room.player.inside_enemy_t = max(room.player.inside_enemy_t, t)
@@ -581,7 +568,7 @@ func _physics_process(dt: float) -> void:
 		creature.time_since_last_damage_taken_visual += dt
 
 		var sh: ShaderMaterial = creature.node_sprite.material_override
-		var t: float = max(0, lerp(1, 0, creature.time_since_last_damage_taken_visual))
+		var t: float = max(0.0, lerp(1.0, 0.0, creature.time_since_last_damage_taken_visual))
 		sh.set_shader_parameter("flash", Color(1, 1, 1, t))
 	##
 
@@ -625,13 +612,15 @@ func _physics_process(dt: float) -> void:
 		stamina_bar.set_rally_front_progress(room.player.stamina_ki / st)
 	##
 
+	assert(len(projectiles_to_make) == 0)
+
 
 func _process(dt: float) -> void:
 	## Updating camera and stuff looking at camera
-	var g_room: glib.GRoom = glib.v.get_rooms()[rooms[current_room_index].gindex]
-	var room_size: Vector2 = Vector2(glib.ToV2i(g_room.get_size()))
+	var g_room := glib.v.get_rooms()[rooms[current_room_index].gindex]
+	var room_size := Vector2(glib.ToV2i(g_room.get_size()))
 
-	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
+	var camera_dir := Vector3(0, sin(camera_angle), cos(camera_angle))
 	var target: Vector3 = lerp(
 		room.player.creature.transform.origin,
 		Vector3(room_size.x / 2, 0, room_size.y * 2 / 3),
@@ -656,18 +645,18 @@ func _process(dt: float) -> void:
 	for creature: Creature in room.container_creatures.get_children():
 		if creature.type <= glib.GCreatureType.PLAYER:
 			continue
-		var creature_camera_dot: float = (camera.position - creature.transform.origin).dot(target_camera_dir)
+		var creature_camera_dot := (camera.position - creature.transform.origin).dot(target_camera_dir)
 		creature.hp_bar.scale = Vector2(1, 1) * (target_camera_dot / creature_camera_dot)
 		creature.hp_bar.position = camera.unproject_position(creature.transform.origin) - creature.hp_bar.size / 2.0 * creature.hp_bar.scale
 	##
 
-	room.action_labels.explicit_update(dt, target_camera_dir, target_camera_dot)
+	room.action_labels.explicit_process(dt, target_camera_dir, target_camera_dot)
 
 
 class ApplyDamageData: ##
-	var type: glib.GDamageType = glib.GDamageType.DEFAULT
-	var immediate: bool = true
-	var attack_id: int = 0
+	var type := glib.GDamageType.DEFAULT
+	var immediate := true
+	var attack_id := 0
 ##
 
 
@@ -676,7 +665,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	if data.attack_id in creature.evaded_attack_ids:
 		return false
 
-	var player_got_damaged: bool = creature.type == glib.GCreatureType.PLAYER
+	var player_got_damaged := (creature.type == glib.GCreatureType.PLAYER)
 	if player_got_damaged:
 		if data.type != glib.GDamageType.AOE:
 			if (
@@ -724,50 +713,58 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 ##
 
 
-func make_projectile(type: glib.GProjectileType, d: Projectile.Data) -> void: ##
-	var data: glib.GProjectile = glib.v.get_projectiles()[type]
+func make_projectile(d: Projectile.Data) -> void: ##
+	assert(d.type)
+	projectiles_to_make.append(d)
+##
 
-	var x: Projectile = packed_projectile.instantiate()
-	room.container_projectiles.add_child(x)
 
-	x.attack_id = room.get_next_attack_id()
-	if data.get_collider_radius():
-		x.sprite.scale = Vector3(1, 1, 1) * (data.get_collider_radius() * 1.53 * 2)
-		x.sprite.add_to_group(GROUP_TARGET_CAMERA)
+func spawn_projectiles() -> void: ##
+	for d: Projectile.Data in projectiles_to_make:
+		var data := glib.v.get_projectiles()[d.type]
+		var x: Projectile = packed_projectile.instantiate()
+		room.container_projectiles.add_child(x)
 
-	if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-		x.sprite.add_to_group(GROUP_TARGET_CAMERA)
+		x.attack_id = room.get_next_attack_id()
+		if data.get_collider_radius():
+			x.sprite.scale = Vector3(1, 1, 1) * (data.get_collider_radius() * 1.53 * 2)
+			x.sprite.add_to_group(GROUP_TARGET_CAMERA)
 
-	x.d = d
-	x.calculated__dir = bf.vector2_direction_or_random(d.pos, d.target)
-	x.res = load(data.get_res())
-	x.sprite.texture = x.res.texture
+		if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+			x.sprite.add_to_group(GROUP_TARGET_CAMERA)
 
-	x.transform.origin = bf.to_xz(d.pos)
+		x.d = d
+		x.calculated__dir = bf.vector2_direction_or_random(d.pos, d.target)
+		x.res = load(data.get_res())
+		x.sprite.texture = x.res.texture
 
-	if data.get_projectilefly_type() == glib.GProjectileFlyType.STRAIGHT:
-		if !data.get_collider_radius():
-			x.transform.basis = Basis(
-				Vector3(0, 1, 0).cross(bf.to_xz(x.calculated__dir)),
-				Vector3(0, 1, 0),
-				bf.to_xz(x.calculated__dir),
-			)
+		x.transform.origin = bf.to_xz(d.pos)
 
-	elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-		var target_scale: Vector3 = Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0
-		for i in range(2):
-			var zone: Node3D = packed_zone_circle.instantiate()
-			room.container_zones.add_child(zone)
-			zone.transform.origin = bf.to_xz(x.d.target) + Vector3(0, 0.01 * i, 0)
+		if data.get_projectilefly_type() == glib.GProjectileFlyType.STRAIGHT:
+			if !data.get_collider_radius():
+				x.transform.basis = Basis(
+					Vector3(0, 1, 0).cross(bf.to_xz(x.calculated__dir)),
+					Vector3(0, 1, 0),
+					bf.to_xz(x.calculated__dir),
+				)
 
-			var tween = create_tween()
-			if i:
-				tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
-				tween.tween_property(zone, "scale", target_scale, data.get_arc__duration())
-			else:
-				tween.tween_property(zone, "scale", target_scale, 0)
-			x.zones.append(zone)
+		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+			var target_scale := Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0
+			for i in range(2):
+				var zone: Node3D = packed_zone_circle.instantiate()
+				room.container_zones.add_child(zone)
+				zone.transform.origin = bf.to_xz(x.d.target) + Vector3(0, 0.01 * i, 0)
 
-	else:
-		bf.invalid_path()
+				var tween = create_tween()
+				if i:
+					tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
+					tween.tween_property(zone, "scale", target_scale, data.get_arc__duration())
+				else:
+					tween.tween_property(zone, "scale", target_scale, 0)
+				x.zones.append(zone)
+
+		else:
+			bf.invalid_path()
+
+	projectiles_to_make.clear()
 ##

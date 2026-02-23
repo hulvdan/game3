@@ -51,7 +51,7 @@ func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##
 ##
 
 
-func explicit_update(
+func explicit_process(
 		dt: float,
 		target_camera_dir: Vector3,
 		target_camera_dot: float,

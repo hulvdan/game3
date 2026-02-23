@@ -28,12 +28,12 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 			i += 1
 			if projectiles_spawned < i and projectile_spawns_at < actor.attack_elapsed:
 				projectiles_spawned += 1
-				var d: Projectile.Data = Projectile.Data.new()
+				var d := Projectile.Data.new()
 				d.type = data.get_attack_projectile_type() as glib.GProjectileType
 				d.owner = actor.type
 				d.pos = bf.from_xz(actor.transform.origin)
 				d.target = bf.from_xz(Room.v.player.creature.transform.origin)
-				Game.v.make_projectile(data.get_attack_projectile_type(), d)
+				Game.v.make_projectile(d)
 	##
 
 	if actor.attack_elapsed >= data.get_attack_duration(): ## Finished attacking

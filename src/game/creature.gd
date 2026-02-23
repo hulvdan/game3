@@ -19,9 +19,18 @@ var melee_attack_id: int
 var melee_damaged_creatures: Array[Creature]
 var evaded_attack_ids: Array[int]
 var melee_target_pos: Vector3
+var speed_modifiers := { 'base': 0 }
 
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
+
+
+func get_speed() -> float: ##
+	var result := 1.0
+	for x: float in speed_modifiers.values():
+		result *= x
+	return result
+##
 
 
 class Controller:

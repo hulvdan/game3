@@ -6,7 +6,6 @@ var bow: Node3D
 var inside_enemy_t := 0.0
 var holding := 0.0
 var shooting_after_roll_scheduled := false
-var rolling := 0.0
 var rolling_retrievable_cost := 0.0
 var roll_direction: Vector2
 var stamina := 0.0
@@ -39,6 +38,12 @@ func init(creature_: Creature, bow_: Node3D) -> void: ##
 	stamina = glib.v.get_player_stamina()
 	stamina_rally = stamina
 	stamina_ki = stamina
+##
+
+
+func explicit_process(dt: float) -> void: ##
+	creature.speed_modifiers.inside_enemies_t = lerp(1.0, glib.v.get_player_speed_inside_enemies_scale(), inside_enemy_t)
+	_states[current_state].explicit_process(dt)
 ##
 
 
@@ -102,7 +107,7 @@ class PlayerBase: ##
 	@abstract func on_exit() -> void
 
 
-	@abstract func process(dt: float) -> void
+	@abstract func explicit_process(dt: float) -> void
 
 
 	func base_on_enter(_action: PlayerAction) -> void:
@@ -127,7 +132,7 @@ class PlayerDefault extends PlayerBase: ##
 		base_on_exit()
 
 
-	func process(dt: float) -> void:
+	func explicit_process(dt: float) -> void:
 		base_process(dt)
 		if !buffer:
 			return
@@ -153,7 +158,7 @@ class PlayerShoot extends PlayerBase: ##
 		base_on_exit()
 
 
-	func process(dt: float) -> void:
+	func explicit_process(dt: float) -> void:
 		base_process(dt)
 		if elapsed >= glib.v.get_shooting_seconds():
 			player.change_state(PlayerStateType.DEFAULT, null)
@@ -172,15 +177,22 @@ class PlayerShoot extends PlayerBase: ##
 class PlayerRoll extends PlayerBase: ##
 	func on_enter(a: PlayerAction) -> void:
 		base_on_enter(a)
+		player.creature.controller.move = a.shoot_or_move_or_roll__dir
 
 
 	func on_exit() -> void:
 		base_on_exit()
 
 
-	func process(dt: float) -> void:
+	func explicit_process(dt: float) -> void:
 		buffer.clear()
 		base_process(dt)
+		player.creature.speed = bf.get_roll_speed(
+			glib.v.get_player_roll_distance(),
+			glib.v.get_player_roll_duration_seconds(),
+			elapsed,
+			glib.v.get_player_roll_pow(),
+		)
 		if elapsed >= glib.v.get_player_roll_duration_seconds():
 			player.change_state(PlayerStateType.DEFAULT, null)
 ##
@@ -195,7 +207,7 @@ class PlayerBlock extends PlayerBase: ##
 		base_on_exit()
 
 
-	func process(dt: float) -> void:
+	func explicit_process(dt: float) -> void:
 		buffer.clear()
 		base_process(dt)
 		player.stamina = max(player.stamina, player.stamina_ki)
