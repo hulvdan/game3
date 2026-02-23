@@ -33,7 +33,7 @@ player_ki_increase_per_second: 70
 player_ki_state_min_duration: 0.3
 action_consumption_duration: 0.2
 player_dodge_stamina_retrieve_percent: 50
-player_holding_stamina_regen_scale: 0.33
+player_shooting_stamina_regen_scale: 0.33
 player_invincibility_after_hit_seconds: 0.5
 mob_invincibility_spikes_seconds: 0.25
 spikes_duration_seconds: 2

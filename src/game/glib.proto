@@ -147,7 +147,7 @@ message Lib {
   float player_ki_increase_per_second = 46;
   float player_ki_state_min_duration = 47;
   float action_consumption_duration = 48;
-  float player_holding_stamina_regen_scale = 21;
+  float player_shooting_stamina_regen_scale = 21;
   float player_invincibility_after_hit_seconds = 28;
   float mob_invincibility_spikes_seconds = 29;
   float spikes_duration_seconds = 25;

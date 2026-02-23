@@ -4,7 +4,7 @@ class_name Room
 
 static var v: Room
 
-var player := Player.new()
+var player := PlayerController.new()
 var start_elapsed := 0.0
 var _next_attack_id := 0
 

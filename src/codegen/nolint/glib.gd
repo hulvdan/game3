@@ -3289,10 +3289,10 @@ class Lib:
 		service.field = __action_consumption_duration
 		data[__action_consumption_duration.tag] = service
 
-		__player_holding_stamina_regen_scale = PBField.new("player_holding_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__player_shooting_stamina_regen_scale = PBField.new("player_shooting_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __player_holding_stamina_regen_scale
-		data[__player_holding_stamina_regen_scale.tag] = service
+		service.field = __player_shooting_stamina_regen_scale
+		data[__player_shooting_stamina_regen_scale.tag] = service
 
 		__player_invincibility_after_hit_seconds = PBField.new("player_invincibility_after_hit_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -3900,26 +3900,26 @@ class Lib:
 		__action_consumption_duration.value = value
 
 
-	var __player_holding_stamina_regen_scale: PBField
+	var __player_shooting_stamina_regen_scale: PBField
 
 
-	func has_player_holding_stamina_regen_scale() -> bool:
-		if __player_holding_stamina_regen_scale.value != null:
+	func has_player_shooting_stamina_regen_scale() -> bool:
+		if __player_shooting_stamina_regen_scale.value != null:
 			return true
 		return false
 
 
-	func get_player_holding_stamina_regen_scale() -> float:
-		return __player_holding_stamina_regen_scale.value
+	func get_player_shooting_stamina_regen_scale() -> float:
+		return __player_shooting_stamina_regen_scale.value
 
 
-	func clear_player_holding_stamina_regen_scale() -> void:
+	func clear_player_shooting_stamina_regen_scale() -> void:
 		data[21].state = PB_SERVICE_STATE.UNFILLED
-		__player_holding_stamina_regen_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__player_shooting_stamina_regen_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_holding_stamina_regen_scale(value: float) -> void:
-		__player_holding_stamina_regen_scale.value = value
+	func set_player_shooting_stamina_regen_scale(value: float) -> void:
+		__player_shooting_stamina_regen_scale.value = value
 
 
 	var __player_invincibility_after_hit_seconds: PBField

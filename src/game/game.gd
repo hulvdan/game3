@@ -296,13 +296,22 @@ func _physics_process(dt: float) -> void:
 		add_child(r.instantiate())
 	##
 
+	## Player actions
+	room.player.creature.controller.move = Vector2(0, 0)
+	if Input.get_action_strength("shoot") >= 0.5:
+		room.player.push_action(PlayerController.ActionType.SHOOT, Vector2.INF)
+	if Input.get_action_strength("roll") >= 0.5:
+		room.player.push_action(PlayerController.ActionType.ROLL, Vector2.INF)
+	if !player_is_entering_door:
+		room.player.push_action(
+			PlayerController.ActionType.SET_MOVE_DIR,
+			Input.get_vector("move_l", "move_r", "move_u", "move_d"),
+		)
+	##
+
 	room.player.explicit_process(dt)
 
 	## Creatures moving
-	room.player.creature.controller.move = Vector2(0, 0)
-	if !player_is_entering_door:
-		room.player.push_action(Player.PlayerActionType.SET_MOVE_DIR, Input.get_vector("move_l", "move_r", "move_u", "move_d"))
-
 	for creature: Creature in room.container_creatures.get_children():
 		var dir := creature.controller.move
 		if dir != Vector2(0, 0):
@@ -526,44 +535,12 @@ func _physics_process(dt: float) -> void:
 		sh.set_shader_parameter("flash", Color(1, 1, 1, t))
 	##
 
-	## Flashing player green during rolls
-	if (
-		(glib.v.get_player_roll_invincibility_start() <= room.player.rolling)
-		&& (room.player.rolling <= glib.v.get_player_roll_invincibility_end())
-	):
-		var sh: ShaderMaterial = room.player.creature.node_sprite.material_override
-		sh.set_shader_parameter('flash', Color(0, 1, 0, 0.5))
-	##
-
-	## Updating player hp bar
+	## Updating player hp and stamina bars
 	hp_bar.set_progress((room.player.creature.hp as float) / (g_creatures[room.player.creature.type].get_hp() as float))
-	##
-
-	## Updating player stamina
-	if 1:
-		var regen_dt := dt
-		if room.player.holding:
-			regen_dt *= glib.v.get_player_holding_stamina_regen_scale()
-		room.player.stamina += regen_dt * glib.v.get_player_stamina_regen_per_second()
-
-		if room.player.stamina > glib.v.get_player_stamina():
-			room.player.stamina = glib.v.get_player_stamina()
-		if room.player.stamina_rally < room.player.stamina:
-			room.player.stamina_rally = room.player.stamina
-
-		room.player.elapsed_since_stamina_consumed += dt
-		room.player.stamina_ki = max(room.player.stamina_ki, room.player.stamina)
-		if room.player.elapsed_since_stamina_consumed >= glib.v.get_player_ki_min_delay():
-			room.player.stamina_ki += glib.v.get_player_ki_increase_per_second() * dt
-		if room.player.stamina_ki > room.player.stamina_rally:
-			room.player.stamina_ki = room.player.stamina_rally
-		assert(room.player.stamina >= 0)
-		assert(room.player.stamina_rally <= glib.v.get_player_stamina())
-
-		var st := glib.v.get_player_stamina()
-		stamina_bar.set_progress(room.player.stamina / st)
-		stamina_bar.set_rally_back_progress(room.player.stamina_rally / st)
-		stamina_bar.set_rally_front_progress(room.player.stamina_ki / st)
+	var st := glib.v.get_player_stamina()
+	stamina_bar.set_progress(room.player.stamina / st)
+	stamina_bar.set_rally_back_progress(room.player.stamina_rally / st)
+	stamina_bar.set_rally_front_progress(room.player.stamina_ki / st)
 	##
 
 	assert(len(projectiles_to_make) == 0)
@@ -622,10 +599,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	var player_got_damaged := (creature.type == glib.GCreatureType.PLAYER)
 	if player_got_damaged:
 		if data.type != glib.GDamageType.AOE:
-			if (
-				(glib.v.get_player_roll_invincibility_start() <= room.player.rolling)
-				&& (room.player.rolling <= glib.v.get_player_roll_invincibility_end())
-			):
+			if room.player.dodging:
 				if data.immediate:
 					var retrieve := (
 						room.player.rolling_retrievable_cost
@@ -651,7 +625,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	creature.hp_bar.set_progress((creature.hp as float) / (glib.v.get_creatures()[creature.type].get_hp() as float))
 	creature.time_since_last_damage_taken_visual = 0
 
-	if (creature != room.player) && (creature.hp <= 0):
+	if (creature.type != glib.GCreatureType.PLAYER) && (creature.hp <= 0):
 		creature.queue_free()
 		creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 		if creature.type != glib.GCreatureType.PLAYER:
