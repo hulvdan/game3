@@ -203,6 +203,8 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()))
 	##
 
+	room.player_stamina = glib.v.get_player_stamina()
+
 
 func _ready() -> void:
 	# TODO: REMOVEME
@@ -215,9 +217,7 @@ func _ready() -> void:
 	assert(camera_angle > 0)
 
 	hp_bar.init(color_ui_hp, false)
-
-	stamina_bar = packed_ui_bar_player.instantiate()
-	stamina_bar.init(color_ui_stamina, true, Bar.Opts.new().with_rally(color_ui_stamina_rally))
+	stamina_bar.init(color_ui_stamina, false, Bar.Opts.new().with_rally(color_ui_stamina_rally))
 
 	var transition: Control = %_transition
 	transition.visible = true
@@ -357,14 +357,18 @@ func _physics_process(dt: float) -> void:
 		room.player_rolling += dt
 		if room.player_rolling >= glib.v.get_player_roll_duration_seconds():
 			room.player_rolling = 0
+			room.player_rolling_retrievable_cost = 0
 			room.player.evaded_attack_ids.clear()
 	elif (
-		(Input.get_action_strength("roll") >= 0.5)
+		(room.player_stamina >= glib.v.get_player_stamina_roll_cost())
+		&& (Input.get_action_strength("roll") >= 0.5)
 		&& (room.player.controller.last_move != Vector2(0, 0))
 	):
 		room.player_rolling = dt
 		room.player_holding = 0
 		room.player_roll_direction = room.player.controller.last_move
+		room.player_stamina -= glib.v.get_player_stamina_roll_cost()
+		room.player_rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
 	##
 
 	## Collisions setup
@@ -659,7 +663,12 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 				&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
 			):
 				if data.immediate:
-					room.player_stamina = min(room.player_stamina + 1, glib.v.get_player_stamina_charges())
+					var retrieve := (
+						room.player_rolling_retrievable_cost
+						* glib.v.get_player_dodge_stamina_retrieve_percent() / 100.0
+					)
+					room.add_stamina(retrieve)
+					room.player_rolling_retrievable_cost -= retrieve
 					player_perfectly_evaded.emit(creature.transform.origin)
 				creature.evaded_attack_ids.append(data.attack_id)
 				return false

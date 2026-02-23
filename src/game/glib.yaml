@@ -24,6 +24,7 @@ player_roll_invincibility_end: 0.25
 player_stamina: 100
 player_stamina_regen_per_second: 20
 player_stamina_roll_cost: 40
+player_dodge_stamina_retrieve_percent: 50
 player_holding_stamina_regen_scale: 0.33
 player_invincibility_after_hit_seconds: 0.5
 mob_invincibility_spikes_seconds: 0.25

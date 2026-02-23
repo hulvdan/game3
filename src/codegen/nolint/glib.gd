@@ -3244,6 +3244,11 @@ class Lib:
 		service.field = __player_stamina_roll_cost
 		data[__player_stamina_roll_cost.tag] = service
 
+		__player_dodge_stamina_retrieve_percent = PBField.new("player_dodge_stamina_retrieve_percent", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 40, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_dodge_stamina_retrieve_percent
+		data[__player_dodge_stamina_retrieve_percent.tag] = service
+
 		__player_holding_stamina_regen_scale = PBField.new("player_holding_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_holding_stamina_regen_scale
@@ -3655,6 +3660,28 @@ class Lib:
 
 	func set_player_stamina_roll_cost(value: float) -> void:
 		__player_stamina_roll_cost.value = value
+
+
+	var __player_dodge_stamina_retrieve_percent: PBField
+
+
+	func has_player_dodge_stamina_retrieve_percent() -> bool:
+		if __player_dodge_stamina_retrieve_percent.value != null:
+			return true
+		return false
+
+
+	func get_player_dodge_stamina_retrieve_percent() -> float:
+		return __player_dodge_stamina_retrieve_percent.value
+
+
+	func clear_player_dodge_stamina_retrieve_percent() -> void:
+		data[40].state = PB_SERVICE_STATE.UNFILLED
+		__player_dodge_stamina_retrieve_percent.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_dodge_stamina_retrieve_percent(value: float) -> void:
+		__player_dodge_stamina_retrieve_percent.value = value
 
 
 	var __player_holding_stamina_regen_scale: PBField

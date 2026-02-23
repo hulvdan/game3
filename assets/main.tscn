@@ -34,6 +34,7 @@ camera_distance = 5.0
 camera_angle = 1.065
 color_ui_hp = Color(0.9098039, 0.23137255, 0.23137255, 1)
 color_ui_stamina = Color(0.5686275, 0.85882354, 0.4117647, 1)
+color_ui_stamina_rally = Color(0.9843137, 0.7254902, 0.32941177, 1)
 world_3d = NodePath("../_meta/_world_3d")
 packed_room = ExtResource("7_vqaxa")
 packed_creature = ExtResource("6_qdlv5")
@@ -104,19 +105,19 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(64, 32)
 layout_mode = 0
 
-[node name="_container_stamina_bars" type="HBoxContainer" parent="_game/CanvasLayer2/Control/_hp_bar" unique_id=1916445434]
-unique_name_in_owner = true
+[node name="Control" type="Control" parent="_game/CanvasLayer2/Control/_hp_bar" unique_id=1620070821]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = 8.0
-offset_right = 64.0
-offset_bottom = 48.0
 grow_vertical = 0
 
-[node name="ColorRect2" parent="_game/CanvasLayer2/Control/_hp_bar/_container_stamina_bars" unique_id=502734556 instance=ExtResource("13_km2eh")]
-layout_mode = 2
+[node name="_stamina_bar" parent="_game/CanvasLayer2/Control/_hp_bar/Control" unique_id=1475868082 instance=ExtResource("13_km2eh")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 32)
+layout_mode = 0
+offset_top = 16.0
+offset_bottom = 48.0
 
 [node name="_transition" type="CanvasLayer" parent="_game" unique_id=1106916493]
 layer = 1000
