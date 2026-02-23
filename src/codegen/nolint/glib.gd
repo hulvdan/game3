@@ -3284,6 +3284,11 @@ class Lib:
 		service.field = __player_ki_state_min_duration
 		data[__player_ki_state_min_duration.tag] = service
 
+		__action_consumption_duration = PBField.new("action_consumption_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 48, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __action_consumption_duration
+		data[__action_consumption_duration.tag] = service
+
 		__player_holding_stamina_regen_scale = PBField.new("player_holding_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_holding_stamina_regen_scale
@@ -3871,6 +3876,28 @@ class Lib:
 
 	func set_player_ki_state_min_duration(value: float) -> void:
 		__player_ki_state_min_duration.value = value
+
+
+	var __action_consumption_duration: PBField
+
+
+	func has_action_consumption_duration() -> bool:
+		if __action_consumption_duration.value != null:
+			return true
+		return false
+
+
+	func get_action_consumption_duration() -> float:
+		return __action_consumption_duration.value
+
+
+	func clear_action_consumption_duration() -> void:
+		data[48].state = PB_SERVICE_STATE.UNFILLED
+		__action_consumption_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_action_consumption_duration(value: float) -> void:
+		__action_consumption_duration.value = value
 
 
 	var __player_holding_stamina_regen_scale: PBField

@@ -296,10 +296,12 @@ func _physics_process(dt: float) -> void:
 		add_child(r.instantiate())
 	##
 
+	room.player.explicit_process(dt)
+
 	## Creatures moving
 	room.player.creature.controller.move = Vector2(0, 0)
 	if !player_is_entering_door:
-		room.player.creature.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
+		room.player.push_action(Player.PlayerActionType.SET_MOVE_DIR, Input.get_vector("move_l", "move_r", "move_u", "move_d"))
 
 	for creature: Creature in room.container_creatures.get_children():
 		var dir := creature.controller.move
@@ -312,54 +314,6 @@ func _physics_process(dt: float) -> void:
 	var end_point := get_mouse_world_point()
 	if end_point != Vector3.INF:
 		room.player.bow.transform.basis = room.player.creature.transform.looking_at(end_point).basis
-	##
-
-	## Player shooting
-	var shooting := Input.get_action_strength("shoot") >= 0.5
-
-	if room.player.rolling and (room.player.rolling < glib.v.get_player_roll_can_shoot_after()):
-		if shooting:
-			room.player.shooting_after_roll_scheduled = true
-
-	else:
-		var dur := glib.v.get_shooting_seconds()
-		if room.player.shooting_after_roll_scheduled:
-			dur = glib.v.get_shooting_after_roll_seconds()
-
-		if room.player.holding >= dur:
-			room.player.consume_stamina(glib.v.get_player_stamina_attack_cost(), false)
-			var d := Projectile.Data.new()
-			d.type = glib.GProjectileType.ARROW
-			d.owner = glib.GCreatureType.PLAYER
-			d.pos = bf.from_xz(room.player.creature.transform.origin)
-			d.target = d.pos - bf.from_xz(room.player.bow.transform.basis.z)
-			make_projectile(d)
-			room.player.holding = 0
-			room.player.shooting_after_roll_scheduled = false
-		elif room.player.holding or (
-			(shooting or room.player.shooting_after_roll_scheduled)
-			and (room.player.stamina >= glib.v.get_player_stamina_attack_cost())
-		):
-			room.player.holding += dt
-	##
-
-	## Player rolling
-	if room.player.rolling:
-		room.player.rolling += dt
-		if room.player.rolling >= glib.v.get_player_roll_duration_seconds():
-			room.player.rolling = 0
-			room.player.rolling_retrievable_cost = 0
-			room.player.creature.evaded_attack_ids.clear()
-	elif (
-		(room.player.stamina >= glib.v.get_player_stamina_roll_cost())
-		&& (Input.get_action_strength("roll") >= 0.5)
-		&& (room.player.creature.controller.last_move != Vector2(0, 0))
-	):
-		room.player.rolling = dt
-		room.player.holding = 0
-		room.player.roll_direction = room.player.creature.controller.last_move
-		room.player.consume_stamina(glib.v.get_player_stamina_roll_cost(), true)
-		room.player.rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
 	##
 
 	spawn_projectiles()
