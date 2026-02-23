@@ -18,7 +18,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	##
 
 	if actor.melee_attacking and actor.attack_elapsed <= data.get_melee__attack_stops_tracking_at():
-		actor.melee_target_pos = Room.v.player.transform.origin
+		actor.melee_target_pos = Room.v.player.creature.transform.origin
 
 	actor.attack_elapsed += get_physics_process_delta_time()
 
@@ -32,7 +32,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 				d.type = data.get_attack_projectile_type() as glib.GProjectileType
 				d.owner = actor.type
 				d.pos = bf.from_xz(actor.transform.origin)
-				d.target = bf.from_xz(Room.v.player.transform.origin)
+				d.target = bf.from_xz(Room.v.player.creature.transform.origin)
 				Game.v.make_projectile(data.get_attack_projectile_type(), d)
 	##
 

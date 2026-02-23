@@ -8,7 +8,7 @@ class_name ActionChase
 
 func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	var actor: Creature = actor_
-	var target_pos: Vector2 = bf.from_xz(Room.v.player.transform.origin)
+	var target_pos: Vector2 = bf.from_xz(Room.v.player.creature.transform.origin)
 	var pos = bf.from_xz((actor as Node3D).transform.origin)
 	var dpos: Vector2 = target_pos - pos
 

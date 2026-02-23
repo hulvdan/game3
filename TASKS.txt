@@ -13,6 +13,7 @@ x stamina: single bar
 x stamina: roll resets rally
 x stamina: attack has stamina + rally cost
 x stamina: ki rally front
+x ref extracted Player
 
 * stamina: KI state restores stamina
 * stamina: block works

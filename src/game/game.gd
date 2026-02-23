@@ -110,7 +110,7 @@ func room_index(pos: Vector2i) -> int: ##
 func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 	if player_is_entering_door:
 		return
-	if body != room.player:
+	if body != room.player.creature:
 		return
 
 	var tween = create_tween()
@@ -196,17 +196,14 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	##
 
 	## Placing player and other creatures
-	room.player = make_creature(glib.GCreatureType.PLAYER, player_pos)
-
-	room.player_bow = packed_bow.instantiate()
-	room.player.add_child(room.player_bow)
+	var bow: Node3D = packed_bow.instantiate()
+	room.player.init(
+		make_creature(glib.GCreatureType.PLAYER, player_pos),
+		bow,
+	)
 	for mob in g_room.get_creatures():
 		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()))
 	##
-
-	room.player_stamina = glib.v.get_player_stamina()
-	room.player_stamina_rally = room.player_stamina
-	room.player_stamina_ki = room.player_stamina
 
 
 func _ready() -> void:
@@ -297,9 +294,9 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Creatures moving
-	room.player.controller.move = Vector2(0, 0)
+	room.player.creature.controller.move = Vector2(0, 0)
 	if !player_is_entering_door:
-		room.player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
+		room.player.creature.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
 
 	for creature: Creature in room.container_creatures.get_children():
 		var data := g_creatures[creature.type]
@@ -310,18 +307,18 @@ func _physics_process(dt: float) -> void:
 		var speed := data.get_speed()
 
 		if creature.type == glib.GCreatureType.PLAYER:
-			if room.player_rolling:
-				dir = room.player_roll_direction
+			if room.player.rolling:
+				dir = room.player.roll_direction
 				speed = bf.get_roll_speed(
 					glib.v.get_player_roll_distance(),
 					glib.v.get_player_roll_duration_seconds(),
-					room.player_rolling,
+					room.player.rolling,
 					glib.v.get_player_roll_pow(),
 				)
 			else:
-				if room.player_holding:
+				if room.player.holding:
 					speed *= glib.v.get_player_speed_holding_scale()
-				speed *= lerp(1.0, glib.v.get_player_speed_inside_enemies_scale(), room.player_inside_enemy_t)
+				speed *= lerp(1.0, glib.v.get_player_speed_inside_enemies_scale(), room.player.inside_enemy_t)
 
 		bf.move_body_with_speed(creature.node_body, dir, speed)
 	##
@@ -329,55 +326,55 @@ func _physics_process(dt: float) -> void:
 	## Updating player's bow direction
 	var end_point := get_mouse_world_point()
 	if end_point != Vector3.INF:
-		room.player_bow.transform.basis = room.player.transform.looking_at(end_point).basis
+		room.player.bow.transform.basis = room.player.creature.transform.looking_at(end_point).basis
 	##
 
 	## Player shooting
 	var shooting := Input.get_action_strength("shoot") >= 0.5
 
-	if room.player_rolling and (room.player_rolling < glib.v.get_player_roll_can_shoot_after()):
+	if room.player.rolling and (room.player.rolling < glib.v.get_player_roll_can_shoot_after()):
 		if shooting:
-			room.player_shooting_after_roll_scheduled = true
+			room.player.shooting_after_roll_scheduled = true
 
 	else:
 		var dur := glib.v.get_shooting_seconds()
-		if room.player_shooting_after_roll_scheduled:
+		if room.player.shooting_after_roll_scheduled:
 			dur = glib.v.get_shooting_after_roll_seconds()
 
-		if room.player_holding >= dur:
-			room.consume_stamina(glib.v.get_player_stamina_attack_cost(), false)
+		if room.player.holding >= dur:
+			room.player.consume_stamina(glib.v.get_player_stamina_attack_cost(), false)
 			var d := Projectile.Data.new()
 			d.type = glib.GProjectileType.ARROW
 			d.owner = glib.GCreatureType.PLAYER
-			d.pos = bf.from_xz(room.player.transform.origin)
-			d.target = d.pos - bf.from_xz(room.player_bow.transform.basis.z)
+			d.pos = bf.from_xz(room.player.creature.transform.origin)
+			d.target = d.pos - bf.from_xz(room.player.bow.transform.basis.z)
 			make_projectile(glib.GProjectileType.ARROW, d)
-			room.player_holding = 0
-			room.player_shooting_after_roll_scheduled = false
-		elif room.player_holding or (
-			(shooting or room.player_shooting_after_roll_scheduled)
-			and (room.player_stamina >= glib.v.get_player_stamina_attack_cost())
+			room.player.holding = 0
+			room.player.shooting_after_roll_scheduled = false
+		elif room.player.holding or (
+			(shooting or room.player.shooting_after_roll_scheduled)
+			and (room.player.stamina >= glib.v.get_player_stamina_attack_cost())
 		):
-			room.player_holding += dt
+			room.player.holding += dt
 	##
 
 	## Player rolling
-	if room.player_rolling:
-		room.player_rolling += dt
-		if room.player_rolling >= glib.v.get_player_roll_duration_seconds():
-			room.player_rolling = 0
-			room.player_rolling_retrievable_cost = 0
-			room.player.evaded_attack_ids.clear()
+	if room.player.rolling:
+		room.player.rolling += dt
+		if room.player.rolling >= glib.v.get_player_roll_duration_seconds():
+			room.player.rolling = 0
+			room.player.rolling_retrievable_cost = 0
+			room.player.creature.evaded_attack_ids.clear()
 	elif (
-		(room.player_stamina >= glib.v.get_player_stamina_roll_cost())
+		(room.player.stamina >= glib.v.get_player_stamina_roll_cost())
 		&& (Input.get_action_strength("roll") >= 0.5)
-		&& (room.player.controller.last_move != Vector2(0, 0))
+		&& (room.player.creature.controller.last_move != Vector2(0, 0))
 	):
-		room.player_rolling = dt
-		room.player_holding = 0
-		room.player_roll_direction = room.player.controller.last_move
-		room.consume_stamina(glib.v.get_player_stamina_roll_cost(), true)
-		room.player_rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
+		room.player.rolling = dt
+		room.player.holding = 0
+		room.player.roll_direction = room.player.creature.controller.last_move
+		room.player.consume_stamina(glib.v.get_player_stamina_roll_cost(), true)
+		room.player.rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
 	##
 
 	## Collisions setup
@@ -563,7 +560,7 @@ func _physics_process(dt: float) -> void:
 	if 1:
 		var creatures_push_radius: float = glib.v.get_creatures_push_radius()
 		var creatures_push_radius_sqr: float = creatures_push_radius * creatures_push_radius
-		room.player_inside_enemy_t = 0
+		room.player.inside_enemy_t = 0
 		for c1: Creature in room.container_creatures.get_children():
 			for c2: Creature in room.container_creatures.get_children():
 				if c1 == c2:
@@ -574,8 +571,8 @@ func _physics_process(dt: float) -> void:
 					var t: float = 1 - sqrt(d) / creatures_push_radius
 					bf.move_body_with_speed(c1.node_body, dir, t)
 					if c1.type == glib.GCreatureType.PLAYER:
-						room.player_inside_enemy_t = max(room.player_inside_enemy_t, t)
-		room.player_inside_enemy_t = min(1, room.player_inside_enemy_t)
+						room.player.inside_enemy_t = max(room.player.inside_enemy_t, t)
+		room.player.inside_enemy_t = min(1, room.player.inside_enemy_t)
 	##
 
 	## Updating creatures time_since_last_damage_taken + flashing
@@ -590,42 +587,42 @@ func _physics_process(dt: float) -> void:
 
 	## Flashing player green during rolls
 	if (
-		(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
-		&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
+		(glib.v.get_player_roll_invincibility_start() <= room.player.rolling)
+		&& (room.player.rolling <= glib.v.get_player_roll_invincibility_end())
 	):
-		var sh: ShaderMaterial = room.player.node_sprite.material_override
+		var sh: ShaderMaterial = room.player.creature.node_sprite.material_override
 		sh.set_shader_parameter('flash', Color(0, 1, 0, 0.5))
 	##
 
 	## Updating player hp bar
-	hp_bar.set_progress((room.player.hp as float) / (g_creatures[room.player.type].get_hp() as float))
+	hp_bar.set_progress((room.player.creature.hp as float) / (g_creatures[room.player.creature.type].get_hp() as float))
 	##
 
 	## Updating player stamina
 	if 1:
 		var regen_dt := dt
-		if room.player_holding:
+		if room.player.holding:
 			regen_dt *= glib.v.get_player_holding_stamina_regen_scale()
-		room.player_stamina += regen_dt * glib.v.get_player_stamina_regen_per_second()
+		room.player.stamina += regen_dt * glib.v.get_player_stamina_regen_per_second()
 
-		if room.player_stamina > glib.v.get_player_stamina():
-			room.player_stamina = glib.v.get_player_stamina()
-		if room.player_stamina_rally < room.player_stamina:
-			room.player_stamina_rally = room.player_stamina
+		if room.player.stamina > glib.v.get_player_stamina():
+			room.player.stamina = glib.v.get_player_stamina()
+		if room.player.stamina_rally < room.player.stamina:
+			room.player.stamina_rally = room.player.stamina
 
-		room.player_elapsed_since_stamina_consumed += dt
-		room.player_stamina_ki = max(room.player_stamina_ki, room.player_stamina)
-		if room.player_elapsed_since_stamina_consumed >= glib.v.get_player_ki_min_delay():
-			room.player_stamina_ki += glib.v.get_player_ki_increase_per_second() * dt
-		if room.player_stamina_ki > room.player_stamina_rally:
-			room.player_stamina_ki = room.player_stamina_rally
-		assert(room.player_stamina >= 0)
-		assert(room.player_stamina_rally <= glib.v.get_player_stamina())
+		room.player.elapsed_since_stamina_consumed += dt
+		room.player.stamina_ki = max(room.player.stamina_ki, room.player.stamina)
+		if room.player.elapsed_since_stamina_consumed >= glib.v.get_player_ki_min_delay():
+			room.player.stamina_ki += glib.v.get_player_ki_increase_per_second() * dt
+		if room.player.stamina_ki > room.player.stamina_rally:
+			room.player.stamina_ki = room.player.stamina_rally
+		assert(room.player.stamina >= 0)
+		assert(room.player.stamina_rally <= glib.v.get_player_stamina())
 
 		var st := glib.v.get_player_stamina()
-		stamina_bar.set_progress(room.player_stamina / st)
-		stamina_bar.set_rally_back_progress(room.player_stamina_rally / st)
-		stamina_bar.set_rally_front_progress(room.player_stamina_ki / st)
+		stamina_bar.set_progress(room.player.stamina / st)
+		stamina_bar.set_rally_back_progress(room.player.stamina_rally / st)
+		stamina_bar.set_rally_front_progress(room.player.stamina_ki / st)
 	##
 
 
@@ -636,7 +633,7 @@ func _process(dt: float) -> void:
 
 	var camera_dir = Vector3(0, sin(camera_angle), cos(camera_angle))
 	var target: Vector3 = lerp(
-		room.player.transform.origin,
+		room.player.creature.transform.origin,
 		Vector3(room_size.x / 2, 0, room_size.y * 2 / 3),
 		# bf.to_xz(ws.x / 2,),
 		0.15,
@@ -683,16 +680,16 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	if player_got_damaged:
 		if data.type != glib.GDamageType.AOE:
 			if (
-				(glib.v.get_player_roll_invincibility_start() <= room.player_rolling)
-				&& (room.player_rolling <= glib.v.get_player_roll_invincibility_end())
+				(glib.v.get_player_roll_invincibility_start() <= room.player.rolling)
+				&& (room.player.rolling <= glib.v.get_player_roll_invincibility_end())
 			):
 				if data.immediate:
 					var retrieve := (
-						room.player_rolling_retrievable_cost
+						room.player.rolling_retrievable_cost
 						* glib.v.get_player_dodge_stamina_retrieve_percent() / 100.0
 					)
-					room.add_stamina(retrieve)
-					room.player_rolling_retrievable_cost -= retrieve
+					room.player.add_stamina(retrieve)
+					room.player.rolling_retrievable_cost -= retrieve
 					player_perfectly_evaded.emit(creature.transform.origin)
 				creature.evaded_attack_ids.append(data.attack_id)
 				return false
