@@ -23,6 +23,7 @@ x roll rally lerp t
 x long block lowers stamina regen
 
 * block: don't spam labels
+*
 * hp rally
 * regen hp rally on hitting enemies
 *

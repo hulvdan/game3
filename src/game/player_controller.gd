@@ -208,6 +208,15 @@ class PlayerDefault extends PlayerBase: ##
 			_:
 				consumed = false
 		return consumed
+
+
+	func explicit_process(dt: float) -> void:
+		super.explicit_process(dt)
+		if player.shoot_after_roll:
+			if player._can_start_shoot():
+				player._change_state(StateType.SHOOT, null)
+			else:
+				player.shoot_after_roll = false
 ##
 
 
@@ -305,7 +314,10 @@ class PlayerRoll extends PlayerBase: ##
 		var consumed := true
 		match a.type:
 			ActionType.SHOOT:
-				player.shoot_after_roll = true
+				if player._can_start_shoot():
+					player.shoot_after_roll = true
+				else:
+					consumed = false
 			_:
 				consumed = false
 		return consumed
