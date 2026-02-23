@@ -15,11 +15,14 @@ x stamina: attack has stamina + rally cost
 x stamina: ki rally front
 x ref extracted Player
 x stamina: KI state restores stamina
+x stamina: block works
+x stamina: stamina depletion regen delay
+  can shoot/roll when stamina > 0
+  can't shoot/roll when stamina <= 0
 
-* stamina: block works
-* stamina: 
-* stamina: 
-* stamina: 
+* block: don't spam labels
+* hp rally
+* regen hp rally on hitting enemies
 *
 * enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 * enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)

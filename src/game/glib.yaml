@@ -11,7 +11,8 @@ damages: ##
   - type: AOE
     ##
 
-player_speed_holding_scale: 0.35
+player_speed_shooting_scale: 0.2
+player_speed_blocking_scale: 0.2
 creatures_push_radius: 1.0
 creatures_push_force: 4
 player_speed_inside_enemies_scale: 0.3
@@ -26,11 +27,13 @@ player_stamina_regen_per_second: 20
 player_stamina_roll_cost: 25
 player_stamina_rally_decay_after: 1
 player_stamina_rally_decay_per_second: 20
-player_stamina_attack_cost: 20
+player_stamina_attack_cost: 25
+player_stamina_depletion_regen_delay: 1.0
 player_stamina_attack_rally_scale: 0.9
-player_ki_min_delay: 0.1
+player_ki_min_delay: 0.0
 player_ki_increase_per_second: 80
 player_ki_state_min_duration: 0.2
+player_perfect_block_window: 0.3
 action_consumption_duration: 0.2
 player_dodge_stamina_retrieve_percent: 50
 player_shooting_stamina_regen_scale: 0.33

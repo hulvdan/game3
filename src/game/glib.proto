@@ -127,7 +127,8 @@ message GCollision {
 message Lib {
   int32 debug_collisions = 5;
   repeated GRoom rooms = 2;
-  float player_speed_holding_scale = 3;
+  float player_speed_shooting_scale = 3;
+  float player_speed_blocking_scale = 49;
   float player_speed_inside_enemies_scale = 17;
   float player_roll_duration_seconds = 18;
   float player_roll_can_shoot_after = 19;
@@ -146,6 +147,8 @@ message Lib {
   float player_ki_min_delay = 45;
   float player_ki_increase_per_second = 46;
   float player_ki_state_min_duration = 47;
+  float player_perfect_block_window = 50;
+  float player_stamina_depletion_regen_delay = 51;
   float action_consumption_duration = 48;
   float player_shooting_stamina_regen_scale = 21;
   float player_invincibility_after_hit_seconds = 28;

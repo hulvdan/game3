@@ -2,6 +2,7 @@ extends Node3D
 
 class_name Creature
 
+## Variables
 @export var node_body: RigidBody3D
 
 var type: glib.GCreatureType
@@ -23,6 +24,7 @@ var speed_modifiers: Dictionary[String, float] = { "base": 0 }
 
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
+##
 
 
 func get_speed() -> float: ##
@@ -33,15 +35,17 @@ func get_speed() -> float: ##
 ##
 
 
-class Controller:
+class Controller: ##
 	var move: Vector2
 	var last_move: Vector2
+##
 
 
-func setup_ai(tree: BeehaveTree) -> void:
+func setup_ai(tree: BeehaveTree) -> void: ##
 	add_child(tree)
 	var cooldown_path: String = tree.get_meta("cooldown")
 	var cooldown: ActionRandCooldown = tree.get_node(cooldown_path)
 	var data: glib.GCreature = glib.v.get_creatures()[type]
 	cooldown.cooldown_min = data.get_attack_cooldown_min()
 	cooldown.cooldown_max = data.get_attack_cooldown_max()
+##

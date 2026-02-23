@@ -3189,10 +3189,15 @@ class Lib:
 		service.func_ref = Callable(self, "add_rooms")
 		data[__rooms.tag] = service
 
-		__player_speed_holding_scale = PBField.new("player_speed_holding_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__player_speed_shooting_scale = PBField.new("player_speed_shooting_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __player_speed_holding_scale
-		data[__player_speed_holding_scale.tag] = service
+		service.field = __player_speed_shooting_scale
+		data[__player_speed_shooting_scale.tag] = service
+
+		__player_speed_blocking_scale = PBField.new("player_speed_blocking_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 49, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_speed_blocking_scale
+		data[__player_speed_blocking_scale.tag] = service
 
 		__player_speed_inside_enemies_scale = PBField.new("player_speed_inside_enemies_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -3283,6 +3288,16 @@ class Lib:
 		service = PBServiceField.new()
 		service.field = __player_ki_state_min_duration
 		data[__player_ki_state_min_duration.tag] = service
+
+		__player_perfect_block_window = PBField.new("player_perfect_block_window", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 50, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_perfect_block_window
+		data[__player_perfect_block_window.tag] = service
+
+		__player_stamina_depletion_regen_delay = PBField.new("player_stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 51, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_stamina_depletion_regen_delay
+		data[__player_stamina_depletion_regen_delay.tag] = service
 
 		__action_consumption_duration = PBField.new("action_consumption_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 48, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -3460,26 +3475,48 @@ class Lib:
 		return element
 
 
-	var __player_speed_holding_scale: PBField
+	var __player_speed_shooting_scale: PBField
 
 
-	func has_player_speed_holding_scale() -> bool:
-		if __player_speed_holding_scale.value != null:
+	func has_player_speed_shooting_scale() -> bool:
+		if __player_speed_shooting_scale.value != null:
 			return true
 		return false
 
 
-	func get_player_speed_holding_scale() -> float:
-		return __player_speed_holding_scale.value
+	func get_player_speed_shooting_scale() -> float:
+		return __player_speed_shooting_scale.value
 
 
-	func clear_player_speed_holding_scale() -> void:
+	func clear_player_speed_shooting_scale() -> void:
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		__player_speed_holding_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__player_speed_shooting_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_speed_holding_scale(value: float) -> void:
-		__player_speed_holding_scale.value = value
+	func set_player_speed_shooting_scale(value: float) -> void:
+		__player_speed_shooting_scale.value = value
+
+
+	var __player_speed_blocking_scale: PBField
+
+
+	func has_player_speed_blocking_scale() -> bool:
+		if __player_speed_blocking_scale.value != null:
+			return true
+		return false
+
+
+	func get_player_speed_blocking_scale() -> float:
+		return __player_speed_blocking_scale.value
+
+
+	func clear_player_speed_blocking_scale() -> void:
+		data[49].state = PB_SERVICE_STATE.UNFILLED
+		__player_speed_blocking_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_speed_blocking_scale(value: float) -> void:
+		__player_speed_blocking_scale.value = value
 
 
 	var __player_speed_inside_enemies_scale: PBField
@@ -3876,6 +3913,50 @@ class Lib:
 
 	func set_player_ki_state_min_duration(value: float) -> void:
 		__player_ki_state_min_duration.value = value
+
+
+	var __player_perfect_block_window: PBField
+
+
+	func has_player_perfect_block_window() -> bool:
+		if __player_perfect_block_window.value != null:
+			return true
+		return false
+
+
+	func get_player_perfect_block_window() -> float:
+		return __player_perfect_block_window.value
+
+
+	func clear_player_perfect_block_window() -> void:
+		data[50].state = PB_SERVICE_STATE.UNFILLED
+		__player_perfect_block_window.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_perfect_block_window(value: float) -> void:
+		__player_perfect_block_window.value = value
+
+
+	var __player_stamina_depletion_regen_delay: PBField
+
+
+	func has_player_stamina_depletion_regen_delay() -> bool:
+		if __player_stamina_depletion_regen_delay.value != null:
+			return true
+		return false
+
+
+	func get_player_stamina_depletion_regen_delay() -> float:
+		return __player_stamina_depletion_regen_delay.value
+
+
+	func clear_player_stamina_depletion_regen_delay() -> void:
+		data[51].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina_depletion_regen_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_stamina_depletion_regen_delay(value: float) -> void:
+		__player_stamina_depletion_regen_delay.value = value
 
 
 	var __action_consumption_duration: PBField

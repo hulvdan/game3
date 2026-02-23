@@ -5,6 +5,8 @@ class_name Game
 ## Variables
 signal player_perfectly_evaded(world_pos: Vector3)
 signal enemy_started_attack(world_pos: Vector3)
+signal player_blocked(world_pos: Vector3)
+signal player_perfectly_blocked(world_pos: Vector3)
 signal damaged(world_pos: Vector3, value: int, type: WhoGotDamagedType)
 
 const GROUP_TARGET_CAMERA := "target_camera"
@@ -539,6 +541,15 @@ func _physics_process(dt: float) -> void:
 		sh.set_shader_parameter("flash", Color(1, 1, 1, t))
 	##
 
+	## Flashing player
+	if 1:
+		var sh: ShaderMaterial = room.player.creature.node_sprite.material_override
+		if room.player.dodging:
+			sh.set_shader_parameter("flash", Color(0, 1, 0, 0.5))
+		if room.player.blocking:
+			sh.set_shader_parameter("flash", Color(0, 0, 1, 0.5))
+	##
+
 	## Updating player hp and stamina bars
 	hp_bar.set_progress((room.player.creature.hp as float) / (g_creatures[room.player.creature.type].get_hp() as float))
 	var st := glib.v.get_player_stamina()
@@ -603,7 +614,16 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	var player_got_damaged := (creature.type == glib.GCreatureType.PLAYER)
 	if player_got_damaged:
 		if data.type != glib.GDamageType.AOE:
-			if room.player.dodging:
+			if room.player.blocking_perfectly:
+				player_perfectly_blocked.emit(creature.transform.origin)
+				return false
+			elif room.player.blocking:
+				player_blocked.emit(creature.transform.origin)
+				damage /= 2
+				assert(damage >= 0)
+				if damage <= 0:
+					return false
+			elif room.player.dodging:
 				if data.immediate:
 					var retrieve := (
 						room.player.rolling_retrievable_cost
