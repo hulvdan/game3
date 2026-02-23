@@ -21,6 +21,7 @@ x stamina: stamina depletion regen delay
   can't shoot/roll when stamina <= 0
 x roll rally lerp t
 x long block lowers stamina regen
+x block: cooldown
 
 * block: don't spam labels
 *

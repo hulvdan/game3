@@ -633,8 +633,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 						room.player.rolling_retrievable_cost
 						* glib.v.get_player_dodge_stamina_retrieve_percent() / 100.0
 					)
-					room.player.add_stamina(retrieve)
-					room.player.add_stamina_rallies(retrieve)
+					room.player.add_stamina(retrieve, 1)
 					room.player.rolling_retrievable_cost -= retrieve
 					player_perfectly_evaded.emit(creature.transform.origin)
 				creature.evaded_attack_ids.append(data.attack_id)
@@ -655,8 +654,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	creature.time_since_last_damage_taken_visual = 0
 
 	if (creature.type != glib.GCreatureType.PLAYER) && (creature.hp <= 0):
-		room.player.add_stamina(glib.v.get_stamina_regen_on_kill())
-		room.player.add_stamina_rallies(glib.v.get_stamina_regen_on_kill())
+		room.player.add_stamina(glib.v.get_stamina_regen_on_kill(), 1)
 		creature.queue_free()
 		creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 		if creature.type != glib.GCreatureType.PLAYER:

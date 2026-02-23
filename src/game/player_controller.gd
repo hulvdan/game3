@@ -15,7 +15,8 @@ var dodging := false
 var blocking := false
 var blocking_perfectly := false
 var ki := false
-var stamina_depleted_at := 0.0
+var _stamina_depleted_at := 0.0
+var _block_exited_at: float = 0.0
 
 var _stamina_regen_modifiers: Dictionary[String, float] = { }
 
@@ -84,8 +85,8 @@ func explicit_process(dt: float) -> void: ##
 	for v: float in _stamina_regen_modifiers.values():
 		regen_dt *= v
 	if (
-		stamina_depleted_at
-		&& (Room.v.start_elapsed - stamina_depleted_at < glib.v.get_player_stamina_depletion_regen_delay())
+		_stamina_depleted_at
+		&& (Room.v.start_elapsed - _stamina_depleted_at < glib.v.get_player_stamina_depletion_regen_delay())
 	):
 		regen_dt = 0
 	stamina += regen_dt * glib.v.get_player_stamina_regen_per_second()
@@ -97,8 +98,8 @@ func explicit_process(dt: float) -> void: ##
 
 	elapsed_since_stamina_consumed += dt
 	stamina_ki = max(stamina_ki, stamina)
-	if elapsed_since_stamina_consumed >= glib.v.get_player_ki_min_delay():
-		stamina_ki += glib.v.get_player_ki_increase_per_second() * dt
+	if elapsed_since_stamina_consumed >= glib.v.get_player_block_min_delay():
+		stamina_ki += glib.v.get_player_block_increase_per_second() * dt
 	if stamina_ki > stamina_rally:
 		stamina_ki = stamina_rally
 	assert(stamina >= 0)
@@ -106,16 +107,12 @@ func explicit_process(dt: float) -> void: ##
 ##
 
 
-func add_stamina(value: float) -> void: ##
+func add_stamina(value: float, rallies_scale: float) -> void: ##
 	assert(value > 0)
 	stamina = min(stamina + value, glib.v.get_player_stamina())
-	stamina_depleted_at = 0.0
-##
-
-
-func add_stamina_rallies(value: float) -> void: ##
-	stamina_rally = min(stamina_rally + value, glib.v.get_player_stamina())
-	stamina_ki = min(stamina_ki + value, glib.v.get_player_stamina())
+	_stamina_depleted_at = 0.0
+	stamina_rally = min(stamina_rally + value * rallies_scale, glib.v.get_player_stamina())
+	stamina_ki = min(stamina_ki + value * rallies_scale, glib.v.get_player_stamina())
 ##
 
 
@@ -125,7 +122,7 @@ func consume_stamina(value: float, rally_lerp_t: float) -> void: ##
 	elapsed_since_stamina_consumed = 0.0
 	stamina = max(0, stamina - value)
 	if stamina <= 0:
-		stamina_depleted_at = Room.v.start_elapsed
+		_stamina_depleted_at = Room.v.start_elapsed
 	stamina_ki = stamina
 	if stamina_rally > stamina:
 		stamina_rally = lerp(stamina, stamina_rally, rally_lerp_t)
@@ -202,7 +199,10 @@ class PlayerDefault extends PlayerBase: ##
 				else:
 					consumed = false
 			ActionType.BLOCK:
-				player._change_state(StateType.BLOCK, a)
+				if player._can_start_block():
+					player._change_state(StateType.BLOCK, a)
+				else:
+					consumed = false
 			ActionType.SET_MOVE_DIR:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
 			_:
@@ -333,7 +333,7 @@ class PlayerBlock extends PlayerBase: ##
 		player.creature.speed_modifiers.block = glib.v.get_player_speed_blocking_scale()
 		player.stamina = max(player.stamina, player.stamina_ki)
 		player.stamina_rally = player.stamina
-		player.stamina_depleted_at = 0.0
+		player._stamina_depleted_at = 0.0
 		player.blocking = true
 		player.blocking_perfectly = true
 		player.ki = true
@@ -346,12 +346,13 @@ class PlayerBlock extends PlayerBase: ##
 		player.blocking = false
 		player.blocking_perfectly = false
 		scheduled_exit = false
+		player._block_exited_at = Room.v.start_elapsed
 
 
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
 		player.blocking_perfectly = (elapsed <= glib.v.get_player_perfect_block_window())
-		if elapsed >= glib.v.get_player_ki_state_min_duration():
+		if elapsed >= glib.v.get_player_block_state_min_duration():
 			player.ki = false
 			player._stamina_regen_modifiers.block = glib.v.get_player_stamina_blocking_scale()
 			if scheduled_exit:
@@ -363,6 +364,8 @@ class PlayerBlock extends PlayerBase: ##
 	func consume_action(a: Action) -> bool:
 		var consumed := true
 		match a.type:
+			ActionType.BLOCK:
+				scheduled_exit = false
 			ActionType.UNBLOCK:
 				scheduled_exit = true
 			ActionType.SET_MOVE_DIR:
@@ -379,3 +382,10 @@ func _can_start_shoot() -> bool:
 
 func _can_start_roll() -> bool:
 	return stamina > 0
+
+
+func _can_start_block() -> bool: ##
+	if !_block_exited_at:
+		return true
+	return Room.v.start_elapsed - _block_exited_at >= glib.v.get_player_block_cooldown()
+##
