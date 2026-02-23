@@ -3309,6 +3309,11 @@ class Lib:
 		service.field = __player_block_cooldown
 		data[__player_block_cooldown.tag] = service
 
+		__player_roll_cooldown = PBField.new("player_roll_cooldown", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 56, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_roll_cooldown
+		data[__player_roll_cooldown.tag] = service
+
 		__player_perfect_block_window = PBField.new("player_perfect_block_window", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 50, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_perfect_block_window
@@ -4021,6 +4026,28 @@ class Lib:
 
 	func set_player_block_cooldown(value: float) -> void:
 		__player_block_cooldown.value = value
+
+
+	var __player_roll_cooldown: PBField
+
+
+	func has_player_roll_cooldown() -> bool:
+		if __player_roll_cooldown.value != null:
+			return true
+		return false
+
+
+	func get_player_roll_cooldown() -> float:
+		return __player_roll_cooldown.value
+
+
+	func clear_player_roll_cooldown() -> void:
+		data[56].state = PB_SERVICE_STATE.UNFILLED
+		__player_roll_cooldown.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_roll_cooldown(value: float) -> void:
+		__player_roll_cooldown.value = value
 
 
 	var __player_perfect_block_window: PBField

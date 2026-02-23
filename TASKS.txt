@@ -22,15 +22,16 @@ x stamina: stamina depletion regen delay
 x roll rally lerp t
 x long block lowers stamina regen
 x block: cooldown
+x roll: cooldown
 
 * block: don't spam labels
-*
-* hp rally
-* regen hp rally on hitting enemies
 *
 * enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 * enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
 * enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)
+*
+* hp rally
+* regen hp rally on hitting enemies
 *
 * room generation: directions
 * minimap: show directions

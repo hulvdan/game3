@@ -151,6 +151,7 @@ message Lib {
   float player_block_increase_per_second = 46;
   float player_block_state_min_duration = 47;
   float player_block_cooldown = 55;
+  float player_roll_cooldown = 56;
   float player_perfect_block_window = 50;
   float player_stamina_depletion_regen_delay = 51;
   float action_consumption_duration = 48;

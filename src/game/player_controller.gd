@@ -16,7 +16,8 @@ var blocking := false
 var blocking_perfectly := false
 var ki := false
 var _stamina_depleted_at := 0.0
-var _block_exited_at: float = 0.0
+var _next_block_at: float = 0.0
+var _next_roll_at: float = 0.0
 
 var _stamina_regen_modifiers: Dictionary[String, float] = { }
 
@@ -288,6 +289,7 @@ class PlayerRoll extends PlayerBase: ##
 		player.rolling_retrievable_cost = 0
 		player.creature.speed_modifiers.base = glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_speed()
 		player.dodging = false
+		player._next_roll_at = Room.v.start_elapsed + glib.v.get_player_roll_cooldown()
 
 
 	func explicit_process(dt: float) -> void:
@@ -346,7 +348,7 @@ class PlayerBlock extends PlayerBase: ##
 		player.blocking = false
 		player.blocking_perfectly = false
 		scheduled_exit = false
-		player._block_exited_at = Room.v.start_elapsed
+		player._next_block_at = Room.v.start_elapsed + glib.v.get_player_block_cooldown()
 
 
 	func explicit_process(dt: float) -> void:
@@ -381,11 +383,11 @@ func _can_start_shoot() -> bool:
 
 
 func _can_start_roll() -> bool:
-	return stamina > 0
+	if stamina <= 0:
+		return false
+	return Room.v.start_elapsed >= _next_roll_at
 
 
 func _can_start_block() -> bool: ##
-	if !_block_exited_at:
-		return true
-	return Room.v.start_elapsed - _block_exited_at >= glib.v.get_player_block_cooldown()
+	return Room.v.start_elapsed >= _next_block_at
 ##
