@@ -3279,6 +3279,16 @@ class Lib:
 		service.field = __player_stamina_roll_rally_scale
 		data[__player_stamina_roll_rally_scale.tag] = service
 
+		__player_stamina_blocking_scale = PBField.new("player_stamina_blocking_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 53, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_stamina_blocking_scale
+		data[__player_stamina_blocking_scale.tag] = service
+
+		__stamina_regen_on_kill = PBField.new("stamina_regen_on_kill", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 54, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_regen_on_kill
+		data[__stamina_regen_on_kill.tag] = service
+
 		__player_ki_min_delay = PBField.new("player_ki_min_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 45, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_ki_min_delay
@@ -3874,6 +3884,50 @@ class Lib:
 
 	func set_player_stamina_roll_rally_scale(value: float) -> void:
 		__player_stamina_roll_rally_scale.value = value
+
+
+	var __player_stamina_blocking_scale: PBField
+
+
+	func has_player_stamina_blocking_scale() -> bool:
+		if __player_stamina_blocking_scale.value != null:
+			return true
+		return false
+
+
+	func get_player_stamina_blocking_scale() -> float:
+		return __player_stamina_blocking_scale.value
+
+
+	func clear_player_stamina_blocking_scale() -> void:
+		data[53].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina_blocking_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_stamina_blocking_scale(value: float) -> void:
+		__player_stamina_blocking_scale.value = value
+
+
+	var __stamina_regen_on_kill: PBField
+
+
+	func has_stamina_regen_on_kill() -> bool:
+		if __stamina_regen_on_kill.value != null:
+			return true
+		return false
+
+
+	func get_stamina_regen_on_kill() -> float:
+		return __stamina_regen_on_kill.value
+
+
+	func clear_stamina_regen_on_kill() -> void:
+		data[54].state = PB_SERVICE_STATE.UNFILLED
+		__stamina_regen_on_kill.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_stamina_regen_on_kill(value: float) -> void:
+		__stamina_regen_on_kill.value = value
 
 
 	var __player_ki_min_delay: PBField

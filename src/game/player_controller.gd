@@ -14,6 +14,7 @@ var elapsed_since_stamina_consumed := 0.0
 var dodging := false
 var blocking := false
 var blocking_perfectly := false
+var ki := false
 var stamina_depleted_at := 0.0
 
 var _stamina_regen_modifiers: Dictionary[String, float] = { }
@@ -108,6 +109,13 @@ func explicit_process(dt: float) -> void: ##
 func add_stamina(value: float) -> void: ##
 	assert(value > 0)
 	stamina = min(stamina + value, glib.v.get_player_stamina())
+	stamina_depleted_at = 0.0
+##
+
+
+func add_stamina_rallies(value: float) -> void: ##
+	stamina_rally = min(stamina_rally + value, glib.v.get_player_stamina())
+	stamina_ki = min(stamina_ki + value, glib.v.get_player_stamina())
 ##
 
 
@@ -316,11 +324,13 @@ class PlayerBlock extends PlayerBase: ##
 		player.stamina_depleted_at = 0.0
 		player.blocking = true
 		player.blocking_perfectly = true
+		player.ki = true
 
 
 	func on_exit() -> void:
 		super.on_exit()
 		player.creature.speed_modifiers.block = 1
+		player._stamina_regen_modifiers.block = 1
 		player.blocking = false
 		player.blocking_perfectly = false
 		scheduled_exit = false
@@ -329,8 +339,13 @@ class PlayerBlock extends PlayerBase: ##
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
 		player.blocking_perfectly = (elapsed <= glib.v.get_player_perfect_block_window())
-		if scheduled_exit && (elapsed >= glib.v.get_player_ki_state_min_duration()):
-			player._change_state(StateType.DEFAULT, null)
+		if elapsed >= glib.v.get_player_ki_state_min_duration():
+			player.ki = false
+			player._stamina_regen_modifiers.block = glib.v.get_player_stamina_blocking_scale()
+			if scheduled_exit:
+				player._change_state(StateType.DEFAULT, null)
+		else:
+			player.ki = true
 
 
 	func consume_action(a: Action) -> bool:

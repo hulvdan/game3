@@ -300,15 +300,15 @@ func _physics_process(dt: float) -> void:
 
 	## Player actions
 	room.player.creature.controller.move = Vector2(0, 0)
-	if Input.is_action_just_pressed("block"):
-		room.player.push_action(PlayerController.ActionType.BLOCK, Vector2.INF)
-	if Input.is_action_just_released("block"):
-		room.player.push_action(PlayerController.ActionType.UNBLOCK, Vector2.INF)
-	if Input.is_action_just_pressed("shoot"):
-		room.player.push_action(PlayerController.ActionType.SHOOT, Vector2.INF)
-	if Input.is_action_just_pressed("roll"):
-		room.player.push_action(PlayerController.ActionType.ROLL, Vector2.INF)
 	if !player_is_entering_door:
+		if Input.is_action_just_pressed("block"):
+			room.player.push_action(PlayerController.ActionType.BLOCK, Vector2.INF)
+		if Input.is_action_just_released("block"):
+			room.player.push_action(PlayerController.ActionType.UNBLOCK, Vector2.INF)
+		if Input.is_action_just_pressed("shoot"):
+			room.player.push_action(PlayerController.ActionType.SHOOT, Vector2.INF)
+		if Input.is_action_just_pressed("roll"):
+			room.player.push_action(PlayerController.ActionType.ROLL, Vector2.INF)
 		room.player.push_action(
 			PlayerController.ActionType.SET_MOVE_DIR,
 			Input.get_vector("move_l", "move_r", "move_u", "move_d"),
@@ -547,7 +547,11 @@ func _physics_process(dt: float) -> void:
 		if room.player.dodging:
 			sh.set_shader_parameter("flash", Color(0, 1, 0, 0.5))
 		if room.player.blocking:
+			sh.set_shader_parameter("flash", Color(0, 0, 1, 0.6))
+		if room.player.ki:
 			sh.set_shader_parameter("flash", Color(0, 0, 1, 0.5))
+		if room.player.blocking_perfectly:
+			sh.set_shader_parameter("flash", Color(1, 1, 0, 0.4))
 	##
 
 	## Updating player hp and stamina bars
@@ -630,6 +634,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 						* glib.v.get_player_dodge_stamina_retrieve_percent() / 100.0
 					)
 					room.player.add_stamina(retrieve)
+					room.player.add_stamina_rallies(retrieve)
 					room.player.rolling_retrievable_cost -= retrieve
 					player_perfectly_evaded.emit(creature.transform.origin)
 				creature.evaded_attack_ids.append(data.attack_id)
@@ -650,6 +655,8 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	creature.time_since_last_damage_taken_visual = 0
 
 	if (creature.type != glib.GCreatureType.PLAYER) && (creature.hp <= 0):
+		room.player.add_stamina(glib.v.get_stamina_regen_on_kill())
+		room.player.add_stamina_rallies(glib.v.get_stamina_regen_on_kill())
 		creature.queue_free()
 		creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 		if creature.type != glib.GCreatureType.PLAYER:
