@@ -3249,6 +3249,26 @@ class Lib:
 		service.field = __player_dodge_stamina_retrieve_percent
 		data[__player_dodge_stamina_retrieve_percent.tag] = service
 
+		__player_stamina_rally_decay_after = PBField.new("player_stamina_rally_decay_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 41, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_stamina_rally_decay_after
+		data[__player_stamina_rally_decay_after.tag] = service
+
+		__player_stamina_rally_decay_per_second = PBField.new("player_stamina_rally_decay_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 42, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_stamina_rally_decay_per_second
+		data[__player_stamina_rally_decay_per_second.tag] = service
+
+		__player_stamina_attack_cost = PBField.new("player_stamina_attack_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 43, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_stamina_attack_cost
+		data[__player_stamina_attack_cost.tag] = service
+
+		__player_stamina_attack_rally_scale = PBField.new("player_stamina_attack_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 44, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_stamina_attack_rally_scale
+		data[__player_stamina_attack_rally_scale.tag] = service
+
 		__player_holding_stamina_regen_scale = PBField.new("player_holding_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __player_holding_stamina_regen_scale
@@ -3682,6 +3702,94 @@ class Lib:
 
 	func set_player_dodge_stamina_retrieve_percent(value: float) -> void:
 		__player_dodge_stamina_retrieve_percent.value = value
+
+
+	var __player_stamina_rally_decay_after: PBField
+
+
+	func has_player_stamina_rally_decay_after() -> bool:
+		if __player_stamina_rally_decay_after.value != null:
+			return true
+		return false
+
+
+	func get_player_stamina_rally_decay_after() -> float:
+		return __player_stamina_rally_decay_after.value
+
+
+	func clear_player_stamina_rally_decay_after() -> void:
+		data[41].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina_rally_decay_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_stamina_rally_decay_after(value: float) -> void:
+		__player_stamina_rally_decay_after.value = value
+
+
+	var __player_stamina_rally_decay_per_second: PBField
+
+
+	func has_player_stamina_rally_decay_per_second() -> bool:
+		if __player_stamina_rally_decay_per_second.value != null:
+			return true
+		return false
+
+
+	func get_player_stamina_rally_decay_per_second() -> float:
+		return __player_stamina_rally_decay_per_second.value
+
+
+	func clear_player_stamina_rally_decay_per_second() -> void:
+		data[42].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina_rally_decay_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_stamina_rally_decay_per_second(value: float) -> void:
+		__player_stamina_rally_decay_per_second.value = value
+
+
+	var __player_stamina_attack_cost: PBField
+
+
+	func has_player_stamina_attack_cost() -> bool:
+		if __player_stamina_attack_cost.value != null:
+			return true
+		return false
+
+
+	func get_player_stamina_attack_cost() -> float:
+		return __player_stamina_attack_cost.value
+
+
+	func clear_player_stamina_attack_cost() -> void:
+		data[43].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina_attack_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_stamina_attack_cost(value: float) -> void:
+		__player_stamina_attack_cost.value = value
+
+
+	var __player_stamina_attack_rally_scale: PBField
+
+
+	func has_player_stamina_attack_rally_scale() -> bool:
+		if __player_stamina_attack_rally_scale.value != null:
+			return true
+		return false
+
+
+	func get_player_stamina_attack_rally_scale() -> float:
+		return __player_stamina_attack_rally_scale.value
+
+
+	func clear_player_stamina_attack_rally_scale() -> void:
+		data[44].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina_attack_rally_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_stamina_attack_rally_scale(value: float) -> void:
+		__player_stamina_attack_rally_scale.value = value
 
 
 	var __player_holding_stamina_regen_scale: PBField

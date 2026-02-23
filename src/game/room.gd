@@ -15,6 +15,7 @@ var player_rolling := 0.0
 var player_rolling_retrievable_cost := 0.0
 var player_roll_direction: Vector2
 var player_stamina := 0.0
+var player_stamina_rally := 0.0
 var player_attack_queued: bool
 var _next_attack_id := 0
 

@@ -139,6 +139,10 @@ message Lib {
   float player_stamina_regen_per_second = 20;
   float player_stamina_roll_cost = 39;
   float player_dodge_stamina_retrieve_percent = 40;
+  float player_stamina_rally_decay_after = 41;
+  float player_stamina_rally_decay_per_second = 42;
+  float player_stamina_attack_cost = 43;
+  float player_stamina_attack_rally_scale = 44;
   float player_holding_stamina_regen_scale = 21;
   float player_invincibility_after_hit_seconds = 28;
   float mob_invincibility_spikes_seconds = 29;

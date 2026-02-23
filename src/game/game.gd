@@ -340,6 +340,8 @@ func _physics_process(dt: float) -> void:
 			dur = glib.v.get_shooting_after_roll_seconds()
 
 		if room.player_holding >= dur:
+			room.player_stamina -= glib.v.get_player_stamina_attack_cost()
+			assert(room.player_stamina >= 0)
 			var d := Projectile.Data.new()
 			d.type = glib.GProjectileType.ARROW
 			d.owner = glib.GCreatureType.PLAYER
@@ -348,7 +350,16 @@ func _physics_process(dt: float) -> void:
 			make_projectile(glib.GProjectileType.ARROW, d)
 			room.player_holding = 0
 			room.player_shooting_after_roll_scheduled = false
-		elif shooting or room.player_holding or room.player_shooting_after_roll_scheduled:
+			if room.player_stamina_rally > room.player_stamina:
+				room.player_stamina_rally = lerp(
+					room.player_stamina,
+					room.player_stamina_rally,
+					glib.v.get_player_stamina_attack_rally_scale(),
+				)
+		elif room.player_holding or (
+			(shooting or room.player_shooting_after_roll_scheduled)
+			and (room.player_stamina >= glib.v.get_player_stamina_attack_cost())
+		):
 			room.player_holding += dt
 	##
 
@@ -369,6 +380,7 @@ func _physics_process(dt: float) -> void:
 		room.player_roll_direction = room.player.controller.last_move
 		room.player_stamina -= glib.v.get_player_stamina_roll_cost()
 		room.player_rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
+		room.player_stamina_rally = room.player_stamina
 	##
 
 	## Collisions setup
@@ -592,16 +604,23 @@ func _physics_process(dt: float) -> void:
 	hp_bar.set_progress((room.player.hp as float) / (g_creatures[room.player.type].get_hp() as float))
 	##
 
-	## Updating player stamina bars
+	## Updating player stamina
 	if 1:
 		var regen_dt := dt
 		if room.player_holding:
 			regen_dt *= glib.v.get_player_holding_stamina_regen_scale()
 		room.player_stamina += regen_dt * glib.v.get_player_stamina_regen_per_second()
+
 		if room.player_stamina > glib.v.get_player_stamina():
 			room.player_stamina = glib.v.get_player_stamina()
-		var t := room.player_stamina / glib.v.get_player_stamina()
-		stamina_bar.set_progress(t)
+		if room.player_stamina_rally < room.player_stamina:
+			room.player_stamina_rally = room.player_stamina
+
+		assert(room.player_stamina >= 0)
+		assert(room.player_stamina_rally <= glib.v.get_player_stamina())
+
+		stamina_bar.set_progress(room.player_stamina / glib.v.get_player_stamina())
+		stamina_bar.set_rally_progress(room.player_stamina_rally / glib.v.get_player_stamina())
 	##
 
 
