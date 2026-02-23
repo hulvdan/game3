@@ -29,8 +29,8 @@ message GCreatureToSpawn {
 
 message GDoor {
   GV2 center_pos = 1;
-  GV2 size = 3;
-  int32 direction = 2;
+  GV2 size = 2;
+  int32 direction = 3;
 }
 
 message GSpike {
@@ -73,14 +73,14 @@ message GCreature {
   int32 attack_projectile_type = 7;
   repeated float attack_projectiles_spawn_at = 8;
   float attack_duration = 9;
-  float melee__attack_polygon_start_at = 14;
-  float melee__attack_polygon_end_at = 15;
-  float melee__attack_stops_tracking_at = 17;
-  int32 melee__damage = 16;
-  int32 collision_type = 10;
-  float attack_cooldown_min = 11;
-  float attack_cooldown_max = 12;
-  GAttackPolygon melee__attack_polygon = 13;
+  float melee__attack_polygon_start_at = 10;
+  float melee__attack_polygon_end_at = 11;
+  float melee__attack_stops_tracking_at = 12;
+  int32 melee__damage = 13;
+  int32 collision_type = 14;
+  float attack_cooldown_min = 15;
+  float attack_cooldown_max = 16;
+  GAttackPolygon melee__attack_polygon = 17;
   repeated GCreatureDrop drops = 18;
 }
 
@@ -112,9 +112,9 @@ message GProjectile {
   int32 projectilefly_type = 4;
   float arc__height = 5;
   float arc__duration = 6;
-  float arc__aoe_radius = 9;
-  float straight__speed = 7;
-  int32 damage = 8;
+  float arc__aoe_radius = 7;
+  float straight__speed = 8;
+  int32 damage = 9;
   int32 pierce = 10;
   float collider_radius = 11;
 }
@@ -125,58 +125,58 @@ message GCollision {
 }
 
 message Lib {
-  int32 debug_collisions = 5;
+  int32 debug_collisions = 1;
   repeated GRoom rooms = 2;
   float player_speed_shooting_scale = 3;
-  float player_speed_blocking_scale = 49;
-  float player_speed_inside_enemies_scale = 17;
-  float player_roll_duration_seconds = 18;
-  float player_roll_can_shoot_after = 19;
-  float player_roll_distance = 22;
-  float player_roll_pow = 23;
-  float player_roll_invincibility_start = 33;
-  float player_roll_invincibility_end = 34;
-  float player_stamina = 38;
-  float player_stamina_regen_per_second = 20;
-  float player_stamina_roll_cost = 39;
-  float player_dodge_stamina_retrieve_percent = 40;
-  float player_stamina_rally_decay_after = 41;
-  float player_stamina_rally_decay_per_second = 42;
-  float player_stamina_attack_cost = 43;
-  float player_stamina_attack_rally_scale = 44;
-  float player_stamina_roll_rally_scale = 52;
-  float player_stamina_blocking_scale = 53;
-  float stamina_regen_on_kill = 54;
-  float player_block_min_delay = 45;
-  float player_block_increase_per_second = 46;
-  float player_block_state_min_duration = 47;
-  float player_block_cooldown = 55;
-  float player_roll_cooldown = 56;
-  float player_perfect_block_window = 50;
-  float player_stamina_depletion_regen_delay = 51;
-  float action_consumption_duration = 48;
-  float player_shooting_stamina_regen_scale = 21;
-  float player_invincibility_after_hit_seconds = 28;
-  float mob_invincibility_spikes_seconds = 29;
-  float spikes_duration_seconds = 25;
-  float spikes_damage_starts_at = 26;
-  int32 spikes_damage = 30;
-  float creatures_push_radius = 15;
-  float creatures_push_force = 16;
-  float arrow_speed = 9;
-  int32 arrow_damage = 11;
-  float shooting_seconds = 13;
-  float shooting_after_roll_seconds = 14;
-  GV2i world_size = 4;
-  GV2i progression_size = 6;
+  float player_speed_blocking_scale = 4;
+  float player_speed_inside_enemies_scale = 5;
+  float player_roll_duration_seconds = 6;
+  float player_roll_can_shoot_after = 7;
+  float player_roll_distance = 8;
+  float player_roll_pow = 9;
+  float player_roll_invincibility_start = 10;
+  float player_roll_invincibility_end = 11;
+  float player_stamina = 12;
+  float player_stamina_regen_per_second = 13;
+  float player_stamina_roll_cost = 14;
+  float player_dodge_stamina_retrieve_percent = 15;
+  float player_stamina_rally_decay_after = 16;
+  float player_stamina_rally_decay_per_second = 17;
+  float player_stamina_attack_cost = 18;
+  float player_stamina_attack_rally_scale = 19;
+  float player_stamina_roll_rally_scale = 20;
+  float player_stamina_blocking_scale = 21;
+  float stamina_regen_on_kill = 22;
+  float player_block_min_delay = 23;
+  float player_block_increase_per_second = 24;
+  float player_block_state_min_duration = 25;
+  float player_block_cooldown = 26;
+  float player_roll_cooldown = 27;
+  float player_perfect_block_window = 28;
+  float player_stamina_depletion_regen_delay = 29;
+  float action_consumption_duration = 30;
+  float player_shooting_stamina_regen_scale = 31;
+  float player_invincibility_after_hit_seconds = 32;
+  float mob_invincibility_spikes_seconds = 33;
+  float spikes_duration_seconds = 34;
+  float spikes_damage_starts_at = 35;
+  int32 spikes_damage = 36;
+  float creatures_push_radius = 37;
+  float creatures_push_force = 38;
+  float arrow_speed = 39;
+  int32 arrow_damage = 40;
+  float shooting_seconds = 41;
+  float shooting_after_roll_seconds = 42;
+  GV2i world_size = 43;
+  GV2i progression_size = 44;
   // TABLE_GEN_START
-  repeated GDamage damages = 27;
-  repeated GProgression progression = 7;
-  repeated GCreature creatures = 8;
-  repeated GItem items = 32;
-  repeated GCollectible collectibles = 31;
-  repeated GProjectileFly projectile_fly_types = 36;
-  repeated GProjectile projectiles = 35;
-  repeated GCollision collision_flags = 37;
+  repeated GDamage damages = 45;
+  repeated GProgression progression = 46;
+  repeated GCreature creatures = 47;
+  repeated GItem items = 48;
+  repeated GCollectible collectibles = 49;
+  repeated GProjectileFly projectile_fly_types = 50;
+  repeated GProjectile projectiles = 51;
+  repeated GCollision collision_flags = 52;
   // TABLE_GEN_END
 }

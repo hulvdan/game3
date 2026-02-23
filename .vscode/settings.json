@@ -30,7 +30,7 @@
     },
     {
       "match": ".proto$",
-      "command": "buf format -w ${file}",
+      "command": "proto-renumber -replace ${file} && buf format -w ${file}",
       "runIn": "backend"
     },
     {

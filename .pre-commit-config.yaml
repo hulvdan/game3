@@ -54,6 +54,14 @@ repos:
         files: \.(json|ldtk)$
         stages: [pre-commit, pre-merge-commit, pre-push, manual]
         exclude: ^addons/.*$
+      - id: proto-renumber
+        name: proto-renumber
+        entry: proto-renumber -replace
+        language: system
+        require_serial: true
+        files: \.proto$
+        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        exclude: ^addons/.*$
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
     rev: v3.6.1
     hooks:

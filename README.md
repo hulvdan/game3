@@ -23,6 +23,7 @@
     ```
 - (for stylua pre-commit) Install rust
   https://rust-lang.org/tools/install/
+- (for proto) go install github.com/mariomakdis/proto-renumber@v1.1.0
 
 ## Bootstrap A New Repo
 
