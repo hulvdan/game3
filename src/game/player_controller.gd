@@ -6,7 +6,6 @@ var bow: Node3D
 var inside_enemy_t := 0.0
 var shoot_after_roll := false
 var rolling_retrievable_cost := 0.0
-var roll_direction: Vector2
 var stamina := 0.0
 var stamina_rally := 0.0
 var stamina_ki := 0.0
@@ -73,7 +72,9 @@ func explicit_process(dt: float) -> void: ##
 		_change_state_to = StateType.NONE
 		_change_state_action = null
 
+	assert(creature.controller.move != Vector2.INF)
 	_states[_current_state].explicit_process(dt)
+	assert(creature.controller.move != Vector2.INF)
 
 	var regen_dt := dt
 	for v: float in _stamina_regen_modifiers.values():
@@ -124,7 +125,7 @@ func _change_state(to: StateType, action: Action) -> void: ##
 ##
 
 enum StateType { NONE, DEFAULT, SHOOT, ROLL, BLOCK }
-enum ActionType { NONE, SHOOT, ROLL, BLOCK, SET_MOVE_DIR }
+enum ActionType { NONE, SHOOT, ROLL, BLOCK, UNBLOCK, SET_MOVE_DIR }
 
 
 class Action: ##
@@ -178,7 +179,10 @@ class PlayerDefault extends PlayerBase: ##
 		var consumed := true
 		match a.type:
 			ActionType.SHOOT:
-				player._change_state(StateType.SHOOT, a)
+				if player.stamina >= glib.v.get_player_stamina_attack_cost():
+					player._change_state(StateType.SHOOT, a)
+				else:
+					consumed = false
 			ActionType.ROLL:
 				player._change_state(StateType.ROLL, a)
 			ActionType.BLOCK:
@@ -195,6 +199,7 @@ class PlayerShoot extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
 		player._stamina_regen_modifiers.shooting = glib.v.get_player_shooting_stamina_regen_scale()
+		assert(player.stamina >= glib.v.get_player_stamina_attack_cost())
 
 
 	func on_exit() -> void:
@@ -225,7 +230,13 @@ class PlayerShoot extends PlayerBase: ##
 		var consumed := true
 		match a.type:
 			ActionType.ROLL:
-				player._change_state(StateType.ROLL, a)
+				if (
+					(player.stamina >= glib.v.get_player_stamina_roll_cost())
+					&& (player.creature.controller.last_move != Vector2(0, 0))
+				):
+					player._change_state(StateType.ROLL, a)
+				else:
+					consumed = false
 			ActionType.BLOCK:
 				player._change_state(StateType.BLOCK, a)
 			ActionType.SET_MOVE_DIR:
@@ -239,12 +250,17 @@ class PlayerShoot extends PlayerBase: ##
 class PlayerRoll extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		player.creature.controller.move = a.shoot_or_move_or_roll__dir
+		player.consume_stamina(glib.v.get_player_stamina_roll_cost(), true)
+		player.rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
+		player.dodging = false
 
 
 	func on_exit() -> void:
 		super.on_exit()
-		player.creature.speed_modifiers.roll = 1
+		player.creature.evaded_attack_ids.clear()
+		player.rolling_retrievable_cost = 0
+		player.creature.speed_modifiers.base = glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_speed()
+		player.dodging = false
 
 
 	func explicit_process(dt: float) -> void:
@@ -259,7 +275,8 @@ class PlayerRoll extends PlayerBase: ##
 			var sh: ShaderMaterial = player.creature.node_sprite.material_override
 			sh.set_shader_parameter("flash", Color(0, 1, 0, 0.5))
 
-		player.creature.speed_modifiers.roll = bf.get_roll_speed(
+		player.creature.controller.move = player.creature.controller.last_move
+		player.creature.speed_modifiers.base = bf.get_roll_speed(
 			glib.v.get_player_roll_distance(),
 			glib.v.get_player_roll_duration_seconds(),
 			elapsed,
@@ -267,17 +284,7 @@ class PlayerRoll extends PlayerBase: ##
 		)
 
 		if elapsed >= glib.v.get_player_roll_duration_seconds():
-			player.rolling_retrievable_cost = 0
-			player.creature.evaded_attack_ids.clear()
 			player._change_state(StateType.DEFAULT, null)
-		elif (
-			(player.stamina >= glib.v.get_player_stamina_roll_cost())
-			&& (Input.get_action_strength("roll") >= 0.5)
-			&& (player.creature.controller.last_move != Vector2(0, 0))
-		):
-			player.roll_direction = player.creature.controller.last_move
-			player.consume_stamina(glib.v.get_player_stamina_roll_cost(), true)
-			player.rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
 
 
 	func consume_action(a: Action) -> bool:
@@ -292,28 +299,34 @@ class PlayerRoll extends PlayerBase: ##
 
 
 class PlayerBlock extends PlayerBase: ##
+	var scheduled_exit := false
+
+
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
 		player.creature.speed_modifiers.block = 0
+		player.stamina = max(player.stamina, player.stamina_ki)
+		player.stamina_rally = max(player.stamina_rally, player.stamina)
 
 
 	func on_exit() -> void:
 		super.on_exit()
 		player.creature.speed_modifiers.block = 1
+		scheduled_exit = false
 
 
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
 
-		player.stamina = max(player.stamina, player.stamina_ki)
-		player.stamina_rally = max(player.stamina_rally, player.stamina)
-		if elapsed >= glib.v.get_player_ki_state_min_duration():
+		if scheduled_exit && (elapsed >= glib.v.get_player_ki_state_min_duration()):
 			player._change_state(StateType.DEFAULT, null)
 
 
 	func consume_action(a: Action) -> bool:
 		var consumed := true
 		match a.type:
+			ActionType.UNBLOCK:
+				scheduled_exit = true
 			_:
 				consumed = false
 		return consumed

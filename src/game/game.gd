@@ -298,9 +298,13 @@ func _physics_process(dt: float) -> void:
 
 	## Player actions
 	room.player.creature.controller.move = Vector2(0, 0)
-	if Input.get_action_strength("shoot") >= 0.5:
+	if Input.is_action_just_pressed("block"):
+		room.player.push_action(PlayerController.ActionType.BLOCK, Vector2.INF)
+	if Input.is_action_just_released("block"):
+		room.player.push_action(PlayerController.ActionType.UNBLOCK, Vector2.INF)
+	if Input.is_action_just_pressed("shoot"):
 		room.player.push_action(PlayerController.ActionType.SHOOT, Vector2.INF)
-	if Input.get_action_strength("roll") >= 0.5:
+	if Input.is_action_just_pressed("roll"):
 		room.player.push_action(PlayerController.ActionType.ROLL, Vector2.INF)
 	if !player_is_entering_door:
 		room.player.push_action(
