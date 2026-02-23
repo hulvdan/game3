@@ -39,11 +39,11 @@
       "runIn": "backend",
       "runningStatusMessage": "glibbing..."
     },
-    {
-      "match": ".gd$",
-      "command": "uv run gdscript-formatter ${file}",
-      "runIn": "backend"
-    },
+    // {
+    //   "match": ".gd$",
+    //   "command": "uv run gdscript-formatter ${file}",
+    //   "runIn": "backend"
+    // },
     {
       "match": ".py$",
       "command": "uv run ruff check --select I ${file} --fix",

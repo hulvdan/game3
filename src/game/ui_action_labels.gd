@@ -15,7 +15,7 @@ class_name UIActionLabels
 var _damage_opts: UIActionLabelOpts = UIActionLabelOpts.new()
 
 
-func _ready() -> void:
+func _ready() -> void: ##
 	Game.v.player_perfectly_evaded.connect(_make_action_label.bind(_options["player_perfectly_evaded"]))
 	Game.v.enemy_started_attack.connect(_make_action_label.bind(_options["enemy_started_attack"]))
 	Game.v.damaged.connect(
@@ -27,6 +27,7 @@ func _ready() -> void:
 				_damage_opts.color = _damage_number_mob_color
 			_make_action_label(world_pos, _damage_opts)
 	)
+##
 
 
 func _make_action_label(pos: Vector3, opts: UIActionLabelOpts) -> void: ##

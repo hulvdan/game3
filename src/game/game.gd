@@ -7,17 +7,18 @@ signal player_perfectly_evaded(world_pos: Vector3)
 signal enemy_started_attack(world_pos: Vector3)
 signal damaged(world_pos: Vector3, value: int, type: WhoGotDamagedType)
 
-const GROUP_TARGET_CAMERA: String = "target_camera"
+const GROUP_TARGET_CAMERA := "target_camera"
 
 static var v: Game = null
-static var async_scene_loaded = false
+static var async_scene_loaded := false
 
 @export_category("Values")
 @export var camera_distance: float
 @export var camera_angle: float
-@export var camera_z_offset: float = 0.3
+@export var camera_z_offset := 0.3
 @export var color_ui_hp: Color
 @export var color_ui_stamina: Color
+@export var color_ui_stamina_rally: Color
 
 @export_category("Resources")
 @export var world_3d: Node3D
@@ -37,10 +38,9 @@ static var async_scene_loaded = false
 @export var packed_ui_minimap_room: PackedScene
 @export var packed_ui_progression_entry: PackedScene
 
-var current_room_pos: Vector2i = Vector2i.MAX
+var current_room_pos := Vector2i.MAX
 var rooms: Array[RoomData] = []
 var ui_minimap_rooms: Array[Sprite2D] = []
-var stamina_bars: Array[Bar]
 
 var room: Room
 var player_is_entering_door := false
@@ -51,25 +51,28 @@ var current_room_index:
 
 @onready var camera: Camera3D = %_camera
 @onready var hp_bar: Bar = %_hp_bar
+@onready var stamina_bar: Bar = %_stamina_bar
 @onready var container_ui_minimap: Control = %_container_ui_minimap
 @onready var container_ui_progression: Node2D = %_container_ui_progression
-@onready var container_stamina_bars: Control = %_container_stamina_bars
+# @onready var container_stamina_bars: Control = %_container_stamina_bars
 @onready var container_general: Node = %_container_general
 ##
 
 enum WhoGotDamagedType { PLAYER, MOB }
 
 
-class RoomData:
-	var gindex: int = -1
+class RoomData: ##
+	var directions := 0
+	var gindex := -1
+##
 
 
 func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
-	var data: glib.GCreature = glib.v.get_creatures()[type]
+	var data := glib.v.get_creatures()[type]
 	var creature: Creature = packed_creature.instantiate()
 	room.container_creatures.add_child(creature)
 
-	var ctype: int = data.get_collision_type()
+	var ctype := data.get_collision_type()
 	creature.node_body.collision_layer = 2 ** ctype
 	creature.type = type
 	creature.res = load(data.get_res())
@@ -98,8 +101,9 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	##
 
 
-func room_index(pos: Vector2i) -> int:
+func room_index(pos: Vector2i) -> int: ##
 	return pos.y * glib.v.get_world_size().get_x() + pos.x
+##
 
 
 func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
@@ -140,7 +144,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 	var g_rooms = glib.v.get_rooms()
 	var g_room = g_rooms[rooms[current_room_index].gindex]
-	var size: Vector2i = glib.ToV2i(g_room.get_size())
+	var size := glib.ToV2i(g_room.get_size())
 
 	## Placing floor tiles
 	bf.clear_children(room.container_floor)
@@ -159,15 +163,15 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 			room.container_floor.add_child(node)
 	##
 
-	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
+	var ws := glib.ToV2i(glib.v.get_world_size())
 	var bounds = Rect2i(Vector2i(0, 0), ws)
 
-	var player_pos: Vector2 = Vector2(size) / 2
+	var player_pos := Vector2(size) / 2
 
 	## Placing doors
 	for door in g_room.get_doors():
-		var offset = bf.DIRECTION_OFFSETS[door.get_direction()]
-		var to_pos: Vector2i = current_room_pos + offset
+		var offset := bf.DIRECTION_OFFSETS[door.get_direction()]
+		var to_pos := current_room_pos + offset
 		if !bounds.has_point(to_pos):
 			continue
 
@@ -199,8 +203,6 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()))
 	##
 
-	room.player_stamina = glib.v.get_player_stamina_charges()
-
 
 func _ready() -> void:
 	# TODO: REMOVEME
@@ -213,12 +215,9 @@ func _ready() -> void:
 	assert(camera_angle > 0)
 
 	hp_bar.init(color_ui_hp, false)
-	bf.clear_children(container_stamina_bars)
-	for i in range(glib.v.get_player_stamina_charges()):
-		var bar: Bar = packed_ui_bar_player.instantiate()
-		stamina_bars.append(bar)
-		container_stamina_bars.add_child(bar)
-		bar.init(color_ui_stamina, true)
+
+	stamina_bar = packed_ui_bar_player.instantiate()
+	stamina_bar.init(color_ui_stamina, true, Bar.Opts.new().with_rally(color_ui_stamina_rally))
 
 	var transition: Control = %_transition
 	transition.visible = true
@@ -228,12 +227,12 @@ func _ready() -> void:
 	bf.clear_children(container_ui_progression)
 	##
 
-	var ws: Vector2i = glib.ToV2i(glib.v.get_world_size())
+	var ws := glib.ToV2i(glib.v.get_world_size())
 	var g_rooms = glib.v.get_rooms()
 
 	## Filling ui minimap
 	for y_ in range(ws.y):
-		var y: int = ws.y - y_ - 1
+		var y := ws.y - y_ - 1
 		var rooms_slice: Array[Sprite2D] = []
 
 		for x in range(ws.x):
@@ -245,7 +244,7 @@ func _ready() -> void:
 			var minimap_room: Sprite2D = packed_ui_minimap_room.instantiate()
 			rooms_slice.append(minimap_room)
 
-			var scale: float = 1.0 / 3.0
+			var scale := 1.0 / 3.0
 			minimap_room.transform = minimap_room.transform.scaled(Vector2(1, 1) * scale)
 			minimap_room.transform = minimap_room.transform.translated(Vector2(x + 1, y + 1) * 100 * scale)
 
@@ -255,13 +254,13 @@ func _ready() -> void:
 	##
 
 	## Filling ui progression
-	var progression_size: Vector2i = glib.ToV2i(glib.v.get_progression_size())
+	var progression_size := glib.ToV2i(glib.v.get_progression_size())
 	for entry in glib.v.get_progression():
 		if !entry.get_type():
 			continue
 		var node: Node2D = packed_ui_progression_entry.instantiate()
 		container_ui_progression.add_child(node)
-		var pos: Vector2i = glib.ToV2i(entry.get_pos())
+		var pos := glib.ToV2i(entry.get_pos())
 		node.transform.origin = (Vector2(pos.x, pos.y) - Vector2(progression_size) / 2.0) * 40.0
 	##
 
@@ -269,9 +268,9 @@ func _ready() -> void:
 
 
 func get_mouse_world_point() -> Vector3: ##
-	var mouse_pos: Vector2 = get_viewport().get_mouse_position()
-	var ray_origin: Vector3 = camera.project_ray_origin(mouse_pos)
-	var ray_dir: Vector3 = camera.project_ray_normal(mouse_pos)
+	var mouse_pos := get_viewport().get_mouse_position()
+	var ray_origin := camera.project_ray_origin(mouse_pos)
+	var ray_dir := camera.project_ray_normal(mouse_pos)
 	var hit_position = Plane(Vector3.UP, 0).intersects_ray(ray_origin, ray_dir)
 	if hit_position:
 		return hit_position
@@ -280,6 +279,9 @@ func get_mouse_world_point() -> Vector3: ##
 
 
 func _physics_process(dt: float) -> void:
+	var g_projectiles := glib.v.get_projectiles()
+	var g_creatures := glib.v.get_creatures()
+
 	room.start_elapsed += dt
 
 	## Async scene loading handler
@@ -294,14 +296,13 @@ func _physics_process(dt: float) -> void:
 	if !player_is_entering_door:
 		room.player.controller.move = Input.get_vector("move_l", "move_r", "move_u", "move_d")
 
-	var creatures = glib.v.get_creatures()
 	for creature: Creature in room.container_creatures.get_children():
-		var data: glib.GCreature = creatures[creature.type]
+		var data := g_creatures[creature.type]
 
-		var dir: Vector2 = creature.controller.move
+		var dir := creature.controller.move
 		if dir != Vector2(0, 0):
 			creature.controller.last_move = dir
-		var speed: float = data.get_speed()
+		var speed := data.get_speed()
 
 		if creature.type == glib.GCreatureType.PLAYER:
 			if room.player_rolling:
@@ -321,25 +322,25 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Updating player's bow direction
-	var end_point: Vector3 = get_mouse_world_point()
+	var end_point := get_mouse_world_point()
 	if end_point != Vector3.INF:
 		room.player_bow.transform.basis = room.player.transform.looking_at(end_point).basis
 	##
 
 	## Player shooting
-	var shooting: bool = Input.get_action_strength("shoot") >= 0.5
+	var shooting := Input.get_action_strength("shoot") >= 0.5
 
 	if room.player_rolling and (room.player_rolling < glib.v.get_player_roll_can_shoot_after()):
 		if shooting:
 			room.player_shooting_after_roll_scheduled = true
 
 	else:
-		var dur: float = glib.v.get_shooting_seconds()
+		var dur := glib.v.get_shooting_seconds()
 		if room.player_shooting_after_roll_scheduled:
 			dur = glib.v.get_shooting_after_roll_seconds()
 
 		if room.player_holding >= dur:
-			var d: Projectile.Data = Projectile.Data.new()
+			var d := Projectile.Data.new()
 			d.type = glib.GProjectileType.ARROW
 			d.owner = glib.GCreatureType.PLAYER
 			d.pos = bf.from_xz(room.player.transform.origin)
@@ -358,56 +359,53 @@ func _physics_process(dt: float) -> void:
 			room.player_rolling = 0
 			room.player.evaded_attack_ids.clear()
 	elif (
-		(room.player_stamina > 0)
-		&& (Input.get_action_strength("roll") >= 0.5)
+		(Input.get_action_strength("roll") >= 0.5)
 		&& (room.player.controller.last_move != Vector2(0, 0))
 	):
 		room.player_rolling = dt
 		room.player_holding = 0
 		room.player_roll_direction = room.player.controller.last_move
-		room.player_stamina -= 1
-		room.player_stamina_elapsed = 0
 	##
 
 	## Collisions setup
-	var debug_collisions: bool = glib.v.get_debug_collisions()
+	var debug_collisions := glib.v.get_debug_collisions()
 	var space = world_3d.get_world_3d().direct_space_state
-	var param_shape: PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
+	var param_shape := PhysicsShapeQueryParameters3D.new()
 	param_shape.collide_with_areas = false
 	param_shape.collide_with_bodies = true
-	var shape_rid_sphere: RID = PhysicsServer3D.sphere_shape_create()
-	var shape_rid_cylinder: RID = PhysicsServer3D.cylinder_shape_create()
-	var shape_rid_polygon: RID = PhysicsServer3D.convex_polygon_shape_create()
-	var cylinder_shape_dict: Dictionary = { "height": 1.0, "radius": 0.01 }
+	var shape_rid_sphere := PhysicsServer3D.sphere_shape_create()
+	var shape_rid_cylinder := PhysicsServer3D.cylinder_shape_create()
+	var shape_rid_polygon := PhysicsServer3D.convex_polygon_shape_create()
+	var cylinder_shape_dict := { "height": 1.0, "radius": 0.01 }
 	##
 
 	## - Melee attacks collisions
-	var apply_damage_melee_data: ApplyDamageData = ApplyDamageData.new()
+	var apply_damage_melee_data := ApplyDamageData.new()
 	for creature: Creature in room.container_creatures.get_children():
 		if !creature.melee_attacking:
 			continue
 
-		var data: glib.GCreature = glib.v.get_creatures()[creature.type]
+		var data := g_creatures[creature.type]
 		if creature.attack_elapsed < data.get_melee__attack_polygon_start_at():
 			continue
 		if creature.attack_elapsed > data.get_melee__attack_polygon_end_at():
 			continue
 
-		var is_player: bool = creature.type == glib.GCreatureType.PLAYER
+		var is_player := (creature.type == glib.GCreatureType.PLAYER)
 
 		param_shape.shape_rid = shape_rid_polygon
 
 		var points: PackedVector3Array
-		var attack_polygon: glib.GAttackPolygon = data.get_melee__attack_polygon()
-		var dist: float = attack_polygon.get_distance()
-		var angle: float = attack_polygon.get_angle()
+		var attack_polygon := data.get_melee__attack_polygon()
+		var dist := attack_polygon.get_distance()
+		var angle := attack_polygon.get_angle()
 		points.append(Vector3(0, 0, 0))
 		points.append(Vector3(dist * cos(angle / 2.0), 0, dist * sin(angle / 2.0)))
 		points.append(Vector3(dist, 0, 0))
 		points.append(Vector3(dist * cos(angle / 2.0), 0, -dist * sin(angle / 2.0)))
 
-		var trr: Transform3D = creature.transform
-		var angle_y: float = -bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(creature.melee_target_pos))
+		var trr := creature.transform
+		var angle_y := -bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(creature.melee_target_pos))
 		trr.basis = Basis.from_euler(Vector3(0, angle_y, 0))
 		param_shape.transform = trr
 		if debug_collisions:
@@ -427,23 +425,22 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## - Updating projectiles + collisions + despawning
-	var projectiles = glib.v.get_projectiles()
-	var apply_damage_projectile_data: ApplyDamageData = ApplyDamageData.new()
+	var apply_damage_projectile_data := ApplyDamageData.new()
 	for projectile: Projectile in room.container_projectiles.get_children():
-		var is_player: bool = projectile.d.owner == glib.GCreatureType.PLAYER
+		var is_player := (projectile.d.owner == glib.GCreatureType.PLAYER)
 		projectile.elapsed += dt
 
 		apply_damage_projectile_data.attack_id = projectile.attack_id
 
-		var should_remove: bool = false
-		var data = projectiles[projectile.d.type]
+		var should_remove := false
+		var data = g_projectiles[projectile.d.type]
 		var fly = data.get_projectilefly_type()
 
 		if fly == glib.GProjectileFlyType.STRAIGHT:
 			apply_damage_projectile_data.type = glib.GDamageType.DEFAULT
-			var projectile_travelled = data.get_straight__speed() * dt
+			var projectile_travelled := data.get_straight__speed() * dt
 			cylinder_shape_dict.height = projectile_travelled
-			var moved: Vector2 = projectile.calculated__dir * projectile_travelled
+			var moved := projectile.calculated__dir * projectile_travelled
 			projectile.transform.origin += bf.to_xz(moved)
 
 			if data.get_collider_radius():
@@ -501,7 +498,7 @@ func _physics_process(dt: float) -> void:
 			PhysicsServer3D.shape_set_data(shape_rid_sphere, data.get_arc__aoe_radius())
 			param_shape.shape_rid = shape_rid_sphere
 
-			var t: float = projectile.elapsed / data.get_arc__duration()
+			var t := projectile.elapsed / data.get_arc__duration()
 			var p: Vector2 = lerp(projectile.d.pos, projectile.d.target, t)
 			var pos: Vector3 = bf.to_xz(p)
 			pos.y = data.get_arc__height() * sin(t * PI)
@@ -537,33 +534,35 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Spike collisions
-	var apply_damage_spike_data: ApplyDamageData = ApplyDamageData.new()
-	apply_damage_spike_data.type = glib.GDamageType.SPIKE
-	for spike: Spike in room.container_spikes.get_children():
-		if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at()):
-			apply_damage_spike_data.immediate = !spike.striked
-			apply_damage_spike_data.attack_id = spike.attack_id
-			spike.striked = true
-			for creature: Creature in spike.creatures_to_damage:
-				apply_damage(creature, glib.v.get_spikes_damage(), apply_damage_spike_data)
+	if 1:
+		var apply_damage_spike_data: ApplyDamageData = ApplyDamageData.new()
+		apply_damage_spike_data.type = glib.GDamageType.SPIKE
+		for spike: Spike in room.container_spikes.get_children():
+			if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at()):
+				apply_damage_spike_data.immediate = !spike.striked
+				apply_damage_spike_data.attack_id = spike.attack_id
+				spike.striked = true
+				for creature: Creature in spike.creatures_to_damage:
+					apply_damage(creature, glib.v.get_spikes_damage(), apply_damage_spike_data)
 	##
 
 	## Pushing creatures apart from each other
-	var creatures_push_radius: float = glib.v.get_creatures_push_radius()
-	var creatures_push_radius_sqr: float = creatures_push_radius * creatures_push_radius
-	room.player_inside_enemy_t = 0
-	for c1: Creature in room.container_creatures.get_children():
-		for c2: Creature in room.container_creatures.get_children():
-			if c1 == c2:
-				continue
-			var dir: Vector2 = bf.from_xz(c1.transform.origin - c2.transform.origin)
-			var d: float = dir.length_squared()
-			if d < creatures_push_radius_sqr:
-				var t: float = 1 - sqrt(d) / creatures_push_radius
-				bf.move_body_with_speed(c1.node_body, dir, t)
-				if c1.type == glib.GCreatureType.PLAYER:
-					room.player_inside_enemy_t = max(room.player_inside_enemy_t, t)
-	room.player_inside_enemy_t = min(1, room.player_inside_enemy_t)
+	if 1:
+		var creatures_push_radius: float = glib.v.get_creatures_push_radius()
+		var creatures_push_radius_sqr: float = creatures_push_radius * creatures_push_radius
+		room.player_inside_enemy_t = 0
+		for c1: Creature in room.container_creatures.get_children():
+			for c2: Creature in room.container_creatures.get_children():
+				if c1 == c2:
+					continue
+				var dir: Vector2 = bf.from_xz(c1.transform.origin - c2.transform.origin)
+				var d: float = dir.length_squared()
+				if d < creatures_push_radius_sqr:
+					var t: float = 1 - sqrt(d) / creatures_push_radius
+					bf.move_body_with_speed(c1.node_body, dir, t)
+					if c1.type == glib.GCreatureType.PLAYER:
+						room.player_inside_enemy_t = max(room.player_inside_enemy_t, t)
+		room.player_inside_enemy_t = min(1, room.player_inside_enemy_t)
 	##
 
 	## Updating creatures time_since_last_damage_taken + flashing
@@ -586,24 +585,19 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Updating player hp bar
-	hp_bar.set_progress((room.player.hp as float) / (glib.v.get_creatures()[room.player.type].get_hp() as float))
+	hp_bar.set_progress((room.player.hp as float) / (g_creatures[room.player.type].get_hp() as float))
 	##
 
 	## Updating player stamina bars
-	for i in range(len(stamina_bars) - room.player_stamina + 1):
-		stamina_bars[len(stamina_bars) - 1 - i].set_progress(0)
-	if len(stamina_bars) > room.player_stamina:
-		var regen_dt: float = dt
+	if 1:
+		var regen_dt := dt
 		if room.player_holding:
 			regen_dt *= glib.v.get_player_holding_stamina_regen_scale()
-		room.player_stamina_elapsed += regen_dt
-		var t: float = min(1, room.player_stamina_elapsed / glib.v.get_player_stamina_regen_seconds())
-		stamina_bars[room.player_stamina].set_progress(t)
-		if t >= 1:
-			room.player_stamina += 1
-			room.player_stamina_elapsed = 0
-	for i in range(room.player_stamina):
-		stamina_bars[i].set_progress(1)
+		room.player_stamina += regen_dt * glib.v.get_player_stamina_regen_per_second()
+		if room.player_stamina > glib.v.get_player_stamina():
+			room.player_stamina = glib.v.get_player_stamina()
+		var t := room.player_stamina / glib.v.get_player_stamina()
+		stamina_bar.set_progress(t)
 	##
 
 
@@ -630,8 +624,8 @@ func _process(dt: float) -> void:
 			e.rotation = camera.rotation
 	##
 
-	var target_camera_dir: Vector3 = (camera.position - target).normalized()
-	var target_camera_dot: float = (camera.position - target).dot(target_camera_dir)
+	var target_camera_dir := (camera.position - target).normalized()
+	var target_camera_dot := (camera.position - target).dot(target_camera_dir)
 
 	## Updating creature hp bar positions
 	for creature: Creature in room.container_creatures.get_children():
@@ -697,7 +691,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	)
 
 	return true
-	##
+##
 
 
 func make_projectile(type: glib.GProjectileType, d: Projectile.Data) -> void: ##

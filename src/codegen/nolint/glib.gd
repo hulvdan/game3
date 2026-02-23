@@ -3229,15 +3229,20 @@ class Lib:
 		service.field = __player_roll_invincibility_end
 		data[__player_roll_invincibility_end.tag] = service
 
-		__player_stamina_charges = PBField.new("player_stamina_charges", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__player_stamina = PBField.new("player_stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 38, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __player_stamina_charges
-		data[__player_stamina_charges.tag] = service
+		service.field = __player_stamina
+		data[__player_stamina.tag] = service
 
-		__player_stamina_regen_seconds = PBField.new("player_stamina_regen_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__player_stamina_regen_per_second = PBField.new("player_stamina_regen_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __player_stamina_regen_seconds
-		data[__player_stamina_regen_seconds.tag] = service
+		service.field = __player_stamina_regen_per_second
+		data[__player_stamina_regen_per_second.tag] = service
+
+		__player_stamina_roll_cost = PBField.new("player_stamina_roll_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 39, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_stamina_roll_cost
+		data[__player_stamina_roll_cost.tag] = service
 
 		__player_holding_stamina_regen_scale = PBField.new("player_holding_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -3586,48 +3591,70 @@ class Lib:
 		__player_roll_invincibility_end.value = value
 
 
-	var __player_stamina_charges: PBField
+	var __player_stamina: PBField
 
 
-	func has_player_stamina_charges() -> bool:
-		if __player_stamina_charges.value != null:
+	func has_player_stamina() -> bool:
+		if __player_stamina.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_charges() -> int:
-		return __player_stamina_charges.value
+	func get_player_stamina() -> float:
+		return __player_stamina.value
 
 
-	func clear_player_stamina_charges() -> void:
-		data[24].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_charges.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+	func clear_player_stamina() -> void:
+		data[38].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_charges(value: int) -> void:
-		__player_stamina_charges.value = value
+	func set_player_stamina(value: float) -> void:
+		__player_stamina.value = value
 
 
-	var __player_stamina_regen_seconds: PBField
+	var __player_stamina_regen_per_second: PBField
 
 
-	func has_player_stamina_regen_seconds() -> bool:
-		if __player_stamina_regen_seconds.value != null:
+	func has_player_stamina_regen_per_second() -> bool:
+		if __player_stamina_regen_per_second.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_regen_seconds() -> float:
-		return __player_stamina_regen_seconds.value
+	func get_player_stamina_regen_per_second() -> float:
+		return __player_stamina_regen_per_second.value
 
 
-	func clear_player_stamina_regen_seconds() -> void:
+	func clear_player_stamina_regen_per_second() -> void:
 		data[20].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_regen_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__player_stamina_regen_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_regen_seconds(value: float) -> void:
-		__player_stamina_regen_seconds.value = value
+	func set_player_stamina_regen_per_second(value: float) -> void:
+		__player_stamina_regen_per_second.value = value
+
+
+	var __player_stamina_roll_cost: PBField
+
+
+	func has_player_stamina_roll_cost() -> bool:
+		if __player_stamina_roll_cost.value != null:
+			return true
+		return false
+
+
+	func get_player_stamina_roll_cost() -> float:
+		return __player_stamina_roll_cost.value
+
+
+	func clear_player_stamina_roll_cost() -> void:
+		data[39].state = PB_SERVICE_STATE.UNFILLED
+		__player_stamina_roll_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_stamina_roll_cost(value: float) -> void:
+		__player_stamina_roll_cost.value = value
 
 
 	var __player_holding_stamina_regen_scale: PBField

@@ -7,16 +7,16 @@ static var v: Room
 var player: Creature
 var player_bow: Node3D
 
-var start_elapsed: float = 0
-var player_inside_enemy_t: float = 0
-var player_holding: float = 0
-var player_shooting_after_roll_scheduled: bool = false
-var player_rolling: float = 0
+var start_elapsed := 0.0
+var player_inside_enemy_t := 0.0
+var player_holding := 0.0
+var player_shooting_after_roll_scheduled := false
+var player_rolling := 0
+var player_rolling_retrievable_cost := 0.0
 var player_roll_direction: Vector2
-var player_stamina: int = 0
-var player_stamina_elapsed: float = 0
+var player_stamina := 0.0
 var player_attack_queued: bool
-var _next_attack_id: int = 0
+var _next_attack_id := 0
 
 @onready var container_creatures: Node = %_container_creatures
 @onready var container_floor: Node = %_container_floor

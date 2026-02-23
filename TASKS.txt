@@ -7,34 +7,24 @@ BIG PLAN
 PLAN
 ============================================================
 
-x yamlfmt good config
-x melee mob: shown collider
-x melee mob: does damage
-x melee mob: can dodge once
-x melee mob: stops tracking player after starting attacking
-x pre-commit: stylua + editorconfig
-x mob throwing 3 fireballs
-x arrow rotated correctly
-x mob mage: projectile collision sphere
-x mob mage: projectile looks at camera
-x mob mage: dodging projectile once
-x can't dash bomb
-x creature drop proto
-x ldtk disable export flag 
-x room generation: room rotation (+ don't forget to rotate direction enums)
-x fix spikes dodge 
-x room generation: void tiles on which player can't step but projectiles can fly over
-x prototyping cubes
-x camera: gravitates towards room's center
-x flashing player green only during invincibility frames
+x google sheets game design
 
-* camera: 
-* camera: 
-* camera: 
-* camera: 
+* stamina: add rally bar
+* stamina: single bar
+* stamina: KI,Block state
+* stamina: 
+* stamina: 
+* stamina: 
+* stamina: 
+* stamina: 
 *
-* room generation: remove connections
-* room generation:  
+*
+* room generation: directions
+* minimap: show directions
+*
+* mobs aggro distance
+* mobs path finding
+*
 * room generation:  
 * room generation:  
 * 

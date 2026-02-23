@@ -135,8 +135,9 @@ message Lib {
   float player_roll_pow = 23;
   float player_roll_invincibility_start = 33;
   float player_roll_invincibility_end = 34;
-  int32 player_stamina_charges = 24;
-  float player_stamina_regen_seconds = 20;
+  float player_stamina = 38;
+  float player_stamina_regen_per_second = 20;
+  float player_stamina_roll_cost = 39;
   float player_holding_stamina_regen_scale = 21;
   float player_invincibility_after_hit_seconds = 28;
   float mob_invincibility_spikes_seconds = 29;

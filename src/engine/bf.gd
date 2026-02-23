@@ -33,7 +33,7 @@ func clear_children(node: Node) -> void: ##
 
 
 func move_body_with_speed(body: RigidBody3D, direction: Vector2, speed: float) -> void:
-	var offset: Vector2 = direction * speed
+	var offset := direction * speed
 	body.apply_central_force(to_xz(offset) * body.linear_damp * body.mass)
 
 
@@ -69,7 +69,7 @@ func invalid_path() -> void: ##
 
 
 func remove(arr: Array, value: Variant) -> void: ##
-	var index: int = arr.find(value)
+	var index := arr.find(value)
 	assert(index >= 0)
 	if index >= 0:
 		arr.remove_at(index)
@@ -79,7 +79,7 @@ func remove(arr: Array, value: Variant) -> void: ##
 func unstable_remove_at(arr: Array, index: int) -> void: ##
 	assert(index >= 0)
 	if index >= 0:
-		var last_index: int = arr.size() - 1
+		var last_index := arr.size() - 1
 		arr[index] = arr[last_index]
 		arr.remove_at(last_index)
 ##
