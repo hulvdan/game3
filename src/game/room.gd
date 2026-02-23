@@ -16,7 +16,9 @@ var player_rolling_retrievable_cost := 0.0
 var player_roll_direction: Vector2
 var player_stamina := 0.0
 var player_stamina_rally := 0.0
+var player_stamina_ki := 0.0
 var player_attack_queued: bool
+var player_elapsed_since_stamina_consumed := 0.0
 var _next_attack_id := 0
 
 @onready var container_creatures: Node = %_container_creatures
@@ -37,7 +39,29 @@ func get_next_attack_id() -> int: ##
 
 
 func add_stamina(value: float) -> void: ##
+	assert(value > 0)
 	player_stamina += value
 	if player_stamina > glib.v.get_player_stamina():
 		player_stamina = glib.v.get_player_stamina()
+##
+
+
+func consume_stamina(value: float, drop_rally: bool) -> void: ##
+	assert(value > 0)
+	player_elapsed_since_stamina_consumed = 0.0
+	player_stamina -= value
+	if player_stamina < 0:
+		player_stamina = 0
+	player_stamina_ki = player_stamina
+	if player_stamina < 0:
+		player_stamina = 0
+	player_stamina_ki = player_stamina
+	if drop_rally:
+		player_stamina_rally = player_stamina
+	if player_stamina_rally > player_stamina:
+		player_stamina_rally = lerp(
+			player_stamina,
+			player_stamina_rally,
+			glib.v.get_player_stamina_attack_rally_scale(),
+		)
 ##

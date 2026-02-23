@@ -12,18 +12,17 @@ x stamina: add rally bar
 x stamina: single bar
 x stamina: roll resets rally
 x stamina: attack has stamina + rally cost
+x stamina: ki rally front
 
-* enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
-* enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
-* enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)
-* 
-* stamina: ki rally front
-* stamina: KI,Block state
-* stamina: 
+* stamina: KI state restores stamina
+* stamina: block works
 * stamina: 
 * stamina: 
 * stamina: 
 *
+* enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
+* enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
+* enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)
 *
 * room generation: directions
 * minimap: show directions

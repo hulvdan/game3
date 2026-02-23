@@ -3269,10 +3269,15 @@ class Lib:
 		service.field = __player_stamina_attack_rally_scale
 		data[__player_stamina_attack_rally_scale.tag] = service
 
-		__player_ki_min_duration = PBField.new("player_ki_min_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 45, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__player_ki_min_delay = PBField.new("player_ki_min_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 45, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __player_ki_min_duration
-		data[__player_ki_min_duration.tag] = service
+		service.field = __player_ki_min_delay
+		data[__player_ki_min_delay.tag] = service
+
+		__player_ki_increase_per_second = PBField.new("player_ki_increase_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 46, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __player_ki_increase_per_second
+		data[__player_ki_increase_per_second.tag] = service
 
 		__player_holding_stamina_regen_scale = PBField.new("player_holding_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -3797,26 +3802,48 @@ class Lib:
 		__player_stamina_attack_rally_scale.value = value
 
 
-	var __player_ki_min_duration: PBField
+	var __player_ki_min_delay: PBField
 
 
-	func has_player_ki_min_duration() -> bool:
-		if __player_ki_min_duration.value != null:
+	func has_player_ki_min_delay() -> bool:
+		if __player_ki_min_delay.value != null:
 			return true
 		return false
 
 
-	func get_player_ki_min_duration() -> float:
-		return __player_ki_min_duration.value
+	func get_player_ki_min_delay() -> float:
+		return __player_ki_min_delay.value
 
 
-	func clear_player_ki_min_duration() -> void:
+	func clear_player_ki_min_delay() -> void:
 		data[45].state = PB_SERVICE_STATE.UNFILLED
-		__player_ki_min_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__player_ki_min_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_ki_min_duration(value: float) -> void:
-		__player_ki_min_duration.value = value
+	func set_player_ki_min_delay(value: float) -> void:
+		__player_ki_min_delay.value = value
+
+
+	var __player_ki_increase_per_second: PBField
+
+
+	func has_player_ki_increase_per_second() -> bool:
+		if __player_ki_increase_per_second.value != null:
+			return true
+		return false
+
+
+	func get_player_ki_increase_per_second() -> float:
+		return __player_ki_increase_per_second.value
+
+
+	func clear_player_ki_increase_per_second() -> void:
+		data[46].state = PB_SERVICE_STATE.UNFILLED
+		__player_ki_increase_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_player_ki_increase_per_second(value: float) -> void:
+		__player_ki_increase_per_second.value = value
 
 
 	var __player_holding_stamina_regen_scale: PBField

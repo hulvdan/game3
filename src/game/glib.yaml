@@ -27,8 +27,9 @@ player_stamina_roll_cost: 35
 player_stamina_rally_decay_after: 1
 player_stamina_rally_decay_per_second: 20
 player_stamina_attack_cost: 10
-player_stamina_attack_rally_scale: 0.9
-player_ki_min_duration: 0.3
+player_stamina_attack_rally_scale: 0.95
+player_ki_min_delay: 0.3
+player_ki_increase_per_second: 70
 player_dodge_stamina_retrieve_percent: 50
 player_holding_stamina_regen_scale: 0.33
 player_invincibility_after_hit_seconds: 0.5

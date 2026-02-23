@@ -205,6 +205,8 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	##
 
 	room.player_stamina = glib.v.get_player_stamina()
+	room.player_stamina_rally = room.player_stamina
+	room.player_stamina_ki = room.player_stamina
 
 
 func _ready() -> void:
@@ -217,12 +219,10 @@ func _ready() -> void:
 	assert(camera_distance > 0)
 	assert(camera_angle > 0)
 
-	hp_bar.init(color_ui_hp, false)
-	stamina_bar.init(
-		color_ui_stamina,
-		false,
-		Bar.Opts.new().with_rally_back(color_ui_stamina_rally).with_rally_front(color_ui_stamina_ki),
-	)
+	hp_bar.init(color_ui_hp)
+	stamina_bar.init(color_ui_stamina)
+	stamina_bar.init_rally_front(color_ui_stamina_ki)
+	stamina_bar.init_rally_back(color_ui_stamina_rally)
 
 	var transition: Control = %_transition
 	transition.visible = true
@@ -345,8 +345,7 @@ func _physics_process(dt: float) -> void:
 			dur = glib.v.get_shooting_after_roll_seconds()
 
 		if room.player_holding >= dur:
-			room.player_stamina -= glib.v.get_player_stamina_attack_cost()
-			assert(room.player_stamina >= 0)
+			room.consume_stamina(glib.v.get_player_stamina_attack_cost(), false)
 			var d := Projectile.Data.new()
 			d.type = glib.GProjectileType.ARROW
 			d.owner = glib.GCreatureType.PLAYER
@@ -355,12 +354,6 @@ func _physics_process(dt: float) -> void:
 			make_projectile(glib.GProjectileType.ARROW, d)
 			room.player_holding = 0
 			room.player_shooting_after_roll_scheduled = false
-			if room.player_stamina_rally > room.player_stamina:
-				room.player_stamina_rally = lerp(
-					room.player_stamina,
-					room.player_stamina_rally,
-					glib.v.get_player_stamina_attack_rally_scale(),
-				)
 		elif room.player_holding or (
 			(shooting or room.player_shooting_after_roll_scheduled)
 			and (room.player_stamina >= glib.v.get_player_stamina_attack_cost())
@@ -383,9 +376,8 @@ func _physics_process(dt: float) -> void:
 		room.player_rolling = dt
 		room.player_holding = 0
 		room.player_roll_direction = room.player.controller.last_move
-		room.player_stamina -= glib.v.get_player_stamina_roll_cost()
+		room.consume_stamina(glib.v.get_player_stamina_roll_cost(), true)
 		room.player_rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
-		room.player_stamina_rally = room.player_stamina
 	##
 
 	## Collisions setup
@@ -621,11 +613,19 @@ func _physics_process(dt: float) -> void:
 		if room.player_stamina_rally < room.player_stamina:
 			room.player_stamina_rally = room.player_stamina
 
+		room.player_elapsed_since_stamina_consumed += dt
+		room.player_stamina_ki = max(room.player_stamina_ki, room.player_stamina)
+		if room.player_elapsed_since_stamina_consumed >= glib.v.get_player_ki_min_delay():
+			room.player_stamina_ki += glib.v.get_player_ki_increase_per_second() * dt
+		if room.player_stamina_ki > room.player_stamina_rally:
+			room.player_stamina_ki = room.player_stamina_rally
 		assert(room.player_stamina >= 0)
 		assert(room.player_stamina_rally <= glib.v.get_player_stamina())
 
-		stamina_bar.set_progress(room.player_stamina / glib.v.get_player_stamina())
-		stamina_bar.set_rally_front_progress(room.player_stamina_rally / glib.v.get_player_stamina())
+		var st := glib.v.get_player_stamina()
+		stamina_bar.set_progress(room.player_stamina / st)
+		stamina_bar.set_rally_back_progress(room.player_stamina_rally / st)
+		stamina_bar.set_rally_front_progress(room.player_stamina_ki / st)
 	##
 
 
