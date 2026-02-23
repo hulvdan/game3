@@ -111,7 +111,7 @@ func add_stamina(value: float) -> void: ##
 ##
 
 
-func consume_stamina(value: float, drop_rally: bool) -> void: ##
+func consume_stamina(value: float, rally_lerp_t: float) -> void: ##
 	assert(value > 0)
 	assert(stamina > 0)
 	elapsed_since_stamina_consumed = 0.0
@@ -119,14 +119,8 @@ func consume_stamina(value: float, drop_rally: bool) -> void: ##
 	if stamina <= 0:
 		stamina_depleted_at = Room.v.start_elapsed
 	stamina_ki = stamina
-	if drop_rally:
-		stamina_rally = stamina
 	if stamina_rally > stamina:
-		stamina_rally = lerp(
-			stamina,
-			stamina_rally,
-			glib.v.get_player_stamina_attack_rally_scale(),
-		)
+		stamina_rally = lerp(stamina, stamina_rally, rally_lerp_t)
 ##
 
 
@@ -230,7 +224,10 @@ class PlayerShoot extends PlayerBase: ##
 			dur = glib.v.get_shooting_after_roll_seconds()
 
 		if elapsed >= dur:
-			player.consume_stamina(glib.v.get_player_stamina_attack_cost(), false)
+			player.consume_stamina(
+				glib.v.get_player_stamina_attack_cost(),
+				glib.v.get_player_stamina_attack_rally_scale(),
+			)
 			var d := Projectile.Data.new()
 			d.type = glib.GProjectileType.ARROW
 			d.owner = glib.GCreatureType.PLAYER
@@ -260,7 +257,10 @@ class PlayerShoot extends PlayerBase: ##
 class PlayerRoll extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		player.consume_stamina(glib.v.get_player_stamina_roll_cost(), true)
+		player.consume_stamina(
+			glib.v.get_player_stamina_roll_cost(),
+			glib.v.get_player_stamina_roll_rally_scale(),
+		)
 		player.rolling_retrievable_cost = glib.v.get_player_stamina_roll_cost()
 		player.dodging = false
 

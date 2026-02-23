@@ -30,6 +30,7 @@ player_stamina_rally_decay_per_second: 20
 player_stamina_attack_cost: 25
 player_stamina_depletion_regen_delay: 1.0
 player_stamina_attack_rally_scale: 0.9
+player_stamina_roll_rally_scale: 0.5
 player_ki_min_delay: 0.0
 player_ki_increase_per_second: 80
 player_ki_state_min_duration: 0.2

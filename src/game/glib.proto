@@ -144,6 +144,7 @@ message Lib {
   float player_stamina_rally_decay_per_second = 42;
   float player_stamina_attack_cost = 43;
   float player_stamina_attack_rally_scale = 44;
+  float player_stamina_roll_rally_scale = 52;
   float player_ki_min_delay = 45;
   float player_ki_increase_per_second = 46;
   float player_ki_state_min_duration = 47;
