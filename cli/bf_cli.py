@@ -1,4 +1,4 @@
-# Imports.  {  ###
+## Imports
 import os
 import shutil
 import zipfile
@@ -12,11 +12,10 @@ from bf_game import *  # noqa
 from bf_glib import do_generate, get_sounds_that_reaper_would_export
 from bf_typer import app, command, global_timing_manager_instance, timing
 
-# }
+##
 
 
-def enrich_game_settings_colors() -> None:
-    # {  ###
+def enrich_game_settings_colors() -> None:  ##
     palette_colors_with_darkened_ones = ["#ffffff", "#000000"]
     bf.game_settings.computed_color_names.append("WHITE")
     bf.game_settings.computed_color_names.append("BLACK")
@@ -38,21 +37,21 @@ def enrich_game_settings_colors() -> None:
         bf.game_settings.colors.append(darkened_color)
 
     bf.game_settings.colors = palette_colors_with_darkened_ones
-    # }
+    ##
 
 
 @timing
 def make_web_build_archive(zip_path: Path, where_godot_exported_folder: Path) -> None:
-    # {  ###
+    ##
     with zipfile.ZipFile(zip_path, "w") as archive:
         for filepath in where_godot_exported_folder.glob("*"):
             archive.write(filepath, filepath.name)
-    # }
+    ##
 
 
 @timing
 def do_profile(godot_platform: str) -> None:
-    # {  ###
+    ##
     bf.run_command(
         [
             "scons",
@@ -63,24 +62,26 @@ def do_profile(godot_platform: str) -> None:
         ],
         cwd="../godot-4.6-stable",
     )
-    # }
+    ##
 
 
 @timing
-def do_godot_lint() -> None:
+def do_godot_lint() -> None:  ##
     bf.run_command("gdlint src", timeout_seconds=5)
+    ##
 
 
 @timing
-def do_godot_check_errors() -> None:
+def do_godot_check_errors() -> None:  ##
     bf.run_command("godot --quit --headless --check-only --debug", timeout_seconds=5)
+    ##
 
 
 @timing
 def do_build(
     target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType
 ) -> None:
-    # {  ###
+    ##
     build_id = (target, platform, build_type)
     assert build_id in bf.ALLOWED_BUILDS, "{} is not allowed!".format(build_id)
 
@@ -110,34 +111,36 @@ def do_build(
         shutil.copy("assets/GameAnalytics.min.js", out_folder)
 
     shutil.make_archive(base_name=out_folder, format="zip", root_dir=out_folder)
-    # }
+    ##
 
 
 @timing
-def do_test() -> None:
-    # {  ###
+def do_test() -> None:  ##
     bf.run_command(
         "godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src/tests -gexit -gprefix test -gdisable_colors",
         timeout_seconds=5,
     )
-    # }
+    ##
 
 
-# def do_stop_debugger_ahk() -> None:
+# def do_stop_debugger_ahk() -> None: ##
 #     bf.run_command(r"autohotkey .nvim-personal\cli.ahk stop_debugger")
+#     ##
 
 
-def do_activate_godot_ahk() -> None:
+def do_activate_godot_ahk() -> None:  ##
     bf.run_command(r"autohotkey .nvim-personal\cli.ahk activate")
+    ##
 
 
-def do_run_in_godot_ahk() -> None:
+def do_run_in_godot_ahk() -> None:  ##
     bf.run_command(r"autohotkey .nvim-personal\cli.ahk run_in_godot")
+    ##
 
 
 # @command
 # def cog():
-#     # {  ###
+#     ##
 #     files_to_cog_and_format = [
 #         *SRC_DIR.rglob("*.cpp"),
 #         *SRC_DIR.rglob("*.h"),
@@ -184,47 +187,49 @@ def do_run_in_godot_ahk() -> None:
 #                 text=True,
 #                 shell=True,
 #             )
-#   # }
+#   ##
 
 
 @command
-def profiles() -> None:
-    # {  ###
+def profiles() -> None:  ##
     godot_platforms = {x.split("_", 1)[0] for x in bf.BuildPlatform}
     for x in godot_platforms:
         if 0 and x == "windows":
             continue
         do_profile(x)
-    # }
+    ##
 
 
 @command
-def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):
+def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
     do_generate(platform, build_type)
     do_activate_godot_ahk()
+    ##
 
 
 @command
-def codegen_and_lint(platform: bf.BuildPlatform, build_type: bf.BuildType):
+def codegen_and_lint(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
     do_generate(platform, build_type)
     do_godot_lint()
     do_godot_check_errors()
     do_activate_godot_ahk()
+    ##
 
 
 @command
-def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType):
-    # {  ###
+def build(
+    target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType
+):  ##
     do_generate(platform, build_type)
     do_godot_lint()
     do_godot_check_errors()
     do_build(target, platform, build_type)
-    # }
+    ##
 
 
 # @command
 # def build_all_and_test():
-#     # {  ###
+#     ##
 #
 #     test()
 #     for target, platform, build_type in bf.ALLOWED_BUILDS:
@@ -233,34 +238,34 @@ def build(target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.Bui
 #         do_generate(platform, build_type)
 #         build(bf.BuildTarget.game, platform, build_type)
 #         bf._glib = None
-#     # }
+#     ##
 
 
 @command
-def run():
+def run():  ##
     platform = bf.BuildPlatform.Win
     build_type = bf.BuildType.Debug
     do_generate(platform, build_type)
     do_godot_lint()
     do_godot_check_errors()
     do_run_in_godot_ahk()
+    ##
 
 
 @command
-def test():
-    # {  ###
+def test():  ##
     platform = bf.BuildPlatform.Win
     build_type = bf.BuildType.Debug
     do_generate(platform, build_type)
     do_godot_lint()
     do_godot_check_errors()
     do_test()
-    # }
+    ##
 
 
 # @command
 # def deploy_itch():
-#     # {  ###
+#     ##
 #     bf.git_check_no_unstashed()
 #
 #     bf.git_bump_tag()
@@ -273,30 +278,29 @@ def test():
 #
 #     target = "{}:html".format(bf.game_settings.itch_target)
 #     bf.run_command([bf.BUTLER_PATH, "push", zip_path, target])
-#     # }
+#     ##
 
 
 @command
-def banner(filepath: Path) -> None:
-    # {  ###
+def banner(filepath: Path) -> None:  ##
     filepath.write_text(
         bf.bannerify([x.rstrip() for x in filepath.read_text("utf-8").splitlines()]),
         "utf-8",
         newline="\n",
     )
-    # }
+    ##
 
 
 @command
-def list_sounds() -> None:
+def list_sounds() -> None:  ##
     a = Counter()  # type: ignore[var-annotated]
     a.update(x.split("__", 1)[0] for x in get_sounds_that_reaper_would_export())
     print(a)
+    ##
 
 
 @command
-def make_swatch():
-    # {  ###
+def make_swatch():  ##
     colors = bf.game_settings.colors
 
     def process_color(color: str) -> dict:
@@ -348,18 +352,26 @@ def make_swatch():
             color_lines.append(f"{r} {g} {b}")
         color_lines = color_lines[2:] + color_lines[:2]
         out_file_2.write("\n".join(color_lines))
-    # }
+    ##
 
 
 @command
-def godot_reimport_localization():
+def proto_renumber():  ##
+    for f in Path("src").rglob("*.proto"):
+        bf.run_command(["proto-renumber", "-replace", f])
+    ##
+
+
+@command
+def godot_reimport_localization():  ##
     bf.run_command("""
         godot --headless --editor --import --quit assets/localization.csv
     """)
+    ##
 
 
 def main() -> None:
-    # {  ###
+    ##
     test_value = bf.hash32("test")
     assert test_value == 0xAFD071E5, test_value
     test_value = bf.hash32("test")  # Checking that it's stable.
@@ -376,11 +388,9 @@ def main() -> None:
             caught_exc = e
     if caught_exc is not None:
         raise caught_exc
-    # }
+    ##
 
 
 if __name__ == "__main__":
     enrich_game_settings_colors()
     main()
-
-###

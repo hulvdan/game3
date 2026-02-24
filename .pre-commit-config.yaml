@@ -56,12 +56,20 @@ repos:
         exclude: ^addons/.*$
       - id: proto-renumber
         name: proto-renumber
-        entry: proto-renumber -replace
+        entry: uv run python cli/bf_cli.py proto_renumber
         language: system
         require_serial: true
-        files: \.proto$
+        always_run: true
+        pass_filenames: false
         stages: [pre-commit, pre-merge-commit, pre-push, manual]
-        exclude: ^addons/.*$
+      - id: buf-format
+        name: buf format
+        entry: buf format -w src
+        language: system
+        require_serial: true
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit, pre-merge-commit, pre-push, manual]
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
     rev: v3.6.1
     hooks:

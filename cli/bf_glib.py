@@ -1,4 +1,4 @@
-# Imports.  {  ###
+## Imports
 import json
 from math import radians
 from pathlib import Path
@@ -10,12 +10,11 @@ from bf_game import *  # noqa
 from bf_typer import timing
 from google.protobuf import json_format
 
-# }
+##
 
 
 @timing
-def get_sounds_that_reaper_would_export() -> set[str]:
-    # {  ###
+def get_sounds_that_reaper_would_export() -> set[str]:  ##
     sounds: set[str] = set()
 
     project = rpp.loads((bf.ASSETS_DIR / "sfx" / "src" / "sfx.rpp").read_text())
@@ -37,12 +36,11 @@ def get_sounds_that_reaper_would_export() -> set[str]:
                     )
 
     return sounds
-    # }
+    ##
 
 
 @timing
-def do_audio(_platform: bf.BuildPlatform) -> None:
-    # {  ###
+def do_audio(_platform: bf.BuildPlatform) -> None:  ##
     AUDIO_SRC_DIR = bf.ASSETS_DIR / "sfx"
     src_files = {p for p in AUDIO_SRC_DIR.glob("*.ogg") if p.is_file()}
 
@@ -53,11 +51,10 @@ def do_audio(_platform: bf.BuildPlatform) -> None:
             continue
         if src_file.stem not in allowed_sounds:
             src_file.unlink()
-    # }
+    ##
 
 
-# def downscale_images(downscale_factors: list[int]) -> None:
-#     # {  ###
+# def downscale_images(downscale_factors: list[int]) -> None:  ##
 #     assert downscale_factors, downscale_factors
 #
 #     images_to_downscale = list(bf.ART_TEXTURES_DIR.glob("*.png"))
@@ -86,7 +83,7 @@ def do_audio(_platform: bf.BuildPlatform) -> None:
 #             )
 #             im.save(export_image_path, "PNG")
 #             os.utime(export_image_path, ns=(s1.st_atime_ns, s1.st_mtime_ns))
-#     # }
+#     ##
 
 
 @timing

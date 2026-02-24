@@ -7,6 +7,8 @@ BIG PLAN
 PLAN
 ============================================================
 
+x proto-renumber good pre-commit
+
 * block: don't spam labels
 *
 * enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)

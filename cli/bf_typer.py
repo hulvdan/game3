@@ -12,8 +12,7 @@ T = TypeVar("T")
 LOG_FILE_POSITION = False
 
 
-class ColoredLoggingFormatter(logging.Formatter):
-    # {  ###
+class ColoredLoggingFormatter(logging.Formatter):  ##
     _grey = "\x1b[30;20m"
     _green = "\x1b[32;20m"
     _yellow = "\x1b[33;20m"
@@ -46,7 +45,7 @@ class ColoredLoggingFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
-    # }
+    ##
 
 
 log = logging.getLogger(__file__)
@@ -64,8 +63,7 @@ _timing_marks: list[Any] = []
 _timing_recursion_depth = 0
 
 
-def timing(f: Callable[P, T]) -> Callable[P, T]:
-    # {  ###
+def timing(f: Callable[P, T]) -> Callable[P, T]:  ##
     @wraps(f)
     def wrap(*args: P.args, **kw: P.kwargs) -> T:
         global timings_stack
@@ -101,15 +99,14 @@ def timing(f: Callable[P, T]) -> Callable[P, T]:
         return result
 
     return wrap
-    # }
+    ##
 
 
 def timing_mark(text):
     _timing_marks.append(text)
 
 
-def print_timings():
-    # {  ###
+def print_timings():  ##
     total_elapsed = sum(i[1] for i in _root_timings_stack)
     if total_elapsed == 0:
         total_elapsed = 0.000001
@@ -143,15 +140,14 @@ def print_timings():
 
     assert _started_at is not None
     log.info("RUNNING TOOK: {:.2f} SEC".format(time() - _started_at))
-    # }
+    ##
 
 
 _started_at = None
 
 
 @contextmanager
-def timing_manager():
-    # {  ###
+def timing_manager():  ##
     global _exiting
     global _started_at
 
@@ -163,7 +159,7 @@ def timing_manager():
 
     if _timing_recursion_depth == 0:
         print_timings()
-    # }
+    ##
 
 
 global_timing_manager_instance = timing_manager()
@@ -172,14 +168,13 @@ global_timing_manager_instance = timing_manager()
 old_exit = exit
 
 
-def timed_exit(code: int) -> NoReturn:
-    # {  ###
+def timed_exit(code: int) -> NoReturn:  ##
     if global_timing_manager_instance is not None:
         global_timing_manager_instance.__exit__(None, None, None)
         console_handler.flush()
 
     old_exit(code)
-    # }
+    ##
 
 
 globals()["exit"] = timed_exit

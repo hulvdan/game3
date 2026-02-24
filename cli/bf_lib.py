@@ -1641,25 +1641,23 @@ class Ldtk(BaseModel):  ##
 
 def ldtk_try_get_single_entity(
     layer: LdtkLayerInstance, identifier: str
-) -> LdtkEntityInstance | None:
-    # {  ###
+) -> LdtkEntityInstance | None:  ##
     found = None
     for e in layer.entityInstances:
         if e.identifier_ == identifier:
             assert found is None
             found = e
     return found
-    # }
+    ##
 
 
 def ldtk_get_single_entity(
     layer: LdtkLayerInstance, identifier: str
-) -> LdtkEntityInstance:
-    # {  ###
+) -> LdtkEntityInstance:  ##
     found = ldtk_try_get_single_entity(layer, identifier)
     assert found is not None
     return found
-    # }
+    ##
 
 
 def ldtk_get_referenced_entity(
