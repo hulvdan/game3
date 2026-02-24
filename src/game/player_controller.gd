@@ -187,28 +187,23 @@ class PlayerBase: ##
 
 class PlayerDefault extends PlayerBase: ##
 	func consume_action(a: Action) -> bool:
-		var consumed := true
 		match a.type:
 			ActionType.SHOOT:
 				if player._can_start_shoot():
 					player._change_state(StateType.SHOOT, a)
-				else:
-					consumed = false
+					return true
 			ActionType.ROLL:
 				if player._can_start_roll():
 					player._change_state(StateType.ROLL, a)
-				else:
-					consumed = false
+					return true
 			ActionType.BLOCK:
 				if player._can_start_block():
 					player._change_state(StateType.BLOCK, a)
-				else:
-					consumed = false
+					return true
 			ActionType.SET_MOVE_DIR:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
-			_:
-				consumed = false
-		return consumed
+				return true
+		return false
 
 
 	func explicit_process(dt: float) -> void:
@@ -257,18 +252,15 @@ class PlayerShoot extends PlayerBase: ##
 
 
 	func consume_action(a: Action) -> bool:
-		var consumed := true
 		match a.type:
 			ActionType.ROLL:
 				if player._can_start_roll():
 					player._change_state(StateType.ROLL, a)
-				else:
-					consumed = false
+					return true
 			ActionType.SET_MOVE_DIR:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
-			_:
-				consumed = false
-		return consumed
+				return true
+		return false
 ##
 
 
@@ -313,16 +305,12 @@ class PlayerRoll extends PlayerBase: ##
 
 
 	func consume_action(a: Action) -> bool:
-		var consumed := true
 		match a.type:
 			ActionType.SHOOT:
 				if player._can_start_shoot():
 					player.shoot_after_roll = true
-				else:
-					consumed = false
-			_:
-				consumed = false
-		return consumed
+					return true
+		return false
 ##
 
 
@@ -364,17 +352,17 @@ class PlayerBlock extends PlayerBase: ##
 
 
 	func consume_action(a: Action) -> bool:
-		var consumed := true
 		match a.type:
 			ActionType.BLOCK:
 				scheduled_exit = false
+				return true
 			ActionType.UNBLOCK:
 				scheduled_exit = true
+				return true
 			ActionType.SET_MOVE_DIR:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
-			_:
-				consumed = false
-		return consumed
+				return true
+		return false
 ##
 
 
