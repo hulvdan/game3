@@ -504,12 +504,12 @@ func _physics_process(dt: float) -> void:
 		var apply_damage_spike_data := ApplyDamageData.new()
 		apply_damage_spike_data.type = glib.GDamageType.SPIKE
 		for spike: Spike in room.container_spikes.get_children():
-			if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes_damage_starts_at()):
+			if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes().get_damage_starts_at()):
 				apply_damage_spike_data.immediate = !spike.striked
 				apply_damage_spike_data.attack_id = spike.attack_id
 				spike.striked = true
 				for creature: Creature in spike.creatures_to_damage:
-					apply_damage(creature, glib.v.get_spikes_damage(), apply_damage_spike_data)
+					apply_damage(creature, glib.v.get_spikes().get_damage(), apply_damage_spike_data)
 	##
 
 	## Pushing creatures apart from each other
@@ -556,7 +556,7 @@ func _physics_process(dt: float) -> void:
 
 	## Updating player hp and stamina bars
 	hp_bar.set_progress((room.player.creature.hp as float) / (g_creatures[room.player.creature.type].get_hp() as float))
-	var st := glib.v.get_player_stamina()
+	var st := glib.v.get_player().get_stamina()
 	stamina_bar.set_progress(room.player.stamina / st)
 	stamina_bar.set_rally_back_progress(room.player.stamina_rally / st)
 	stamina_bar.set_rally_front_progress(room.player.stamina_ki / st)
@@ -631,14 +631,14 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 				if data.immediate:
 					var retrieve := (
 						room.player.rolling_retrievable_cost
-						* glib.v.get_player_dodge_stamina_retrieve_percent() / 100.0
+						* glib.v.get_player().get_dodge_stamina_retrieve_percent() / 100.0
 					)
 					room.player.add_stamina(retrieve, 1)
 					room.player.rolling_retrievable_cost -= retrieve
 					player_perfectly_evaded.emit(creature.transform.origin)
 				creature.evaded_attack_ids.append(data.attack_id)
 				return false
-		if creature.time_since_last_damage_taken <= glib.v.get_player_invincibility_after_hit_seconds():
+		if creature.time_since_last_damage_taken <= glib.v.get_player().get_invincibility_after_hit_seconds():
 			return false
 		creature.time_since_last_damage_taken = 0
 
@@ -654,7 +654,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	creature.time_since_last_damage_taken_visual = 0
 
 	if (creature.type != glib.GCreatureType.PLAYER) && (creature.hp <= 0):
-		room.player.add_stamina(glib.v.get_stamina_regen_on_kill(), 1)
+		room.player.add_stamina(glib.v.get_player().get_stamina_regen_on_kill(), 1)
 		creature.queue_free()
 		creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 		if creature.type != glib.GCreatureType.PLAYER:

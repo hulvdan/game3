@@ -124,59 +124,69 @@ message GCollision {
   string debug_name = 2;
 }
 
+message GConfigControls {
+  float action_consumption_duration = 1;
+}
+
+message GConfigSpikes {
+  float duration_seconds = 1;
+  float damage_starts_at = 2;
+  int32 damage = 3;
+}
+
+message GConfigPlayer {
+  float speed_shooting_scale = 1;
+  float speed_blocking_scale = 2;
+  float speed_inside_enemies_scale = 3;
+  float roll_duration_seconds = 4;
+  float roll_can_shoot_after = 5;
+  float roll_distance = 6;
+  float roll_pow = 7;
+  float roll_invincibility_start = 8;
+  float roll_invincibility_end = 9;
+  float stamina = 10;
+  float stamina_regen_per_second = 11;
+  float stamina_roll_cost = 12;
+  float dodge_stamina_retrieve_percent = 13;
+  float stamina_rally_decay_after = 14;
+  float stamina_rally_decay_per_second = 15;
+  float stamina_attack_cost = 16;
+  float stamina_attack_rally_scale = 17;
+  float stamina_roll_rally_scale = 18;
+  float stamina_blocking_scale = 19;
+  float stamina_regen_on_kill = 20;
+  float block_min_delay = 21;
+  float block_increase_per_second = 22;
+  float block_state_min_duration = 23;
+  float block_cooldown = 24;
+  float roll_cooldown = 25;
+  float perfect_block_window = 26;
+  float stamina_depletion_regen_delay = 27;
+  float shooting_stamina_regen_scale = 28;
+  float invincibility_after_hit_seconds = 29;
+  float shooting_seconds = 30;
+  float shooting_after_roll_seconds = 31;
+}
+
 message Lib {
-  int32 debug_collisions = 1;
-  repeated GRoom rooms = 2;
-  float player_speed_shooting_scale = 3;
-  float player_speed_blocking_scale = 4;
-  float player_speed_inside_enemies_scale = 5;
-  float player_roll_duration_seconds = 6;
-  float player_roll_can_shoot_after = 7;
-  float player_roll_distance = 8;
-  float player_roll_pow = 9;
-  float player_roll_invincibility_start = 10;
-  float player_roll_invincibility_end = 11;
-  float player_stamina = 12;
-  float player_stamina_regen_per_second = 13;
-  float player_stamina_roll_cost = 14;
-  float player_dodge_stamina_retrieve_percent = 15;
-  float player_stamina_rally_decay_after = 16;
-  float player_stamina_rally_decay_per_second = 17;
-  float player_stamina_attack_cost = 18;
-  float player_stamina_attack_rally_scale = 19;
-  float player_stamina_roll_rally_scale = 20;
-  float player_stamina_blocking_scale = 21;
-  float stamina_regen_on_kill = 22;
-  float player_block_min_delay = 23;
-  float player_block_increase_per_second = 24;
-  float player_block_state_min_duration = 25;
-  float player_block_cooldown = 26;
-  float player_roll_cooldown = 27;
-  float player_perfect_block_window = 28;
-  float player_stamina_depletion_regen_delay = 29;
-  float action_consumption_duration = 30;
-  float player_shooting_stamina_regen_scale = 31;
-  float player_invincibility_after_hit_seconds = 32;
-  float mob_invincibility_spikes_seconds = 33;
-  float spikes_duration_seconds = 34;
-  float spikes_damage_starts_at = 35;
-  int32 spikes_damage = 36;
-  float creatures_push_radius = 37;
-  float creatures_push_force = 38;
-  float arrow_speed = 39;
-  int32 arrow_damage = 40;
-  float shooting_seconds = 41;
-  float shooting_after_roll_seconds = 42;
-  GV2i world_size = 43;
-  GV2i progression_size = 44;
+  GConfigControls controls = 1;
+  GConfigPlayer player = 2;
+  GConfigSpikes spikes = 3;
+  int32 debug_collisions = 4;
+  repeated GRoom rooms = 5;
+  float mob_invincibility_spikes_seconds = 6;
+  float creatures_push_radius = 7;
+  float creatures_push_force = 8;
+  GV2i world_size = 9;
+  GV2i progression_size = 10;
   // TABLE_GEN_START
-  repeated GDamage damages = 45;
-  repeated GProgression progression = 46;
-  repeated GCreature creatures = 47;
-  repeated GItem items = 48;
-  repeated GCollectible collectibles = 49;
-  repeated GProjectileFly projectile_fly_types = 50;
-  repeated GProjectile projectiles = 51;
-  repeated GCollision collision_flags = 52;
+  repeated GDamage damages = 11;
+  repeated GProgression progression = 12;
+  repeated GCreature creatures = 13;
+  repeated GItem items = 14;
+  repeated GCollectible collectibles = 15;
+  repeated GProjectileFly projectile_fly_types = 16;
+  repeated GProjectile projectiles = 17;
+  repeated GCollision collision_flags = 18;
   // TABLE_GEN_END
 }

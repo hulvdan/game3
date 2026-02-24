@@ -59,7 +59,7 @@ func _physics_process(dt: float) -> void:
 
 	if is_active:
 		activation_elapsed += dt
-		if activation_elapsed >= glib.v.get_spikes_duration_seconds():
+		if activation_elapsed >= glib.v.get_spikes().get_duration_seconds():
 			striked = false
 			is_active = false
 			attack_id = 0
@@ -71,7 +71,7 @@ func _physics_process(dt: float) -> void:
 func _process(dt: float) -> void:
 	if is_active:
 		activation_elapsed_visual += dt
-		var t: float = activation_elapsed_visual / glib.v.get_spikes_damage_starts_at()
+		var t: float = activation_elapsed_visual / glib.v.get_spikes().get_damage_starts_at()
 		t = clamp(t, 0, 1)
 		_set_scale(curve.sample(t))
 

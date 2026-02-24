@@ -3173,749 +3173,754 @@ class GCollision:
 		return result
 
 
-class Lib:
+class GConfigControls:
 	func _init():
 		var service
 
-		__debug_collisions = PBField.new("debug_collisions", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __debug_collisions
-		data[__debug_collisions.tag] = service
-
-		var __rooms_default: Array[GRoom] = []
-		__rooms = PBField.new("rooms", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 2, true, __rooms_default)
-		service = PBServiceField.new()
-		service.field = __rooms
-		service.func_ref = Callable(self, "add_rooms")
-		data[__rooms.tag] = service
-
-		__player_speed_shooting_scale = PBField.new("player_speed_shooting_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_speed_shooting_scale
-		data[__player_speed_shooting_scale.tag] = service
-
-		__player_speed_blocking_scale = PBField.new("player_speed_blocking_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_speed_blocking_scale
-		data[__player_speed_blocking_scale.tag] = service
-
-		__player_speed_inside_enemies_scale = PBField.new("player_speed_inside_enemies_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_speed_inside_enemies_scale
-		data[__player_speed_inside_enemies_scale.tag] = service
-
-		__player_roll_duration_seconds = PBField.new("player_roll_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_roll_duration_seconds
-		data[__player_roll_duration_seconds.tag] = service
-
-		__player_roll_can_shoot_after = PBField.new("player_roll_can_shoot_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_roll_can_shoot_after
-		data[__player_roll_can_shoot_after.tag] = service
-
-		__player_roll_distance = PBField.new("player_roll_distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_roll_distance
-		data[__player_roll_distance.tag] = service
-
-		__player_roll_pow = PBField.new("player_roll_pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_roll_pow
-		data[__player_roll_pow.tag] = service
-
-		__player_roll_invincibility_start = PBField.new("player_roll_invincibility_start", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_roll_invincibility_start
-		data[__player_roll_invincibility_start.tag] = service
-
-		__player_roll_invincibility_end = PBField.new("player_roll_invincibility_end", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_roll_invincibility_end
-		data[__player_roll_invincibility_end.tag] = service
-
-		__player_stamina = PBField.new("player_stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina
-		data[__player_stamina.tag] = service
-
-		__player_stamina_regen_per_second = PBField.new("player_stamina_regen_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_regen_per_second
-		data[__player_stamina_regen_per_second.tag] = service
-
-		__player_stamina_roll_cost = PBField.new("player_stamina_roll_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_roll_cost
-		data[__player_stamina_roll_cost.tag] = service
-
-		__player_dodge_stamina_retrieve_percent = PBField.new("player_dodge_stamina_retrieve_percent", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_dodge_stamina_retrieve_percent
-		data[__player_dodge_stamina_retrieve_percent.tag] = service
-
-		__player_stamina_rally_decay_after = PBField.new("player_stamina_rally_decay_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_rally_decay_after
-		data[__player_stamina_rally_decay_after.tag] = service
-
-		__player_stamina_rally_decay_per_second = PBField.new("player_stamina_rally_decay_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_rally_decay_per_second
-		data[__player_stamina_rally_decay_per_second.tag] = service
-
-		__player_stamina_attack_cost = PBField.new("player_stamina_attack_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 18, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_attack_cost
-		data[__player_stamina_attack_cost.tag] = service
-
-		__player_stamina_attack_rally_scale = PBField.new("player_stamina_attack_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 19, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_attack_rally_scale
-		data[__player_stamina_attack_rally_scale.tag] = service
-
-		__player_stamina_roll_rally_scale = PBField.new("player_stamina_roll_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_roll_rally_scale
-		data[__player_stamina_roll_rally_scale.tag] = service
-
-		__player_stamina_blocking_scale = PBField.new("player_stamina_blocking_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_blocking_scale
-		data[__player_stamina_blocking_scale.tag] = service
-
-		__stamina_regen_on_kill = PBField.new("stamina_regen_on_kill", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 22, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __stamina_regen_on_kill
-		data[__stamina_regen_on_kill.tag] = service
-
-		__player_block_min_delay = PBField.new("player_block_min_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 23, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_block_min_delay
-		data[__player_block_min_delay.tag] = service
-
-		__player_block_increase_per_second = PBField.new("player_block_increase_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_block_increase_per_second
-		data[__player_block_increase_per_second.tag] = service
-
-		__player_block_state_min_duration = PBField.new("player_block_state_min_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_block_state_min_duration
-		data[__player_block_state_min_duration.tag] = service
-
-		__player_block_cooldown = PBField.new("player_block_cooldown", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_block_cooldown
-		data[__player_block_cooldown.tag] = service
-
-		__player_roll_cooldown = PBField.new("player_roll_cooldown", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_roll_cooldown
-		data[__player_roll_cooldown.tag] = service
-
-		__player_perfect_block_window = PBField.new("player_perfect_block_window", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_perfect_block_window
-		data[__player_perfect_block_window.tag] = service
-
-		__player_stamina_depletion_regen_delay = PBField.new("player_stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 29, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_stamina_depletion_regen_delay
-		data[__player_stamina_depletion_regen_delay.tag] = service
-
-		__action_consumption_duration = PBField.new("action_consumption_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 30, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__action_consumption_duration = PBField.new("action_consumption_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __action_consumption_duration
 		data[__action_consumption_duration.tag] = service
 
-		__player_shooting_stamina_regen_scale = PBField.new("player_shooting_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 31, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_shooting_stamina_regen_scale
-		data[__player_shooting_stamina_regen_scale.tag] = service
 
-		__player_invincibility_after_hit_seconds = PBField.new("player_invincibility_after_hit_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 32, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __player_invincibility_after_hit_seconds
-		data[__player_invincibility_after_hit_seconds.tag] = service
+	var data = { }
 
-		__mob_invincibility_spikes_seconds = PBField.new("mob_invincibility_spikes_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 33, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __mob_invincibility_spikes_seconds
-		data[__mob_invincibility_spikes_seconds.tag] = service
+	var __action_consumption_duration: PBField
 
-		__spikes_duration_seconds = PBField.new("spikes_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 34, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __spikes_duration_seconds
-		data[__spikes_duration_seconds.tag] = service
 
-		__spikes_damage_starts_at = PBField.new("spikes_damage_starts_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 35, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __spikes_damage_starts_at
-		data[__spikes_damage_starts_at.tag] = service
+	func has_action_consumption_duration() -> bool:
+		if __action_consumption_duration.value != null:
+			return true
+		return false
 
-		__spikes_damage = PBField.new("spikes_damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 36, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __spikes_damage
-		data[__spikes_damage.tag] = service
 
-		__creatures_push_radius = PBField.new("creatures_push_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 37, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __creatures_push_radius
-		data[__creatures_push_radius.tag] = service
+	func get_action_consumption_duration() -> float:
+		return __action_consumption_duration.value
 
-		__creatures_push_force = PBField.new("creatures_push_force", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 38, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __creatures_push_force
-		data[__creatures_push_force.tag] = service
 
-		__arrow_speed = PBField.new("arrow_speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 39, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __arrow_speed
-		data[__arrow_speed.tag] = service
+	func clear_action_consumption_duration() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__action_consumption_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
-		__arrow_damage = PBField.new("arrow_damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 40, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __arrow_damage
-		data[__arrow_damage.tag] = service
 
-		__shooting_seconds = PBField.new("shooting_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 41, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __shooting_seconds
-		data[__shooting_seconds.tag] = service
+	func set_action_consumption_duration(value: float) -> void:
+		__action_consumption_duration.value = value
 
-		__shooting_after_roll_seconds = PBField.new("shooting_after_roll_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 42, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __shooting_after_roll_seconds
-		data[__shooting_after_roll_seconds.tag] = service
 
-		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 43, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
-		service = PBServiceField.new()
-		service.field = __world_size
-		service.func_ref = Callable(self, "new_world_size")
-		data[__world_size.tag] = service
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
 
-		__progression_size = PBField.new("progression_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 44, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
-		service = PBServiceField.new()
-		service.field = __progression_size
-		service.func_ref = Callable(self, "new_progression_size")
-		data[__progression_size.tag] = service
 
-		var __damages_default: Array[GDamage] = []
-		__damages = PBField.new("damages", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 45, true, __damages_default)
-		service = PBServiceField.new()
-		service.field = __damages
-		service.func_ref = Callable(self, "add_damages")
-		data[__damages.tag] = service
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
 
-		var __progression_default: Array[GProgression] = []
-		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 46, true, __progression_default)
-		service = PBServiceField.new()
-		service.field = __progression
-		service.func_ref = Callable(self, "add_progression")
-		data[__progression.tag] = service
 
-		var __creatures_default: Array[GCreature] = []
-		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 47, true, __creatures_default)
-		service = PBServiceField.new()
-		service.field = __creatures
-		service.func_ref = Callable(self, "add_creatures")
-		data[__creatures.tag] = service
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
 
-		var __items_default: Array[GItem] = []
-		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 48, true, __items_default)
-		service = PBServiceField.new()
-		service.field = __items
-		service.func_ref = Callable(self, "add_items")
-		data[__items.tag] = service
 
-		var __collectibles_default: Array[GCollectible] = []
-		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 49, true, __collectibles_default)
-		service = PBServiceField.new()
-		service.field = __collectibles
-		service.func_ref = Callable(self, "add_collectibles")
-		data[__collectibles.tag] = service
+class GConfigSpikes:
+	func _init():
+		var service
 
-		var __projectile_fly_types_default: Array[GProjectileFly] = []
-		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 50, true, __projectile_fly_types_default)
+		__duration_seconds = PBField.new("duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __projectile_fly_types
-		service.func_ref = Callable(self, "add_projectile_fly_types")
-		data[__projectile_fly_types.tag] = service
+		service.field = __duration_seconds
+		data[__duration_seconds.tag] = service
 
-		var __projectiles_default: Array[GProjectile] = []
-		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 51, true, __projectiles_default)
+		__damage_starts_at = PBField.new("damage_starts_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __projectiles
-		service.func_ref = Callable(self, "add_projectiles")
-		data[__projectiles.tag] = service
+		service.field = __damage_starts_at
+		data[__damage_starts_at.tag] = service
 
-		var __collision_flags_default: Array[GCollision] = []
-		__collision_flags = PBField.new("collision_flags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 52, true, __collision_flags_default)
+		__damage = PBField.new("damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
-		service.field = __collision_flags
-		service.func_ref = Callable(self, "add_collision_flags")
-		data[__collision_flags.tag] = service
+		service.field = __damage
+		data[__damage.tag] = service
 
 
 	var data = { }
 
-	var __debug_collisions: PBField
+	var __duration_seconds: PBField
 
 
-	func has_debug_collisions() -> bool:
-		if __debug_collisions.value != null:
+	func has_duration_seconds() -> bool:
+		if __duration_seconds.value != null:
 			return true
 		return false
 
 
-	func get_debug_collisions() -> int:
-		return __debug_collisions.value
+	func get_duration_seconds() -> float:
+		return __duration_seconds.value
 
 
-	func clear_debug_collisions() -> void:
+	func clear_duration_seconds() -> void:
 		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__debug_collisions.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+		__duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_debug_collisions(value: int) -> void:
-		__debug_collisions.value = value
+	func set_duration_seconds(value: float) -> void:
+		__duration_seconds.value = value
 
 
-	var __rooms: PBField
+	var __damage_starts_at: PBField
 
 
-	func get_rooms() -> Array[GRoom]:
-		return __rooms.value
+	func has_damage_starts_at() -> bool:
+		if __damage_starts_at.value != null:
+			return true
+		return false
 
 
-	func clear_rooms() -> void:
+	func get_damage_starts_at() -> float:
+		return __damage_starts_at.value
+
+
+	func clear_damage_starts_at() -> void:
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		__rooms.value.clear()
+		__damage_starts_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func add_rooms() -> GRoom:
-		var element = GRoom.new()
-		__rooms.value.append(element)
-		return element
+	func set_damage_starts_at(value: float) -> void:
+		__damage_starts_at.value = value
 
 
-	var __player_speed_shooting_scale: PBField
+	var __damage: PBField
 
 
-	func has_player_speed_shooting_scale() -> bool:
-		if __player_speed_shooting_scale.value != null:
+	func has_damage() -> bool:
+		if __damage.value != null:
 			return true
 		return false
 
 
-	func get_player_speed_shooting_scale() -> float:
-		return __player_speed_shooting_scale.value
+	func get_damage() -> int:
+		return __damage.value
 
 
-	func clear_player_speed_shooting_scale() -> void:
+	func clear_damage() -> void:
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		__player_speed_shooting_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
-	func set_player_speed_shooting_scale(value: float) -> void:
-		__player_speed_shooting_scale.value = value
+	func set_damage(value: int) -> void:
+		__damage.value = value
 
 
-	var __player_speed_blocking_scale: PBField
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
 
 
-	func has_player_speed_blocking_scale() -> bool:
-		if __player_speed_blocking_scale.value != null:
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GConfigPlayer:
+	func _init():
+		var service
+
+		__speed_shooting_scale = PBField.new("speed_shooting_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __speed_shooting_scale
+		data[__speed_shooting_scale.tag] = service
+
+		__speed_blocking_scale = PBField.new("speed_blocking_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __speed_blocking_scale
+		data[__speed_blocking_scale.tag] = service
+
+		__speed_inside_enemies_scale = PBField.new("speed_inside_enemies_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __speed_inside_enemies_scale
+		data[__speed_inside_enemies_scale.tag] = service
+
+		__roll_duration_seconds = PBField.new("roll_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __roll_duration_seconds
+		data[__roll_duration_seconds.tag] = service
+
+		__roll_can_shoot_after = PBField.new("roll_can_shoot_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __roll_can_shoot_after
+		data[__roll_can_shoot_after.tag] = service
+
+		__roll_distance = PBField.new("roll_distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __roll_distance
+		data[__roll_distance.tag] = service
+
+		__roll_pow = PBField.new("roll_pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __roll_pow
+		data[__roll_pow.tag] = service
+
+		__roll_invincibility_start = PBField.new("roll_invincibility_start", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __roll_invincibility_start
+		data[__roll_invincibility_start.tag] = service
+
+		__roll_invincibility_end = PBField.new("roll_invincibility_end", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __roll_invincibility_end
+		data[__roll_invincibility_end.tag] = service
+
+		__stamina = PBField.new("stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina
+		data[__stamina.tag] = service
+
+		__stamina_regen_per_second = PBField.new("stamina_regen_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_regen_per_second
+		data[__stamina_regen_per_second.tag] = service
+
+		__stamina_roll_cost = PBField.new("stamina_roll_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_roll_cost
+		data[__stamina_roll_cost.tag] = service
+
+		__dodge_stamina_retrieve_percent = PBField.new("dodge_stamina_retrieve_percent", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __dodge_stamina_retrieve_percent
+		data[__dodge_stamina_retrieve_percent.tag] = service
+
+		__stamina_rally_decay_after = PBField.new("stamina_rally_decay_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_rally_decay_after
+		data[__stamina_rally_decay_after.tag] = service
+
+		__stamina_rally_decay_per_second = PBField.new("stamina_rally_decay_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_rally_decay_per_second
+		data[__stamina_rally_decay_per_second.tag] = service
+
+		__stamina_attack_cost = PBField.new("stamina_attack_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_attack_cost
+		data[__stamina_attack_cost.tag] = service
+
+		__stamina_attack_rally_scale = PBField.new("stamina_attack_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_attack_rally_scale
+		data[__stamina_attack_rally_scale.tag] = service
+
+		__stamina_roll_rally_scale = PBField.new("stamina_roll_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 18, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_roll_rally_scale
+		data[__stamina_roll_rally_scale.tag] = service
+
+		__stamina_blocking_scale = PBField.new("stamina_blocking_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 19, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_blocking_scale
+		data[__stamina_blocking_scale.tag] = service
+
+		__stamina_regen_on_kill = PBField.new("stamina_regen_on_kill", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_regen_on_kill
+		data[__stamina_regen_on_kill.tag] = service
+
+		__block_min_delay = PBField.new("block_min_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __block_min_delay
+		data[__block_min_delay.tag] = service
+
+		__block_increase_per_second = PBField.new("block_increase_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 22, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __block_increase_per_second
+		data[__block_increase_per_second.tag] = service
+
+		__block_state_min_duration = PBField.new("block_state_min_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 23, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __block_state_min_duration
+		data[__block_state_min_duration.tag] = service
+
+		__block_cooldown = PBField.new("block_cooldown", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __block_cooldown
+		data[__block_cooldown.tag] = service
+
+		__roll_cooldown = PBField.new("roll_cooldown", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __roll_cooldown
+		data[__roll_cooldown.tag] = service
+
+		__perfect_block_window = PBField.new("perfect_block_window", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __perfect_block_window
+		data[__perfect_block_window.tag] = service
+
+		__stamina_depletion_regen_delay = PBField.new("stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __stamina_depletion_regen_delay
+		data[__stamina_depletion_regen_delay.tag] = service
+
+		__shooting_stamina_regen_scale = PBField.new("shooting_stamina_regen_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __shooting_stamina_regen_scale
+		data[__shooting_stamina_regen_scale.tag] = service
+
+		__invincibility_after_hit_seconds = PBField.new("invincibility_after_hit_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 29, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __invincibility_after_hit_seconds
+		data[__invincibility_after_hit_seconds.tag] = service
+
+		__shooting_seconds = PBField.new("shooting_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 30, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __shooting_seconds
+		data[__shooting_seconds.tag] = service
+
+		__shooting_after_roll_seconds = PBField.new("shooting_after_roll_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 31, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __shooting_after_roll_seconds
+		data[__shooting_after_roll_seconds.tag] = service
+
+
+	var data = { }
+
+	var __speed_shooting_scale: PBField
+
+
+	func has_speed_shooting_scale() -> bool:
+		if __speed_shooting_scale.value != null:
 			return true
 		return false
 
 
-	func get_player_speed_blocking_scale() -> float:
-		return __player_speed_blocking_scale.value
+	func get_speed_shooting_scale() -> float:
+		return __speed_shooting_scale.value
 
 
-	func clear_player_speed_blocking_scale() -> void:
+	func clear_speed_shooting_scale() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__speed_shooting_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_speed_shooting_scale(value: float) -> void:
+		__speed_shooting_scale.value = value
+
+
+	var __speed_blocking_scale: PBField
+
+
+	func has_speed_blocking_scale() -> bool:
+		if __speed_blocking_scale.value != null:
+			return true
+		return false
+
+
+	func get_speed_blocking_scale() -> float:
+		return __speed_blocking_scale.value
+
+
+	func clear_speed_blocking_scale() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__speed_blocking_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_speed_blocking_scale(value: float) -> void:
+		__speed_blocking_scale.value = value
+
+
+	var __speed_inside_enemies_scale: PBField
+
+
+	func has_speed_inside_enemies_scale() -> bool:
+		if __speed_inside_enemies_scale.value != null:
+			return true
+		return false
+
+
+	func get_speed_inside_enemies_scale() -> float:
+		return __speed_inside_enemies_scale.value
+
+
+	func clear_speed_inside_enemies_scale() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__speed_inside_enemies_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_speed_inside_enemies_scale(value: float) -> void:
+		__speed_inside_enemies_scale.value = value
+
+
+	var __roll_duration_seconds: PBField
+
+
+	func has_roll_duration_seconds() -> bool:
+		if __roll_duration_seconds.value != null:
+			return true
+		return false
+
+
+	func get_roll_duration_seconds() -> float:
+		return __roll_duration_seconds.value
+
+
+	func clear_roll_duration_seconds() -> void:
 		data[4].state = PB_SERVICE_STATE.UNFILLED
-		__player_speed_blocking_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__roll_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_speed_blocking_scale(value: float) -> void:
-		__player_speed_blocking_scale.value = value
+	func set_roll_duration_seconds(value: float) -> void:
+		__roll_duration_seconds.value = value
 
 
-	var __player_speed_inside_enemies_scale: PBField
+	var __roll_can_shoot_after: PBField
 
 
-	func has_player_speed_inside_enemies_scale() -> bool:
-		if __player_speed_inside_enemies_scale.value != null:
+	func has_roll_can_shoot_after() -> bool:
+		if __roll_can_shoot_after.value != null:
 			return true
 		return false
 
 
-	func get_player_speed_inside_enemies_scale() -> float:
-		return __player_speed_inside_enemies_scale.value
+	func get_roll_can_shoot_after() -> float:
+		return __roll_can_shoot_after.value
 
 
-	func clear_player_speed_inside_enemies_scale() -> void:
+	func clear_roll_can_shoot_after() -> void:
 		data[5].state = PB_SERVICE_STATE.UNFILLED
-		__player_speed_inside_enemies_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__roll_can_shoot_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_speed_inside_enemies_scale(value: float) -> void:
-		__player_speed_inside_enemies_scale.value = value
+	func set_roll_can_shoot_after(value: float) -> void:
+		__roll_can_shoot_after.value = value
 
 
-	var __player_roll_duration_seconds: PBField
+	var __roll_distance: PBField
 
 
-	func has_player_roll_duration_seconds() -> bool:
-		if __player_roll_duration_seconds.value != null:
+	func has_roll_distance() -> bool:
+		if __roll_distance.value != null:
 			return true
 		return false
 
 
-	func get_player_roll_duration_seconds() -> float:
-		return __player_roll_duration_seconds.value
+	func get_roll_distance() -> float:
+		return __roll_distance.value
 
 
-	func clear_player_roll_duration_seconds() -> void:
+	func clear_roll_distance() -> void:
 		data[6].state = PB_SERVICE_STATE.UNFILLED
-		__player_roll_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__roll_distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_roll_duration_seconds(value: float) -> void:
-		__player_roll_duration_seconds.value = value
+	func set_roll_distance(value: float) -> void:
+		__roll_distance.value = value
 
 
-	var __player_roll_can_shoot_after: PBField
+	var __roll_pow: PBField
 
 
-	func has_player_roll_can_shoot_after() -> bool:
-		if __player_roll_can_shoot_after.value != null:
+	func has_roll_pow() -> bool:
+		if __roll_pow.value != null:
 			return true
 		return false
 
 
-	func get_player_roll_can_shoot_after() -> float:
-		return __player_roll_can_shoot_after.value
+	func get_roll_pow() -> float:
+		return __roll_pow.value
 
 
-	func clear_player_roll_can_shoot_after() -> void:
+	func clear_roll_pow() -> void:
 		data[7].state = PB_SERVICE_STATE.UNFILLED
-		__player_roll_can_shoot_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__roll_pow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_roll_can_shoot_after(value: float) -> void:
-		__player_roll_can_shoot_after.value = value
+	func set_roll_pow(value: float) -> void:
+		__roll_pow.value = value
 
 
-	var __player_roll_distance: PBField
+	var __roll_invincibility_start: PBField
 
 
-	func has_player_roll_distance() -> bool:
-		if __player_roll_distance.value != null:
+	func has_roll_invincibility_start() -> bool:
+		if __roll_invincibility_start.value != null:
 			return true
 		return false
 
 
-	func get_player_roll_distance() -> float:
-		return __player_roll_distance.value
+	func get_roll_invincibility_start() -> float:
+		return __roll_invincibility_start.value
 
 
-	func clear_player_roll_distance() -> void:
+	func clear_roll_invincibility_start() -> void:
 		data[8].state = PB_SERVICE_STATE.UNFILLED
-		__player_roll_distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__roll_invincibility_start.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_roll_distance(value: float) -> void:
-		__player_roll_distance.value = value
+	func set_roll_invincibility_start(value: float) -> void:
+		__roll_invincibility_start.value = value
 
 
-	var __player_roll_pow: PBField
+	var __roll_invincibility_end: PBField
 
 
-	func has_player_roll_pow() -> bool:
-		if __player_roll_pow.value != null:
+	func has_roll_invincibility_end() -> bool:
+		if __roll_invincibility_end.value != null:
 			return true
 		return false
 
 
-	func get_player_roll_pow() -> float:
-		return __player_roll_pow.value
+	func get_roll_invincibility_end() -> float:
+		return __roll_invincibility_end.value
 
 
-	func clear_player_roll_pow() -> void:
+	func clear_roll_invincibility_end() -> void:
 		data[9].state = PB_SERVICE_STATE.UNFILLED
-		__player_roll_pow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__roll_invincibility_end.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_roll_pow(value: float) -> void:
-		__player_roll_pow.value = value
+	func set_roll_invincibility_end(value: float) -> void:
+		__roll_invincibility_end.value = value
 
 
-	var __player_roll_invincibility_start: PBField
+	var __stamina: PBField
 
 
-	func has_player_roll_invincibility_start() -> bool:
-		if __player_roll_invincibility_start.value != null:
+	func has_stamina() -> bool:
+		if __stamina.value != null:
 			return true
 		return false
 
 
-	func get_player_roll_invincibility_start() -> float:
-		return __player_roll_invincibility_start.value
+	func get_stamina() -> float:
+		return __stamina.value
 
 
-	func clear_player_roll_invincibility_start() -> void:
+	func clear_stamina() -> void:
 		data[10].state = PB_SERVICE_STATE.UNFILLED
-		__player_roll_invincibility_start.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_roll_invincibility_start(value: float) -> void:
-		__player_roll_invincibility_start.value = value
+	func set_stamina(value: float) -> void:
+		__stamina.value = value
 
 
-	var __player_roll_invincibility_end: PBField
+	var __stamina_regen_per_second: PBField
 
 
-	func has_player_roll_invincibility_end() -> bool:
-		if __player_roll_invincibility_end.value != null:
+	func has_stamina_regen_per_second() -> bool:
+		if __stamina_regen_per_second.value != null:
 			return true
 		return false
 
 
-	func get_player_roll_invincibility_end() -> float:
-		return __player_roll_invincibility_end.value
+	func get_stamina_regen_per_second() -> float:
+		return __stamina_regen_per_second.value
 
 
-	func clear_player_roll_invincibility_end() -> void:
+	func clear_stamina_regen_per_second() -> void:
 		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__player_roll_invincibility_end.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_regen_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_roll_invincibility_end(value: float) -> void:
-		__player_roll_invincibility_end.value = value
+	func set_stamina_regen_per_second(value: float) -> void:
+		__stamina_regen_per_second.value = value
 
 
-	var __player_stamina: PBField
+	var __stamina_roll_cost: PBField
 
 
-	func has_player_stamina() -> bool:
-		if __player_stamina.value != null:
+	func has_stamina_roll_cost() -> bool:
+		if __stamina_roll_cost.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina() -> float:
-		return __player_stamina.value
+	func get_stamina_roll_cost() -> float:
+		return __stamina_roll_cost.value
 
 
-	func clear_player_stamina() -> void:
+	func clear_stamina_roll_cost() -> void:
 		data[12].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_roll_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina(value: float) -> void:
-		__player_stamina.value = value
+	func set_stamina_roll_cost(value: float) -> void:
+		__stamina_roll_cost.value = value
 
 
-	var __player_stamina_regen_per_second: PBField
+	var __dodge_stamina_retrieve_percent: PBField
 
 
-	func has_player_stamina_regen_per_second() -> bool:
-		if __player_stamina_regen_per_second.value != null:
+	func has_dodge_stamina_retrieve_percent() -> bool:
+		if __dodge_stamina_retrieve_percent.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_regen_per_second() -> float:
-		return __player_stamina_regen_per_second.value
+	func get_dodge_stamina_retrieve_percent() -> float:
+		return __dodge_stamina_retrieve_percent.value
 
 
-	func clear_player_stamina_regen_per_second() -> void:
+	func clear_dodge_stamina_retrieve_percent() -> void:
 		data[13].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_regen_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__dodge_stamina_retrieve_percent.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_regen_per_second(value: float) -> void:
-		__player_stamina_regen_per_second.value = value
+	func set_dodge_stamina_retrieve_percent(value: float) -> void:
+		__dodge_stamina_retrieve_percent.value = value
 
 
-	var __player_stamina_roll_cost: PBField
+	var __stamina_rally_decay_after: PBField
 
 
-	func has_player_stamina_roll_cost() -> bool:
-		if __player_stamina_roll_cost.value != null:
+	func has_stamina_rally_decay_after() -> bool:
+		if __stamina_rally_decay_after.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_roll_cost() -> float:
-		return __player_stamina_roll_cost.value
+	func get_stamina_rally_decay_after() -> float:
+		return __stamina_rally_decay_after.value
 
 
-	func clear_player_stamina_roll_cost() -> void:
+	func clear_stamina_rally_decay_after() -> void:
 		data[14].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_roll_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_rally_decay_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_roll_cost(value: float) -> void:
-		__player_stamina_roll_cost.value = value
+	func set_stamina_rally_decay_after(value: float) -> void:
+		__stamina_rally_decay_after.value = value
 
 
-	var __player_dodge_stamina_retrieve_percent: PBField
+	var __stamina_rally_decay_per_second: PBField
 
 
-	func has_player_dodge_stamina_retrieve_percent() -> bool:
-		if __player_dodge_stamina_retrieve_percent.value != null:
+	func has_stamina_rally_decay_per_second() -> bool:
+		if __stamina_rally_decay_per_second.value != null:
 			return true
 		return false
 
 
-	func get_player_dodge_stamina_retrieve_percent() -> float:
-		return __player_dodge_stamina_retrieve_percent.value
+	func get_stamina_rally_decay_per_second() -> float:
+		return __stamina_rally_decay_per_second.value
 
 
-	func clear_player_dodge_stamina_retrieve_percent() -> void:
+	func clear_stamina_rally_decay_per_second() -> void:
 		data[15].state = PB_SERVICE_STATE.UNFILLED
-		__player_dodge_stamina_retrieve_percent.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_rally_decay_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_dodge_stamina_retrieve_percent(value: float) -> void:
-		__player_dodge_stamina_retrieve_percent.value = value
+	func set_stamina_rally_decay_per_second(value: float) -> void:
+		__stamina_rally_decay_per_second.value = value
 
 
-	var __player_stamina_rally_decay_after: PBField
+	var __stamina_attack_cost: PBField
 
 
-	func has_player_stamina_rally_decay_after() -> bool:
-		if __player_stamina_rally_decay_after.value != null:
+	func has_stamina_attack_cost() -> bool:
+		if __stamina_attack_cost.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_rally_decay_after() -> float:
-		return __player_stamina_rally_decay_after.value
+	func get_stamina_attack_cost() -> float:
+		return __stamina_attack_cost.value
 
 
-	func clear_player_stamina_rally_decay_after() -> void:
+	func clear_stamina_attack_cost() -> void:
 		data[16].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_rally_decay_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_attack_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_rally_decay_after(value: float) -> void:
-		__player_stamina_rally_decay_after.value = value
+	func set_stamina_attack_cost(value: float) -> void:
+		__stamina_attack_cost.value = value
 
 
-	var __player_stamina_rally_decay_per_second: PBField
+	var __stamina_attack_rally_scale: PBField
 
 
-	func has_player_stamina_rally_decay_per_second() -> bool:
-		if __player_stamina_rally_decay_per_second.value != null:
+	func has_stamina_attack_rally_scale() -> bool:
+		if __stamina_attack_rally_scale.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_rally_decay_per_second() -> float:
-		return __player_stamina_rally_decay_per_second.value
+	func get_stamina_attack_rally_scale() -> float:
+		return __stamina_attack_rally_scale.value
 
 
-	func clear_player_stamina_rally_decay_per_second() -> void:
+	func clear_stamina_attack_rally_scale() -> void:
 		data[17].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_rally_decay_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_attack_rally_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_rally_decay_per_second(value: float) -> void:
-		__player_stamina_rally_decay_per_second.value = value
+	func set_stamina_attack_rally_scale(value: float) -> void:
+		__stamina_attack_rally_scale.value = value
 
 
-	var __player_stamina_attack_cost: PBField
+	var __stamina_roll_rally_scale: PBField
 
 
-	func has_player_stamina_attack_cost() -> bool:
-		if __player_stamina_attack_cost.value != null:
+	func has_stamina_roll_rally_scale() -> bool:
+		if __stamina_roll_rally_scale.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_attack_cost() -> float:
-		return __player_stamina_attack_cost.value
+	func get_stamina_roll_rally_scale() -> float:
+		return __stamina_roll_rally_scale.value
 
 
-	func clear_player_stamina_attack_cost() -> void:
+	func clear_stamina_roll_rally_scale() -> void:
 		data[18].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_attack_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_roll_rally_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_attack_cost(value: float) -> void:
-		__player_stamina_attack_cost.value = value
+	func set_stamina_roll_rally_scale(value: float) -> void:
+		__stamina_roll_rally_scale.value = value
 
 
-	var __player_stamina_attack_rally_scale: PBField
+	var __stamina_blocking_scale: PBField
 
 
-	func has_player_stamina_attack_rally_scale() -> bool:
-		if __player_stamina_attack_rally_scale.value != null:
+	func has_stamina_blocking_scale() -> bool:
+		if __stamina_blocking_scale.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_attack_rally_scale() -> float:
-		return __player_stamina_attack_rally_scale.value
+	func get_stamina_blocking_scale() -> float:
+		return __stamina_blocking_scale.value
 
 
-	func clear_player_stamina_attack_rally_scale() -> void:
+	func clear_stamina_blocking_scale() -> void:
 		data[19].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_attack_rally_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_blocking_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_attack_rally_scale(value: float) -> void:
-		__player_stamina_attack_rally_scale.value = value
-
-
-	var __player_stamina_roll_rally_scale: PBField
-
-
-	func has_player_stamina_roll_rally_scale() -> bool:
-		if __player_stamina_roll_rally_scale.value != null:
-			return true
-		return false
-
-
-	func get_player_stamina_roll_rally_scale() -> float:
-		return __player_stamina_roll_rally_scale.value
-
-
-	func clear_player_stamina_roll_rally_scale() -> void:
-		data[20].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_roll_rally_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_player_stamina_roll_rally_scale(value: float) -> void:
-		__player_stamina_roll_rally_scale.value = value
-
-
-	var __player_stamina_blocking_scale: PBField
-
-
-	func has_player_stamina_blocking_scale() -> bool:
-		if __player_stamina_blocking_scale.value != null:
-			return true
-		return false
-
-
-	func get_player_stamina_blocking_scale() -> float:
-		return __player_stamina_blocking_scale.value
-
-
-	func clear_player_stamina_blocking_scale() -> void:
-		data[21].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_blocking_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_player_stamina_blocking_scale(value: float) -> void:
-		__player_stamina_blocking_scale.value = value
+	func set_stamina_blocking_scale(value: float) -> void:
+		__stamina_blocking_scale.value = value
 
 
 	var __stamina_regen_on_kill: PBField
@@ -3932,7 +3937,7 @@ class Lib:
 
 
 	func clear_stamina_regen_on_kill() -> void:
-		data[22].state = PB_SERVICE_STATE.UNFILLED
+		data[20].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_regen_on_kill.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -3940,400 +3945,202 @@ class Lib:
 		__stamina_regen_on_kill.value = value
 
 
-	var __player_block_min_delay: PBField
+	var __block_min_delay: PBField
 
 
-	func has_player_block_min_delay() -> bool:
-		if __player_block_min_delay.value != null:
+	func has_block_min_delay() -> bool:
+		if __block_min_delay.value != null:
 			return true
 		return false
 
 
-	func get_player_block_min_delay() -> float:
-		return __player_block_min_delay.value
+	func get_block_min_delay() -> float:
+		return __block_min_delay.value
 
 
-	func clear_player_block_min_delay() -> void:
+	func clear_block_min_delay() -> void:
+		data[21].state = PB_SERVICE_STATE.UNFILLED
+		__block_min_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_block_min_delay(value: float) -> void:
+		__block_min_delay.value = value
+
+
+	var __block_increase_per_second: PBField
+
+
+	func has_block_increase_per_second() -> bool:
+		if __block_increase_per_second.value != null:
+			return true
+		return false
+
+
+	func get_block_increase_per_second() -> float:
+		return __block_increase_per_second.value
+
+
+	func clear_block_increase_per_second() -> void:
+		data[22].state = PB_SERVICE_STATE.UNFILLED
+		__block_increase_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_block_increase_per_second(value: float) -> void:
+		__block_increase_per_second.value = value
+
+
+	var __block_state_min_duration: PBField
+
+
+	func has_block_state_min_duration() -> bool:
+		if __block_state_min_duration.value != null:
+			return true
+		return false
+
+
+	func get_block_state_min_duration() -> float:
+		return __block_state_min_duration.value
+
+
+	func clear_block_state_min_duration() -> void:
 		data[23].state = PB_SERVICE_STATE.UNFILLED
-		__player_block_min_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__block_state_min_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_block_min_delay(value: float) -> void:
-		__player_block_min_delay.value = value
+	func set_block_state_min_duration(value: float) -> void:
+		__block_state_min_duration.value = value
 
 
-	var __player_block_increase_per_second: PBField
+	var __block_cooldown: PBField
 
 
-	func has_player_block_increase_per_second() -> bool:
-		if __player_block_increase_per_second.value != null:
+	func has_block_cooldown() -> bool:
+		if __block_cooldown.value != null:
 			return true
 		return false
 
 
-	func get_player_block_increase_per_second() -> float:
-		return __player_block_increase_per_second.value
+	func get_block_cooldown() -> float:
+		return __block_cooldown.value
 
 
-	func clear_player_block_increase_per_second() -> void:
+	func clear_block_cooldown() -> void:
 		data[24].state = PB_SERVICE_STATE.UNFILLED
-		__player_block_increase_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__block_cooldown.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_block_increase_per_second(value: float) -> void:
-		__player_block_increase_per_second.value = value
+	func set_block_cooldown(value: float) -> void:
+		__block_cooldown.value = value
 
 
-	var __player_block_state_min_duration: PBField
+	var __roll_cooldown: PBField
 
 
-	func has_player_block_state_min_duration() -> bool:
-		if __player_block_state_min_duration.value != null:
+	func has_roll_cooldown() -> bool:
+		if __roll_cooldown.value != null:
 			return true
 		return false
 
 
-	func get_player_block_state_min_duration() -> float:
-		return __player_block_state_min_duration.value
+	func get_roll_cooldown() -> float:
+		return __roll_cooldown.value
 
 
-	func clear_player_block_state_min_duration() -> void:
+	func clear_roll_cooldown() -> void:
 		data[25].state = PB_SERVICE_STATE.UNFILLED
-		__player_block_state_min_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__roll_cooldown.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_block_state_min_duration(value: float) -> void:
-		__player_block_state_min_duration.value = value
+	func set_roll_cooldown(value: float) -> void:
+		__roll_cooldown.value = value
 
 
-	var __player_block_cooldown: PBField
+	var __perfect_block_window: PBField
 
 
-	func has_player_block_cooldown() -> bool:
-		if __player_block_cooldown.value != null:
+	func has_perfect_block_window() -> bool:
+		if __perfect_block_window.value != null:
 			return true
 		return false
 
 
-	func get_player_block_cooldown() -> float:
-		return __player_block_cooldown.value
+	func get_perfect_block_window() -> float:
+		return __perfect_block_window.value
 
 
-	func clear_player_block_cooldown() -> void:
+	func clear_perfect_block_window() -> void:
 		data[26].state = PB_SERVICE_STATE.UNFILLED
-		__player_block_cooldown.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__perfect_block_window.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_block_cooldown(value: float) -> void:
-		__player_block_cooldown.value = value
+	func set_perfect_block_window(value: float) -> void:
+		__perfect_block_window.value = value
 
 
-	var __player_roll_cooldown: PBField
+	var __stamina_depletion_regen_delay: PBField
 
 
-	func has_player_roll_cooldown() -> bool:
-		if __player_roll_cooldown.value != null:
+	func has_stamina_depletion_regen_delay() -> bool:
+		if __stamina_depletion_regen_delay.value != null:
 			return true
 		return false
 
 
-	func get_player_roll_cooldown() -> float:
-		return __player_roll_cooldown.value
+	func get_stamina_depletion_regen_delay() -> float:
+		return __stamina_depletion_regen_delay.value
 
 
-	func clear_player_roll_cooldown() -> void:
+	func clear_stamina_depletion_regen_delay() -> void:
 		data[27].state = PB_SERVICE_STATE.UNFILLED
-		__player_roll_cooldown.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_depletion_regen_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_roll_cooldown(value: float) -> void:
-		__player_roll_cooldown.value = value
+	func set_stamina_depletion_regen_delay(value: float) -> void:
+		__stamina_depletion_regen_delay.value = value
 
 
-	var __player_perfect_block_window: PBField
+	var __shooting_stamina_regen_scale: PBField
 
 
-	func has_player_perfect_block_window() -> bool:
-		if __player_perfect_block_window.value != null:
+	func has_shooting_stamina_regen_scale() -> bool:
+		if __shooting_stamina_regen_scale.value != null:
 			return true
 		return false
 
 
-	func get_player_perfect_block_window() -> float:
-		return __player_perfect_block_window.value
+	func get_shooting_stamina_regen_scale() -> float:
+		return __shooting_stamina_regen_scale.value
 
 
-	func clear_player_perfect_block_window() -> void:
+	func clear_shooting_stamina_regen_scale() -> void:
 		data[28].state = PB_SERVICE_STATE.UNFILLED
-		__player_perfect_block_window.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__shooting_stamina_regen_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_perfect_block_window(value: float) -> void:
-		__player_perfect_block_window.value = value
+	func set_shooting_stamina_regen_scale(value: float) -> void:
+		__shooting_stamina_regen_scale.value = value
 
 
-	var __player_stamina_depletion_regen_delay: PBField
+	var __invincibility_after_hit_seconds: PBField
 
 
-	func has_player_stamina_depletion_regen_delay() -> bool:
-		if __player_stamina_depletion_regen_delay.value != null:
+	func has_invincibility_after_hit_seconds() -> bool:
+		if __invincibility_after_hit_seconds.value != null:
 			return true
 		return false
 
 
-	func get_player_stamina_depletion_regen_delay() -> float:
-		return __player_stamina_depletion_regen_delay.value
+	func get_invincibility_after_hit_seconds() -> float:
+		return __invincibility_after_hit_seconds.value
 
 
-	func clear_player_stamina_depletion_regen_delay() -> void:
+	func clear_invincibility_after_hit_seconds() -> void:
 		data[29].state = PB_SERVICE_STATE.UNFILLED
-		__player_stamina_depletion_regen_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__invincibility_after_hit_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_player_stamina_depletion_regen_delay(value: float) -> void:
-		__player_stamina_depletion_regen_delay.value = value
-
-
-	var __action_consumption_duration: PBField
-
-
-	func has_action_consumption_duration() -> bool:
-		if __action_consumption_duration.value != null:
-			return true
-		return false
-
-
-	func get_action_consumption_duration() -> float:
-		return __action_consumption_duration.value
-
-
-	func clear_action_consumption_duration() -> void:
-		data[30].state = PB_SERVICE_STATE.UNFILLED
-		__action_consumption_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_action_consumption_duration(value: float) -> void:
-		__action_consumption_duration.value = value
-
-
-	var __player_shooting_stamina_regen_scale: PBField
-
-
-	func has_player_shooting_stamina_regen_scale() -> bool:
-		if __player_shooting_stamina_regen_scale.value != null:
-			return true
-		return false
-
-
-	func get_player_shooting_stamina_regen_scale() -> float:
-		return __player_shooting_stamina_regen_scale.value
-
-
-	func clear_player_shooting_stamina_regen_scale() -> void:
-		data[31].state = PB_SERVICE_STATE.UNFILLED
-		__player_shooting_stamina_regen_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_player_shooting_stamina_regen_scale(value: float) -> void:
-		__player_shooting_stamina_regen_scale.value = value
-
-
-	var __player_invincibility_after_hit_seconds: PBField
-
-
-	func has_player_invincibility_after_hit_seconds() -> bool:
-		if __player_invincibility_after_hit_seconds.value != null:
-			return true
-		return false
-
-
-	func get_player_invincibility_after_hit_seconds() -> float:
-		return __player_invincibility_after_hit_seconds.value
-
-
-	func clear_player_invincibility_after_hit_seconds() -> void:
-		data[32].state = PB_SERVICE_STATE.UNFILLED
-		__player_invincibility_after_hit_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_player_invincibility_after_hit_seconds(value: float) -> void:
-		__player_invincibility_after_hit_seconds.value = value
-
-
-	var __mob_invincibility_spikes_seconds: PBField
-
-
-	func has_mob_invincibility_spikes_seconds() -> bool:
-		if __mob_invincibility_spikes_seconds.value != null:
-			return true
-		return false
-
-
-	func get_mob_invincibility_spikes_seconds() -> float:
-		return __mob_invincibility_spikes_seconds.value
-
-
-	func clear_mob_invincibility_spikes_seconds() -> void:
-		data[33].state = PB_SERVICE_STATE.UNFILLED
-		__mob_invincibility_spikes_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_mob_invincibility_spikes_seconds(value: float) -> void:
-		__mob_invincibility_spikes_seconds.value = value
-
-
-	var __spikes_duration_seconds: PBField
-
-
-	func has_spikes_duration_seconds() -> bool:
-		if __spikes_duration_seconds.value != null:
-			return true
-		return false
-
-
-	func get_spikes_duration_seconds() -> float:
-		return __spikes_duration_seconds.value
-
-
-	func clear_spikes_duration_seconds() -> void:
-		data[34].state = PB_SERVICE_STATE.UNFILLED
-		__spikes_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_spikes_duration_seconds(value: float) -> void:
-		__spikes_duration_seconds.value = value
-
-
-	var __spikes_damage_starts_at: PBField
-
-
-	func has_spikes_damage_starts_at() -> bool:
-		if __spikes_damage_starts_at.value != null:
-			return true
-		return false
-
-
-	func get_spikes_damage_starts_at() -> float:
-		return __spikes_damage_starts_at.value
-
-
-	func clear_spikes_damage_starts_at() -> void:
-		data[35].state = PB_SERVICE_STATE.UNFILLED
-		__spikes_damage_starts_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_spikes_damage_starts_at(value: float) -> void:
-		__spikes_damage_starts_at.value = value
-
-
-	var __spikes_damage: PBField
-
-
-	func has_spikes_damage() -> bool:
-		if __spikes_damage.value != null:
-			return true
-		return false
-
-
-	func get_spikes_damage() -> int:
-		return __spikes_damage.value
-
-
-	func clear_spikes_damage() -> void:
-		data[36].state = PB_SERVICE_STATE.UNFILLED
-		__spikes_damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_spikes_damage(value: int) -> void:
-		__spikes_damage.value = value
-
-
-	var __creatures_push_radius: PBField
-
-
-	func has_creatures_push_radius() -> bool:
-		if __creatures_push_radius.value != null:
-			return true
-		return false
-
-
-	func get_creatures_push_radius() -> float:
-		return __creatures_push_radius.value
-
-
-	func clear_creatures_push_radius() -> void:
-		data[37].state = PB_SERVICE_STATE.UNFILLED
-		__creatures_push_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_creatures_push_radius(value: float) -> void:
-		__creatures_push_radius.value = value
-
-
-	var __creatures_push_force: PBField
-
-
-	func has_creatures_push_force() -> bool:
-		if __creatures_push_force.value != null:
-			return true
-		return false
-
-
-	func get_creatures_push_force() -> float:
-		return __creatures_push_force.value
-
-
-	func clear_creatures_push_force() -> void:
-		data[38].state = PB_SERVICE_STATE.UNFILLED
-		__creatures_push_force.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_creatures_push_force(value: float) -> void:
-		__creatures_push_force.value = value
-
-
-	var __arrow_speed: PBField
-
-
-	func has_arrow_speed() -> bool:
-		if __arrow_speed.value != null:
-			return true
-		return false
-
-
-	func get_arrow_speed() -> float:
-		return __arrow_speed.value
-
-
-	func clear_arrow_speed() -> void:
-		data[39].state = PB_SERVICE_STATE.UNFILLED
-		__arrow_speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_arrow_speed(value: float) -> void:
-		__arrow_speed.value = value
-
-
-	var __arrow_damage: PBField
-
-
-	func has_arrow_damage() -> bool:
-		if __arrow_damage.value != null:
-			return true
-		return false
-
-
-	func get_arrow_damage() -> int:
-		return __arrow_damage.value
-
-
-	func clear_arrow_damage() -> void:
-		data[40].state = PB_SERVICE_STATE.UNFILLED
-		__arrow_damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_arrow_damage(value: int) -> void:
-		__arrow_damage.value = value
+	func set_invincibility_after_hit_seconds(value: float) -> void:
+		__invincibility_after_hit_seconds.value = value
 
 
 	var __shooting_seconds: PBField
@@ -4350,7 +4157,7 @@ class Lib:
 
 
 	func clear_shooting_seconds() -> void:
-		data[41].state = PB_SERVICE_STATE.UNFILLED
+		data[30].state = PB_SERVICE_STATE.UNFILLED
 		__shooting_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4372,12 +4179,331 @@ class Lib:
 
 
 	func clear_shooting_after_roll_seconds() -> void:
-		data[42].state = PB_SERVICE_STATE.UNFILLED
+		data[31].state = PB_SERVICE_STATE.UNFILLED
 		__shooting_after_roll_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
 	func set_shooting_after_roll_seconds(value: float) -> void:
 		__shooting_after_roll_seconds.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class Lib:
+	func _init():
+		var service
+
+		__controls = PBField.new("controls", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __controls
+		service.func_ref = Callable(self, "new_controls")
+		data[__controls.tag] = service
+
+		__player = PBField.new("player", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __player
+		service.func_ref = Callable(self, "new_player")
+		data[__player.tag] = service
+
+		__spikes = PBField.new("spikes", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __spikes
+		service.func_ref = Callable(self, "new_spikes")
+		data[__spikes.tag] = service
+
+		__debug_collisions = PBField.new("debug_collisions", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __debug_collisions
+		data[__debug_collisions.tag] = service
+
+		var __rooms_default: Array[GRoom] = []
+		__rooms = PBField.new("rooms", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 5, true, __rooms_default)
+		service = PBServiceField.new()
+		service.field = __rooms
+		service.func_ref = Callable(self, "add_rooms")
+		data[__rooms.tag] = service
+
+		__mob_invincibility_spikes_seconds = PBField.new("mob_invincibility_spikes_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __mob_invincibility_spikes_seconds
+		data[__mob_invincibility_spikes_seconds.tag] = service
+
+		__creatures_push_radius = PBField.new("creatures_push_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __creatures_push_radius
+		data[__creatures_push_radius.tag] = service
+
+		__creatures_push_force = PBField.new("creatures_push_force", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __creatures_push_force
+		data[__creatures_push_force.tag] = service
+
+		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __world_size
+		service.func_ref = Callable(self, "new_world_size")
+		data[__world_size.tag] = service
+
+		__progression_size = PBField.new("progression_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __progression_size
+		service.func_ref = Callable(self, "new_progression_size")
+		data[__progression_size.tag] = service
+
+		var __damages_default: Array[GDamage] = []
+		__damages = PBField.new("damages", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 11, true, __damages_default)
+		service = PBServiceField.new()
+		service.field = __damages
+		service.func_ref = Callable(self, "add_damages")
+		data[__damages.tag] = service
+
+		var __progression_default: Array[GProgression] = []
+		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 12, true, __progression_default)
+		service = PBServiceField.new()
+		service.field = __progression
+		service.func_ref = Callable(self, "add_progression")
+		data[__progression.tag] = service
+
+		var __creatures_default: Array[GCreature] = []
+		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 13, true, __creatures_default)
+		service = PBServiceField.new()
+		service.field = __creatures
+		service.func_ref = Callable(self, "add_creatures")
+		data[__creatures.tag] = service
+
+		var __items_default: Array[GItem] = []
+		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 14, true, __items_default)
+		service = PBServiceField.new()
+		service.field = __items
+		service.func_ref = Callable(self, "add_items")
+		data[__items.tag] = service
+
+		var __collectibles_default: Array[GCollectible] = []
+		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 15, true, __collectibles_default)
+		service = PBServiceField.new()
+		service.field = __collectibles
+		service.func_ref = Callable(self, "add_collectibles")
+		data[__collectibles.tag] = service
+
+		var __projectile_fly_types_default: Array[GProjectileFly] = []
+		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 16, true, __projectile_fly_types_default)
+		service = PBServiceField.new()
+		service.field = __projectile_fly_types
+		service.func_ref = Callable(self, "add_projectile_fly_types")
+		data[__projectile_fly_types.tag] = service
+
+		var __projectiles_default: Array[GProjectile] = []
+		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 17, true, __projectiles_default)
+		service = PBServiceField.new()
+		service.field = __projectiles
+		service.func_ref = Callable(self, "add_projectiles")
+		data[__projectiles.tag] = service
+
+		var __collision_flags_default: Array[GCollision] = []
+		__collision_flags = PBField.new("collision_flags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __collision_flags_default)
+		service = PBServiceField.new()
+		service.field = __collision_flags
+		service.func_ref = Callable(self, "add_collision_flags")
+		data[__collision_flags.tag] = service
+
+
+	var data = { }
+
+	var __controls: PBField
+
+
+	func has_controls() -> bool:
+		if __controls.value != null:
+			return true
+		return false
+
+
+	func get_controls() -> GConfigControls:
+		return __controls.value
+
+
+	func clear_controls() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__controls.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_controls() -> GConfigControls:
+		__controls.value = GConfigControls.new()
+		return __controls.value
+
+
+	var __player: PBField
+
+
+	func has_player() -> bool:
+		if __player.value != null:
+			return true
+		return false
+
+
+	func get_player() -> GConfigPlayer:
+		return __player.value
+
+
+	func clear_player() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__player.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_player() -> GConfigPlayer:
+		__player.value = GConfigPlayer.new()
+		return __player.value
+
+
+	var __spikes: PBField
+
+
+	func has_spikes() -> bool:
+		if __spikes.value != null:
+			return true
+		return false
+
+
+	func get_spikes() -> GConfigSpikes:
+		return __spikes.value
+
+
+	func clear_spikes() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__spikes.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_spikes() -> GConfigSpikes:
+		__spikes.value = GConfigSpikes.new()
+		return __spikes.value
+
+
+	var __debug_collisions: PBField
+
+
+	func has_debug_collisions() -> bool:
+		if __debug_collisions.value != null:
+			return true
+		return false
+
+
+	func get_debug_collisions() -> int:
+		return __debug_collisions.value
+
+
+	func clear_debug_collisions() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__debug_collisions.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_debug_collisions(value: int) -> void:
+		__debug_collisions.value = value
+
+
+	var __rooms: PBField
+
+
+	func get_rooms() -> Array[GRoom]:
+		return __rooms.value
+
+
+	func clear_rooms() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__rooms.value.clear()
+
+
+	func add_rooms() -> GRoom:
+		var element = GRoom.new()
+		__rooms.value.append(element)
+		return element
+
+
+	var __mob_invincibility_spikes_seconds: PBField
+
+
+	func has_mob_invincibility_spikes_seconds() -> bool:
+		if __mob_invincibility_spikes_seconds.value != null:
+			return true
+		return false
+
+
+	func get_mob_invincibility_spikes_seconds() -> float:
+		return __mob_invincibility_spikes_seconds.value
+
+
+	func clear_mob_invincibility_spikes_seconds() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__mob_invincibility_spikes_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_mob_invincibility_spikes_seconds(value: float) -> void:
+		__mob_invincibility_spikes_seconds.value = value
+
+
+	var __creatures_push_radius: PBField
+
+
+	func has_creatures_push_radius() -> bool:
+		if __creatures_push_radius.value != null:
+			return true
+		return false
+
+
+	func get_creatures_push_radius() -> float:
+		return __creatures_push_radius.value
+
+
+	func clear_creatures_push_radius() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__creatures_push_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_creatures_push_radius(value: float) -> void:
+		__creatures_push_radius.value = value
+
+
+	var __creatures_push_force: PBField
+
+
+	func has_creatures_push_force() -> bool:
+		if __creatures_push_force.value != null:
+			return true
+		return false
+
+
+	func get_creatures_push_force() -> float:
+		return __creatures_push_force.value
+
+
+	func clear_creatures_push_force() -> void:
+		data[8].state = PB_SERVICE_STATE.UNFILLED
+		__creatures_push_force.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_creatures_push_force(value: float) -> void:
+		__creatures_push_force.value = value
 
 
 	var __world_size: PBField
@@ -4394,7 +4520,7 @@ class Lib:
 
 
 	func clear_world_size() -> void:
-		data[43].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__world_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -4417,7 +4543,7 @@ class Lib:
 
 
 	func clear_progression_size() -> void:
-		data[44].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__progression_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -4434,7 +4560,7 @@ class Lib:
 
 
 	func clear_damages() -> void:
-		data[45].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__damages.value.clear()
 
 
@@ -4452,7 +4578,7 @@ class Lib:
 
 
 	func clear_progression() -> void:
-		data[46].state = PB_SERVICE_STATE.UNFILLED
+		data[12].state = PB_SERVICE_STATE.UNFILLED
 		__progression.value.clear()
 
 
@@ -4470,7 +4596,7 @@ class Lib:
 
 
 	func clear_creatures() -> void:
-		data[47].state = PB_SERVICE_STATE.UNFILLED
+		data[13].state = PB_SERVICE_STATE.UNFILLED
 		__creatures.value.clear()
 
 
@@ -4488,7 +4614,7 @@ class Lib:
 
 
 	func clear_items() -> void:
-		data[48].state = PB_SERVICE_STATE.UNFILLED
+		data[14].state = PB_SERVICE_STATE.UNFILLED
 		__items.value.clear()
 
 
@@ -4506,7 +4632,7 @@ class Lib:
 
 
 	func clear_collectibles() -> void:
-		data[49].state = PB_SERVICE_STATE.UNFILLED
+		data[15].state = PB_SERVICE_STATE.UNFILLED
 		__collectibles.value.clear()
 
 
@@ -4524,7 +4650,7 @@ class Lib:
 
 
 	func clear_projectile_fly_types() -> void:
-		data[50].state = PB_SERVICE_STATE.UNFILLED
+		data[16].state = PB_SERVICE_STATE.UNFILLED
 		__projectile_fly_types.value.clear()
 
 
@@ -4542,7 +4668,7 @@ class Lib:
 
 
 	func clear_projectiles() -> void:
-		data[51].state = PB_SERVICE_STATE.UNFILLED
+		data[17].state = PB_SERVICE_STATE.UNFILLED
 		__projectiles.value.clear()
 
 
@@ -4560,7 +4686,7 @@ class Lib:
 
 
 	func clear_collision_flags() -> void:
-		data[52].state = PB_SERVICE_STATE.UNFILLED
+		data[18].state = PB_SERVICE_STATE.UNFILLED
 		__collision_flags.value.clear()
 
 
