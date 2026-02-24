@@ -212,6 +212,9 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 
 func _ready() -> void:
+	Collisions.init(world_3d)
+	assert(len(Projectile.updaters) == glib.GProjectileFlyType.COUNT)
+
 	# TODO: REMOVEME
 	TranslationServer.set_locale('ru')
 
@@ -335,17 +338,7 @@ func _physics_process(dt: float) -> void:
 
 	spawn_projectiles()
 
-	## Collisions setup
-	var debug_collisions := glib.v.get_debug_collisions()
-	var space = world_3d.get_world_3d().direct_space_state
-	var param_shape := PhysicsShapeQueryParameters3D.new()
-	param_shape.collide_with_areas = false
-	param_shape.collide_with_bodies = true
-	var shape_rid_sphere := PhysicsServer3D.sphere_shape_create()
-	var shape_rid_cylinder := PhysicsServer3D.cylinder_shape_create()
-	var shape_rid_polygon := PhysicsServer3D.convex_polygon_shape_create()
-	var cylinder_shape_dict := { "height": 1.0, "radius": 0.01 }
-	##
+	Collisions.init_frame()
 
 	## - Melee attacks collisions
 	var apply_damage_melee_data := ApplyDamageData.new()
@@ -393,112 +386,15 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## - Updating projectiles + collisions + despawning
-	var apply_damage_projectile_data := ApplyDamageData.new()
 	for projectile: Projectile in room.container_projectiles.get_children():
-		var is_player := (projectile.d.owner == glib.GCreatureType.PLAYER)
-		projectile.elapsed += dt
+		var data := g_projectiles[projectile.d.type]
 
-		apply_damage_projectile_data.attack_id = projectile.attack_id
-
-		var should_remove := false
-		var data = g_projectiles[projectile.d.type]
-		var fly = data.get_projectilefly_type()
-
-		if fly == glib.GProjectileFlyType.STRAIGHT:
-			apply_damage_projectile_data.type = glib.GDamageType.DEFAULT
-			var projectile_travelled := data.get_straight__speed() * dt
-			cylinder_shape_dict.height = projectile_travelled
-			var moved := projectile.calculated__dir * projectile_travelled
-			projectile.transform.origin += bf.to_xz(moved)
-
-			if data.get_collider_radius():
-				PhysicsServer3D.shape_set_data(shape_rid_sphere, data.get_collider_radius())
-				param_shape.shape_rid = shape_rid_sphere
-			else:
-				PhysicsServer3D.shape_set_data(shape_rid_cylinder, cylinder_shape_dict)
-				param_shape.shape_rid = shape_rid_cylinder
-			param_shape.transform.origin = projectile.transform.origin
-			param_shape.transform.basis = projectile.transform.basis * Basis.from_euler(Vector3(0.0, PI / 2, PI / 2))
-
-			if debug_collisions:
-				ImmediateGizmos3D.set_transform(param_shape.transform)
-				if data.get_collider_radius():
-					ImmediateGizmos3D.line_circle(
-						Vector3(0, 0, 0),
-						Vector3(1, 0, 0),
-						data.get_collider_radius(),
-						Color.BLUE,
-					)
-				else:
-					ImmediateGizmos3D.line_capsule(
-						Vector3(0, 0, 0),
-						cylinder_shape_dict.radius as float,
-						cylinder_shape_dict.height as float,
-						Color.BLUE,
-					)
-
-			for mask in [
-				glib.GCollisionType.WALLS,
-				glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
-			]:
-				param_shape.collision_mask = mask
-				for d: Dictionary in space.intersect_shape(param_shape, 12):
-					if mask == glib.GCollisionType.WALLS:
-						should_remove = true
-						break
-
-					var damaged_creature: Creature = d.collider
-					if damaged_creature in projectile.damaged_creatures:
-						continue
-
-					if apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data):
-						projectile.damaged_creatures.append(damaged_creature)
-						projectile.straight__pierced += 1
-						if projectile.straight__pierced > data.get_pierce():
-							should_remove = true
-							break
-
-				if should_remove:
-					break
-
-		elif fly == glib.GProjectileFlyType.ARC:
-			apply_damage_projectile_data.type = glib.GDamageType.AOE
-			PhysicsServer3D.shape_set_data(shape_rid_sphere, data.get_arc__aoe_radius())
-			param_shape.shape_rid = shape_rid_sphere
-
-			var t := projectile.elapsed / data.get_arc__duration()
-			var p: Vector2 = lerp(projectile.d.pos, projectile.d.target, t)
-			var pos: Vector3 = bf.to_xz(p)
-			pos.y = data.get_arc__height() * sin(t * PI)
-			projectile.transform.origin = pos
-
-			if projectile.elapsed >= data.get_arc__duration():
-				param_shape.collision_mask = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
-				param_shape.transform.origin = bf.to_xz(projectile.d.target)
-
-				for d: Dictionary in space.intersect_shape(param_shape, 12):
-					var damaged_creature: Creature = d.collider
-					if damaged_creature in projectile.damaged_creatures:
-						continue
-
-					if apply_damage(damaged_creature, data.get_damage(), apply_damage_projectile_data):
-						projectile.damaged_creatures.append(damaged_creature)
-
-				should_remove = true
-				for z: Node3D in projectile.zones:
-					room.container_zones.remove_child(z)
-
-		else:
-			bf.invalid_path()
-
-		if should_remove:
-			projectile.queue_free()
-	##
-
-	## Collisions end
-	PhysicsServer3D.free_rid(shape_rid_sphere)
-	PhysicsServer3D.free_rid(shape_rid_cylinder)
-	PhysicsServer3D.free_rid(shape_rid_polygon)
+		Projectile.updaters[data.get_projectilefly_type()].explicit_process(
+			dt,
+			projectile,
+			(projectile.d.owner == glib.GCreatureType.PLAYER),
+			data,
+		)
 	##
 
 	## Spike collisions

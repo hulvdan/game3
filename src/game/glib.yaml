@@ -121,6 +121,20 @@ creatures: ##
       - item_type: GOLD
         min: 10
         max: 16
+  - type: MOB_HOMER
+    hp: 3
+    speed: 0.8
+    attack_projectile_type: HOMING
+    attack_projectiles_spawn_at:
+      - 0.8
+    attack_duration: 1.3
+    attack_cooldown_min: 2.0
+    attack_cooldown_max: 3.0
+    attack_distance: 7
+    drops:
+      - item_type: GOLD
+        min: 10
+        max: 16
   - type: MOB_BONKER
     hp: 5
     speed: 1
@@ -161,6 +175,7 @@ collectibles: ##
 projectile_fly_types: ##
   - type: STRAIGHT
   - type: ARC
+  - type: HOMING
 ##
 
 projectiles: ##
@@ -178,4 +193,8 @@ projectiles: ##
     arc__height: 1
     arc__duration: 1
     arc__aoe_radius: 1
+  - type: HOMING
+    damage: 1
+    projectilefly_type: HOMING
+    collider_radius: 0.3
 ##

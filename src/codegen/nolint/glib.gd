@@ -4774,6 +4774,7 @@ enum GCreatureType {
 	PLAYER,
 	MOB_SHOOTER,
 	MOB_MAGE,
+	MOB_HOMER,
 	MOB_BONKER,
 	COUNT,
 }
@@ -4798,6 +4799,7 @@ enum GCollectibleType {
 enum GProjectileFlyType {
 	STRAIGHT,
 	ARC,
+	HOMING,
 	COUNT,
 }
 
@@ -4806,6 +4808,7 @@ enum GProjectileType {
 	ARROW,
 	BALL,
 	BOMB,
+	HOMING,
 	COUNT,
 }
 

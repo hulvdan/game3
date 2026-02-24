@@ -33,6 +33,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 				d.owner = actor.type
 				d.pos = bf.from_xz(actor.transform.origin)
 				d.target = bf.from_xz(Room.v.player.creature.transform.origin)
+				d.homing__target = Room.v.player.creature
 				Game.v.make_projectile(d)
 	##
 
