@@ -366,14 +366,16 @@ class PlayerBlock extends PlayerBase: ##
 ##
 
 
-func _can_start_shoot() -> bool:
+func _can_start_shoot() -> bool: ##
 	return stamina > 0
+##
 
 
-func _can_start_roll() -> bool:
+func _can_start_roll() -> bool: ##
 	if stamina <= 0:
 		return false
 	return Room.v.start_elapsed >= _next_roll_at
+##
 
 
 func _can_start_block() -> bool: ##
