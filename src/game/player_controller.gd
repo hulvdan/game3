@@ -34,6 +34,9 @@ var _states: Array[PlayerBase] = [
 	PlayerRoll.new(),
 	PlayerBlock.new(),
 ]
+
+enum StateType { NONE, DEFAULT, SHOOT, ROLL, BLOCK }
+enum ActionType { NONE, SHOOT, ROLL, BLOCK, UNBLOCK, SET_MOVE_DIR }
 ##
 
 
@@ -134,9 +137,6 @@ func _change_state(to: StateType, action: Action) -> void: ##
 	_change_state_to = to
 	_change_state_action = action
 ##
-
-enum StateType { NONE, DEFAULT, SHOOT, ROLL, BLOCK }
-enum ActionType { NONE, SHOOT, ROLL, BLOCK, UNBLOCK, SET_MOVE_DIR }
 
 
 class Action: ##
