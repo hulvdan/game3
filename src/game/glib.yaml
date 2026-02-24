@@ -146,7 +146,8 @@ creatures: ##
     melee__attack_polygon_end_at: 0.6
     melee__attack_stops_tracking_at: 0.2
     melee__attack_polygon:
-      distance: 2
+      distance_min: 1
+      distance_max: 2
       angle_degrees: 90
     drops:
       - item_type: GOLD

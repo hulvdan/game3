@@ -32,9 +32,10 @@ func clear_children(node: Node) -> void: ##
 ##
 
 
-func move_body_with_speed(body: RigidBody3D, direction: Vector2, speed: float) -> void:
+func move_body_with_speed(body: RigidBody3D, direction: Vector2, speed: float) -> void: ##
 	var offset := direction * speed
 	body.apply_central_force(to_xz(offset) * body.linear_damp * body.mass)
+##
 
 
 func set_pos_2d(node: Node3D, pos: Vector2) -> void: ##

@@ -53,8 +53,9 @@ message GProgression {
 }
 
 message GAttackPolygon {
-  float distance = 1;
-  float angle = 2;
+  float distance_min = 1;
+  float distance_max = 2;
+  float angle = 3;
 }
 
 message GCreatureDrop {

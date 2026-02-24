@@ -1688,12 +1688,17 @@ class GAttackPolygon:
 	func _init():
 		var service
 
-		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__distance_min = PBField.new("distance_min", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __distance
-		data[__distance.tag] = service
+		service.field = __distance_min
+		data[__distance_min.tag] = service
 
-		__angle = PBField.new("angle", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__distance_max = PBField.new("distance_max", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __distance_max
+		data[__distance_max.tag] = service
+
+		__angle = PBField.new("angle", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __angle
 		data[__angle.tag] = service
@@ -1701,26 +1706,48 @@ class GAttackPolygon:
 
 	var data = { }
 
-	var __distance: PBField
+	var __distance_min: PBField
 
 
-	func has_distance() -> bool:
-		if __distance.value != null:
+	func has_distance_min() -> bool:
+		if __distance_min.value != null:
 			return true
 		return false
 
 
-	func get_distance() -> float:
-		return __distance.value
+	func get_distance_min() -> float:
+		return __distance_min.value
 
 
-	func clear_distance() -> void:
+	func clear_distance_min() -> void:
 		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__distance_min.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_distance(value: float) -> void:
-		__distance.value = value
+	func set_distance_min(value: float) -> void:
+		__distance_min.value = value
+
+
+	var __distance_max: PBField
+
+
+	func has_distance_max() -> bool:
+		if __distance_max.value != null:
+			return true
+		return false
+
+
+	func get_distance_max() -> float:
+		return __distance_max.value
+
+
+	func clear_distance_max() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__distance_max.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_distance_max(value: float) -> void:
+		__distance_max.value = value
 
 
 	var __angle: PBField
@@ -1737,7 +1764,7 @@ class GAttackPolygon:
 
 
 	func clear_angle() -> void:
-		data[2].state = PB_SERVICE_STATE.UNFILLED
+		data[3].state = PB_SERVICE_STATE.UNFILLED
 		__angle.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 

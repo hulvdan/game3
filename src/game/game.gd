@@ -355,11 +355,13 @@ func _physics_process(dt: float) -> void:
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)
 		apply_damage_melee_data.attack_id = creature.melee_attack_id
 		var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
+		var polygon := data.get_melee__attack_polygon()
 		for d: Dictionary in Collisions.query_circle_segment(
 			bf.from_xz(creature.transform.origin),
-			data.get_melee__attack_polygon().get_distance(),
+			polygon.get_distance_min(),
+			polygon.get_distance_max(),
 			-bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(creature.melee_target_pos)),
-			data.get_melee__attack_polygon().get_angle(),
+			polygon.get_angle(),
 			mask,
 			true,
 			false,

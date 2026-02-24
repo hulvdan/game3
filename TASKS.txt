@@ -16,6 +16,7 @@ x enemies: longer shooting distance
 x ref collisions
 x ref projectiles
 x fix: polygon collision angle
+x polygon collision convex fix
 
 * enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 *
