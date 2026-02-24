@@ -7,28 +7,14 @@ BIG PLAN
 PLAN
 ============================================================
 
-x google sheets game design
-x stamina: add rally bar
-x stamina: single bar
-x stamina: roll resets rally
-x stamina: attack has stamina + rally cost
-x stamina: ki rally front
-x ref extracted Player
-x stamina: KI state restores stamina
-x stamina: block works
-x stamina: stamina depletion regen delay
-  can shoot/roll when stamina > 0
-  can't shoot/roll when stamina <= 0
-x roll rally lerp t
-x long block lowers stamina regen
-x block: cooldown
-x roll: cooldown
-
 * block: don't spam labels
 *
 * enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 * enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
 * enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)
+*
+* enemies: longer shooting distance
+* enemies: shooting tunneling
 *
 * hp rally
 * regen hp rally on hitting enemies
