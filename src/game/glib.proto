@@ -159,12 +159,12 @@ message GConfigPlayer {
   float stamina_regen_scale__blocking = 19;
   float stamina_regen_scale__shooting = 20;
 
-  float block_min_delay = 21;
-  float block_increase_per_second = 22;
-  float block_state_min_duration = 23;
-  float block_cooldown = 24;
-  float roll_cooldown = 25;
-  float perfect_block_window = 26;
+  float block__activation_start = 21;
+  float ki__rally_increase_per_second = 22;
+  float block__min_duration = 23;
+  float cooldown__block = 24;
+  float cooldown__roll = 25;
+  float block__perfect_end = 26;
   float stamina_depletion_regen_delay = 27;
   float invincibility_after_hit_seconds = 28;
   float shooting_seconds = 29;

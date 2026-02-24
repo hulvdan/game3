@@ -99,8 +99,8 @@ func explicit_process(dt: float) -> void: ##
 
 	elapsed_since_stamina_consumed += dt
 	stamina_ki = max(stamina_ki, stamina)
-	if elapsed_since_stamina_consumed >= glib.v.get_player().get_block_min_delay():
-		stamina_ki += glib.v.get_player().get_block_increase_per_second() * dt
+	if elapsed_since_stamina_consumed >= glib.v.get_player().get_block__activation_start():
+		stamina_ki += glib.v.get_player().get_ki__rally_increase_per_second() * dt
 	if stamina_ki > stamina_rally:
 		stamina_ki = stamina_rally
 	assert(stamina >= 0)
@@ -281,7 +281,7 @@ class PlayerRoll extends PlayerBase: ##
 		player.rolling_retrievable_cost = 0
 		player.creature.speed_modifiers.base = glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_speed()
 		player.dodging = false
-		player._next_roll_at = Room.v.start_elapsed + glib.v.get_player().get_roll_cooldown()
+		player._next_roll_at = Room.v.start_elapsed + glib.v.get_player().get_cooldown__roll()
 
 
 	func explicit_process(dt: float) -> void:
@@ -336,13 +336,13 @@ class PlayerBlock extends PlayerBase: ##
 		player.blocking = false
 		player.blocking_perfectly = false
 		scheduled_exit = false
-		player._next_block_at = Room.v.start_elapsed + glib.v.get_player().get_block_cooldown()
+		player._next_block_at = Room.v.start_elapsed + glib.v.get_player().get_cooldown__block()
 
 
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
-		player.blocking_perfectly = (elapsed <= glib.v.get_player().get_perfect_block_window())
-		if elapsed >= glib.v.get_player().get_block_state_min_duration():
+		player.blocking_perfectly = (elapsed <= glib.v.get_player().get_block__perfect_end())
+		if elapsed >= glib.v.get_player().get_block__min_duration():
 			player.ki = false
 			player._stamina_regen_modifiers.block = glib.v.get_player().get_stamina_regen_scale__blocking()
 			if scheduled_exit:

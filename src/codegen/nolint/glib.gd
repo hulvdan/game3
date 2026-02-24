@@ -3447,35 +3447,35 @@ class GConfigPlayer:
 		service.field = __stamina_regen_scale__shooting
 		data[__stamina_regen_scale__shooting.tag] = service
 
-		__block_min_delay = PBField.new("block_min_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__activation_start = PBField.new("block__activation_start", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __block_min_delay
-		data[__block_min_delay.tag] = service
+		service.field = __block__activation_start
+		data[__block__activation_start.tag] = service
 
-		__block_increase_per_second = PBField.new("block_increase_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 22, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__ki__rally_increase_per_second = PBField.new("ki__rally_increase_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 22, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __block_increase_per_second
-		data[__block_increase_per_second.tag] = service
+		service.field = __ki__rally_increase_per_second
+		data[__ki__rally_increase_per_second.tag] = service
 
-		__block_state_min_duration = PBField.new("block_state_min_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 23, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__min_duration = PBField.new("block__min_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 23, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __block_state_min_duration
-		data[__block_state_min_duration.tag] = service
+		service.field = __block__min_duration
+		data[__block__min_duration.tag] = service
 
-		__block_cooldown = PBField.new("block_cooldown", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__cooldown__block = PBField.new("cooldown__block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __block_cooldown
-		data[__block_cooldown.tag] = service
+		service.field = __cooldown__block
+		data[__cooldown__block.tag] = service
 
-		__roll_cooldown = PBField.new("roll_cooldown", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__cooldown__roll = PBField.new("cooldown__roll", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __roll_cooldown
-		data[__roll_cooldown.tag] = service
+		service.field = __cooldown__roll
+		data[__cooldown__roll.tag] = service
 
-		__perfect_block_window = PBField.new("perfect_block_window", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__perfect_end = PBField.new("block__perfect_end", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __perfect_block_window
-		data[__perfect_block_window.tag] = service
+		service.field = __block__perfect_end
+		data[__block__perfect_end.tag] = service
 
 		__stamina_depletion_regen_delay = PBField.new("stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -3940,136 +3940,136 @@ class GConfigPlayer:
 		__stamina_regen_scale__shooting.value = value
 
 
-	var __block_min_delay: PBField
+	var __block__activation_start: PBField
 
 
-	func has_block_min_delay() -> bool:
-		if __block_min_delay.value != null:
+	func has_block__activation_start() -> bool:
+		if __block__activation_start.value != null:
 			return true
 		return false
 
 
-	func get_block_min_delay() -> float:
-		return __block_min_delay.value
+	func get_block__activation_start() -> float:
+		return __block__activation_start.value
 
 
-	func clear_block_min_delay() -> void:
+	func clear_block__activation_start() -> void:
 		data[21].state = PB_SERVICE_STATE.UNFILLED
-		__block_min_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__block__activation_start.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_block_min_delay(value: float) -> void:
-		__block_min_delay.value = value
+	func set_block__activation_start(value: float) -> void:
+		__block__activation_start.value = value
 
 
-	var __block_increase_per_second: PBField
+	var __ki__rally_increase_per_second: PBField
 
 
-	func has_block_increase_per_second() -> bool:
-		if __block_increase_per_second.value != null:
+	func has_ki__rally_increase_per_second() -> bool:
+		if __ki__rally_increase_per_second.value != null:
 			return true
 		return false
 
 
-	func get_block_increase_per_second() -> float:
-		return __block_increase_per_second.value
+	func get_ki__rally_increase_per_second() -> float:
+		return __ki__rally_increase_per_second.value
 
 
-	func clear_block_increase_per_second() -> void:
+	func clear_ki__rally_increase_per_second() -> void:
 		data[22].state = PB_SERVICE_STATE.UNFILLED
-		__block_increase_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__ki__rally_increase_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_block_increase_per_second(value: float) -> void:
-		__block_increase_per_second.value = value
+	func set_ki__rally_increase_per_second(value: float) -> void:
+		__ki__rally_increase_per_second.value = value
 
 
-	var __block_state_min_duration: PBField
+	var __block__min_duration: PBField
 
 
-	func has_block_state_min_duration() -> bool:
-		if __block_state_min_duration.value != null:
+	func has_block__min_duration() -> bool:
+		if __block__min_duration.value != null:
 			return true
 		return false
 
 
-	func get_block_state_min_duration() -> float:
-		return __block_state_min_duration.value
+	func get_block__min_duration() -> float:
+		return __block__min_duration.value
 
 
-	func clear_block_state_min_duration() -> void:
+	func clear_block__min_duration() -> void:
 		data[23].state = PB_SERVICE_STATE.UNFILLED
-		__block_state_min_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__block__min_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_block_state_min_duration(value: float) -> void:
-		__block_state_min_duration.value = value
+	func set_block__min_duration(value: float) -> void:
+		__block__min_duration.value = value
 
 
-	var __block_cooldown: PBField
+	var __cooldown__block: PBField
 
 
-	func has_block_cooldown() -> bool:
-		if __block_cooldown.value != null:
+	func has_cooldown__block() -> bool:
+		if __cooldown__block.value != null:
 			return true
 		return false
 
 
-	func get_block_cooldown() -> float:
-		return __block_cooldown.value
+	func get_cooldown__block() -> float:
+		return __cooldown__block.value
 
 
-	func clear_block_cooldown() -> void:
+	func clear_cooldown__block() -> void:
 		data[24].state = PB_SERVICE_STATE.UNFILLED
-		__block_cooldown.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__cooldown__block.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_block_cooldown(value: float) -> void:
-		__block_cooldown.value = value
+	func set_cooldown__block(value: float) -> void:
+		__cooldown__block.value = value
 
 
-	var __roll_cooldown: PBField
+	var __cooldown__roll: PBField
 
 
-	func has_roll_cooldown() -> bool:
-		if __roll_cooldown.value != null:
+	func has_cooldown__roll() -> bool:
+		if __cooldown__roll.value != null:
 			return true
 		return false
 
 
-	func get_roll_cooldown() -> float:
-		return __roll_cooldown.value
+	func get_cooldown__roll() -> float:
+		return __cooldown__roll.value
 
 
-	func clear_roll_cooldown() -> void:
+	func clear_cooldown__roll() -> void:
 		data[25].state = PB_SERVICE_STATE.UNFILLED
-		__roll_cooldown.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__cooldown__roll.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_roll_cooldown(value: float) -> void:
-		__roll_cooldown.value = value
+	func set_cooldown__roll(value: float) -> void:
+		__cooldown__roll.value = value
 
 
-	var __perfect_block_window: PBField
+	var __block__perfect_end: PBField
 
 
-	func has_perfect_block_window() -> bool:
-		if __perfect_block_window.value != null:
+	func has_block__perfect_end() -> bool:
+		if __block__perfect_end.value != null:
 			return true
 		return false
 
 
-	func get_perfect_block_window() -> float:
-		return __perfect_block_window.value
+	func get_block__perfect_end() -> float:
+		return __block__perfect_end.value
 
 
-	func clear_perfect_block_window() -> void:
+	func clear_block__perfect_end() -> void:
 		data[26].state = PB_SERVICE_STATE.UNFILLED
-		__perfect_block_window.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__block__perfect_end.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_perfect_block_window(value: float) -> void:
-		__perfect_block_window.value = value
+	func set_block__perfect_end(value: float) -> void:
+		__block__perfect_end.value = value
 
 
 	var __stamina_depletion_regen_delay: PBField
