@@ -135,26 +135,30 @@ message GConfigSpikes {
 }
 
 message GConfigPlayer {
-  float speed_shooting_scale = 1;
-  float speed_blocking_scale = 2;
-  float speed_inside_enemies_scale = 3;
-  float roll_duration_seconds = 4;
-  float roll_can_shoot_after = 5;
-  float roll_distance = 6;
-  float roll_pow = 7;
-  float roll_invincibility_start = 8;
-  float roll_invincibility_end = 9;
-  float stamina = 10;
-  float stamina_regen_per_second = 11;
-  float stamina_roll_cost = 12;
-  float dodge_stamina_retrieve_percent = 13;
-  float stamina_rally_decay_after = 14;
-  float stamina_rally_decay_per_second = 15;
-  float stamina_attack_cost = 16;
-  float stamina_attack_rally_scale = 17;
-  float stamina_roll_rally_scale = 18;
-  float stamina_blocking_scale = 19;
-  float stamina_regen_on_kill = 20;
+  float speed_scale__shooting = 1;
+  float speed_scale__blocking = 2;
+  float speed_scale__inside_enemies = 3;
+
+  float roll_distance = 4;
+  float roll_pow = 5;
+  float roll_invincibility_start = 6;
+  float roll_invincibility_end = 7;
+  float roll_duration_seconds = 8;
+
+  float stamina = 9;
+  float stamina_regen_per_second = 10;
+  float stamina_roll_cost = 11;
+  float dodge_stamina_retrieve_percent = 12;
+  float stamina_rally_decay_after = 13;
+  float stamina_rally_decay_per_second = 14;
+  float stamina_attack_cost = 15;
+  float stamina_attack_rally_scale = 16;
+  float stamina_roll_rally_scale = 17;
+  float stamina_regen_on_kill = 18;
+
+  float stamina_regen_scale__blocking = 19;
+  float stamina_regen_scale__shooting = 20;
+
   float block_min_delay = 21;
   float block_increase_per_second = 22;
   float block_state_min_duration = 23;
@@ -162,10 +166,9 @@ message GConfigPlayer {
   float roll_cooldown = 25;
   float perfect_block_window = 26;
   float stamina_depletion_regen_delay = 27;
-  float shooting_stamina_regen_scale = 28;
-  float invincibility_after_hit_seconds = 29;
-  float shooting_seconds = 30;
-  float shooting_after_roll_seconds = 31;
+  float invincibility_after_hit_seconds = 28;
+  float shooting_seconds = 29;
+  float shooting_after_roll_seconds = 30;
 }
 
 message Lib {

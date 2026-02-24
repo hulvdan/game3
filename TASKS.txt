@@ -8,6 +8,7 @@ PLAN
 ============================================================
 
 x proto-renumber good pre-commit
+x proto extracted Player, Spikes, Controls configs
 
 * block: don't spam labels
 *

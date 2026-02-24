@@ -66,7 +66,7 @@ func explicit_process(dt: float) -> void: ##
 	assert(glib.v.get_controls().get_action_consumption_duration() >= 0)
 	creature.speed_modifiers.inside_enemies_t = lerp(
 		1.0,
-		glib.v.get_player().get_speed_inside_enemies_scale(),
+		glib.v.get_player().get_speed_scale__inside_enemies(),
 		inside_enemy_t,
 	)
 
@@ -219,8 +219,8 @@ class PlayerDefault extends PlayerBase: ##
 class PlayerShoot extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		player.creature.speed_modifiers.shooting = glib.v.get_player().get_speed_shooting_scale()
-		player._stamina_regen_modifiers.shooting = glib.v.get_player().get_shooting_stamina_regen_scale()
+		player.creature.speed_modifiers.shooting = glib.v.get_player().get_speed_scale__shooting()
+		player._stamina_regen_modifiers.shooting = glib.v.get_player().get_stamina_regen_scale__shooting()
 
 
 	func on_exit() -> void:
@@ -320,7 +320,7 @@ class PlayerBlock extends PlayerBase: ##
 
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		player.creature.speed_modifiers.block = glib.v.get_player().get_speed_blocking_scale()
+		player.creature.speed_modifiers.block = glib.v.get_player().get_speed_scale__blocking()
 		player.stamina = max(player.stamina, player.stamina_ki)
 		player.stamina_rally = player.stamina
 		player._stamina_depleted_at = 0.0
@@ -344,7 +344,7 @@ class PlayerBlock extends PlayerBase: ##
 		player.blocking_perfectly = (elapsed <= glib.v.get_player().get_perfect_block_window())
 		if elapsed >= glib.v.get_player().get_block_state_min_duration():
 			player.ki = false
-			player._stamina_regen_modifiers.block = glib.v.get_player().get_stamina_blocking_scale()
+			player._stamina_regen_modifiers.block = glib.v.get_player().get_stamina_regen_scale__blocking()
 			if scheduled_exit:
 				player._change_state(StateType.DEFAULT, null)
 		else:
