@@ -289,6 +289,8 @@ func get_mouse_world_point() -> Vector3: ##
 
 
 func _physics_process(dt: float) -> void:
+	Collisions.init_frame()
+
 	var g_projectiles := glib.v.get_projectiles()
 	var g_creatures := glib.v.get_creatures()
 
@@ -353,30 +355,17 @@ func _physics_process(dt: float) -> void:
 			continue
 
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)
-
-		param_shape.shape_rid = shape_rid_polygon
-
-		var points: PackedVector3Array
-		var attack_polygon := data.get_melee__attack_polygon()
-		var dist := attack_polygon.get_distance()
-		var angle := attack_polygon.get_angle()
-		points.append(Vector3(0, 0, 0))
-		points.append(Vector3(dist * cos(angle / 2.0), 0, dist * sin(angle / 2.0)))
-		points.append(Vector3(dist, 0, 0))
-		points.append(Vector3(dist * cos(angle / 2.0), 0, -dist * sin(angle / 2.0)))
-
-		var trr := creature.transform
-		var angle_y := -bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(creature.melee_target_pos))
-		trr.basis = Basis.from_euler(Vector3(0, angle_y, 0))
-		param_shape.transform = trr
-		if debug_collisions:
-			ImmediateGizmos3D.set_transform(param_shape.transform)
-			ImmediateGizmos3D.line_polygon(points)
-		PhysicsServer3D.shape_set_data(shape_rid_polygon, points)
-
 		apply_damage_melee_data.attack_id = creature.melee_attack_id
-		param_shape.collision_mask = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
-		for d: Dictionary in space.intersect_shape(param_shape, 12):
+		var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
+		for d: Dictionary in Collisions.query_circle_segment(
+			bf.from_xz(creature.transform.origin),
+			data.get_melee__attack_polygon().get_distance(),
+			-bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(creature.melee_target_pos)),
+			mask,
+			true,
+			false,
+			12,
+		):
 			var damaged_creature: Creature = d.collider
 			if damaged_creature in creature.melee_damaged_creatures:
 				continue

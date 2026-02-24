@@ -68,8 +68,8 @@ class UpdaterStraight extends UpdaterBase:
 		param_shape.transform.origin = projectile.transform.origin
 		param_shape.transform.basis = projectile.transform.basis * Basis.from_euler(Vector3(0.0, PI / 2, PI / 2))
 
-		if debug_collisions:
-			ImmediateGizmos3D.set_transform(param_shape.transform)
+		if _debug_collisions:
+			ImmediateGizmos3D.set_transform(_param_shape.transform)
 			if data.get_collider_radius():
 				ImmediateGizmos3D.line_circle(
 					Vector3(0, 0, 0),
@@ -80,8 +80,8 @@ class UpdaterStraight extends UpdaterBase:
 			else:
 				ImmediateGizmos3D.line_capsule(
 					Vector3(0, 0, 0),
-					cylinder_shape_dict.radius as float,
-					cylinder_shape_dict.height as float,
+					_cylinder_shape_dict.radius as float,
+					_cylinder_shape_dict.height as float,
 					Color.BLUE,
 				)
 
@@ -89,8 +89,9 @@ class UpdaterStraight extends UpdaterBase:
 			glib.GCollisionType.WALLS,
 			glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
 		]:
-			param_shape.collision_mask = mask
-			for d: Dictionary in space.intersect_shape(param_shape, 12):
+			# param_shape.collision_mask = mask
+			# for d: Dictionary in space.intersect_shape(param_shape, 12):
+			for d: Dictionary in Collisions.query_ray():
 				if mask == glib.GCollisionType.WALLS:
 					x.queue_free()
 					break
