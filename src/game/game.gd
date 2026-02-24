@@ -359,6 +359,7 @@ func _physics_process(dt: float) -> void:
 			bf.from_xz(creature.transform.origin),
 			data.get_melee__attack_polygon().get_distance(),
 			-bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(creature.melee_target_pos)),
+			data.get_melee__attack_polygon().get_angle(),
 			mask,
 			true,
 			false,

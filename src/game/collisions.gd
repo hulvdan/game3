@@ -60,7 +60,8 @@ static func query_circle(
 static func query_circle_segment(
 		pos: Vector2,
 		radius: float,
-		angle: float,
+		direction_angle: float,
+		spread_angle: float,
 		mask: int,
 		collide_with_bodies: bool,
 		collide_with_areas: bool,
@@ -68,8 +69,8 @@ static func query_circle_segment(
 ) -> Array[Dictionary]: ##
 	_polygon_points.clear()
 	_polygon_points.append(Vector3(0, 0, 0))
-	var c: float = cos(angle / 2.0)
-	var s: float = sin(angle / 2.0)
+	var c: float = cos(spread_angle / 2.0)
+	var s: float = sin(spread_angle / 2.0)
 	_polygon_points.append(Vector3(radius * c, 0, radius * s))
 	_polygon_points.append(Vector3(radius, 0, 0))
 	_polygon_points.append(Vector3(radius * c, 0, -radius * s))
@@ -78,7 +79,7 @@ static func query_circle_segment(
 	_set_param_common_data(
 		_shape_polygon,
 		pos,
-		Basis.from_euler(Vector3(0, angle, 0)),
+		Basis.from_euler(Vector3(0, direction_angle, 0)),
 		collide_with_bodies,
 		collide_with_areas,
 		mask,

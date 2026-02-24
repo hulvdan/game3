@@ -14,8 +14,9 @@ x gdlint disabled no-elif-return
 x block: don't spam labels
 x enemies: longer shooting distance
 x ref collisions
+x ref projectiles
+x fix: polygon collision angle
 
-* ref projectiles
 * enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 *
 * enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
