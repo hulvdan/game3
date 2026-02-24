@@ -2,6 +2,7 @@ extends Node3D
 
 class_name Projectile
 
+## Variables
 class Data:
 	var type: glib.GProjectileType
 	var owner: glib.GCreatureType
@@ -27,6 +28,7 @@ static var updaters: Array[UpdaterBase] = [
 	UpdaterArc.new(),
 	UpdaterHoming.new(),
 ]
+##
 
 
 @abstract
@@ -34,23 +36,14 @@ class UpdaterBase:
 	static var damage_data := Game.ApplyDamageData.new()
 
 
-	func explicit_process(
-			dt: float,
-			x: Projectile,
-			_is_player: bool,
-			_data: glib.GProjectile,
-	) -> void:
+	func explicit_process(dt: float, x: Projectile, _is_player: bool, _data: glib.GProjectile) -> void: ##
 		x.elapsed += dt
 		damage_data.attack_id = x.attack_id
+	##
 
 
 class UpdaterStraight extends UpdaterBase:
-	func explicit_process(
-			dt: float,
-			x: Projectile,
-			is_player: bool,
-			data: glib.GProjectile,
-	) -> void:
+	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
 
 		damage_data.type = glib.GDamageType.DEFAULT
@@ -99,15 +92,11 @@ class UpdaterStraight extends UpdaterBase:
 					if x.straight__pierced > data.get_pierce():
 						x.queue_free()
 						break
+	##
 
 
 class UpdaterArc extends UpdaterBase:
-	func explicit_process(
-			dt: float,
-			x: Projectile,
-			is_player: bool,
-			data: glib.GProjectile,
-	) -> void:
+	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
 		damage_data.type = glib.GDamageType.AOE
 
@@ -138,13 +127,10 @@ class UpdaterArc extends UpdaterBase:
 			x.queue_free()
 			for z: Node3D in x.zones:
 				Room.v.container_zones.remove_child(z)
+	##
 
 
 class UpdaterHoming extends UpdaterBase:
-	func explicit_process(
-			dt: float,
-			x: Projectile,
-			is_player: bool,
-			data: glib.GProjectile,
-	) -> void:
+	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
+	##
