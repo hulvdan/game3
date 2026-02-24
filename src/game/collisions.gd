@@ -7,6 +7,7 @@ static var _shape_sphere := PhysicsServer3D.sphere_shape_create()
 static var _shape_cylinder := PhysicsServer3D.cylinder_shape_create()
 static var _shape_polygon := PhysicsServer3D.convex_polygon_shape_create()
 static var _cylinder_shape_dict := { "height": 0.0, "radius": 0.01 }
+static var _polygon_points: PackedVector3Array
 
 static var _debug_collisions: bool
 static var _space: PhysicsDirectSpaceState3D
@@ -54,8 +55,6 @@ static func query_circle(
 
 	return _space.intersect_shape(_param, max_returned_objects)
 ##
-
-static var _polygon_points: PackedVector3Array
 
 
 static func query_circle_segment(

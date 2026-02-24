@@ -340,8 +340,6 @@ func _physics_process(dt: float) -> void:
 
 	spawn_projectiles()
 
-	Collisions.init_frame()
-
 	## - Melee attacks collisions
 	var apply_damage_melee_data := ApplyDamageData.new()
 	for creature: Creature in room.container_creatures.get_children():

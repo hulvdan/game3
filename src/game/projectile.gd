@@ -51,26 +51,40 @@ class UpdaterStraight extends UpdaterBase:
 			is_player: bool,
 			data: glib.GProjectile,
 	) -> void:
-		super().explicit_process(dt, x, is_player, data)
+		super.explicit_process(dt, x, is_player, data)
 
 		damage_data.type = glib.GDamageType.DEFAULT
 		var projectile_travelled := data.get_straight__speed() * dt
 		var moved := x.calculated__dir * projectile_travelled
 		x.transform.origin += bf.to_xz(moved)
 
+		var q: Array[Dictionary]
+
 		for mask: int in [
 			glib.GCollisionType.WALLS,
 			glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
 		]:
-			for d: Dictionary in Collisions.query_ray(
-				bf.from_xz(x.transform.origin),
-				x.calculated__dir.angle(),
-				projectile_travelled,
-				mask,
-				true,
-				false,
-				12,
-			):
+			if data.get_collider_radius():
+				q = Collisions.query_circle(
+					bf.from_xz(x.transform.origin),
+					data.get_collider_radius(),
+					mask,
+					true,
+					false,
+					12,
+				)
+			else:
+				q = Collisions.query_ray(
+					bf.from_xz(x.transform.origin),
+					x.calculated__dir.angle(),
+					projectile_travelled,
+					mask,
+					true,
+					false,
+					12,
+				)
+
+			for d: Dictionary in q:
 				if mask == glib.GCollisionType.WALLS:
 					x.queue_free()
 					break
@@ -94,7 +108,7 @@ class UpdaterArc extends UpdaterBase:
 			is_player: bool,
 			data: glib.GProjectile,
 	) -> void:
-		super().explicit_process(dt, x, is_player, data)
+		super.explicit_process(dt, x, is_player, data)
 		damage_data.type = glib.GDamageType.AOE
 
 		var t := x.elapsed / data.get_arc__duration()
@@ -133,4 +147,4 @@ class UpdaterHoming extends UpdaterBase:
 			is_player: bool,
 			data: glib.GProjectile,
 	) -> void:
-		super().explicit_process(dt, x, is_player, data)
+		super.explicit_process(dt, x, is_player, data)
