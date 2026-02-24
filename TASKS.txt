@@ -9,6 +9,8 @@ PLAN
 
 x proto-renumber good pre-commit
 x proto extracted Player, Spikes, Controls configs
+x proto ref
+x gdlint disabled no-elif-return
 
 * block: don't spam labels
 *
