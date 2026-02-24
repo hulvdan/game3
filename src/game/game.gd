@@ -317,8 +317,10 @@ func _physics_process(dt: float) -> void:
 
 	room.player.explicit_process(dt)
 
-	## Creatures moving
+	## Creatures updating + moving
 	for creature: Creature in room.container_creatures.get_children():
+		creature.explicit_process(dt)
+
 		var dir := creature.controller.move
 		if dir != Vector2(0, 0):
 			creature.controller.last_move = dir
@@ -612,7 +614,7 @@ class ApplyDamageData: ##
 
 func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> bool: ##
 	assert(data.attack_id)
-	if data.attack_id in creature.evaded_attack_ids:
+	if creature.is_attack_evaded(data.attack_id):
 		return false
 
 	var player_got_damaged := (creature.type == glib.GCreatureType.PLAYER)
@@ -620,8 +622,10 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 		if data.type != glib.GDamageType.AOE:
 			if room.player.blocking_perfectly:
 				player_perfectly_blocked.emit(creature.transform.origin)
+				creature.evade_attack(data.attack_id)
 				return false
 			elif room.player.blocking:
+				creature.evade_attack(data.attack_id)
 				player_blocked.emit(creature.transform.origin)
 				damage /= 2
 				assert(damage >= 0)
@@ -636,7 +640,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 					room.player.add_stamina(retrieve, 1)
 					room.player.rolling_retrievable_cost -= retrieve
 					player_perfectly_evaded.emit(creature.transform.origin)
-				creature.evaded_attack_ids.append(data.attack_id)
+				creature.evade_attack(data.attack_id)
 				return false
 		if creature.time_since_last_damage_taken <= glib.v.get_player().get_invincibility_after_hit_seconds():
 			return false

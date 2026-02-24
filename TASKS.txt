@@ -11,14 +11,13 @@ x proto-renumber good pre-commit
 x proto extracted Player, Spikes, Controls configs
 x proto ref
 x gdlint disabled no-elif-return
+x block: don't spam labels
+x enemies: longer shooting distance
 
-* block: don't spam labels
-*
 * enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 * enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
 * enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)
 *
-* enemies: longer shooting distance
 * enemies: shooting tunneling
 *
 * hp rally

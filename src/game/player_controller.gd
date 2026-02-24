@@ -277,7 +277,6 @@ class PlayerRoll extends PlayerBase: ##
 
 	func on_exit() -> void:
 		super.on_exit()
-		player.creature.evaded_attack_ids.clear()
 		player.rolling_retrievable_cost = 0
 		player.creature.speed_modifiers.base = glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_speed()
 		player.dodging = false

@@ -63,6 +63,7 @@ spikes: ##
 creatures_push_radius: 1.0
 creatures_push_force: 4
 mob_invincibility_spikes_seconds: 0.25
+blocked_attack_damages_again_after: 0.5
 
 progression: ##
   - type: INVALID
@@ -99,6 +100,7 @@ creatures: ##
     attack_duration: 0.8
     attack_cooldown_min: 0.7
     attack_cooldown_max: 1.2
+    attack_distance: 4
     drops:
       - item_type: GOLD
         min: 3
@@ -114,6 +116,7 @@ creatures: ##
     attack_duration: 2
     attack_cooldown_min: 2.0
     attack_cooldown_max: 3.0
+    attack_distance: 5
     drops:
       - item_type: GOLD
         min: 10

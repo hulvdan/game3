@@ -3,7 +3,12 @@ extends ActionLeaf
 
 class_name ActionChase
 
-@export var attack_range: float = 2.0
+var _attack_distance_sqr: float
+
+
+func set_attack_distance(value: float) -> void: ##
+	_attack_distance_sqr = value * value
+##
 
 
 func tick(actor_: Node, _blackboard: Blackboard) -> int:
@@ -12,7 +17,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	var pos = bf.from_xz((actor as Node3D).transform.origin)
 	var dpos: Vector2 = target_pos - pos
 
-	if dpos.length_squared() <= attack_range * attack_range:
+	if dpos.length_squared() <= _attack_distance_sqr:
 		# Target is in attack range.
 		actor.controller.move = Vector2(0, 0)
 		return SUCCESS

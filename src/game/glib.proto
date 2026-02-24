@@ -80,8 +80,9 @@ message GCreature {
   int32 collision_type = 14;
   float attack_cooldown_min = 15;
   float attack_cooldown_max = 16;
-  GAttackPolygon melee__attack_polygon = 17;
-  repeated GCreatureDrop drops = 18;
+  float attack_distance = 17;
+  GAttackPolygon melee__attack_polygon = 18;
+  repeated GCreatureDrop drops = 19;
 }
 
 message GDamage {
@@ -178,18 +179,19 @@ message Lib {
   int32 debug_collisions = 4;
   repeated GRoom rooms = 5;
   float mob_invincibility_spikes_seconds = 6;
-  float creatures_push_radius = 7;
-  float creatures_push_force = 8;
-  GV2i world_size = 9;
-  GV2i progression_size = 10;
+  float blocked_attack_damages_again_after = 7;
+  float creatures_push_radius = 8;
+  float creatures_push_force = 9;
+  GV2i world_size = 10;
+  GV2i progression_size = 11;
   // TABLE_GEN_START
-  repeated GDamage damages = 11;
-  repeated GProgression progression = 12;
-  repeated GCreature creatures = 13;
-  repeated GItem items = 14;
-  repeated GCollectible collectibles = 15;
-  repeated GProjectileFly projectile_fly_types = 16;
-  repeated GProjectile projectiles = 17;
-  repeated GCollision collision_flags = 18;
+  repeated GDamage damages = 12;
+  repeated GProgression progression = 13;
+  repeated GCreature creatures = 14;
+  repeated GItem items = 15;
+  repeated GCollectible collectibles = 16;
+  repeated GProjectileFly projectile_fly_types = 17;
+  repeated GProjectile projectiles = 18;
+  repeated GCollision collision_flags = 19;
   // TABLE_GEN_END
 }
