@@ -244,19 +244,8 @@ def _process_glib(genline, glib) -> None:
 
     ##
 
-    validate_tags(
-        "projectiles",
-        "tags",
-        "projectile_tags",
-        "projectiletag_type",
-    )
-
-    validate_tags(
-        "creatures",
-        "melee__tags",
-        "melee_tags",
-        "meleetag_type",
-    )
+    validate_tags("projectiles", "tags", "projectile_tags", "projectiletag_type")
+    validate_tags("creatures", "melee__tags", "melee_tags", "meleetag_type")
 
     ## Projectiles
     for x in glib["projectiles"][1:]:
