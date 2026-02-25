@@ -174,8 +174,11 @@ collectibles: ##
 ##
 
 projectile_fly_types: ##
-  - type: STRAIGHT
+  - type: DEFAULT
   - type: ARC
+##
+
+projectile_tag_types: ##
   - type: HOMING
 ##
 
@@ -183,10 +186,10 @@ projectiles: ##
   - type: INVALID
   - type: ARROW
     damage: 1
-    straight__speed: 14
+    default__speed: 14
   - type: BALL
     damage: 1
-    straight__speed: 3
+    default__speed: 3
     collider_radius: 0.3
   - type: BOMB
     damage: 2
@@ -196,6 +199,9 @@ projectiles: ##
     arc__aoe_radius: 1
   - type: HOMING
     damage: 1
-    projectilefly_type: HOMING
     collider_radius: 0.3
-##
+    projectiletagvalue_types:
+      - projectiletag_type: HOMING
+        valuef: 0.1
+        ##
+

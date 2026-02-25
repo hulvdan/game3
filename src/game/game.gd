@@ -357,10 +357,10 @@ func _physics_process(dt: float) -> void:
 		var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
 		var polygon := data.get_melee__attack_polygon()
 		for d: Dictionary in Collisions.query_circle_segment(
-			bf.from_xz(creature.transform.origin),
+			bf.xz(creature.transform.origin),
 			polygon.get_distance_min(),
 			polygon.get_distance_max(),
-			-bf.from_xz(creature.transform.origin).angle_to_point(bf.from_xz(creature.melee_target_pos)),
+			-bf.xz(creature.transform.origin).angle_to_point(bf.xz(creature.melee_target_pos)),
 			polygon.get_angle(),
 			mask,
 			true,
@@ -409,7 +409,7 @@ func _physics_process(dt: float) -> void:
 			for c2: Creature in room.container_creatures.get_children():
 				if c1 == c2:
 					continue
-				var dir := bf.from_xz(c1.transform.origin - c2.transform.origin)
+				var dir := bf.xz(c1.transform.origin - c2.transform.origin)
 				var d := dir.length_squared()
 				if d < creatures_push_radius_sqr:
 					var t := 1.0 - sqrt(d) / creatures_push_radius
@@ -594,7 +594,7 @@ func spawn_projectiles() -> void: ##
 
 		x.transform.origin = bf.to_xz(d.pos)
 
-		if data.get_projectilefly_type() == glib.GProjectileFlyType.STRAIGHT:
+		if data.get_projectilefly_type() == glib.GProjectileFlyType.DEFAULT:
 			if !data.get_collider_radius():
 				x.transform.basis = Basis(
 					Vector3(0, 1, 0).cross(bf.to_xz(x.calculated__dir)),

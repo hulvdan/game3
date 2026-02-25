@@ -16,7 +16,7 @@ var d: Data
 var res: ResProjectile
 var zones: Array[Node3D]
 var damaged_creatures: Array[Creature]
-var straight__pierced: int
+var default__pierced: int
 var attack_id: int
 var calculated__dir: Vector2
 var homing__velocity: Vector2
@@ -24,9 +24,8 @@ var homing__velocity: Vector2
 @onready var sprite: Sprite3D = %_sprite
 
 static var updaters: Array[UpdaterBase] = [
-	UpdaterStraight.new(),
+	UpdaterDefault.new(),
 	UpdaterArc.new(),
-	UpdaterHoming.new(),
 ]
 ##
 
@@ -42,12 +41,27 @@ class UpdaterBase:
 	##
 
 
-class UpdaterStraight extends UpdaterBase:
+class UpdaterDefault extends UpdaterBase:
 	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
 
 		damage_data.type = glib.GDamageType.DEFAULT
-		var projectile_travelled := data.get_straight__speed() * dt
+		var projectile_travelled := data.get_default__speed() * dt
+
+		for tag in data.get_projectiletagvalue_types():
+			if tag.get_projectiletag_type() == glib.GProjectileTagType.HOMING:
+				var target_direction := bf.vector2_direction_or_random(
+					bf.xz(x.transform.origin),
+					bf.xz(x.d.homing__target.transform.origin),
+				)
+				x.calculated__dir = Vector2(1, 0).rotated(
+					lerp_angle(
+						x.calculated__dir.angle(),
+						target_direction.angle(),
+						tag.get_valuef() * dt,
+					),
+				)
+
 		var moved := x.calculated__dir * projectile_travelled
 		x.transform.origin += bf.to_xz(moved)
 
@@ -59,7 +73,7 @@ class UpdaterStraight extends UpdaterBase:
 		]:
 			if data.get_collider_radius():
 				q = Collisions.query_circle(
-					bf.from_xz(x.transform.origin),
+					bf.xz(x.transform.origin),
 					data.get_collider_radius(),
 					mask,
 					true,
@@ -68,7 +82,7 @@ class UpdaterStraight extends UpdaterBase:
 				)
 			else:
 				q = Collisions.query_ray(
-					bf.from_xz(x.transform.origin),
+					bf.xz(x.transform.origin),
 					x.calculated__dir.angle(),
 					projectile_travelled,
 					mask,
@@ -88,8 +102,8 @@ class UpdaterStraight extends UpdaterBase:
 
 				if Game.v.apply_damage(damaged_creature, data.get_damage(), damage_data):
 					x.damaged_creatures.append(damaged_creature)
-					x.straight__pierced += 1
-					if x.straight__pierced > data.get_pierce():
+					x.default__pierced += 1
+					if x.default__pierced > data.get_pierce():
 						x.queue_free()
 						break
 	##
@@ -128,7 +142,7 @@ class UpdaterArc extends UpdaterBase:
 			var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
 
 			for d: Dictionary in Collisions.query_circle(
-				bf.from_xz(x.transform.origin),
+				bf.xz(x.transform.origin),
 				data.get_arc__aoe_radius(),
 				mask,
 				true,
@@ -145,10 +159,4 @@ class UpdaterArc extends UpdaterBase:
 			x.queue_free()
 			for z: Node3D in x.zones:
 				Room.v.container_zones.remove_child(z)
-	##
-
-
-class UpdaterHoming extends UpdaterBase:
-	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
-		super.explicit_process(dt, x, is_player, data)
 	##

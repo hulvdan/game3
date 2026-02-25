@@ -2814,6 +2814,203 @@ class GProjectileFly:
 		return result
 
 
+class GProjectileTag:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GProjectileTagValue:
+	func _init():
+		var service
+
+		__projectiletag_type = PBField.new("projectiletag_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __projectiletag_type
+		data[__projectiletag_type.tag] = service
+
+		__valuei = PBField.new("valuei", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __valuei
+		data[__valuei.tag] = service
+
+		__valuef = PBField.new("valuef", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __valuef
+		data[__valuef.tag] = service
+
+
+	var data = { }
+
+	var __projectiletag_type: PBField
+
+
+	func has_projectiletag_type() -> bool:
+		if __projectiletag_type.value != null:
+			return true
+		return false
+
+
+	func get_projectiletag_type() -> int:
+		return __projectiletag_type.value
+
+
+	func clear_projectiletag_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__projectiletag_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_projectiletag_type(value: int) -> void:
+		__projectiletag_type.value = value
+
+
+	var __valuei: PBField
+
+
+	func has_valuei() -> bool:
+		if __valuei.value != null:
+			return true
+		return false
+
+
+	func get_valuei() -> int:
+		return __valuei.value
+
+
+	func clear_valuei() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__valuei.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_valuei(value: int) -> void:
+		__valuei.value = value
+
+
+	var __valuef: PBField
+
+
+	func has_valuef() -> bool:
+		if __valuef.value != null:
+			return true
+		return false
+
+
+	func get_valuef() -> float:
+		return __valuef.value
+
+
+	func clear_valuef() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__valuef.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_valuef(value: float) -> void:
+		__valuef.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GProjectile:
 	func _init():
 		var service
@@ -2853,10 +3050,10 @@ class GProjectile:
 		service.field = __arc__aoe_radius
 		data[__arc__aoe_radius.tag] = service
 
-		__straight__speed = PBField.new("straight__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __straight__speed
-		data[__straight__speed.tag] = service
+		service.field = __default__speed
+		data[__default__speed.tag] = service
 
 		__damage = PBField.new("damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
@@ -2872,6 +3069,13 @@ class GProjectile:
 		service = PBServiceField.new()
 		service.field = __collider_radius
 		data[__collider_radius.tag] = service
+
+		var __projectiletagvalue_types_default: Array[GProjectileTagValue] = []
+		__projectiletagvalue_types = PBField.new("projectiletagvalue_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 12, true, __projectiletagvalue_types_default)
+		service = PBServiceField.new()
+		service.field = __projectiletagvalue_types
+		service.func_ref = Callable(self, "add_projectiletagvalue_types")
+		data[__projectiletagvalue_types.tag] = service
 
 
 	var data = { }
@@ -3030,26 +3234,26 @@ class GProjectile:
 		__arc__aoe_radius.value = value
 
 
-	var __straight__speed: PBField
+	var __default__speed: PBField
 
 
-	func has_straight__speed() -> bool:
-		if __straight__speed.value != null:
+	func has_default__speed() -> bool:
+		if __default__speed.value != null:
 			return true
 		return false
 
 
-	func get_straight__speed() -> float:
-		return __straight__speed.value
+	func get_default__speed() -> float:
+		return __default__speed.value
 
 
-	func clear_straight__speed() -> void:
+	func clear_default__speed() -> void:
 		data[8].state = PB_SERVICE_STATE.UNFILLED
-		__straight__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__default__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_straight__speed(value: float) -> void:
-		__straight__speed.value = value
+	func set_default__speed(value: float) -> void:
+		__default__speed.value = value
 
 
 	var __damage: PBField
@@ -3116,6 +3320,24 @@ class GProjectile:
 
 	func set_collider_radius(value: float) -> void:
 		__collider_radius.value = value
+
+
+	var __projectiletagvalue_types: PBField
+
+
+	func get_projectiletagvalue_types() -> Array[GProjectileTagValue]:
+		return __projectiletagvalue_types.value
+
+
+	func clear_projectiletagvalue_types() -> void:
+		data[12].state = PB_SERVICE_STATE.UNFILLED
+		__projectiletagvalue_types.value.clear()
+
+
+	func add_projectiletagvalue_types() -> GProjectileTagValue:
+		var element = GProjectileTagValue.new()
+		__projectiletagvalue_types.value.append(element)
+		return element
 
 
 	func _to_string() -> String:
@@ -4346,15 +4568,22 @@ class Lib:
 		service.func_ref = Callable(self, "add_projectile_fly_types")
 		data[__projectile_fly_types.tag] = service
 
+		var __projectile_tag_types_default: Array[GProjectileTag] = []
+		__projectile_tag_types = PBField.new("projectile_tag_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __projectile_tag_types_default)
+		service = PBServiceField.new()
+		service.field = __projectile_tag_types
+		service.func_ref = Callable(self, "add_projectile_tag_types")
+		data[__projectile_tag_types.tag] = service
+
 		var __projectiles_default: Array[GProjectile] = []
-		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __projectiles_default)
+		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __projectiles_default)
 		service = PBServiceField.new()
 		service.field = __projectiles
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
 
 		var __collision_flags_default: Array[GCollision] = []
-		__collision_flags = PBField.new("collision_flags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __collision_flags_default)
+		__collision_flags = PBField.new("collision_flags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __collision_flags_default)
 		service = PBServiceField.new()
 		service.field = __collision_flags
 		service.func_ref = Callable(self, "add_collision_flags")
@@ -4714,6 +4943,24 @@ class Lib:
 		return element
 
 
+	var __projectile_tag_types: PBField
+
+
+	func get_projectile_tag_types() -> Array[GProjectileTag]:
+		return __projectile_tag_types.value
+
+
+	func clear_projectile_tag_types() -> void:
+		data[18].state = PB_SERVICE_STATE.UNFILLED
+		__projectile_tag_types.value.clear()
+
+
+	func add_projectile_tag_types() -> GProjectileTag:
+		var element = GProjectileTag.new()
+		__projectile_tag_types.value.append(element)
+		return element
+
+
 	var __projectiles: PBField
 
 
@@ -4722,7 +4969,7 @@ class Lib:
 
 
 	func clear_projectiles() -> void:
-		data[18].state = PB_SERVICE_STATE.UNFILLED
+		data[19].state = PB_SERVICE_STATE.UNFILLED
 		__projectiles.value.clear()
 
 
@@ -4740,7 +4987,7 @@ class Lib:
 
 
 	func clear_collision_flags() -> void:
-		data[19].state = PB_SERVICE_STATE.UNFILLED
+		data[20].state = PB_SERVICE_STATE.UNFILLED
 		__collision_flags.value.clear()
 
 
@@ -4824,8 +5071,12 @@ enum GCollectibleType {
 }
 
 enum GProjectileFlyType {
-	STRAIGHT,
+	DEFAULT,
 	ARC,
+	COUNT,
+}
+
+enum GProjectileTagType {
 	HOMING,
 	COUNT,
 }

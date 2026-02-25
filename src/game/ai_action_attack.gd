@@ -31,8 +31,8 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 				var d := Projectile.Data.new()
 				d.type = data.get_attack_projectile_type() as glib.GProjectileType
 				d.owner = actor.type
-				d.pos = bf.from_xz(actor.transform.origin)
-				d.target = bf.from_xz(Room.v.player.creature.transform.origin)
+				d.pos = bf.xz(actor.transform.origin)
+				d.target = bf.xz(Room.v.player.creature.transform.origin)
 				d.homing__target = Room.v.player.creature
 				Game.v.make_projectile(d)
 	##

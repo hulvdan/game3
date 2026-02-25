@@ -13,8 +13,8 @@ func set_attack_distance(value: float) -> void: ##
 
 func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	var actor: Creature = actor_
-	var target_pos: Vector2 = bf.from_xz(Room.v.player.creature.transform.origin)
-	var pos = bf.from_xz((actor as Node3D).transform.origin)
+	var target_pos: Vector2 = bf.xz(Room.v.player.creature.transform.origin)
+	var pos = bf.xz((actor as Node3D).transform.origin)
 	var dpos: Vector2 = target_pos - pos
 
 	if glib.v.get_debug_collisions():

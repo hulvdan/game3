@@ -48,7 +48,7 @@ func scale_2d(node: Node3D, scale: Vector2) -> void:
 	node.transform = node.transform.scaled(Vector3(scale.x, 1, scale.y))
 
 
-func from_xz(value: Vector3) -> Vector2:
+func xz(value: Vector3) -> Vector2:
 	return Vector2(value.x, value.z)
 
 

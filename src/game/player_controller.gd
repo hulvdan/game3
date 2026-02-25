@@ -244,8 +244,8 @@ class PlayerShoot extends PlayerBase: ##
 			var d := Projectile.Data.new()
 			d.type = glib.GProjectileType.ARROW
 			d.owner = glib.GCreatureType.PLAYER
-			d.pos = bf.from_xz(player.creature.transform.origin)
-			d.target = d.pos - bf.from_xz(player.bow.transform.basis.z)
+			d.pos = bf.xz(player.creature.transform.origin)
+			d.target = d.pos - bf.xz(player.bow.transform.basis.z)
 			Game.v.make_projectile(d)
 			player.shoot_after_roll = false
 			player._change_state(StateType.DEFAULT, null)

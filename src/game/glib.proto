@@ -107,6 +107,17 @@ message GProjectileFly {
   string debug_name = 2;
 }
 
+message GProjectileTag {
+  int32 type = 1;
+  string debug_name = 2;
+}
+
+message GProjectileTagValue {
+  int32 projectiletag_type = 1;
+  int32 valuei = 2;
+  float valuef = 3;
+}
+
 message GProjectile {
   int32 type = 1;
   string debug_name = 2;
@@ -115,10 +126,11 @@ message GProjectile {
   float arc__height = 5;
   float arc__duration = 6;
   float arc__aoe_radius = 7;
-  float straight__speed = 8;
+  float default__speed = 8;
   int32 damage = 9;
   int32 pierce = 10;
   float collider_radius = 11;
+  repeated GProjectileTagValue projectiletagvalue_types = 12;
 }
 
 message GCollision {
@@ -192,7 +204,8 @@ message Lib {
   repeated GItem items = 15;
   repeated GCollectible collectibles = 16;
   repeated GProjectileFly projectile_fly_types = 17;
-  repeated GProjectile projectiles = 18;
-  repeated GCollision collision_flags = 19;
+  repeated GProjectileTag projectile_tag_types = 18;
+  repeated GProjectile projectiles = 19;
+  repeated GCollision collision_flags = 20;
   // TABLE_GEN_END
 }
