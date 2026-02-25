@@ -22,6 +22,8 @@ x blocking resets min block time
 * block: 
 * block: 
 *
+* player class feature: knockback: default, 1/3, immune
+*
 * player melee attack
 *
 * enemy: hiver inside: aimed at player
