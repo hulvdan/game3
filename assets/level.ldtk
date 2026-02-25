@@ -11,7 +11,7 @@
   "iid": "27a80100-fa90-11f0-a600-6d791be30d7e",
   "jsonVersion": "1.5.3",
   "appBuildId": 473703,
-  "nextUid": 32,
+  "nextUid": 33,
   "identifierStyle": "Capitalize",
   "toc": [],
   "worldLayout": "Free",
@@ -5685,6 +5685,599 @@
           ],
           "autoLayerTiles": [],
           "seed": 3284034,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": []
+        }
+      ],
+      "__neighbours": []
+    },
+    {
+      "identifier": "Level_7",
+      "iid": "4d66ac40-fa90-11f0-a500-eb028e3ae7d7",
+      "uid": 32,
+      "worldX": 16,
+      "worldY": 432,
+      "worldDepth": 0,
+      "pxWid": 336,
+      "pxHei": 144,
+      "__bgColor": "#696A79",
+      "bgColor": null,
+      "useAutoIdentifier": true,
+      "bgRelPath": null,
+      "bgPos": null,
+      "bgPivotX": 0.5,
+      "bgPivotY": 0.5,
+      "__smartColor": "#ADADB5",
+      "__bgPos": null,
+      "externalRelPath": null,
+      "fieldInstances": [
+        {
+          "__identifier": "disable_export",
+          "__type": "Bool",
+          "__value": false,
+          "__tile": null,
+          "defUid": 27,
+          "realEditorValues": []
+        }
+      ],
+      "layerInstances": [
+        {
+          "__identifier": "Progression",
+          "__type": "Entities",
+          "__cWid": 21,
+          "__cHei": 9,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "4d66ac41-fa90-11f0-a500-2b62b0c2d31e",
+          "levelId": 32,
+          "layerDefUid": 9,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [],
+          "autoLayerTiles": [],
+          "seed": 4627005,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": []
+        },
+        {
+          "__identifier": "Entities",
+          "__type": "Entities",
+          "__cWid": 21,
+          "__cHei": 9,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "4d66ac42-fa90-11f0-a500-49499c7a5cdf",
+          "levelId": 32,
+          "layerDefUid": 3,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [],
+          "autoLayerTiles": [],
+          "seed": 7304057,
+          "overrideTilesetUid": null,
+          "gridTiles": [],
+          "entityInstances": [
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                11,
+                2
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "61dfc300-fa90-11f0-a500-f3c48ba57305",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                176,
+                32
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_BONKER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_BONKER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 192,
+              "__worldY": 464
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                8,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "624d78f0-fa90-11f0-a500-83514bddcbd8",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                128,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SPEAR",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SPEAR"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 144,
+              "__worldY": 496
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                0,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 288,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "81602f30-fa90-11f0-a500-7b7defd9bdd1",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                0,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Left_2",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 288,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Left_2"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 16,
+              "__worldY": 496
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                3,
+                0
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 256,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "81e5b2e0-fa90-11f0-a500-b9d6377cca41",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                48,
+                0
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Up_3",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 256,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Up_3"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 64,
+              "__worldY": 432
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                16,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 272,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "829071d0-fa90-11f0-a500-bfeb981075f1",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                256,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Down_1",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 272,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Down_1"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 272,
+              "__worldY": 544
+            },
+            {
+              "__identifier": "Door",
+              "__grid": [
+                19,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": {
+                "tilesetUid": 5,
+                "x": 304,
+                "y": 80,
+                "w": 16,
+                "h": 16
+              },
+              "__smartColor": "#BE4A2F",
+              "iid": "8361a480-fa90-11f0-a500-7f051160864a",
+              "width": 32,
+              "height": 32,
+              "defUid": 2,
+              "px": [
+                304,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Direction",
+                  "__type": "LocalEnum.Direction",
+                  "__value": "Right_0",
+                  "__tile": {
+                    "tilesetUid": 5,
+                    "x": 304,
+                    "y": 80,
+                    "w": 16,
+                    "h": 16
+                  },
+                  "defUid": 6,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "Right_0"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 320,
+              "__worldY": 496
+            }
+          ]
+        },
+        {
+          "__identifier": "Floor",
+          "__type": "IntGrid",
+          "__cWid": 21,
+          "__cHei": 9,
+          "__gridSize": 16,
+          "__opacity": 1,
+          "__pxTotalOffsetX": 0,
+          "__pxTotalOffsetY": 0,
+          "__tilesetDefUid": null,
+          "__tilesetRelPath": null,
+          "iid": "4d66ac43-fa90-11f0-a500-ffaf27bf2061",
+          "levelId": 32,
+          "layerDefUid": 1,
+          "pxOffsetX": 0,
+          "pxOffsetY": 0,
+          "visible": true,
+          "optionalRules": [],
+          "intGridCsv": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "autoLayerTiles": [],
+          "seed": 1432175,
           "overrideTilesetUid": null,
           "gridTiles": [],
           "entityInstances": []
