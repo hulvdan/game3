@@ -14,6 +14,8 @@ const GROUP_TARGET_CAMERA := "target_camera"
 static var v: Game = null
 static var async_scene_loaded := false
 
+static var _impulses_to_remove_indices: Array[int]
+
 @export_category("Values")
 @export var camera_distance: float
 @export var camera_angle: float
@@ -291,9 +293,6 @@ func get_mouse_world_point() -> Vector3: ##
 	##
 
 
-static var _impulses_to_remove_indices: Array[int]
-
-
 func _physics_process(dt: float) -> void:
 	Collisions.init_frame()
 
@@ -350,7 +349,7 @@ func _physics_process(dt: float) -> void:
 				impulse_pow,
 			)
 			bf.move_body_with_speed(creature.node_body, impulse.dir, speed)
-			if e >= impulse_dur:
+			if e > impulse_dur:
 				_impulses_to_remove_indices.append(impulse_index)
 
 		for i in range(len(_impulses_to_remove_indices)):
@@ -605,13 +604,19 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			if room.player.blocking_perfectly:
 				player_perfectly_blocked.emit(creature.transform.origin)
 				creature.evade_attack(data.attack_id)
-				creature.add_impulse(data.impulse_dir, data.impulse)
+				creature.add_impulse(
+					data.impulse_dir,
+					data.impulse * glib.v.get_impulse_block_scale(),
+				)
 				return false
 			elif room.player.blocking:
 				creature.evade_attack(data.attack_id)
 				creature.blocked = true
 				player_blocked.emit(creature.transform.origin)
-				creature.add_impulse(data.impulse_dir, data.impulse)
+				creature.add_impulse(
+					data.impulse_dir,
+					data.impulse * glib.v.get_impulse_block_scale(),
+				)
 				damage /= 2
 				assert(damage >= 0)
 				if damage <= 0:

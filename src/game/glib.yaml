@@ -64,8 +64,11 @@ spikes: ##
 
 creatures_push_radius: 1.0
 creatures_push_force: 4
+
 impulse_duration_seconds: 0.2
 impulse_pow: 0.1
+impulse_block_scale: 0.5
+
 mob_invincibility_spikes_seconds: 0.25
 blocked_attack_damages_again_after: 0.5
 

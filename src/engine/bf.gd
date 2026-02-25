@@ -89,6 +89,7 @@ func invalid_path() -> void: ##
 
 
 func remove(arr: Array, value: Variant) -> void: ##
+	assert(len(arr))
 	var index := arr.find(value)
 	assert(index >= 0)
 	if index >= 0:
@@ -97,6 +98,7 @@ func remove(arr: Array, value: Variant) -> void: ##
 
 
 func unstable_remove_at(arr: Array, index: int) -> void: ##
+	assert(len(arr))
 	assert(index >= 0)
 	if index >= 0:
 		var last_index := arr.size() - 1
