@@ -18,21 +18,21 @@ script = ExtResource("5_3a6xa")
 texture = ExtResource("6_ljbfl")
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
-[sub_resource type="Resource" id="Resource_ljbfl"]
-script = ExtResource("5_3a6xa")
-text = "DODGE"
-color = Color(0.67058825, 0.5803922, 0.47843137, 1)
-metadata/_custom_type_script = "uid://dhp1eiart43ss"
-
 [sub_resource type="Resource" id="Resource_ca2fg"]
 script = ExtResource("5_3a6xa")
-text = "Block"
+text = "BLOCK"
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
 [sub_resource type="Resource" id="Resource_xopim"]
 script = ExtResource("5_3a6xa")
-text = "Block++"
+text = "BLOCK"
 color = Color(1, 0.8000001, 0, 1)
+metadata/_custom_type_script = "uid://dhp1eiart43ss"
+
+[sub_resource type="Resource" id="Resource_ljbfl"]
+script = ExtResource("5_3a6xa")
+text = "DODGE"
+color = Color(0.67058825, 0.5803922, 0.47843137, 1)
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
 [node name="room" type="Node" unique_id=154726596]

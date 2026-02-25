@@ -36,7 +36,7 @@ static var updaters: Array[UpdaterBase] = [
 
 
 func on_free(data: glib.GProjectile) -> void: ##
-	for tag in data.get_projectiletagvalue_types():
+	for tag in data.get_tags():
 		match tag.get_projectiletag_type():
 			glib.GProjectileTagType.HIVE:
 				var angle := calculated__dir.angle()
@@ -80,7 +80,7 @@ class UpdaterDefault extends UpdaterBase:
 
 		var moved := x.calculated__dir * projectile_travelled
 		x.transform.origin += bf.to_xz(moved)
-		for tag in data.get_projectiletagvalue_types():
+		for tag in data.get_tags():
 			match tag.get_projectiletag_type():
 				glib.GProjectileTagType.HOMING:
 					var target_dir := bf.vector2_direction_or_random(

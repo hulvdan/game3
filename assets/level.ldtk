@@ -845,6 +845,11 @@
             "id": "MOB_BONKER",
             "tileRect": null,
             "color": 0
+          },
+          {
+            "id": "MOB_SPEAR",
+            "tileRect": null,
+            "color": 0
           }
         ],
         "iconTilesetUid": null,

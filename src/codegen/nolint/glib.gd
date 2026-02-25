@@ -1908,6 +1908,311 @@ class GCreatureDrop:
 		return result
 
 
+class GMeleeTag:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GMeleeTagValue:
+	func _init():
+		var service
+
+		__meleetag_type = PBField.new("meleetag_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __meleetag_type
+		data[__meleetag_type.tag] = service
+
+		__valuei1 = PBField.new("valuei1", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __valuei1
+		data[__valuei1.tag] = service
+
+		__valuei2 = PBField.new("valuei2", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __valuei2
+		data[__valuei2.tag] = service
+
+		__valuei3 = PBField.new("valuei3", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __valuei3
+		data[__valuei3.tag] = service
+
+		__valuef1 = PBField.new("valuef1", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __valuef1
+		data[__valuef1.tag] = service
+
+		__valuef2 = PBField.new("valuef2", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __valuef2
+		data[__valuef2.tag] = service
+
+		__valuef3 = PBField.new("valuef3", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __valuef3
+		data[__valuef3.tag] = service
+
+
+	var data = { }
+
+	var __meleetag_type: PBField
+
+
+	func has_meleetag_type() -> bool:
+		if __meleetag_type.value != null:
+			return true
+		return false
+
+
+	func get_meleetag_type() -> int:
+		return __meleetag_type.value
+
+
+	func clear_meleetag_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__meleetag_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_meleetag_type(value: int) -> void:
+		__meleetag_type.value = value
+
+
+	var __valuei1: PBField
+
+
+	func has_valuei1() -> bool:
+		if __valuei1.value != null:
+			return true
+		return false
+
+
+	func get_valuei1() -> int:
+		return __valuei1.value
+
+
+	func clear_valuei1() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__valuei1.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_valuei1(value: int) -> void:
+		__valuei1.value = value
+
+
+	var __valuei2: PBField
+
+
+	func has_valuei2() -> bool:
+		if __valuei2.value != null:
+			return true
+		return false
+
+
+	func get_valuei2() -> int:
+		return __valuei2.value
+
+
+	func clear_valuei2() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__valuei2.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_valuei2(value: int) -> void:
+		__valuei2.value = value
+
+
+	var __valuei3: PBField
+
+
+	func has_valuei3() -> bool:
+		if __valuei3.value != null:
+			return true
+		return false
+
+
+	func get_valuei3() -> int:
+		return __valuei3.value
+
+
+	func clear_valuei3() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__valuei3.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_valuei3(value: int) -> void:
+		__valuei3.value = value
+
+
+	var __valuef1: PBField
+
+
+	func has_valuef1() -> bool:
+		if __valuef1.value != null:
+			return true
+		return false
+
+
+	func get_valuef1() -> float:
+		return __valuef1.value
+
+
+	func clear_valuef1() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__valuef1.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_valuef1(value: float) -> void:
+		__valuef1.value = value
+
+
+	var __valuef2: PBField
+
+
+	func has_valuef2() -> bool:
+		if __valuef2.value != null:
+			return true
+		return false
+
+
+	func get_valuef2() -> float:
+		return __valuef2.value
+
+
+	func clear_valuef2() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__valuef2.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_valuef2(value: float) -> void:
+		__valuef2.value = value
+
+
+	var __valuef3: PBField
+
+
+	func has_valuef3() -> bool:
+		if __valuef3.value != null:
+			return true
+		return false
+
+
+	func get_valuef3() -> float:
+		return __valuef3.value
+
+
+	func clear_valuef3() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__valuef3.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_valuef3(value: float) -> void:
+		__valuef3.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GCreature:
 	func _init():
 		var service
@@ -1942,70 +2247,77 @@ class GCreature:
 		service.field = __speed
 		data[__speed.tag] = service
 
-		__attack_projectile_type = PBField.new("attack_projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__attack_duration = PBField.new("attack_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __attack_duration
+		data[__attack_duration.tag] = service
+
+		__attack_cooldown_min = PBField.new("attack_cooldown_min", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __attack_cooldown_min
+		data[__attack_cooldown_min.tag] = service
+
+		__attack_cooldown_max = PBField.new("attack_cooldown_max", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __attack_cooldown_max
+		data[__attack_cooldown_max.tag] = service
+
+		__attack_distance = PBField.new("attack_distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __attack_distance
+		data[__attack_distance.tag] = service
+
+		__attack_projectile_type = PBField.new("attack_projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __attack_projectile_type
 		data[__attack_projectile_type.tag] = service
 
 		var __attack_projectiles_spawn_at_default: Array[float] = []
-		__attack_projectiles_spawn_at = PBField.new("attack_projectiles_spawn_at", PB_DATA_TYPE.FLOAT, PB_RULE.REPEATED, 8, true, __attack_projectiles_spawn_at_default)
+		__attack_projectiles_spawn_at = PBField.new("attack_projectiles_spawn_at", PB_DATA_TYPE.FLOAT, PB_RULE.REPEATED, 12, true, __attack_projectiles_spawn_at_default)
 		service = PBServiceField.new()
 		service.field = __attack_projectiles_spawn_at
 		data[__attack_projectiles_spawn_at.tag] = service
 
-		__attack_duration = PBField.new("attack_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __attack_duration
-		data[__attack_duration.tag] = service
-
-		__melee__attack_polygon_start_at = PBField.new("melee__attack_polygon_start_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__melee__attack_polygon_start_at = PBField.new("melee__attack_polygon_start_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __melee__attack_polygon_start_at
 		data[__melee__attack_polygon_start_at.tag] = service
 
-		__melee__attack_polygon_end_at = PBField.new("melee__attack_polygon_end_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__melee__attack_polygon_end_at = PBField.new("melee__attack_polygon_end_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __melee__attack_polygon_end_at
 		data[__melee__attack_polygon_end_at.tag] = service
 
-		__melee__attack_stops_tracking_at = PBField.new("melee__attack_stops_tracking_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__melee__attack_stops_tracking_at = PBField.new("melee__attack_stops_tracking_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __melee__attack_stops_tracking_at
 		data[__melee__attack_stops_tracking_at.tag] = service
 
-		__melee__damage = PBField.new("melee__damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__melee__damage = PBField.new("melee__damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __melee__damage
 		data[__melee__damage.tag] = service
 
-		__collision_type = PBField.new("collision_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		var __melee__tags_default: Array[GMeleeTagValue] = []
+		__melee__tags = PBField.new("melee__tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 17, true, __melee__tags_default)
+		service = PBServiceField.new()
+		service.field = __melee__tags
+		service.func_ref = Callable(self, "add_melee__tags")
+		data[__melee__tags.tag] = service
+
+		__collision_type = PBField.new("collision_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 18, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __collision_type
 		data[__collision_type.tag] = service
 
-		__attack_cooldown_min = PBField.new("attack_cooldown_min", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __attack_cooldown_min
-		data[__attack_cooldown_min.tag] = service
-
-		__attack_cooldown_max = PBField.new("attack_cooldown_max", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __attack_cooldown_max
-		data[__attack_cooldown_max.tag] = service
-
-		__attack_distance = PBField.new("attack_distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __attack_distance
-		data[__attack_distance.tag] = service
-
-		__melee__attack_polygon = PBField.new("melee__attack_polygon", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 18, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__melee__attack_polygon = PBField.new("melee__attack_polygon", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 19, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __melee__attack_polygon
 		service.func_ref = Callable(self, "new_melee__attack_polygon")
 		data[__melee__attack_polygon.tag] = service
 
 		var __drops_default: Array[GCreatureDrop] = []
-		__drops = PBField.new("drops", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __drops_default)
+		__drops = PBField.new("drops", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __drops_default)
 		service = PBServiceField.new()
 		service.field = __drops
 		service.func_ref = Callable(self, "add_drops")
@@ -2146,44 +2458,6 @@ class GCreature:
 		__speed.value = value
 
 
-	var __attack_projectile_type: PBField
-
-
-	func has_attack_projectile_type() -> bool:
-		if __attack_projectile_type.value != null:
-			return true
-		return false
-
-
-	func get_attack_projectile_type() -> int:
-		return __attack_projectile_type.value
-
-
-	func clear_attack_projectile_type() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
-		__attack_projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_attack_projectile_type(value: int) -> void:
-		__attack_projectile_type.value = value
-
-
-	var __attack_projectiles_spawn_at: PBField
-
-
-	func get_attack_projectiles_spawn_at() -> Array[float]:
-		return __attack_projectiles_spawn_at.value
-
-
-	func clear_attack_projectiles_spawn_at() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
-		__attack_projectiles_spawn_at.value.clear()
-
-
-	func add_attack_projectiles_spawn_at(value: float) -> void:
-		__attack_projectiles_spawn_at.value.append(value)
-
-
 	var __attack_duration: PBField
 
 
@@ -2198,122 +2472,12 @@ class GCreature:
 
 
 	func clear_attack_duration() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.UNFILLED
 		__attack_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
 	func set_attack_duration(value: float) -> void:
 		__attack_duration.value = value
-
-
-	var __melee__attack_polygon_start_at: PBField
-
-
-	func has_melee__attack_polygon_start_at() -> bool:
-		if __melee__attack_polygon_start_at.value != null:
-			return true
-		return false
-
-
-	func get_melee__attack_polygon_start_at() -> float:
-		return __melee__attack_polygon_start_at.value
-
-
-	func clear_melee__attack_polygon_start_at() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
-		__melee__attack_polygon_start_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_melee__attack_polygon_start_at(value: float) -> void:
-		__melee__attack_polygon_start_at.value = value
-
-
-	var __melee__attack_polygon_end_at: PBField
-
-
-	func has_melee__attack_polygon_end_at() -> bool:
-		if __melee__attack_polygon_end_at.value != null:
-			return true
-		return false
-
-
-	func get_melee__attack_polygon_end_at() -> float:
-		return __melee__attack_polygon_end_at.value
-
-
-	func clear_melee__attack_polygon_end_at() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__melee__attack_polygon_end_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_melee__attack_polygon_end_at(value: float) -> void:
-		__melee__attack_polygon_end_at.value = value
-
-
-	var __melee__attack_stops_tracking_at: PBField
-
-
-	func has_melee__attack_stops_tracking_at() -> bool:
-		if __melee__attack_stops_tracking_at.value != null:
-			return true
-		return false
-
-
-	func get_melee__attack_stops_tracking_at() -> float:
-		return __melee__attack_stops_tracking_at.value
-
-
-	func clear_melee__attack_stops_tracking_at() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
-		__melee__attack_stops_tracking_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_melee__attack_stops_tracking_at(value: float) -> void:
-		__melee__attack_stops_tracking_at.value = value
-
-
-	var __melee__damage: PBField
-
-
-	func has_melee__damage() -> bool:
-		if __melee__damage.value != null:
-			return true
-		return false
-
-
-	func get_melee__damage() -> int:
-		return __melee__damage.value
-
-
-	func clear_melee__damage() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
-		__melee__damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_melee__damage(value: int) -> void:
-		__melee__damage.value = value
-
-
-	var __collision_type: PBField
-
-
-	func has_collision_type() -> bool:
-		if __collision_type.value != null:
-			return true
-		return false
-
-
-	func get_collision_type() -> int:
-		return __collision_type.value
-
-
-	func clear_collision_type() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
-		__collision_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_collision_type(value: int) -> void:
-		__collision_type.value = value
 
 
 	var __attack_cooldown_min: PBField
@@ -2330,7 +2494,7 @@ class GCreature:
 
 
 	func clear_attack_cooldown_min() -> void:
-		data[15].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__attack_cooldown_min.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -2352,7 +2516,7 @@ class GCreature:
 
 
 	func clear_attack_cooldown_max() -> void:
-		data[16].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__attack_cooldown_max.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -2374,12 +2538,178 @@ class GCreature:
 
 
 	func clear_attack_distance() -> void:
-		data[17].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__attack_distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
 	func set_attack_distance(value: float) -> void:
 		__attack_distance.value = value
+
+
+	var __attack_projectile_type: PBField
+
+
+	func has_attack_projectile_type() -> bool:
+		if __attack_projectile_type.value != null:
+			return true
+		return false
+
+
+	func get_attack_projectile_type() -> int:
+		return __attack_projectile_type.value
+
+
+	func clear_attack_projectile_type() -> void:
+		data[11].state = PB_SERVICE_STATE.UNFILLED
+		__attack_projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_attack_projectile_type(value: int) -> void:
+		__attack_projectile_type.value = value
+
+
+	var __attack_projectiles_spawn_at: PBField
+
+
+	func get_attack_projectiles_spawn_at() -> Array[float]:
+		return __attack_projectiles_spawn_at.value
+
+
+	func clear_attack_projectiles_spawn_at() -> void:
+		data[12].state = PB_SERVICE_STATE.UNFILLED
+		__attack_projectiles_spawn_at.value.clear()
+
+
+	func add_attack_projectiles_spawn_at(value: float) -> void:
+		__attack_projectiles_spawn_at.value.append(value)
+
+
+	var __melee__attack_polygon_start_at: PBField
+
+
+	func has_melee__attack_polygon_start_at() -> bool:
+		if __melee__attack_polygon_start_at.value != null:
+			return true
+		return false
+
+
+	func get_melee__attack_polygon_start_at() -> float:
+		return __melee__attack_polygon_start_at.value
+
+
+	func clear_melee__attack_polygon_start_at() -> void:
+		data[13].state = PB_SERVICE_STATE.UNFILLED
+		__melee__attack_polygon_start_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_melee__attack_polygon_start_at(value: float) -> void:
+		__melee__attack_polygon_start_at.value = value
+
+
+	var __melee__attack_polygon_end_at: PBField
+
+
+	func has_melee__attack_polygon_end_at() -> bool:
+		if __melee__attack_polygon_end_at.value != null:
+			return true
+		return false
+
+
+	func get_melee__attack_polygon_end_at() -> float:
+		return __melee__attack_polygon_end_at.value
+
+
+	func clear_melee__attack_polygon_end_at() -> void:
+		data[14].state = PB_SERVICE_STATE.UNFILLED
+		__melee__attack_polygon_end_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_melee__attack_polygon_end_at(value: float) -> void:
+		__melee__attack_polygon_end_at.value = value
+
+
+	var __melee__attack_stops_tracking_at: PBField
+
+
+	func has_melee__attack_stops_tracking_at() -> bool:
+		if __melee__attack_stops_tracking_at.value != null:
+			return true
+		return false
+
+
+	func get_melee__attack_stops_tracking_at() -> float:
+		return __melee__attack_stops_tracking_at.value
+
+
+	func clear_melee__attack_stops_tracking_at() -> void:
+		data[15].state = PB_SERVICE_STATE.UNFILLED
+		__melee__attack_stops_tracking_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_melee__attack_stops_tracking_at(value: float) -> void:
+		__melee__attack_stops_tracking_at.value = value
+
+
+	var __melee__damage: PBField
+
+
+	func has_melee__damage() -> bool:
+		if __melee__damage.value != null:
+			return true
+		return false
+
+
+	func get_melee__damage() -> int:
+		return __melee__damage.value
+
+
+	func clear_melee__damage() -> void:
+		data[16].state = PB_SERVICE_STATE.UNFILLED
+		__melee__damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_melee__damage(value: int) -> void:
+		__melee__damage.value = value
+
+
+	var __melee__tags: PBField
+
+
+	func get_melee__tags() -> Array[GMeleeTagValue]:
+		return __melee__tags.value
+
+
+	func clear_melee__tags() -> void:
+		data[17].state = PB_SERVICE_STATE.UNFILLED
+		__melee__tags.value.clear()
+
+
+	func add_melee__tags() -> GMeleeTagValue:
+		var element = GMeleeTagValue.new()
+		__melee__tags.value.append(element)
+		return element
+
+
+	var __collision_type: PBField
+
+
+	func has_collision_type() -> bool:
+		if __collision_type.value != null:
+			return true
+		return false
+
+
+	func get_collision_type() -> int:
+		return __collision_type.value
+
+
+	func clear_collision_type() -> void:
+		data[18].state = PB_SERVICE_STATE.UNFILLED
+		__collision_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_collision_type(value: int) -> void:
+		__collision_type.value = value
 
 
 	var __melee__attack_polygon: PBField
@@ -2396,7 +2726,7 @@ class GCreature:
 
 
 	func clear_melee__attack_polygon() -> void:
-		data[18].state = PB_SERVICE_STATE.UNFILLED
+		data[19].state = PB_SERVICE_STATE.UNFILLED
 		__melee__attack_polygon.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -2413,7 +2743,7 @@ class GCreature:
 
 
 	func clear_drops() -> void:
-		data[19].state = PB_SERVICE_STATE.UNFILLED
+		data[20].state = PB_SERVICE_STATE.UNFILLED
 		__drops.value.clear()
 
 
@@ -3097,12 +3427,12 @@ class GProjectile:
 		service.field = __default__speed
 		data[__default__speed.tag] = service
 
-		var __projectiletagvalue_types_default: Array[GProjectileTagValue] = []
-		__projectiletagvalue_types = PBField.new("projectiletagvalue_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 12, true, __projectiletagvalue_types_default)
+		var __tags_default: Array[GProjectileTagValue] = []
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 12, true, __tags_default)
 		service = PBServiceField.new()
-		service.field = __projectiletagvalue_types
-		service.func_ref = Callable(self, "add_projectiletagvalue_types")
-		data[__projectiletagvalue_types.tag] = service
+		service.field = __tags
+		service.func_ref = Callable(self, "add_tags")
+		data[__tags.tag] = service
 
 
 	var data = { }
@@ -3349,21 +3679,21 @@ class GProjectile:
 		__default__speed.value = value
 
 
-	var __projectiletagvalue_types: PBField
+	var __tags: PBField
 
 
-	func get_projectiletagvalue_types() -> Array[GProjectileTagValue]:
-		return __projectiletagvalue_types.value
+	func get_tags() -> Array[GProjectileTagValue]:
+		return __tags.value
 
 
-	func clear_projectiletagvalue_types() -> void:
+	func clear_tags() -> void:
 		data[12].state = PB_SERVICE_STATE.UNFILLED
-		__projectiletagvalue_types.value.clear()
+		__tags.value.clear()
 
 
-	func add_projectiletagvalue_types() -> GProjectileTagValue:
+	func add_tags() -> GProjectileTagValue:
 		var element = GProjectileTagValue.new()
-		__projectiletagvalue_types.value.append(element)
+		__tags.value.append(element)
 		return element
 
 
@@ -4621,6 +4951,13 @@ class Lib:
 		service.func_ref = Callable(self, "add_collision_flags")
 		data[__collision_flags.tag] = service
 
+		var __melee_tags_default: Array[GMeleeTag] = []
+		__melee_tags = PBField.new("melee_tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __melee_tags_default)
+		service = PBServiceField.new()
+		service.field = __melee_tags
+		service.func_ref = Callable(self, "add_melee_tags")
+		data[__melee_tags.tag] = service
+
 
 	var data = { }
 
@@ -5051,6 +5388,24 @@ class Lib:
 		return element
 
 
+	var __melee_tags: PBField
+
+
+	func get_melee_tags() -> Array[GMeleeTag]:
+		return __melee_tags.value
+
+
+	func clear_melee_tags() -> void:
+		data[22].state = PB_SERVICE_STATE.UNFILLED
+		__melee_tags.value.clear()
+
+
+	func add_melee_tags() -> GMeleeTag:
+		var element = GMeleeTag.new()
+		__melee_tags.value.append(element)
+		return element
+
+
 	func _to_string() -> String:
 		return PBPacker.message_to_string(data)
 
@@ -5106,6 +5461,7 @@ enum GCreatureType {
 	MOB_HIVER,
 	MOB_HIVER_INSIDE,
 	MOB_BONKER,
+	MOB_SPEAR,
 	COUNT,
 }
 
@@ -5154,4 +5510,9 @@ enum GCollisionType {
 	WALLS = 0x1,
 	PLAYER = 0x2,
 	MOBS = 0x4,
+}
+
+enum GMeleeTagType {
+	DASH,
+	COUNT,
 }

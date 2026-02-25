@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ResCreature" format=3 uid="uid://bv7fylsrv1jog"]
+
+[ext_resource type="Script" uid="uid://dql1ibeyvp13e" path="res://src/game/res_creature.gd" id="1_pi7j4"]
+[ext_resource type="Texture2D" uid="uid://cjfno7rgkd2y6" path="res://assets/art/textures/removeme/_tile_15_mona_lisa_dark.png" id="2_pi7j4"]
+
+[resource]
+script = ExtResource("1_pi7j4")
+texture = ExtResource("2_pi7j4")
+metadata/_custom_type_script = "uid://dql1ibeyvp13e"

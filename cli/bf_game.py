@@ -215,30 +215,52 @@ def _process_glib(genline, glib) -> None:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
     ##
 
-    ## Projectiles
-    tag_type_2_tag = {x["type"]: x for x in glib["projectile_tags"]}
-    for x in glib["projectiles"][1:]:
-        x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
-
-        # Validating 'requires_' tag fields.
-        for tag in x.get("projectiletagvalue_types", []):
-            tag_type = tag["projectiletag_type"]
-            tag_data = tag_type_2_tag[tag_type]
-            for req in tag_data:
-                if req.startswith("requires_"):
-                    stripped_field = req.removeprefix("requires_")
-                    assert stripped_field in tag, (
-                        "On projectile {} tag {} field '{}' must me specified".format(
-                            x["type"], tag_type, stripped_field
+    def validate_tags(
+        entities_table: str,
+        entity_tags_key: str,
+        tags_table: str,
+        tag_type_key: str,
+    ) -> None:  ##
+        entities = glib[entities_table]
+        for x in entities:
+            tag_type_2_tag = {x["type"]: x for x in glib[tags_table]}
+            for tag in x.get(entity_tags_key, []):
+                tag_type = tag[tag_type_key]
+                tag_data = tag_type_2_tag[tag_type]
+                for req in tag_data:
+                    if req.startswith("requires_"):
+                        stripped_field = req.removeprefix("requires_")
+                        assert stripped_field in tag, (
+                            "{}: {} tag {} field '{}' must me specified".format(
+                                entities_table, x["type"], tag_type, stripped_field
+                            )
                         )
-                    )
+
+        # Stripping 'requires_' from tags table
+        for i, tag in enumerate(glib[tags_table]):
+            glib[tags_table][i] = {
+                k: v for k, v in tag.items() if not k.startswith("requires_")
+            }
+
     ##
 
-    ## Stripping 'requires_' from projectile tags
-    for i, tag in enumerate(glib["projectile_tags"]):
-        glib["projectile_tags"][i] = {
-            k: v for k, v in tag.items() if not k.startswith("requires_")
-        }
+    validate_tags(
+        "projectiles",
+        "tags",
+        "projectile_tags",
+        "projectiletag_type",
+    )
+
+    validate_tags(
+        "creatures",
+        "melee__tags",
+        "melee_tags",
+        "meleetag_type",
+    )
+
+    ## Projectiles
+    for x in glib["projectiles"][1:]:
+        x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
     ##
 
     ## Progression
