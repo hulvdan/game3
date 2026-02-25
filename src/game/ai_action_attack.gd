@@ -16,12 +16,38 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 		actor.melee_attacking = true
 		actor.melee_attack_id = Room.v.get_next_attack_id()
 		actor.melee_damaged_creatures.clear()
+		actor.controller.move = Vector2(0, 0)
 	##
 
 	if actor.melee_attacking and actor.attack_elapsed <= data.get_melee__attack_stops_tracking_at():
-		actor.melee_target_pos = Room.v.player.creature.transform.origin
+		actor.melee_target_pos = bf.xz(Room.v.player.creature.transform.origin)
+		actor.melee_target_dir = bf.vector2_direction_or_random(
+			bf.xz(actor.transform.origin),
+			actor.melee_target_pos,
+		)
 
 	actor.attack_elapsed += get_physics_process_delta_time()
+
+	# Processing dash tag
+	for tag in data.get_melee__tags():
+		match tag.get_meleetag_type():
+			glib.GMeleeTagType.DASH:
+				actor.controller.move = actor.melee_target_dir
+
+				var e: float = min(actor.attack_elapsed, data.get_attack_duration())
+				actor.speed_modifiers.melee_dash = 0
+
+				var start := data.get_melee__attack_polygon_start_at()
+				var end := data.get_melee__attack_polygon_end_at()
+				var dur := end - start
+
+				if ((start <= actor.attack_elapsed) && (actor.attack_elapsed <= end)):
+					actor.speed_modifiers.melee_dash = bf.get_roll_speed(
+						tag.get_valuef1(),
+						dur,
+						e - start,
+						tag.get_valuef2(),
+					)
 
 	## Spawning projectiles
 	if data.get_attack_projectile_type():
@@ -44,6 +70,8 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 		actor.attack_elapsed = 0.0
 		projectiles_spawned = 0
 		actor.melee_attacking = false
+		actor.controller.move = Vector2(0, 0)
+		actor.speed_modifiers.melee_dash = 1
 		return SUCCESS
 	##
 

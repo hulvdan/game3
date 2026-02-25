@@ -13,9 +13,8 @@ x projectile max travel distance
 x enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)
 x enemy: RANGED. STAR PATTERN снаряд на месте (rogue legacy mage ice)
 - enemies: shooting tunneling
+x enemy: spearman who dashes
 
-* enemy: spearman who dashes
-*
 * enemy: hiver inside: aimed at player
   HIVE ALWAYS AIMED AT PLAYER TAG?
 *

@@ -28,7 +28,8 @@ class EvadedAttack:
 
 
 var _evaded_attacks: Array[EvadedAttack]
-var melee_target_pos: Vector3
+var melee_target_pos: Vector2
+var melee_target_dir: Vector2
 var speed_modifiers: Dictionary[String, float] = { "base": 0 }
 
 @onready var node_target_camera: Node3D = %_rotate
@@ -62,9 +63,18 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 
 	var chase_path: String = tree.get_meta("chase")
 	var chase: ActionChase = tree.get_node(chase_path)
-	chase.set_attack_distance(data.get_attack_distance())
+
+	var attack_dist: = data.get_attack_distance()
 	if data.get_melee__attack_polygon():
-		chase.set_attack_distance(data.get_melee__attack_polygon().get_distance_max())
+		attack_dist += data.get_melee__attack_polygon().get_distance_max()
+	for tag in data.get_melee__tags():
+		match tag.get_meleetag_type():
+			glib.GMeleeTagType.DASH:
+				var dash_dist := tag.get_valuef1()
+				attack_dist += dash_dist
+				attack_dist -= data.get_melee__attack_polygon().get_distance_max()
+
+	chase.set_attack_distance(attack_dist)
 ##
 
 

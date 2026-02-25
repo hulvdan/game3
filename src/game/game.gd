@@ -409,7 +409,7 @@ func _physics_process(dt: float) -> void:
 			bf.xz(creature.transform.origin),
 			polygon.get_distance_min(),
 			polygon.get_distance_max(),
-			-bf.xz(creature.transform.origin).angle_to_point(bf.xz(creature.melee_target_pos)),
+			-bf.xz(creature.transform.origin).angle_to_point(creature.melee_target_pos),
 			polygon.get_angle(),
 			mask,
 			true,

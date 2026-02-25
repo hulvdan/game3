@@ -3692,6 +3692,47 @@
               ],
               "__worldX": 624,
               "__worldY": 48
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                4,
+                5
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "30bbf620-fa90-11f0-9ea0-5dac447587f4",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                64,
+                80
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SPEAR",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SPEAR"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 496,
+              "__worldY": 96
             }
           ]
         },

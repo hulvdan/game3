@@ -59,6 +59,13 @@ func to_xz(value: Vector2) -> Vector3:
 func get_roll_speed(dist: float, dur: float, elapsed: float, x: float) -> float: ##
 	# v(t) of player during roll = A - B * t^x
 	# v(0) = A; v(dist) = 0.
+
+	assert(dist > 0)
+	assert(dur > 0)
+	assert(elapsed > 0)
+	assert(elapsed <= 2 * dur) # Слабый assert. Откидываю только заоблачные значения.
+	assert(x > 0)
+
 	return dist * (x + 1) / (x * pow(dur, x) * dur) * (pow(dur, x) - pow(elapsed, x))
 ##
 
