@@ -227,18 +227,20 @@ message Lib {
   float blocked_attack_damages_again_after = 8;
   float creatures_push_radius = 9;
   float creatures_push_force = 10;
-  GV2i world_size = 11;
-  GV2i progression_size = 12;
+  float impulse_duration_seconds = 11;
+  float impulse_pow = 12;
+  GV2i world_size = 13;
+  GV2i progression_size = 14;
   // TABLE_GEN_START
-  repeated GDamage damages = 13;
-  repeated GProgression progression = 14;
-  repeated GCreature creatures = 15;
-  repeated GItem items = 16;
-  repeated GCollectible collectibles = 17;
-  repeated GProjectileFly projectile_fly_types = 18;
-  repeated GProjectileTag projectile_tags = 19;
-  repeated GProjectile projectiles = 20;
-  repeated GCollision collision_flags = 21;
-  repeated GMeleeTag melee_tags = 22;
+  repeated GDamage damages = 15;
+  repeated GProgression progression = 16;
+  repeated GCreature creatures = 17;
+  repeated GItem items = 18;
+  repeated GCollectible collectibles = 19;
+  repeated GProjectileFly projectile_fly_types = 20;
+  repeated GProjectileTag projectile_tags = 21;
+  repeated GProjectile projectiles = 22;
+  repeated GCollision collision_flags = 23;
+  repeated GMeleeTag melee_tags = 24;
   // TABLE_GEN_END
 }

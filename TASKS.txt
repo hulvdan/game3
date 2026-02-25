@@ -16,8 +16,8 @@ x enemy: RANGED. STAR PATTERN снаряд на месте (rogue legacy mage ic
 x enemy: spearman who dashes
 x don't reset player hp upon remake room
 x blocking resets min block time
+x block: MHW like impulse
 
-* block: MHW like impulse
 * block: 
 * block: 
 * block: 

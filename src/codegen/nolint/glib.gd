@@ -4903,83 +4903,93 @@ class Lib:
 		service.field = __creatures_push_force
 		data[__creatures_push_force.tag] = service
 
-		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__impulse_duration_seconds = PBField.new("impulse_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __impulse_duration_seconds
+		data[__impulse_duration_seconds.tag] = service
+
+		__impulse_pow = PBField.new("impulse_pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __impulse_pow
+		data[__impulse_pow.tag] = service
+
+		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __world_size
 		service.func_ref = Callable(self, "new_world_size")
 		data[__world_size.tag] = service
 
-		__progression_size = PBField.new("progression_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__progression_size = PBField.new("progression_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __progression_size
 		service.func_ref = Callable(self, "new_progression_size")
 		data[__progression_size.tag] = service
 
 		var __damages_default: Array[GDamage] = []
-		__damages = PBField.new("damages", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 13, true, __damages_default)
+		__damages = PBField.new("damages", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 15, true, __damages_default)
 		service = PBServiceField.new()
 		service.field = __damages
 		service.func_ref = Callable(self, "add_damages")
 		data[__damages.tag] = service
 
 		var __progression_default: Array[GProgression] = []
-		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 14, true, __progression_default)
+		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 16, true, __progression_default)
 		service = PBServiceField.new()
 		service.field = __progression
 		service.func_ref = Callable(self, "add_progression")
 		data[__progression.tag] = service
 
 		var __creatures_default: Array[GCreature] = []
-		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 15, true, __creatures_default)
+		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 17, true, __creatures_default)
 		service = PBServiceField.new()
 		service.field = __creatures
 		service.func_ref = Callable(self, "add_creatures")
 		data[__creatures.tag] = service
 
 		var __items_default: Array[GItem] = []
-		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 16, true, __items_default)
+		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __items_default)
 		service = PBServiceField.new()
 		service.field = __items
 		service.func_ref = Callable(self, "add_items")
 		data[__items.tag] = service
 
 		var __collectibles_default: Array[GCollectible] = []
-		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 17, true, __collectibles_default)
+		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __collectibles_default)
 		service = PBServiceField.new()
 		service.field = __collectibles
 		service.func_ref = Callable(self, "add_collectibles")
 		data[__collectibles.tag] = service
 
 		var __projectile_fly_types_default: Array[GProjectileFly] = []
-		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __projectile_fly_types_default)
+		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __projectile_fly_types_default)
 		service = PBServiceField.new()
 		service.field = __projectile_fly_types
 		service.func_ref = Callable(self, "add_projectile_fly_types")
 		data[__projectile_fly_types.tag] = service
 
 		var __projectile_tags_default: Array[GProjectileTag] = []
-		__projectile_tags = PBField.new("projectile_tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __projectile_tags_default)
+		__projectile_tags = PBField.new("projectile_tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 21, true, __projectile_tags_default)
 		service = PBServiceField.new()
 		service.field = __projectile_tags
 		service.func_ref = Callable(self, "add_projectile_tags")
 		data[__projectile_tags.tag] = service
 
 		var __projectiles_default: Array[GProjectile] = []
-		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __projectiles_default)
+		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __projectiles_default)
 		service = PBServiceField.new()
 		service.field = __projectiles
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
 
 		var __collision_flags_default: Array[GCollision] = []
-		__collision_flags = PBField.new("collision_flags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 21, true, __collision_flags_default)
+		__collision_flags = PBField.new("collision_flags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __collision_flags_default)
 		service = PBServiceField.new()
 		service.field = __collision_flags
 		service.func_ref = Callable(self, "add_collision_flags")
 		data[__collision_flags.tag] = service
 
 		var __melee_tags_default: Array[GMeleeTag] = []
-		__melee_tags = PBField.new("melee_tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __melee_tags_default)
+		__melee_tags = PBField.new("melee_tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __melee_tags_default)
 		service = PBServiceField.new()
 		service.field = __melee_tags
 		service.func_ref = Callable(self, "add_melee_tags")
@@ -5207,6 +5217,50 @@ class Lib:
 		__creatures_push_force.value = value
 
 
+	var __impulse_duration_seconds: PBField
+
+
+	func has_impulse_duration_seconds() -> bool:
+		if __impulse_duration_seconds.value != null:
+			return true
+		return false
+
+
+	func get_impulse_duration_seconds() -> float:
+		return __impulse_duration_seconds.value
+
+
+	func clear_impulse_duration_seconds() -> void:
+		data[11].state = PB_SERVICE_STATE.UNFILLED
+		__impulse_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_impulse_duration_seconds(value: float) -> void:
+		__impulse_duration_seconds.value = value
+
+
+	var __impulse_pow: PBField
+
+
+	func has_impulse_pow() -> bool:
+		if __impulse_pow.value != null:
+			return true
+		return false
+
+
+	func get_impulse_pow() -> float:
+		return __impulse_pow.value
+
+
+	func clear_impulse_pow() -> void:
+		data[12].state = PB_SERVICE_STATE.UNFILLED
+		__impulse_pow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_impulse_pow(value: float) -> void:
+		__impulse_pow.value = value
+
+
 	var __world_size: PBField
 
 
@@ -5221,7 +5275,7 @@ class Lib:
 
 
 	func clear_world_size() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
+		data[13].state = PB_SERVICE_STATE.UNFILLED
 		__world_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -5244,7 +5298,7 @@ class Lib:
 
 
 	func clear_progression_size() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
+		data[14].state = PB_SERVICE_STATE.UNFILLED
 		__progression_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -5261,7 +5315,7 @@ class Lib:
 
 
 	func clear_damages() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[15].state = PB_SERVICE_STATE.UNFILLED
 		__damages.value.clear()
 
 
@@ -5279,7 +5333,7 @@ class Lib:
 
 
 	func clear_progression() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
+		data[16].state = PB_SERVICE_STATE.UNFILLED
 		__progression.value.clear()
 
 
@@ -5297,7 +5351,7 @@ class Lib:
 
 
 	func clear_creatures() -> void:
-		data[15].state = PB_SERVICE_STATE.UNFILLED
+		data[17].state = PB_SERVICE_STATE.UNFILLED
 		__creatures.value.clear()
 
 
@@ -5315,7 +5369,7 @@ class Lib:
 
 
 	func clear_items() -> void:
-		data[16].state = PB_SERVICE_STATE.UNFILLED
+		data[18].state = PB_SERVICE_STATE.UNFILLED
 		__items.value.clear()
 
 
@@ -5333,7 +5387,7 @@ class Lib:
 
 
 	func clear_collectibles() -> void:
-		data[17].state = PB_SERVICE_STATE.UNFILLED
+		data[19].state = PB_SERVICE_STATE.UNFILLED
 		__collectibles.value.clear()
 
 
@@ -5351,7 +5405,7 @@ class Lib:
 
 
 	func clear_projectile_fly_types() -> void:
-		data[18].state = PB_SERVICE_STATE.UNFILLED
+		data[20].state = PB_SERVICE_STATE.UNFILLED
 		__projectile_fly_types.value.clear()
 
 
@@ -5369,7 +5423,7 @@ class Lib:
 
 
 	func clear_projectile_tags() -> void:
-		data[19].state = PB_SERVICE_STATE.UNFILLED
+		data[21].state = PB_SERVICE_STATE.UNFILLED
 		__projectile_tags.value.clear()
 
 
@@ -5387,7 +5441,7 @@ class Lib:
 
 
 	func clear_projectiles() -> void:
-		data[20].state = PB_SERVICE_STATE.UNFILLED
+		data[22].state = PB_SERVICE_STATE.UNFILLED
 		__projectiles.value.clear()
 
 
@@ -5405,7 +5459,7 @@ class Lib:
 
 
 	func clear_collision_flags() -> void:
-		data[21].state = PB_SERVICE_STATE.UNFILLED
+		data[23].state = PB_SERVICE_STATE.UNFILLED
 		__collision_flags.value.clear()
 
 
@@ -5423,7 +5477,7 @@ class Lib:
 
 
 	func clear_melee_tags() -> void:
-		data[22].state = PB_SERVICE_STATE.UNFILLED
+		data[24].state = PB_SERVICE_STATE.UNFILLED
 		__melee_tags.value.clear()
 
 

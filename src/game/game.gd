@@ -291,6 +291,9 @@ func get_mouse_world_point() -> Vector3: ##
 	##
 
 
+static var _impulses_to_remove_indices: Array[int]
+
+
 func _physics_process(dt: float) -> void:
 	Collisions.init_frame()
 
@@ -326,6 +329,8 @@ func _physics_process(dt: float) -> void:
 	room.player.explicit_process(dt)
 
 	## Creatures updating + moving
+	var impulse_dur := glib.v.get_impulse_duration_seconds()
+	var impulse_pow := glib.v.get_impulse_pow()
 	for creature: Creature in room.container_creatures.get_children():
 		creature.explicit_process(dt)
 
@@ -333,6 +338,27 @@ func _physics_process(dt: float) -> void:
 		if dir != Vector2(0, 0):
 			creature.controller.last_move = dir
 		bf.move_body_with_speed(creature.node_body, dir, creature.get_speed())
+
+		var impulse_index := -1
+		for impulse in creature.impulses:
+			impulse_index += 1
+			var e := Room.v.start_elapsed - impulse.created_at
+			var speed := bf.get_roll_speed(
+				impulse.dist,
+				impulse_dur,
+				e,
+				impulse_pow,
+			)
+			bf.move_body_with_speed(creature.node_body, impulse.dir, speed)
+			if e >= impulse_dur:
+				_impulses_to_remove_indices.append(impulse_index)
+
+		for i in range(len(_impulses_to_remove_indices)):
+			bf.unstable_remove_at(
+				creature.impulses,
+				_impulses_to_remove_indices[len(_impulses_to_remove_indices) - i - 1],
+			)
+		_impulses_to_remove_indices.clear()
 	##
 
 	## Updating player's bow direction
@@ -562,7 +588,7 @@ class ApplyDamageData: ##
 	var immediate := true
 	var attack_id := 0
 	var impulse := 0
-	var impulse_dir := Vector2.INF
+	var impulse_dir := Vector2(0, 0)
 ##
 
 
@@ -579,17 +605,13 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			if room.player.blocking_perfectly:
 				player_perfectly_blocked.emit(creature.transform.origin)
 				creature.evade_attack(data.attack_id)
+				creature.add_impulse(data.impulse_dir, data.impulse)
 				return false
 			elif room.player.blocking:
 				creature.evade_attack(data.attack_id)
 				creature.blocked = true
 				player_blocked.emit(creature.transform.origin)
-				if (data.impulse > 0) and (data.impulse_dir != Vector2.INF):
-					bf.impulse(
-						creature.node_body,
-						data.impulse,
-						bf.to_xz(data.impulse_dir),
-					)
+				creature.add_impulse(data.impulse_dir, data.impulse)
 				damage /= 2
 				assert(damage >= 0)
 				if damage <= 0:
@@ -605,8 +627,11 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 					player_perfectly_evaded.emit(creature.transform.origin)
 				creature.evade_attack(data.attack_id)
 				return false
-		if creature.time_since_last_damage_taken <= glib.v.get_player().get_invincibility_after_hit_seconds():
+
+		var invincibility_dur := glib.v.get_player().get_invincibility_after_hit_seconds()
+		if creature.time_since_last_damage_taken <= invincibility_dur:
 			return false
+
 		creature.time_since_last_damage_taken = 0
 
 	else:
@@ -632,6 +657,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 		damage,
 		WhoGotDamagedType.PLAYER if player_got_damaged else WhoGotDamagedType.MOB,
 	)
+	creature.add_impulse(data.impulse_dir, data.impulse)
 
 	return true
 ##

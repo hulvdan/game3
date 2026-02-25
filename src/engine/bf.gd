@@ -38,30 +38,33 @@ func move_body_with_speed(body: RigidBody3D, direction: Vector2, speed: float) -
 ##
 
 
+func impulse(body: RigidBody3D, dist: float, dir: Vector3) -> void: ##
+	assert(body)
+	assert(dist >= 0)
+	assert(dir != Vector3.INF)
+	var impulse_strength := dist * body.linear_damp * body.mass
+	body.apply_impulse(dir * impulse_strength)
+##
+
+
 func set_pos_2d(node: Node3D, pos: Vector2) -> void: ##
 	node.transform.origin.x = pos.x
 	node.transform.origin.z = pos.y
 ##
 
 
-func scale_2d(node: Node3D, scale: Vector2) -> void:
+func scale_2d(node: Node3D, scale: Vector2) -> void: ##
 	node.transform = node.transform.scaled(Vector3(scale.x, 1, scale.y))
+##
 
 
-func xz(value: Vector3) -> Vector2:
+func xz(value: Vector3) -> Vector2: ##
 	return Vector2(value.x, value.z)
+##
 
 
-func to_xz(value: Vector2) -> Vector3:
+func to_xz(value: Vector2) -> Vector3: ##
 	return Vector3(value.x, 0, value.y)
-
-
-func impulse(body: RigidBody3D, dist: float, dir: Vector3) -> void: ##
-	assert(body)
-	assert(dist >= 0)
-	assert(dir != Vector3.INF)
-	var impulse_strength := body.mass * dist * Engine.get_physics_ticks_per_second()
-	body.apply_impulse(dir * impulse_strength)
 ##
 
 
