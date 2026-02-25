@@ -33,6 +33,7 @@ var speed_modifiers: Dictionary[String, float] = { "base": 0 }
 
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
+@onready var node_shape: CollisionShape3D = %_shape
 ##
 
 

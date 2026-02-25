@@ -488,6 +488,13 @@ func _process(dt: float) -> void:
 		creature.hp_bar.position = camera.unproject_position(creature.transform.origin) - creature.hp_bar.size / 2.0 * creature.hp_bar.scale
 	##
 
+	## Drawing creature gizmos
+	if glib.v.get_debug_collisions():
+		for creature: Creature in room.container_creatures.get_children():
+			ImmediateGizmos3D.set_transform(creature.transform)
+			ImmediateGizmos3D.line_circle(Vector3(0, 0, 0), Vector3(0, 1, 0), creature.node_shape.scale.x / 2)
+	##
+
 	room.action_labels.explicit_process(dt, target_camera_dir, target_camera_dot)
 
 

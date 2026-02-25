@@ -23,7 +23,8 @@ linear_damp = 16.0
 script = ExtResource("1_vvuob")
 node_body = NodePath(".")
 
-[node name="shape" type="CollisionShape3D" parent="." unique_id=904343699]
+[node name="_shape" type="CollisionShape3D" parent="." unique_id=904343699]
+unique_name_in_owner = true
 transform = Transform3D(0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 0, 0, 0)
 shape = SubResource("CylinderShape3D_sw327")
 

@@ -13,6 +13,8 @@ static var _polygon_points: PackedVector3Array
 static var _debug_collisions: bool
 static var _space: PhysicsDirectSpaceState3D
 static var _initialized: bool
+
+static var _color := Color(1, 1, 0, 1)
 ##
 
 
@@ -56,7 +58,7 @@ static func query_circle(
 			Vector3(0, 0, 0),
 			Vector3(1, 0, 0),
 			radius,
-			Color.BLUE,
+			_color,
 		)
 
 	return _space.intersect_shape(_param, max_returned_objects)
@@ -103,7 +105,7 @@ static func query_circle_segment(
 
 	if _debug_collisions:
 		ImmediateGizmos3D.set_transform(_param.transform)
-		ImmediateGizmos3D.line_polygon(_polygon_points)
+		ImmediateGizmos3D.line_polygon(_polygon_points, _color)
 
 	return _space.intersect_shape(_param, max_returned_objects)
 ##
@@ -126,7 +128,7 @@ static func query_ray(
 	_set_param_common_data(
 		_shape_cylinder,
 		pos,
-		Basis.from_euler(Vector3(0, angle, 0)) * _sphere_basis,
+		Basis.from_euler(Vector3(0, -angle + PI / 2, 0)) * _sphere_basis,
 		collide_with_bodies,
 		collide_with_areas,
 		mask,
@@ -138,7 +140,7 @@ static func query_ray(
 			Vector3(0, 0, 0),
 			_cylinder_shape_dict.radius as float,
 			_cylinder_shape_dict.height as float,
-			Color.BLUE,
+			_color,
 		)
 
 	return _space.intersect_shape(_param, max_returned_objects)

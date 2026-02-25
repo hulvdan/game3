@@ -106,6 +106,24 @@ class UpdaterArc extends UpdaterBase:
 		pos.y = data.get_arc__height() * sin(t * PI)
 		x.transform.origin = pos
 
+		if glib.v.get_debug_collisions():
+			var trr := Transform3D()
+			trr.origin = bf.to_xz(x.d.target)
+			trr.basis = x.transform.basis
+			ImmediateGizmos3D.set_transform(trr)
+			ImmediateGizmos3D.line_circle(
+				Vector3(0, 0, 0),
+				Vector3(0, 1, 0),
+				data.get_arc__aoe_radius(),
+				Color(1, 0, 0, 1),
+			)
+			ImmediateGizmos3D.line_circle(
+				Vector3(0, 0, 0),
+				Vector3(0, 1, 0),
+				t * data.get_arc__aoe_radius(),
+				Color(1, 0, 0, 1),
+			)
+
 		if x.elapsed >= data.get_arc__duration():
 			var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
 
