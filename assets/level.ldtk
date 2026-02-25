@@ -3600,6 +3600,47 @@
               ],
               "__worldX": 688,
               "__worldY": 128
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                12,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "4e20a7e0-fa90-11f0-9ea0-cb128dd24698",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                192,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SHOOTER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SHOOTER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 624,
+              "__worldY": 128
             }
           ]
         },
@@ -4763,14 +4804,14 @@
                 {
                   "__identifier": "Type",
                   "__type": "LocalEnum.CODEGEN_Creatures",
-                  "__value": "MOB_SHOOTER",
+                  "__value": "MOB_HOMER",
                   "__tile": null,
                   "defUid": 31,
                   "realEditorValues": [
                     {
                       "id": "V_String",
                       "params": [
-                        "MOB_SHOOTER"
+                        "MOB_HOMER"
                       ]
                     }
                   ]
@@ -4845,14 +4886,14 @@
                 {
                   "__identifier": "Type",
                   "__type": "LocalEnum.CODEGEN_Creatures",
-                  "__value": "MOB_SHOOTER",
+                  "__value": "MOB_BONKER",
                   "__tile": null,
                   "defUid": 31,
                   "realEditorValues": [
                     {
                       "id": "V_String",
                       "params": [
-                        "MOB_SHOOTER"
+                        "MOB_BONKER"
                       ]
                     }
                   ]
@@ -4886,14 +4927,14 @@
                 {
                   "__identifier": "Type",
                   "__type": "LocalEnum.CODEGEN_Creatures",
-                  "__value": "MOB_MAGE",
+                  "__value": "MOB_HIVER",
                   "__tile": null,
                   "defUid": 31,
                   "realEditorValues": [
                     {
                       "id": "V_String",
                       "params": [
-                        "MOB_MAGE"
+                        "MOB_HIVER"
                       ]
                     }
                   ]
@@ -4901,6 +4942,47 @@
               ],
               "__worldX": 528,
               "__worldY": 400
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                7,
+                6
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "48fc6ec0-fa90-11f0-9ea0-cb81257d30cb",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                112,
+                96
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_SHOOTER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_SHOOTER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 496,
+              "__worldY": 336
             }
           ]
         },

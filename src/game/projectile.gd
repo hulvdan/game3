@@ -80,18 +80,17 @@ class UpdaterDefault extends UpdaterBase:
 
 		var moved := x.calculated__dir * projectile_travelled
 		x.transform.origin += bf.to_xz(moved)
-
-		var target_direction := bf.vector2_direction_or_random(
-			bf.xz(x.transform.origin),
-			bf.xz(x.d.homing__target.transform.origin),
-		)
 		for tag in data.get_projectiletagvalue_types():
 			match tag.get_projectiletag_type():
 				glib.GProjectileTagType.HOMING:
+					var target_dir := bf.vector2_direction_or_random(
+						bf.xz(x.transform.origin),
+						bf.xz(x.d.homing__target.transform.origin),
+					)
 					x.calculated__dir = Vector2(1, 0).rotated(
 						lerp_angle(
 							x.calculated__dir.angle(),
-							target_direction.angle(),
+							target_dir.angle(),
 							tag.get_valuef() * dt,
 						),
 					)
@@ -122,21 +121,22 @@ class UpdaterDefault extends UpdaterBase:
 					MAX_COLLISIONS_DEFAULT,
 				)
 
-			for d: Dictionary in q:
-				if mask == glib.GCollisionType.WALLS:
-					x.queue_free()
-					break
-
-				var damaged_creature: Creature = d.collider
-				if damaged_creature in x.damaged_creatures:
-					continue
-
-				if Game.v.apply_damage(damaged_creature, data.get_damage(), damage_data):
-					x.damaged_creatures.append(damaged_creature)
-					x.default__pierced += 1
-					if x.default__pierced > data.get_pierce():
+			if data.get_damage() > 0:
+				for d: Dictionary in q:
+					if mask == glib.GCollisionType.WALLS:
 						x.queue_free()
 						break
+
+					var damaged_creature: Creature = d.collider
+					if damaged_creature in x.damaged_creatures:
+						continue
+
+					if Game.v.apply_damage(damaged_creature, data.get_damage(), damage_data):
+						x.damaged_creatures.append(damaged_creature)
+						x.default__pierced += 1
+						if x.default__pierced > data.get_pierce():
+							x.queue_free()
+							break
 
 	##
 
@@ -157,36 +157,38 @@ class UpdaterArc extends UpdaterBase:
 			trr.origin = bf.to_xz(x.d.target)
 			trr.basis = x.transform.basis
 			ImmediateGizmos3D.set_transform(trr)
+			var color := Color(1, 0, 0, 1) if data.get_damage() > 0 else Color(1, 1, 1, 1)
 			ImmediateGizmos3D.line_circle(
 				Vector3(0, 0, 0),
 				Vector3(0, 1, 0),
 				data.get_collider_radius(),
-				Color(1, 0, 0, 1),
+				color,
 			)
 			ImmediateGizmos3D.line_circle(
 				Vector3(0, 0, 0),
 				Vector3(0, 1, 0),
 				t * data.get_collider_radius(),
-				Color(1, 0, 0, 1),
+				color,
 			)
 
 		if x.elapsed >= data.get_arc__duration():
 			var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
 
-			for d: Dictionary in Collisions.query_circle(
-				bf.xz(x.transform.origin),
-				data.get_collider_radius(),
-				mask,
-				true,
-				false,
-				MAX_COLLISIONS_AOE,
-			):
-				var damaged_creature: Creature = d.collider
-				if damaged_creature in x.damaged_creatures:
-					continue
+			if data.get_damage() > 0:
+				for d: Dictionary in Collisions.query_circle(
+					bf.xz(x.transform.origin),
+					data.get_collider_radius(),
+					mask,
+					true,
+					false,
+					MAX_COLLISIONS_AOE,
+				):
+					var damaged_creature: Creature = d.collider
+					if damaged_creature in x.damaged_creatures:
+						continue
 
-				if Game.v.apply_damage(damaged_creature, data.get_damage(), damage_data):
-					x.damaged_creatures.append(damaged_creature)
+					if Game.v.apply_damage(damaged_creature, data.get_damage(), damage_data):
+						x.damaged_creatures.append(damaged_creature)
 
 			x.queue_free()
 			for z: Node3D in x.zones:

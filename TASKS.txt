@@ -12,7 +12,7 @@ x enemy: RANGED. самонаводящийся снаряд (= dash в стор
 x projectile max travel distance
 x enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)
 
-* enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
+* enemy: RANGED. STAR PATTERN снаряд на месте (rogue legacy mage ice)
 *
 * enemies: shooting tunneling
 *

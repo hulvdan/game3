@@ -196,23 +196,26 @@ message Lib {
   GConfigControls controls = 1;
   GConfigPlayer player = 2;
   GConfigSpikes spikes = 3;
+
   int32 debug_collisions = 4;
-  repeated GRoom rooms = 5;
-  float mob_invincibility_spikes_seconds = 6;
-  float blocked_attack_damages_again_after = 7;
-  float creatures_push_radius = 8;
-  float creatures_push_force = 9;
-  GV2i world_size = 10;
-  GV2i progression_size = 11;
+  int32 debug_collisions__chase = 5;
+
+  repeated GRoom rooms = 6;
+  float mob_invincibility_spikes_seconds = 7;
+  float blocked_attack_damages_again_after = 8;
+  float creatures_push_radius = 9;
+  float creatures_push_force = 10;
+  GV2i world_size = 11;
+  GV2i progression_size = 12;
   // TABLE_GEN_START
-  repeated GDamage damages = 12;
-  repeated GProgression progression = 13;
-  repeated GCreature creatures = 14;
-  repeated GItem items = 15;
-  repeated GCollectible collectibles = 16;
-  repeated GProjectileFly projectile_fly_types = 17;
-  repeated GProjectileTag projectile_tags = 18;
-  repeated GProjectile projectiles = 19;
-  repeated GCollision collision_flags = 20;
+  repeated GDamage damages = 13;
+  repeated GProgression progression = 14;
+  repeated GCreature creatures = 15;
+  repeated GItem items = 16;
+  repeated GCollectible collectibles = 17;
+  repeated GProjectileFly projectile_fly_types = 18;
+  repeated GProjectileTag projectile_tags = 19;
+  repeated GProjectile projectiles = 20;
+  repeated GCollision collision_flags = 21;
   // TABLE_GEN_END
 }

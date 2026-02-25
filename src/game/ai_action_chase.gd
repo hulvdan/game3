@@ -17,7 +17,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	var pos = bf.xz((actor as Node3D).transform.origin)
 	var dpos: Vector2 = target_pos - pos
 
-	if glib.v.get_debug_collisions():
+	if glib.v.get_debug_collisions() && glib.v.get_debug_collisions__chase():
 		ImmediateGizmos3D.set_transform(actor.transform)
 		ImmediateGizmos3D.line_circle(Vector3(0, 0, 0), Vector3(0, 1, 0), _attack_distance)
 
