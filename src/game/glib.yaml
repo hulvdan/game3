@@ -199,9 +199,10 @@ projectiles: ##
     arc__aoe_radius: 1
   - type: HOMING
     damage: 1
+    default__speed: 3
     collider_radius: 0.3
     projectiletagvalue_types:
       - projectiletag_type: HOMING
-        valuef: 0.1
+        valuef: 1.0
         ##
 

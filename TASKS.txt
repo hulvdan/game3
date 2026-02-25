@@ -8,8 +8,9 @@ PLAN
 ============================================================
 
 x can tag projectile as homing
+x enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 
-* enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
+* projectile max travel length
 *
 * enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
 * enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)

@@ -3595,6 +3595,47 @@
               ],
               "__worldX": 688,
               "__worldY": 128
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                9,
+                4
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "e7cf89a0-fa90-11f0-99be-59754675590e",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                144,
+                64
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_HOMER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_HOMER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 576,
+              "__worldY": 80
             }
           ]
         },
