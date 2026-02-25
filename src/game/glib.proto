@@ -206,10 +206,12 @@ message GConfigPlayer {
   float cooldown__block = 24;
   float cooldown__roll = 25;
   float block__perfect_end = 26;
-  float stamina_depletion_regen_delay = 27;
-  float invincibility_after_hit_seconds = 28;
-  float shooting_seconds = 29;
-  float shooting_after_roll_seconds = 30;
+  float block__idle_after_block = 27;
+
+  float stamina_depletion_regen_delay = 28;
+  float invincibility_after_hit_seconds = 29;
+  float shooting_seconds = 30;
+  float shooting_after_roll_seconds = 31;
 }
 
 message Lib {

@@ -4110,22 +4110,27 @@ class GConfigPlayer:
 		service.field = __block__perfect_end
 		data[__block__perfect_end.tag] = service
 
-		__stamina_depletion_regen_delay = PBField.new("stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__idle_after_block = PBField.new("block__idle_after_block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __block__idle_after_block
+		data[__block__idle_after_block.tag] = service
+
+		__stamina_depletion_regen_delay = PBField.new("stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_depletion_regen_delay
 		data[__stamina_depletion_regen_delay.tag] = service
 
-		__invincibility_after_hit_seconds = PBField.new("invincibility_after_hit_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__invincibility_after_hit_seconds = PBField.new("invincibility_after_hit_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 29, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __invincibility_after_hit_seconds
 		data[__invincibility_after_hit_seconds.tag] = service
 
-		__shooting_seconds = PBField.new("shooting_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 29, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__shooting_seconds = PBField.new("shooting_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 30, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __shooting_seconds
 		data[__shooting_seconds.tag] = service
 
-		__shooting_after_roll_seconds = PBField.new("shooting_after_roll_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 30, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__shooting_after_roll_seconds = PBField.new("shooting_after_roll_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 31, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __shooting_after_roll_seconds
 		data[__shooting_after_roll_seconds.tag] = service
@@ -4705,6 +4710,28 @@ class GConfigPlayer:
 		__block__perfect_end.value = value
 
 
+	var __block__idle_after_block: PBField
+
+
+	func has_block__idle_after_block() -> bool:
+		if __block__idle_after_block.value != null:
+			return true
+		return false
+
+
+	func get_block__idle_after_block() -> float:
+		return __block__idle_after_block.value
+
+
+	func clear_block__idle_after_block() -> void:
+		data[27].state = PB_SERVICE_STATE.UNFILLED
+		__block__idle_after_block.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_block__idle_after_block(value: float) -> void:
+		__block__idle_after_block.value = value
+
+
 	var __stamina_depletion_regen_delay: PBField
 
 
@@ -4719,7 +4746,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_depletion_regen_delay() -> void:
-		data[27].state = PB_SERVICE_STATE.UNFILLED
+		data[28].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_depletion_regen_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4741,7 +4768,7 @@ class GConfigPlayer:
 
 
 	func clear_invincibility_after_hit_seconds() -> void:
-		data[28].state = PB_SERVICE_STATE.UNFILLED
+		data[29].state = PB_SERVICE_STATE.UNFILLED
 		__invincibility_after_hit_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4763,7 +4790,7 @@ class GConfigPlayer:
 
 
 	func clear_shooting_seconds() -> void:
-		data[29].state = PB_SERVICE_STATE.UNFILLED
+		data[30].state = PB_SERVICE_STATE.UNFILLED
 		__shooting_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4785,7 +4812,7 @@ class GConfigPlayer:
 
 
 	func clear_shooting_after_roll_seconds() -> void:
-		data[30].state = PB_SERVICE_STATE.UNFILLED
+		data[31].state = PB_SERVICE_STATE.UNFILLED
 		__shooting_after_roll_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 

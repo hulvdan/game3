@@ -129,6 +129,8 @@ func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 
 
 func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
+	var player_hp := glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_hp()
+
 	## Updating flash of ui minimap
 	if current_room_pos != Vector2i.MAX:
 		var s1: ShaderMaterial = ui_minimap_rooms[current_room_index].material
@@ -141,6 +143,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	## Reinstantiating room node
 	player_is_entering_door = false
 	if room:
+		player_hp = room.player.creature.hp
 		room.queue_free()
 	room = packed_room.instantiate()
 	container_general.add_child(room)
@@ -203,10 +206,9 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 	## Placing player and other creatures
 	var bow: Node3D = packed_bow.instantiate()
-	room.player.init(
-		make_creature(glib.GCreatureType.PLAYER, player_pos),
-		bow,
-	)
+	var player_creature := make_creature(glib.GCreatureType.PLAYER, player_pos)
+	player_creature.hp = player_hp
+	room.player.init(player_creature, bow)
 	for mob in g_room.get_creatures():
 		make_creature(mob.get_creature_type(), glib.ToV2(mob.get_pos()))
 	##
