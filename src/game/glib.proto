@@ -121,15 +121,21 @@ message GProjectileTagValue {
 message GProjectile {
   int32 type = 1;
   string debug_name = 2;
+
   string res = 3;
-  int32 projectilefly_type = 4;
-  float arc__height = 5;
-  float arc__duration = 6;
-  float arc__aoe_radius = 7;
-  float default__speed = 8;
-  int32 damage = 9;
-  int32 pierce = 10;
-  float collider_radius = 11;
+
+  int32 damage = 4;
+  int32 pierce = 5;
+  float collider_radius = 6;
+
+  int32 projectilefly_type = 7;
+
+  float arc__height = 8;
+  float arc__duration = 9;
+  float arc__aoe_radius = 10;
+
+  float default__speed = 11;
+
   repeated GProjectileTagValue projectiletagvalue_types = 12;
 }
 
