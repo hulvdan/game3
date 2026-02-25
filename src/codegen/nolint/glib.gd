@@ -3045,33 +3045,38 @@ class GProjectile:
 		service.field = __collider_radius
 		data[__collider_radius.tag] = service
 
-		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __distance
+		data[__distance.tag] = service
+
+		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __projectilefly_type
 		data[__projectilefly_type.tag] = service
 
-		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc__height
 		data[__arc__height.tag] = service
 
-		__arc__duration = PBField.new("arc__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc__duration = PBField.new("arc__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc__duration
 		data[__arc__duration.tag] = service
 
-		__arc__aoe_radius = PBField.new("arc__aoe_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc__aoe_radius = PBField.new("arc__aoe_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc__aoe_radius
 		data[__arc__aoe_radius.tag] = service
 
-		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __default__speed
 		data[__default__speed.tag] = service
 
 		var __projectiletagvalue_types_default: Array[GProjectileTagValue] = []
-		__projectiletagvalue_types = PBField.new("projectiletagvalue_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 12, true, __projectiletagvalue_types_default)
+		__projectiletagvalue_types = PBField.new("projectiletagvalue_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 13, true, __projectiletagvalue_types_default)
 		service = PBServiceField.new()
 		service.field = __projectiletagvalue_types
 		service.func_ref = Callable(self, "add_projectiletagvalue_types")
@@ -3212,6 +3217,28 @@ class GProjectile:
 		__collider_radius.value = value
 
 
+	var __distance: PBField
+
+
+	func has_distance() -> bool:
+		if __distance.value != null:
+			return true
+		return false
+
+
+	func get_distance() -> float:
+		return __distance.value
+
+
+	func clear_distance() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_distance(value: float) -> void:
+		__distance.value = value
+
+
 	var __projectilefly_type: PBField
 
 
@@ -3226,7 +3253,7 @@ class GProjectile:
 
 
 	func clear_projectilefly_type() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__projectilefly_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -3248,7 +3275,7 @@ class GProjectile:
 
 
 	func clear_arc__height() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__arc__height.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -3270,7 +3297,7 @@ class GProjectile:
 
 
 	func clear_arc__duration() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__arc__duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -3292,7 +3319,7 @@ class GProjectile:
 
 
 	func clear_arc__aoe_radius() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__arc__aoe_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -3314,7 +3341,7 @@ class GProjectile:
 
 
 	func clear_default__speed() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
+		data[12].state = PB_SERVICE_STATE.UNFILLED
 		__default__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -3330,7 +3357,7 @@ class GProjectile:
 
 
 	func clear_projectiletagvalue_types() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
+		data[13].state = PB_SERVICE_STATE.UNFILLED
 		__projectiletagvalue_types.value.clear()
 
 

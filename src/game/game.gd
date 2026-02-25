@@ -569,6 +569,11 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 
 func make_projectile(d: Projectile.Data) -> void: ##
 	assert(d.type)
+
+	var data := glib.v.get_projectiles()[d.type]
+	var target_dir := bf.vector2_direction_or_random(d.pos, d.target)
+	d.target = d.pos + target_dir * min(data.get_distance(), (d.target - d.pos).length())
+
 	projectiles_to_make.append(d)
 ##
 

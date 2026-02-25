@@ -20,6 +20,7 @@ var default__pierced: int
 var attack_id: int
 var calculated__dir: Vector2
 var homing__velocity: Vector2
+var travelled: float
 
 @onready var sprite: Sprite3D = %_sprite
 
@@ -35,9 +36,11 @@ class UpdaterBase:
 	static var damage_data := Game.ApplyDamageData.new()
 
 
-	func explicit_process(dt: float, x: Projectile, _is_player: bool, _data: glib.GProjectile) -> void: ##
+	func explicit_process(dt: float, x: Projectile, _is_player: bool, data: glib.GProjectile) -> void: ##
 		x.elapsed += dt
 		damage_data.attack_id = x.attack_id
+		if x.travelled > data.get_distance():
+			x.queue_free()
 	##
 
 
@@ -47,6 +50,7 @@ class UpdaterDefault extends UpdaterBase:
 
 		damage_data.type = glib.GDamageType.DEFAULT
 		var projectile_travelled := data.get_default__speed() * dt
+		x.travelled += projectile_travelled
 
 		for tag in data.get_projectiletagvalue_types():
 			if tag.get_projectiletag_type() == glib.GProjectileTagType.HOMING:

@@ -127,16 +127,17 @@ message GProjectile {
   int32 damage = 4;
   int32 pierce = 5;
   float collider_radius = 6;
+  float distance = 7;
 
-  int32 projectilefly_type = 7;
+  int32 projectilefly_type = 8;
 
-  float arc__height = 8;
-  float arc__duration = 9;
-  float arc__aoe_radius = 10;
+  float arc__height = 9;
+  float arc__duration = 10;
+  float arc__aoe_radius = 11;
 
-  float default__speed = 11;
+  float default__speed = 12;
 
-  repeated GProjectileTagValue projectiletagvalue_types = 12;
+  repeated GProjectileTagValue projectiletagvalue_types = 13;
 }
 
 message GCollision {

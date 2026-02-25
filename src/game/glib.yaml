@@ -179,7 +179,7 @@ projectile_fly_types: ##
 ##
 
 projectile_tag_types: ##
-  - type: HOMING
+  - type: HOMING # valuef is rotation speed
 ##
 
 projectiles: ##
@@ -187,20 +187,24 @@ projectiles: ##
   - type: ARROW
     damage: 1
     default__speed: 14
+    distance: 6
   - type: BALL
     damage: 1
     default__speed: 3
     collider_radius: 0.3
+    distance: 8
   - type: BOMB
     damage: 2
     projectilefly_type: ARC
     arc__height: 1
     arc__duration: 1
     arc__aoe_radius: 1
+    distance: 5
   - type: HOMING
     damage: 1
     default__speed: 3
     collider_radius: 0.3
+    distance: 8
     projectiletagvalue_types:
       - projectiletag_type: HOMING
         valuef: 1.0
