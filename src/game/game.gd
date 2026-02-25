@@ -338,7 +338,55 @@ func _physics_process(dt: float) -> void:
 		room.player.bow.transform.basis = room.player.creature.transform.looking_at(end_point).basis
 	##
 
-	spawn_projectiles()
+	## Spawning projectiles (flushing `projectiles_to_make`)
+	for d: Projectile.Data in projectiles_to_make:
+		var data := glib.v.get_projectiles()[d.type]
+		var x: Projectile = packed_projectile.instantiate()
+		room.container_projectiles.add_child(x)
+
+		x.attack_id = room.get_next_attack_id()
+		if data.get_collider_radius():
+			x.sprite.scale = Vector3(1, 1, 1) * (data.get_collider_radius() * 1.53 * 2)
+			x.sprite.add_to_group(GROUP_TARGET_CAMERA)
+
+		if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+			x.sprite.add_to_group(GROUP_TARGET_CAMERA)
+
+		x.d = d
+		x.calculated__dir = bf.vector2_direction_or_random(d.pos, d.target)
+		x.res = load(data.get_res())
+		x.sprite.texture = x.res.texture
+
+		x.transform.origin = bf.to_xz(d.pos)
+
+		if data.get_projectilefly_type() == glib.GProjectileFlyType.DEFAULT:
+			if !data.get_collider_radius():
+				x.transform.basis = Basis(
+					Vector3(0, 1, 0).cross(bf.to_xz(x.calculated__dir)),
+					Vector3(0, 1, 0),
+					bf.to_xz(x.calculated__dir),
+				)
+
+		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+			var target_scale := Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0
+			for i in range(2):
+				var zone: Node3D = packed_zone_circle.instantiate()
+				room.container_zones.add_child(zone)
+				zone.transform.origin = bf.to_xz(x.d.target) + Vector3(0, 0.01 * i, 0)
+
+				var tween = create_tween()
+				if i:
+					tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
+					tween.tween_property(zone, "scale", target_scale, data.get_arc__duration())
+				else:
+					tween.tween_property(zone, "scale", target_scale, 0)
+				x.zones.append(zone)
+
+		else:
+			bf.invalid_path()
+
+	projectiles_to_make.clear()
+	##
 
 	## - Melee attacks collisions
 	var apply_damage_melee_data := ApplyDamageData.new()
@@ -575,55 +623,4 @@ func make_projectile(d: Projectile.Data) -> void: ##
 	d.target = d.pos + target_dir * min(data.get_distance(), (d.target - d.pos).length())
 
 	projectiles_to_make.append(d)
-##
-
-
-func spawn_projectiles() -> void: ##
-	for d: Projectile.Data in projectiles_to_make:
-		var data := glib.v.get_projectiles()[d.type]
-		var x: Projectile = packed_projectile.instantiate()
-		room.container_projectiles.add_child(x)
-
-		x.attack_id = room.get_next_attack_id()
-		if data.get_collider_radius():
-			x.sprite.scale = Vector3(1, 1, 1) * (data.get_collider_radius() * 1.53 * 2)
-			x.sprite.add_to_group(GROUP_TARGET_CAMERA)
-
-		if data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-			x.sprite.add_to_group(GROUP_TARGET_CAMERA)
-
-		x.d = d
-		x.calculated__dir = bf.vector2_direction_or_random(d.pos, d.target)
-		x.res = load(data.get_res())
-		x.sprite.texture = x.res.texture
-
-		x.transform.origin = bf.to_xz(d.pos)
-
-		if data.get_projectilefly_type() == glib.GProjectileFlyType.DEFAULT:
-			if !data.get_collider_radius():
-				x.transform.basis = Basis(
-					Vector3(0, 1, 0).cross(bf.to_xz(x.calculated__dir)),
-					Vector3(0, 1, 0),
-					bf.to_xz(x.calculated__dir),
-				)
-
-		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-			var target_scale := Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0
-			for i in range(2):
-				var zone: Node3D = packed_zone_circle.instantiate()
-				room.container_zones.add_child(zone)
-				zone.transform.origin = bf.to_xz(x.d.target) + Vector3(0, 0.01 * i, 0)
-
-				var tween = create_tween()
-				if i:
-					tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
-					tween.tween_property(zone, "scale", target_scale, data.get_arc__duration())
-				else:
-					tween.tween_property(zone, "scale", target_scale, 0)
-				x.zones.append(zone)
-
-		else:
-			bf.invalid_path()
-
-	projectiles_to_make.clear()
 ##
