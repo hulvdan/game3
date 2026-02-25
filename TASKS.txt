@@ -11,10 +11,10 @@ x can tag projectile as homing
 x enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 x projectile max travel distance
 x enemy: RANGED. STAR PATTERN в игроке (= отойди + dash внутрь области)
+x enemy: RANGED. STAR PATTERN снаряд на месте (rogue legacy mage ice)
+- enemies: shooting tunneling
 
-* enemy: RANGED. STAR PATTERN снаряд на месте (rogue legacy mage ice)
-*
-* enemies: shooting tunneling
+* enemy: hiver inside: aimed at player
 *
 * hp rally
 * regen hp rally on hitting enemies

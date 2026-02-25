@@ -5104,6 +5104,7 @@ enum GCreatureType {
 	MOB_MAGE,
 	MOB_HOMER,
 	MOB_HIVER,
+	MOB_HIVER_INSIDE,
 	MOB_BONKER,
 	COUNT,
 }
@@ -5142,6 +5143,7 @@ enum GProjectileType {
 	ARROW,
 	BALL,
 	BOMB,
+	STAR_HIVE_INSIDE,
 	STAR_HIVE,
 	STAR_BIT,
 	HOMING,
