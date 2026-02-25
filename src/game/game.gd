@@ -405,10 +405,14 @@ func _physics_process(dt: float) -> void:
 
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)
 		apply_damage_melee_data.attack_id = creature.melee_attack_id
+		apply_damage_melee_data.impulse = 1
+
+		var attacker_pos := bf.xz(creature.transform.origin)
+
 		var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
 		var polygon := data.get_melee__attack_polygon()
 		for d: Dictionary in Collisions.query_circle_segment(
-			bf.xz(creature.transform.origin),
+			attacker_pos,
 			polygon.get_distance_min(),
 			polygon.get_distance_max(),
 			-bf.xz(creature.transform.origin).angle_to_point(creature.melee_target_pos),
@@ -421,6 +425,11 @@ func _physics_process(dt: float) -> void:
 			var damaged_creature: Creature = d.collider
 			if damaged_creature in creature.melee_damaged_creatures:
 				continue
+
+			apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
+				attacker_pos,
+				bf.xz(damaged_creature.transform.origin),
+			)
 
 			if apply_damage(damaged_creature, data.get_melee__damage(), apply_damage_melee_data):
 				creature.melee_damaged_creatures.append(damaged_creature)
@@ -552,10 +561,14 @@ class ApplyDamageData: ##
 	var type := glib.GDamageType.DEFAULT
 	var immediate := true
 	var attack_id := 0
+	var impulse := 0
+	var impulse_dir := Vector2.INF
 ##
 
 
 func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> bool: ##
+	assert(data.impulse >= 0)
+
 	assert(data.attack_id)
 	if creature.is_attack_evaded(data.attack_id):
 		return false
@@ -571,6 +584,12 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 				creature.evade_attack(data.attack_id)
 				creature.blocked = true
 				player_blocked.emit(creature.transform.origin)
+				if (data.impulse > 0) and (data.impulse_dir != Vector2.INF):
+					bf.impulse(
+						creature.node_body,
+						data.impulse,
+						bf.to_xz(data.impulse_dir),
+					)
 				damage /= 2
 				assert(damage >= 0)
 				if damage <= 0:

@@ -80,6 +80,8 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 
 
 func evade_attack(id: int) -> void: ##
+	if !id:
+		return
 	var x := EvadedAttack.new()
 	x.id = id
 	x.destroy_at = glib.v.get_blocked_attack_damages_again_after()

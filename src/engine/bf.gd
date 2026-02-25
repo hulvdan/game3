@@ -56,6 +56,15 @@ func to_xz(value: Vector2) -> Vector3:
 	return Vector3(value.x, 0, value.y)
 
 
+func impulse(body: RigidBody3D, dist: float, dir: Vector3) -> void: ##
+	assert(body)
+	assert(dist >= 0)
+	assert(dir != Vector3.INF)
+	var impulse_strength := body.mass * dist * Engine.get_physics_ticks_per_second()
+	body.apply_impulse(dir * impulse_strength)
+##
+
+
 func get_roll_speed(dist: float, dur: float, elapsed: float, x: float) -> float: ##
 	# v(t) of player during roll = A - B * t^x
 	# v(0) = A; v(dist) = 0.
