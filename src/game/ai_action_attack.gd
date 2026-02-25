@@ -10,7 +10,8 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	var actor: Creature = actor_
 	var data = glib.v.get_creatures()[actor.type]
 
-	if !actor.attack_elapsed: ## Attack started
+	## Attack start
+	if !actor.attack_elapsed:
 		Game.v.enemy_started_attack.emit(actor.transform.origin)
 		actor.melee_attacking = true
 		actor.melee_attack_id = Room.v.get_next_attack_id()
@@ -22,7 +23,8 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 
 	actor.attack_elapsed += get_physics_process_delta_time()
 
-	if data.get_attack_projectile_type(): ## Spawning projectiles
+	## Spawning projectiles
+	if data.get_attack_projectile_type():
 		var i: int = 0
 		for projectile_spawns_at in data.get_attack_projectiles_spawn_at():
 			i += 1
@@ -37,7 +39,8 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 				Game.v.make_projectile(d)
 	##
 
-	if actor.attack_elapsed >= data.get_attack_duration(): ## Finished attacking
+	## Attack finish
+	if actor.attack_elapsed >= data.get_attack_duration():
 		actor.attack_elapsed = 0.0
 		projectiles_spawned = 0
 		actor.melee_attacking = false

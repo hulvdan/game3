@@ -2,6 +2,10 @@ extends Node3D
 
 class_name Projectile
 
+const MAX_COLLISIONS_DEFAULT := 4
+const MAX_COLLISIONS_AOE := 12
+
+
 ## Variables
 class Data:
 	var type: glib.GProjectileType
@@ -31,6 +35,28 @@ static var updaters: Array[UpdaterBase] = [
 ##
 
 
+func on_free(data: glib.GProjectile) -> void: ##
+	for tag in data.get_projectiletagvalue_types():
+		match tag.get_projectiletag_type():
+			glib.GProjectileTagType.HIVE:
+				var angle := calculated__dir.angle()
+				var children_count := tag.get_valuei()
+				assert(children_count > 0)
+
+				var angle_step := 2 * PI / children_count
+				for i in range(children_count):
+					angle += angle_step
+
+					var c := Projectile.Data.new()
+					c.type = tag.get_projectile_type() as glib.GProjectileType
+					c.owner = d.owner
+					c.pos = bf.xz(transform.origin)
+					c.target = c.pos + Vector2(1, 0).rotated(angle)
+					c.homing__target = d.homing__target
+					Game.v.make_projectile(c)
+##
+
+
 @abstract
 class UpdaterBase:
 	static var damage_data := Game.ApplyDamageData.new()
@@ -52,22 +78,23 @@ class UpdaterDefault extends UpdaterBase:
 		var projectile_travelled := data.get_default__speed() * dt
 		x.travelled += projectile_travelled
 
-		for tag in data.get_projectiletagvalue_types():
-			if tag.get_projectiletag_type() == glib.GProjectileTagType.HOMING:
-				var target_direction := bf.vector2_direction_or_random(
-					bf.xz(x.transform.origin),
-					bf.xz(x.d.homing__target.transform.origin),
-				)
-				x.calculated__dir = Vector2(1, 0).rotated(
-					lerp_angle(
-						x.calculated__dir.angle(),
-						target_direction.angle(),
-						tag.get_valuef() * dt,
-					),
-				)
-
 		var moved := x.calculated__dir * projectile_travelled
 		x.transform.origin += bf.to_xz(moved)
+
+		var target_direction := bf.vector2_direction_or_random(
+			bf.xz(x.transform.origin),
+			bf.xz(x.d.homing__target.transform.origin),
+		)
+		for tag in data.get_projectiletagvalue_types():
+			match tag.get_projectiletag_type():
+				glib.GProjectileTagType.HOMING:
+					x.calculated__dir = Vector2(1, 0).rotated(
+						lerp_angle(
+							x.calculated__dir.angle(),
+							target_direction.angle(),
+							tag.get_valuef() * dt,
+						),
+					)
 
 		var q: Array[Dictionary]
 
@@ -82,7 +109,7 @@ class UpdaterDefault extends UpdaterBase:
 					mask,
 					true,
 					false,
-					12,
+					MAX_COLLISIONS_DEFAULT,
 				)
 			else:
 				q = Collisions.query_ray(
@@ -92,7 +119,7 @@ class UpdaterDefault extends UpdaterBase:
 					mask,
 					true,
 					false,
-					12,
+					MAX_COLLISIONS_DEFAULT,
 				)
 
 			for d: Dictionary in q:
@@ -110,6 +137,7 @@ class UpdaterDefault extends UpdaterBase:
 					if x.default__pierced > data.get_pierce():
 						x.queue_free()
 						break
+
 	##
 
 
@@ -132,13 +160,13 @@ class UpdaterArc extends UpdaterBase:
 			ImmediateGizmos3D.line_circle(
 				Vector3(0, 0, 0),
 				Vector3(0, 1, 0),
-				data.get_arc__aoe_radius(),
+				data.get_collider_radius(),
 				Color(1, 0, 0, 1),
 			)
 			ImmediateGizmos3D.line_circle(
 				Vector3(0, 0, 0),
 				Vector3(0, 1, 0),
-				t * data.get_arc__aoe_radius(),
+				t * data.get_collider_radius(),
 				Color(1, 0, 0, 1),
 			)
 
@@ -147,11 +175,11 @@ class UpdaterArc extends UpdaterBase:
 
 			for d: Dictionary in Collisions.query_circle(
 				bf.xz(x.transform.origin),
-				data.get_arc__aoe_radius(),
+				data.get_collider_radius(),
 				mask,
 				true,
 				false,
-				12,
+				MAX_COLLISIONS_AOE,
 			):
 				var damaged_creature: Creature = d.collider
 				if damaged_creature in x.damaged_creatures:

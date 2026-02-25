@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ResProjectile" format=3 uid="uid://c3a0oymn0yn88"]
+
+[ext_resource type="Script" uid="uid://ufgqvq6nhi3u" path="res://src/game/res_projectile.gd" id="1_trb0j"]
+[ext_resource type="Texture2D" uid="uid://dhn26v2k1nbsd" path="res://assets/art/textures/removeme/_circle_34_dolly.png" id="2_u5scm"]
+
+[resource]
+script = ExtResource("1_trb0j")
+texture = ExtResource("2_u5scm")
+metadata/_custom_type_script = "uid://ufgqvq6nhi3u"

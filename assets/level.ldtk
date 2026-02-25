@@ -832,6 +832,11 @@
             "color": 0
           },
           {
+            "id": "MOB_HIVER",
+            "tileRect": null,
+            "color": 0
+          },
+          {
             "id": "MOB_BONKER",
             "tileRect": null,
             "color": 0
@@ -3435,49 +3440,8 @@
             {
               "__identifier": "Creature",
               "__grid": [
-                11,
-                3
-              ],
-              "__pivot": [
-                0,
-                0
-              ],
-              "__tags": [],
-              "__tile": null,
-              "__smartColor": "#EAD4AA",
-              "iid": "ed6cf020-fa90-11f0-a5e2-c33da01f2d11",
-              "width": 16,
-              "height": 16,
-              "defUid": 30,
-              "px": [
-                176,
-                48
-              ],
-              "fieldInstances": [
-                {
-                  "__identifier": "Type",
-                  "__type": "LocalEnum.CODEGEN_Creatures",
-                  "__value": "MOB_BONKER",
-                  "__tile": null,
-                  "defUid": 31,
-                  "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": [
-                        "MOB_BONKER"
-                      ]
-                    }
-                  ]
-                }
-              ],
-              "__worldX": 608,
-              "__worldY": 64
-            },
-            {
-              "__identifier": "Creature",
-              "__grid": [
-                10,
-                6
+                9,
+                7
               ],
               "__pivot": [
                 0,
@@ -3491,8 +3455,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                160,
-                96
+                144,
+                112
               ],
               "fieldInstances": [
                 {
@@ -3511,14 +3475,14 @@
                   ]
                 }
               ],
-              "__worldX": 592,
-              "__worldY": 112
+              "__worldX": 576,
+              "__worldY": 128
             },
             {
               "__identifier": "Creature",
               "__grid": [
                 5,
-                2
+                3
               ],
               "__pivot": [
                 0,
@@ -3533,7 +3497,7 @@
               "defUid": 30,
               "px": [
                 80,
-                32
+                48
               ],
               "fieldInstances": [
                 {
@@ -3553,54 +3517,13 @@
                 }
               ],
               "__worldX": 512,
-              "__worldY": 48
+              "__worldY": 64
             },
             {
               "__identifier": "Creature",
               "__grid": [
-                16,
-                7
-              ],
-              "__pivot": [
-                0,
-                0
-              ],
-              "__tags": [],
-              "__tile": null,
-              "__smartColor": "#EAD4AA",
-              "iid": "f12a9460-fa90-11f0-a5e2-b95a0bb0a450",
-              "width": 16,
-              "height": 16,
-              "defUid": 30,
-              "px": [
-                256,
-                112
-              ],
-              "fieldInstances": [
-                {
-                  "__identifier": "Type",
-                  "__type": "LocalEnum.CODEGEN_Creatures",
-                  "__value": "MOB_MAGE",
-                  "__tile": null,
-                  "defUid": 31,
-                  "realEditorValues": [
-                    {
-                      "id": "V_String",
-                      "params": [
-                        "MOB_MAGE"
-                      ]
-                    }
-                  ]
-                }
-              ],
-              "__worldX": 688,
-              "__worldY": 128
-            },
-            {
-              "__identifier": "Creature",
-              "__grid": [
-                9,
-                4
+                10,
+                2
               ],
               "__pivot": [
                 0,
@@ -3614,8 +3537,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                144,
-                64
+                160,
+                32
               ],
               "fieldInstances": [
                 {
@@ -3634,8 +3557,49 @@
                   ]
                 }
               ],
-              "__worldX": 576,
-              "__worldY": 80
+              "__worldX": 592,
+              "__worldY": 48
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                16,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "81183610-fa90-11f0-9ea0-cb888c4e310e",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                256,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_HIVER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_HIVER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 688,
+              "__worldY": 128
             }
           ]
         },

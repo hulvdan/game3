@@ -368,7 +368,7 @@ func _physics_process(dt: float) -> void:
 				)
 
 		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
-			var target_scale := Vector3(1, 1, 1) * data.get_arc__aoe_radius() * 2.0
+			var target_scale := Vector3(1, 1, 1) * data.get_collider_radius() * 2.0
 			for i in range(2):
 				var zone: Node3D = packed_zone_circle.instantiate()
 				room.container_zones.add_child(zone)
@@ -424,15 +424,16 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## - Updating projectiles + collisions + despawning
-	for projectile: Projectile in room.container_projectiles.get_children():
-		var data := g_projectiles[projectile.d.type]
-
+	for x: Projectile in room.container_projectiles.get_children():
+		var data := g_projectiles[x.d.type]
 		Projectile.updaters[data.get_projectilefly_type()].explicit_process(
 			dt,
-			projectile,
-			(projectile.d.owner == glib.GCreatureType.PLAYER),
+			x,
+			(x.d.owner == glib.GCreatureType.PLAYER),
 			data,
 		)
+		if x.is_queued_for_deletion():
+			x.on_free(data)
 	##
 
 	## Spike collisions
@@ -497,8 +498,6 @@ func _physics_process(dt: float) -> void:
 	stamina_bar.set_rally_back_progress(room.player.stamina_rally / st)
 	stamina_bar.set_rally_front_progress(room.player.stamina_ki / st)
 	##
-
-	assert(len(projectiles_to_make) == 0)
 
 
 func _process(dt: float) -> void:

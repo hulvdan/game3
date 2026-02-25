@@ -2918,6 +2918,11 @@ class GProjectileTagValue:
 		service.field = __valuef
 		data[__valuef.tag] = service
 
+		__projectile_type = PBField.new("projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __projectile_type
+		data[__projectile_type.tag] = service
+
 
 	var data = { }
 
@@ -2985,6 +2990,28 @@ class GProjectileTagValue:
 
 	func set_valuef(value: float) -> void:
 		__valuef.value = value
+
+
+	var __projectile_type: PBField
+
+
+	func has_projectile_type() -> bool:
+		if __projectile_type.value != null:
+			return true
+		return false
+
+
+	func get_projectile_type() -> int:
+		return __projectile_type.value
+
+
+	func clear_projectile_type() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_projectile_type(value: int) -> void:
+		__projectile_type.value = value
 
 
 	func _to_string() -> String:
@@ -3065,18 +3092,13 @@ class GProjectile:
 		service.field = __arc__duration
 		data[__arc__duration.tag] = service
 
-		__arc__aoe_radius = PBField.new("arc__aoe_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __arc__aoe_radius
-		data[__arc__aoe_radius.tag] = service
-
-		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __default__speed
 		data[__default__speed.tag] = service
 
 		var __projectiletagvalue_types_default: Array[GProjectileTagValue] = []
-		__projectiletagvalue_types = PBField.new("projectiletagvalue_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 13, true, __projectiletagvalue_types_default)
+		__projectiletagvalue_types = PBField.new("projectiletagvalue_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 12, true, __projectiletagvalue_types_default)
 		service = PBServiceField.new()
 		service.field = __projectiletagvalue_types
 		service.func_ref = Callable(self, "add_projectiletagvalue_types")
@@ -3305,28 +3327,6 @@ class GProjectile:
 		__arc__duration.value = value
 
 
-	var __arc__aoe_radius: PBField
-
-
-	func has_arc__aoe_radius() -> bool:
-		if __arc__aoe_radius.value != null:
-			return true
-		return false
-
-
-	func get_arc__aoe_radius() -> float:
-		return __arc__aoe_radius.value
-
-
-	func clear_arc__aoe_radius() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__arc__aoe_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_arc__aoe_radius(value: float) -> void:
-		__arc__aoe_radius.value = value
-
-
 	var __default__speed: PBField
 
 
@@ -3341,7 +3341,7 @@ class GProjectile:
 
 
 	func clear_default__speed() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__default__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -3357,7 +3357,7 @@ class GProjectile:
 
 
 	func clear_projectiletagvalue_types() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[12].state = PB_SERVICE_STATE.UNFILLED
 		__projectiletagvalue_types.value.clear()
 
 
@@ -4595,12 +4595,12 @@ class Lib:
 		service.func_ref = Callable(self, "add_projectile_fly_types")
 		data[__projectile_fly_types.tag] = service
 
-		var __projectile_tag_types_default: Array[GProjectileTag] = []
-		__projectile_tag_types = PBField.new("projectile_tag_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __projectile_tag_types_default)
+		var __projectile_tags_default: Array[GProjectileTag] = []
+		__projectile_tags = PBField.new("projectile_tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __projectile_tags_default)
 		service = PBServiceField.new()
-		service.field = __projectile_tag_types
-		service.func_ref = Callable(self, "add_projectile_tag_types")
-		data[__projectile_tag_types.tag] = service
+		service.field = __projectile_tags
+		service.func_ref = Callable(self, "add_projectile_tags")
+		data[__projectile_tags.tag] = service
 
 		var __projectiles_default: Array[GProjectile] = []
 		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __projectiles_default)
@@ -4970,21 +4970,21 @@ class Lib:
 		return element
 
 
-	var __projectile_tag_types: PBField
+	var __projectile_tags: PBField
 
 
-	func get_projectile_tag_types() -> Array[GProjectileTag]:
-		return __projectile_tag_types.value
+	func get_projectile_tags() -> Array[GProjectileTag]:
+		return __projectile_tags.value
 
 
-	func clear_projectile_tag_types() -> void:
+	func clear_projectile_tags() -> void:
 		data[18].state = PB_SERVICE_STATE.UNFILLED
-		__projectile_tag_types.value.clear()
+		__projectile_tags.value.clear()
 
 
-	func add_projectile_tag_types() -> GProjectileTag:
+	func add_projectile_tags() -> GProjectileTag:
 		var element = GProjectileTag.new()
-		__projectile_tag_types.value.append(element)
+		__projectile_tags.value.append(element)
 		return element
 
 
@@ -5076,6 +5076,7 @@ enum GCreatureType {
 	MOB_SHOOTER,
 	MOB_MAGE,
 	MOB_HOMER,
+	MOB_HIVER,
 	MOB_BONKER,
 	COUNT,
 }
@@ -5105,6 +5106,7 @@ enum GProjectileFlyType {
 
 enum GProjectileTagType {
 	HOMING,
+	HIVE,
 	COUNT,
 }
 
@@ -5113,6 +5115,8 @@ enum GProjectileType {
 	ARROW,
 	BALL,
 	BOMB,
+	STAR_HIVE,
+	STAR_BIT,
 	HOMING,
 	COUNT,
 }

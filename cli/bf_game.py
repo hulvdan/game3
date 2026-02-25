@@ -20,7 +20,7 @@ from pathlib import Path
 import bf_lib as bf
 import numpy as np
 from bf_typer import command, timing
-from PIL import Image, ImageDraw, ImageEnhance, ImageFont
+from PIL import Image
 
 ##
 
@@ -216,8 +216,29 @@ def _process_glib(genline, glib) -> None:
     ##
 
     ## Projectiles
+    tag_type_2_tag = {x["type"]: x for x in glib["projectile_tags"]}
     for x in glib["projectiles"][1:]:
         x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
+
+        # Validating 'requires_' tag fields.
+        for tag in x.get("projectiletagvalue_types", []):
+            tag_type = tag["projectiletag_type"]
+            tag_data = tag_type_2_tag[tag_type]
+            for req in tag_data:
+                if req.startswith("requires_"):
+                    stripped_field = req.removeprefix("requires_")
+                    assert stripped_field in tag, (
+                        "On projectile {} tag {} field '{}' must me specified".format(
+                            x["type"], tag_type, stripped_field
+                        )
+                    )
+    ##
+
+    ## Stripping 'requires_' from projectile tags
+    for i, tag in enumerate(glib["projectile_tags"]):
+        glib["projectile_tags"][i] = {
+            k: v for k, v in tag.items() if not k.startswith("requires_")
+        }
     ##
 
     ## Progression
