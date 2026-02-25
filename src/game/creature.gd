@@ -20,6 +20,7 @@ var attack_elapsed: float
 var melee_attacking: bool
 var melee_attack_id: int
 var melee_damaged_creatures: Array[Creature]
+var blocked: bool
 
 
 class EvadedAttack:

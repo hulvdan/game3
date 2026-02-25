@@ -569,6 +569,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 				return false
 			elif room.player.blocking:
 				creature.evade_attack(data.attack_id)
+				creature.blocked = true
 				player_blocked.emit(creature.transform.origin)
 				damage /= 2
 				assert(damage >= 0)

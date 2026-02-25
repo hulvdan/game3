@@ -15,8 +15,12 @@ x enemy: RANGED. STAR PATTERN снаряд на месте (rogue legacy mage ic
 - enemies: shooting tunneling
 x enemy: spearman who dashes
 x don't reset player hp upon remake room
+x blocking resets min block time
 
-* blocking resets min block time
+* block: MHW like impulse
+* block: 
+* block: 
+* block: 
 *
 * enemy: hiver inside: aimed at player
   HIVE ALWAYS AIMED AT PLAYER TAG?

@@ -203,10 +203,10 @@ message GConfigPlayer {
   float block__activation_start = 21;
   float ki__rally_increase_per_second = 22;
   float block__min_duration = 23;
-  float cooldown__block = 24;
-  float cooldown__roll = 25;
-  float block__perfect_end = 26;
-  float block__idle_after_block = 27;
+  float block__idle_after_block = 24;
+  float cooldown__block = 25;
+  float cooldown__roll = 26;
+  float block__perfect_end = 27;
 
   float stamina_depletion_regen_delay = 28;
   float invincibility_after_hit_seconds = 29;

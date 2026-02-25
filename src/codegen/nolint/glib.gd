@@ -4095,25 +4095,25 @@ class GConfigPlayer:
 		service.field = __block__min_duration
 		data[__block__min_duration.tag] = service
 
-		__cooldown__block = PBField.new("cooldown__block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__idle_after_block = PBField.new("block__idle_after_block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __block__idle_after_block
+		data[__block__idle_after_block.tag] = service
+
+		__cooldown__block = PBField.new("cooldown__block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __cooldown__block
 		data[__cooldown__block.tag] = service
 
-		__cooldown__roll = PBField.new("cooldown__roll", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__cooldown__roll = PBField.new("cooldown__roll", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __cooldown__roll
 		data[__cooldown__roll.tag] = service
 
-		__block__perfect_end = PBField.new("block__perfect_end", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__perfect_end = PBField.new("block__perfect_end", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __block__perfect_end
 		data[__block__perfect_end.tag] = service
-
-		__block__idle_after_block = PBField.new("block__idle_after_block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __block__idle_after_block
-		data[__block__idle_after_block.tag] = service
 
 		__stamina_depletion_regen_delay = PBField.new("stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -4644,6 +4644,28 @@ class GConfigPlayer:
 		__block__min_duration.value = value
 
 
+	var __block__idle_after_block: PBField
+
+
+	func has_block__idle_after_block() -> bool:
+		if __block__idle_after_block.value != null:
+			return true
+		return false
+
+
+	func get_block__idle_after_block() -> float:
+		return __block__idle_after_block.value
+
+
+	func clear_block__idle_after_block() -> void:
+		data[24].state = PB_SERVICE_STATE.UNFILLED
+		__block__idle_after_block.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_block__idle_after_block(value: float) -> void:
+		__block__idle_after_block.value = value
+
+
 	var __cooldown__block: PBField
 
 
@@ -4658,7 +4680,7 @@ class GConfigPlayer:
 
 
 	func clear_cooldown__block() -> void:
-		data[24].state = PB_SERVICE_STATE.UNFILLED
+		data[25].state = PB_SERVICE_STATE.UNFILLED
 		__cooldown__block.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4680,7 +4702,7 @@ class GConfigPlayer:
 
 
 	func clear_cooldown__roll() -> void:
-		data[25].state = PB_SERVICE_STATE.UNFILLED
+		data[26].state = PB_SERVICE_STATE.UNFILLED
 		__cooldown__roll.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4702,34 +4724,12 @@ class GConfigPlayer:
 
 
 	func clear_block__perfect_end() -> void:
-		data[26].state = PB_SERVICE_STATE.UNFILLED
+		data[27].state = PB_SERVICE_STATE.UNFILLED
 		__block__perfect_end.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
 	func set_block__perfect_end(value: float) -> void:
 		__block__perfect_end.value = value
-
-
-	var __block__idle_after_block: PBField
-
-
-	func has_block__idle_after_block() -> bool:
-		if __block__idle_after_block.value != null:
-			return true
-		return false
-
-
-	func get_block__idle_after_block() -> float:
-		return __block__idle_after_block.value
-
-
-	func clear_block__idle_after_block() -> void:
-		data[27].state = PB_SERVICE_STATE.UNFILLED
-		__block__idle_after_block.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_block__idle_after_block(value: float) -> void:
-		__block__idle_after_block.value = value
 
 
 	var __stamina_depletion_regen_delay: PBField

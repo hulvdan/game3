@@ -340,7 +340,18 @@ class PlayerBlock extends PlayerBase: ##
 
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
-		player.blocking_perfectly = (elapsed <= glib.v.get_player().get_block__perfect_end())
+
+		var player_data := glib.v.get_player()
+		if player.creature.blocked:
+			player.creature.blocked = false
+			elapsed = min(
+				elapsed,
+				player_data.get_block__min_duration() - player_data.get_block__idle_after_block(),
+			)
+
+		if elapsed > glib.v.get_player().get_block__perfect_end():
+			player.blocking_perfectly = false
+
 		if elapsed >= glib.v.get_player().get_block__min_duration():
 			player.ki = false
 			player._stamina_regen_modifiers.block = glib.v.get_player().get_stamina_regen_scale__blocking()
