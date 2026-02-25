@@ -182,7 +182,7 @@ creatures: ##
     melee__attack_stops_tracking_at: 0.3
     melee__attack_polygon:
       distance_max: 2
-      angle_degrees: 30
+      angle_degrees: 20
     melee__tags:
       - meleetag_type: DASH
         valuef1: 4
