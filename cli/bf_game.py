@@ -215,7 +215,7 @@ def _process_glib(genline, glib) -> None:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
     ##
 
-    def validate_tags(
+    def process_tags(
         entities_table: str,
         entity_tags_key: str,
         tags_table: str,
@@ -244,8 +244,8 @@ def _process_glib(genline, glib) -> None:
 
     ##
 
-    validate_tags("projectiles", "tags", "projectile_tags", "projectiletag_type")
-    validate_tags("creatures", "melee__tags", "melee_tags", "meleetag_type")
+    process_tags("projectiles", "tags", "projectile_tags", "projectiletag_type")
+    process_tags("creatures", "melee__tags", "melee_tags", "meleetag_type")
 
     ## Projectiles
     for x in glib["projectiles"][1:]:
