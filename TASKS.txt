@@ -7,18 +7,6 @@ BIG PLAN
 PLAN
 ============================================================
 
-x proto-renumber good pre-commit
-x proto extracted Player, Spikes, Controls configs
-x proto ref
-x gdlint disabled no-elif-return
-x block: don't spam labels
-x enemies: longer shooting distance
-x ref collisions
-x ref projectiles
-x fix: polygon collision angle
-x polygon collision convex fix
-x gizmos visual tweaks
-
 * enemy: RANGED. самонаводящийся снаряд (= dash в сторону врага)
 *
 * enemy: RANGED. STAR PATTERN снаряд (rogue legacy mage ice)
