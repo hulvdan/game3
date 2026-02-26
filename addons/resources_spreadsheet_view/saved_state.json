@@ -1,5 +1,16 @@
 {
   "column_properties": {
+    "": {
+      "metadata/_custom_type_script": {
+        "visibility": 0
+      },
+      "resource_local_to_scene": {
+        "visibility": 0
+      },
+      "resource_name": {
+        "visibility": 0
+      }
+    },
     "res://src/game/res_creatures/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
@@ -13,10 +24,22 @@
       "texture": {
         "visibility": 1.0
       }
+    },
+    "res://src/game/res_projectiles/": {
+      "metadata/_custom_type_script": {
+        "visibility": 0
+      },
+      "resource_local_to_scene": {
+        "visibility": 0
+      },
+      "resource_name": {
+        "visibility": 0
+      }
     }
   },
   "recent_paths": [
-    "res://src/game/res_creatures/"
+    "res://src/game/res_creatures/",
+    "res://src/game/res_projectiles/"
   ],
   "table_functions": {
     "filter": [
