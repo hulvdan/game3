@@ -9,6 +9,7 @@ PLAN
 
 x vscode test action
 x fix: adding BLOCK to buffer removes all UNBLOCK from it
+x figlet banners pre-commit
 
 * GENERATE IDEAS
   - Какие игровые ситуации можно создать в боевке через действия / мобов / ловушки?
@@ -16,18 +17,18 @@ x fix: adding BLOCK to buffer removes all UNBLOCK from it
 * traps: dart
 * traps: fire
 * traps: barrel bomb that player/mobs can damage
-* traps: 
+* traps:
 *
 * ability: hook
-* ability: 
-* ability: 
-* ability: 
-* ability: 
+* ability:
+* ability:
+* ability:
+* ability:
 *
 * attack: bow heavy piercing attack
-* attack: 
-* attack: 
-* attack: 
+* attack:
+* attack:
+* attack:
 *
 * !!! mobs movement navigation
 * !!! mobs can't start attacking when there's no raycast from mob to player
@@ -48,13 +49,13 @@ x fix: adding BLOCK to buffer removes all UNBLOCK from it
 * mobs aggro distance
 * mobs path finding
 *
-* room generation:  
-* room generation:  
-* 
-* drop items 
-* 
-* 
-* 
+* room generation:
+* room generation:
+*
+* drop items
+*
+*
+*
 * floating spiky ball trap
 *
 * items: can drop from mines (hollow knight like)
@@ -62,9 +63,9 @@ x fix: adding BLOCK to buffer removes all UNBLOCK from it
 * items: can drop from bonepiles
 * items: can drop from mobs
 *
-* items: 
-* items: 
-* items: 
+* items:
+* items:
+* items:
 *
 * progression: can upgrade HP
 * progression: upgrading costs items
@@ -88,26 +89,26 @@ x fix: adding BLOCK to buffer removes all UNBLOCK from it
 * mob takes damage from bow
 * swing attack?
 * long range by default + melee spells?
-* player hp bar 
+* player hp bar
 * mob hp bar
 * spikes (ref curse of the dead gods)
 * mob with shield
-  * can kill 
+  * can kill
     * ricochet wall
-    * piercing arrow 
-* 
-* 
-* 
-* 
-* 
-* 
+    * piercing arrow
 *
 *
 *
-* progression: 
-* progression: 
-* progression: 
-* progression: 
+*
+*
+*
+*
+*
+*
+* progression:
+* progression:
+* progression:
+* progression:
 *
 *
 *
@@ -127,16 +128,16 @@ x fix: adding BLOCK to buffer removes all UNBLOCK from it
 * Отрисовать древо прогрессии
 * Продумать ресурсы (собираемые / с мобов / с элит. мобов / с боссов)
 * collectible
-* 
-* 
-* 
-* 
-* 
-* 
-* 
-* 
-* 
-* 
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
 
 PRE RELEASE
 ============================================================

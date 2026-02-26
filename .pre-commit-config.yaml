@@ -75,6 +75,7 @@ repos:
         entry: uv run python cli/bf_cli.py banner
         language: system
         require_serial: true
+        files: \.(yml|yaml|gd|py|c|h|cxx|cpp|txt|md|proto|fbs|lua)$
         stages: [pre-commit, pre-merge-commit, manual]
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
     rev: v3.6.1
