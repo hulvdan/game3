@@ -282,12 +282,13 @@ def test():  ##
 
 
 @command
-def banner(filepath: Path) -> None:  ##
-    filepath.write_text(
-        bf.bannerify([x.rstrip() for x in filepath.read_text("utf-8").splitlines()]),
-        "utf-8",
-        newline="\n",
-    )
+def banner(filepaths: list[Path]) -> None:  ##
+    for fp in filepaths:
+        fp.write_text(
+            bf.bannerify([x.rstrip() for x in fp.read_text("utf-8").splitlines()]),
+            "utf-8",
+            newline="\n",
+        )
     ##
 
 
