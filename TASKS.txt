@@ -15,9 +15,8 @@ x melee mob who dashes before swing
 x fix: after mob's attack going outside->inside of his range resets cooldown.
   BUT IT SHOULD NOT RESET COOLDOWN!
 x melee mob who attacks in circle around him
+x attack polygon / circle anchor_x
 
-* attack polygon / circle anchor_x
-*
 * some mobs can damage other mobs
   (melee attack mask type + exclude this mob)
   (projectile attack mask type + exclude this mob)

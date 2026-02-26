@@ -191,7 +191,7 @@ creatures: ##
     melee__attack_collision_ends_at: 0.6
     melee__attack_stops_tracking_at: 0.2
     melee__attack_polygon:
-      distance_min: 1
+      distance_min: 0.5
       distance_max: 2
       angle_degrees: 90
       anchor_x: 0.5
