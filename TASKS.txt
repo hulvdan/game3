@@ -8,11 +8,10 @@ PLAN
 ============================================================
 
 x vscode test action
+x fix: adding BLOCK to buffer removes all UNBLOCK from it
 
 * GENERATE IDEAS
   - Какие игровые ситуации можно создать в боевке через действия / мобов / ловушки?
-*
-* fix: adding BLOCK to buffer removes all UNBLOCK from it
 *
 * traps: dart
 * traps: fire

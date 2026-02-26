@@ -64,11 +64,7 @@ func push_action(type: ActionType, dir: Vector2) -> void: ##
 	_buffer.append(a)
 
 	if type == ActionType.BLOCK:
-		bf.remove_all_by_key(
-			_buffer,
-			func(x: Action):
-				return Action.is_unblock(x)
-		)
+		bf.remove_all_by_key(_buffer, Action.is_unblock)
 ##
 
 
