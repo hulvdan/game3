@@ -101,7 +101,8 @@ class UpdaterDefault extends UpdaterBase:
 			2 ** glib.GMaskType.WALLS,
 			2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER),
 		]:
-			if data.get_collider_radius():
+			assert(data.get_collider_radius() >= 0)
+			if data.get_collider_radius() > 0:
 				q = Collisions.query_circle(
 					bf.xz(x.transform.origin),
 					data.get_collider_radius(),

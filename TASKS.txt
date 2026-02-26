@@ -19,6 +19,9 @@ x attack polygon / circle anchor_x
 
 * mob same as jumper but BLINKER (teleports in front of player)
 *
+* контроль кривизны query_circle_segment (для широкой пули)
+* query_rect?
+*
 * моб, что взрывается на месте
 * моб, что при выстреле откидывается назад (projectile spawn impulse)
 * моб, melee stomp (blink instead of dash)

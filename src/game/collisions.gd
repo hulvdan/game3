@@ -147,6 +147,20 @@ static func query_ray(
 ##
 
 
+static func query_rect(
+		_pos: Vector2,
+		_size: Vector2,
+		_angle: float,
+		_mask: int,
+		_collide_with_bodies: bool,
+		_collide_with_areas: bool,
+		_max_returned_objects: int,
+) -> Array[Dictionary]: ##
+	bf.invalid_path()
+	return []
+##
+
+
 static func _set_param_common_data(
 		rid: RID,
 		pos: Vector2,
