@@ -11,6 +11,16 @@ x vscode test action
 x fix: adding BLOCK to buffer removes all UNBLOCK from it
 x figlet banners pre-commit
 
+* marking attacks / proejctiles as only_perfect_blockable
+  -> projectile/melee hitbox shows up as red
+*
+* melee__dash_starts_at
+* melee__dash_ends_at
+* projectile blockable / not
+*
+* игрок может бросить бомбу
+* ловушки активируются на 1 игрока / 2 мобов / 3 игрока и мобов
+*
 * GENERATE IDEAS
   - Какие игровые ситуации можно создать в боевке через действия / мобов / ловушки?
 *
@@ -29,6 +39,8 @@ x figlet banners pre-commit
 * attack:
 * attack:
 * attack:
+*
+* волны врагов (убиваешь несколько -> еще некоторые спавнятся)
 *
 * !!! mobs movement navigation
 * !!! mobs can't start attacking when there's no raycast from mob to player

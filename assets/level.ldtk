@@ -33,7 +33,7 @@
   "imageExportMode": "None",
   "exportLevelBg": true,
   "pngFilePattern": null,
-  "backupOnSave": false,
+  "backupOnSave": true,
   "backupLimit": 10,
   "backupRelPath": null,
   "levelNamePattern": "Level_%idx",
@@ -5697,10 +5697,10 @@
       "iid": "4d66ac40-fa90-11f0-a500-eb028e3ae7d7",
       "uid": 32,
       "worldX": 16,
-      "worldY": 432,
+      "worldY": 416,
       "worldDepth": 0,
       "pxWid": 336,
-      "pxHei": 144,
+      "pxHei": 160,
       "__bgColor": "#696A79",
       "bgColor": null,
       "useAutoIdentifier": true,
@@ -5726,7 +5726,7 @@
           "__identifier": "Progression",
           "__type": "Entities",
           "__cWid": 21,
-          "__cHei": 9,
+          "__cHei": 10,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -5751,7 +5751,7 @@
           "__identifier": "Entities",
           "__type": "Entities",
           "__cWid": 21,
-          "__cHei": 9,
+          "__cHei": 10,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -5775,7 +5775,7 @@
               "__identifier": "Creature",
               "__grid": [
                 11,
-                2
+                3
               ],
               "__pivot": [
                 0,
@@ -5790,7 +5790,7 @@
               "defUid": 30,
               "px": [
                 176,
-                32
+                48
               ],
               "fieldInstances": [
                 {
@@ -5851,13 +5851,13 @@
                 }
               ],
               "__worldX": 144,
-              "__worldY": 496
+              "__worldY": 480
             },
             {
               "__identifier": "Door",
               "__grid": [
                 0,
-                4
+                5
               ],
               "__pivot": [
                 0,
@@ -5878,7 +5878,7 @@
               "defUid": 2,
               "px": [
                 0,
-                64
+                80
               ],
               "fieldInstances": [
                 {
@@ -5957,13 +5957,13 @@
                 }
               ],
               "__worldX": 64,
-              "__worldY": 432
+              "__worldY": 416
             },
             {
               "__identifier": "Door",
               "__grid": [
                 16,
-                7
+                8
               ],
               "__pivot": [
                 0,
@@ -5984,7 +5984,7 @@
               "defUid": 2,
               "px": [
                 256,
-                112
+                128
               ],
               "fieldInstances": [
                 {
@@ -6016,7 +6016,7 @@
               "__identifier": "Door",
               "__grid": [
                 19,
-                4
+                5
               ],
               "__pivot": [
                 0,
@@ -6037,7 +6037,7 @@
               "defUid": 2,
               "px": [
                 304,
-                64
+                80
               ],
               "fieldInstances": [
                 {
@@ -6071,7 +6071,7 @@
           "__identifier": "Floor",
           "__type": "IntGrid",
           "__cWid": 21,
-          "__cHei": 9,
+          "__cHei": 10,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -6116,6 +6116,27 @@
             0,
             0,
             0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
             1,
             1,
             1,
@@ -6148,48 +6169,6 @@
             1,
             1,
             0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
             0,
             0,
             1,
@@ -6217,6 +6196,48 @@
             1,
             1,
             1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
             0,
             0,
             0,
@@ -6252,7 +6273,7 @@
             1,
             1,
             1,
-            1,
+            0,
             0,
             0,
             0,
