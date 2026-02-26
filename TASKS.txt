@@ -16,6 +16,7 @@ x fix: after mob's attack going outside->inside of his range resets cooldown.
   BUT IT SHOULD NOT RESET COOLDOWN!
 
 * моб, что взрывается на месте
+* моб, что при выстреле откидывается назад (projectile spawn impulse)
 * моб, melee stomp
 *
 * marking attacks / proejctiles as only_perfect_blockable

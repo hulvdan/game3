@@ -3062,7 +3062,7 @@
       "worldY": 16,
       "worldDepth": 0,
       "pxWid": 304,
-      "pxHei": 160,
+      "pxHei": 208,
       "__bgColor": "#696A79",
       "bgColor": null,
       "useAutoIdentifier": true,
@@ -3090,7 +3090,7 @@
           "__identifier": "Progression",
           "__type": "Entities",
           "__cWid": 19,
-          "__cHei": 10,
+          "__cHei": 13,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -3115,7 +3115,7 @@
           "__identifier": "Entities",
           "__type": "Entities",
           "__cWid": 19,
-          "__cHei": 10,
+          "__cHei": 13,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -3450,7 +3450,7 @@
             {
               "__identifier": "Creature",
               "__grid": [
-                9,
+                14,
                 7
               ],
               "__pivot": [
@@ -3465,7 +3465,7 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                144,
+                224,
                 112
               ],
               "fieldInstances": [
@@ -3485,14 +3485,14 @@
                   ]
                 }
               ],
-              "__worldX": 576,
+              "__worldX": 656,
               "__worldY": 128
             },
             {
               "__identifier": "Creature",
               "__grid": [
-                5,
-                3
+                11,
+                10
               ],
               "__pivot": [
                 0,
@@ -3506,8 +3506,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                80,
-                48
+                176,
+                160
               ],
               "fieldInstances": [
                 {
@@ -3526,14 +3526,14 @@
                   ]
                 }
               ],
-              "__worldX": 512,
-              "__worldY": 64
+              "__worldX": 608,
+              "__worldY": 176
             },
             {
               "__identifier": "Creature",
               "__grid": [
-                9,
-                2
+                12,
+                10
               ],
               "__pivot": [
                 0,
@@ -3547,8 +3547,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                144,
-                32
+                192,
+                160
               ],
               "fieldInstances": [
                 {
@@ -3567,14 +3567,14 @@
                   ]
                 }
               ],
-              "__worldX": 576,
-              "__worldY": 48
+              "__worldX": 624,
+              "__worldY": 176
             },
             {
               "__identifier": "Creature",
               "__grid": [
-                16,
-                7
+                9,
+                10
               ],
               "__pivot": [
                 0,
@@ -3588,8 +3588,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                256,
-                112
+                144,
+                160
               ],
               "fieldInstances": [
                 {
@@ -3608,14 +3608,14 @@
                   ]
                 }
               ],
-              "__worldX": 688,
-              "__worldY": 128
+              "__worldX": 576,
+              "__worldY": 176
             },
             {
               "__identifier": "Creature",
               "__grid": [
-                12,
-                7
+                8,
+                10
               ],
               "__pivot": [
                 0,
@@ -3629,8 +3629,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                192,
-                112
+                128,
+                160
               ],
               "fieldInstances": [
                 {
@@ -3649,14 +3649,14 @@
                   ]
                 }
               ],
-              "__worldX": 624,
-              "__worldY": 128
+              "__worldX": 560,
+              "__worldY": 176
             },
             {
               "__identifier": "Creature",
               "__grid": [
-                12,
-                2
+                13,
+                10
               ],
               "__pivot": [
                 0,
@@ -3670,8 +3670,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                192,
-                32
+                208,
+                160
               ],
               "fieldInstances": [
                 {
@@ -3690,14 +3690,14 @@
                   ]
                 }
               ],
-              "__worldX": 624,
-              "__worldY": 48
+              "__worldX": 640,
+              "__worldY": 176
             },
             {
               "__identifier": "Creature",
               "__grid": [
-                4,
-                5
+                10,
+                10
               ],
               "__pivot": [
                 0,
@@ -3711,8 +3711,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                64,
-                80
+                160,
+                160
               ],
               "fieldInstances": [
                 {
@@ -3731,8 +3731,8 @@
                   ]
                 }
               ],
-              "__worldX": 496,
-              "__worldY": 96
+              "__worldX": 592,
+              "__worldY": 176
             }
           ]
         },
@@ -3740,7 +3740,7 @@
           "__identifier": "Floor",
           "__type": "IntGrid",
           "__cWid": 19,
-          "__cHei": 10,
+          "__cHei": 13,
           "__gridSize": 16,
           "__opacity": 1,
           "__pxTotalOffsetX": 0,
@@ -3925,6 +3925,63 @@
             1,
             1,
             1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             0,
             0,
             0,
