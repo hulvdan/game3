@@ -448,7 +448,7 @@ func _physics_process(dt: float) -> void:
 				attacker_pos + off,
 				polygon.get_distance_min(),
 				polygon.get_distance_max(),
-				-bf.xz(creature.transform.origin).angle_to_point(creature.melee_target_pos),
+				-creature.melee_target_dir.angle(),
 				polygon.get_angle(),
 				mask,
 				true,
