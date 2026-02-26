@@ -12,9 +12,9 @@ x fix: adding BLOCK to buffer removes all UNBLOCK from it
 x figlet banners pre-commit
 x melee__dash_starts_at * melee__dash_ends_at
 x melee mob who dashes before swing
-
-* fix: after mob's attack going outside->inside of his range resets cooldown.
+x fix: after mob's attack going outside->inside of his range resets cooldown.
   BUT IT SHOULD NOT RESET COOLDOWN!
+
 * моб, что взрывается на месте
 * моб, melee stomp
 *

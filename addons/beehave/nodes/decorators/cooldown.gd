@@ -11,6 +11,8 @@ class_name CooldownDecorator
 ## The wait time in seconds
 @export var wait_time := 0.0
 
+@export var hulvdan_disable_interrupt_reset_time: bool
+
 @onready var cache_key = "cooldown_%s" % self.get_instance_id()
 
 
@@ -52,6 +54,7 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 
 
 func interrupt(actor: Node, blackboard: Blackboard) -> void:
-	# Reset the cooldown when the branch changes
-	blackboard.set_value(cache_key, 0.0, str(actor.get_instance_id()))
+	if not hulvdan_disable_interrupt_reset_time:
+		# Reset the cooldown when the branch changes
+		blackboard.set_value(cache_key, 0.0, str(actor.get_instance_id()))
 	super.interrupt(actor, blackboard)
