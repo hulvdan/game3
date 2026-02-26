@@ -99,7 +99,7 @@ class UpdaterDefault extends UpdaterBase:
 
 		for mask: int in [
 			2 ** glib.GMaskType.WALLS,
-			2 ** glib.GMaskType.MOBS if is_player else 2 ** glib.GMaskType.PLAYER,
+			2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER),
 		]:
 			if data.get_collider_radius():
 				q = Collisions.query_circle(
@@ -172,7 +172,7 @@ class UpdaterArc extends UpdaterBase:
 			)
 
 		if x.elapsed >= data.get_arc__duration():
-			var mask: int = glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER
+			var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
 
 			if data.get_damage() > 0:
 				for d: Dictionary in Collisions.query_circle(
