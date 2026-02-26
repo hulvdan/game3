@@ -11,7 +11,7 @@ func set_attack_distance(value: float) -> void: ##
 ##
 
 
-func tick(actor_: Node, _blackboard: Blackboard) -> int:
+func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
 	var actor: Creature = actor_
 	var target_pos: Vector2 = bf.xz(Room.v.player.creature.transform.origin)
 	var pos = bf.xz((actor as Node3D).transform.origin)
@@ -29,3 +29,4 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	var dir: Vector2 = dpos.normalized()
 	actor.controller.move = dir
 	return RUNNING
+##

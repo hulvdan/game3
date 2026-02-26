@@ -19,16 +19,18 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 		actor.controller.move = Vector2(0, 0)
 	##
 
+	## Tracking target (player)
 	if actor.melee_attacking and actor.attack_elapsed <= data.get_melee__attack_stops_tracking_at():
 		actor.melee_target_pos = bf.xz(Room.v.player.creature.transform.origin)
 		actor.melee_target_dir = bf.vector2_direction_or_random(
 			bf.xz(actor.transform.origin),
 			actor.melee_target_pos,
 		)
+	##
 
 	actor.attack_elapsed += get_physics_process_delta_time()
 
-	# Processing dash tag
+	## Processing dash
 	if data.get_melee__attack_dash_distance() > 0:
 		actor.controller.move = actor.melee_target_dir
 
@@ -46,6 +48,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 				e - start,
 				data.get_melee__attack_dash_pow(),
 			)
+	##
 
 	## Spawning projectiles
 	if data.get_attack_projectile_type():
