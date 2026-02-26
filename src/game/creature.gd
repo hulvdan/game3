@@ -87,13 +87,27 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 	var chase: ActionChase = tree.get_node(chase_path)
 
 	var attack_dist: = data.get_attack_distance()
-	if data.get_melee__attack_polygon():
-		attack_dist += data.get_melee__attack_polygon().get_distance_max()
+
+	var polygon := data.get_melee__attack_polygon()
+	var circle := data.get_melee__attack_circle()
+
+	if polygon:
+		assert(!circle)
+	if circle:
+		assert(!polygon)
+
+	var hitbox_dist: float
+	if polygon:
+		hitbox_dist = polygon.get_distance_max() * (polygon.get_anchor_x() + 0.5)
+	if circle:
+		hitbox_dist = circle.get_radius() * (circle.get_anchor_x() + 0.5)
+
+	attack_dist += hitbox_dist
 
 	var dash_dist := data.get_melee__attack_dash_distance()
 	if dash_dist > 0:
 		attack_dist += dash_dist
-		attack_dist -= data.get_melee__attack_polygon().get_distance_max() / 2
+		attack_dist -= hitbox_dist / 2
 
 	chase.set_attack_distance(attack_dist)
 ##

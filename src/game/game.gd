@@ -79,8 +79,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	var creature: Creature = packed_creature.instantiate()
 	room.container_creatures.add_child(creature)
 
-	var ctype := data.get_collision_type()
-	creature.node_body.collision_layer = 2 ** ctype
+	creature.node_body.collision_layer = 2 ** data.get_mask_type()
 	creature.type = type
 	creature.res = load(data.get_res())
 	creature.speed_modifiers.base = data.get_speed()
@@ -423,9 +422,9 @@ func _physics_process(dt: float) -> void:
 			continue
 
 		var data := g_creatures[creature.type]
-		if creature.attack_elapsed < data.get_melee__attack_polygon_starts_at():
+		if creature.attack_elapsed < data.get_melee__attack_collision_starts_at():
 			continue
-		if creature.attack_elapsed > data.get_melee__attack_polygon_ends_at():
+		if creature.attack_elapsed > data.get_melee__attack_collision_ends_at():
 			continue
 
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)
@@ -434,19 +433,38 @@ func _physics_process(dt: float) -> void:
 
 		var attacker_pos := bf.xz(creature.transform.origin)
 
-		var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
+		var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
 		var polygon := data.get_melee__attack_polygon()
-		for d: Dictionary in Collisions.query_circle_segment(
-			attacker_pos,
-			polygon.get_distance_min(),
-			polygon.get_distance_max(),
-			-bf.xz(creature.transform.origin).angle_to_point(creature.melee_target_pos),
-			polygon.get_angle(),
-			mask,
-			true,
-			false,
-			12,
-		):
+		var circle := data.get_melee__attack_circle()
+		if polygon:
+			assert(!circle)
+		if circle:
+			assert(!polygon)
+
+		var q: Array[Dictionary]
+		if polygon:
+			q = Collisions.query_circle_segment(
+				attacker_pos,
+				polygon.get_distance_min(),
+				polygon.get_distance_max(),
+				-bf.xz(creature.transform.origin).angle_to_point(creature.melee_target_pos),
+				polygon.get_angle(),
+				mask,
+				true,
+				false,
+				12,
+			)
+		if circle:
+			q = Collisions.query_circle(
+				attacker_pos,
+				circle.get_radius(),
+				mask,
+				true,
+				false,
+				12,
+			)
+
+		for d: Dictionary in q:
 			var damaged_creature: Creature = d.collider
 			if damaged_creature in creature.melee_damaged_creatures:
 				continue

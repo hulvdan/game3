@@ -56,6 +56,12 @@ message GAttackPolygon {
   float distance_min = 1;
   float distance_max = 2;
   float angle = 3;
+  float anchor_x = 4;
+}
+
+message GAttackCircle {
+  float radius = 1;
+  float anchor_x = 2;
 }
 
 message GCreatureDrop {
@@ -96,18 +102,20 @@ message GCreature {
   repeated float attack_projectiles_spawn_at = 12;
 
   int32 melee__damage = 13;
-  float melee__attack_polygon_starts_at = 14;
-  float melee__attack_polygon_ends_at = 15;
+  float melee__attack_collision_starts_at = 14;
+  float melee__attack_collision_ends_at = 15;
   float melee__attack_stops_tracking_at = 16;
   float melee__attack_dash_starts_at = 17;
   float melee__attack_dash_ends_at = 18;
   float melee__attack_dash_distance = 19;
   float melee__attack_dash_pow = 20;
-  repeated GMeleeTagValue melee__tags = 21;
+  int32 melee__attack_collider_type = 21;
+  repeated GMeleeTagValue melee__tags = 22;
 
-  int32 collision_type = 22;
-  GAttackPolygon melee__attack_polygon = 23;
-  repeated GCreatureDrop drops = 24;
+  int32 mask_type = 23;
+  GAttackPolygon melee__attack_polygon = 24;
+  GAttackCircle melee__attack_circle = 25;
+  repeated GCreatureDrop drops = 26;
 }
 
 message GDamage {
@@ -164,7 +172,7 @@ message GProjectile {
   repeated GProjectileTagValue tags = 12;
 }
 
-message GCollision {
+message GMask {
   int32 type = 1;
   string debug_name = 2;
 }
@@ -247,7 +255,7 @@ message Lib {
   repeated GProjectileFly projectile_fly_types = 21;
   repeated GProjectileTag projectile_tags = 22;
   repeated GProjectile projectiles = 23;
-  repeated GCollision collision_flags = 24;
+  repeated GMask masks = 24;
   repeated GMeleeTag melee_tags = 25;
   // TABLE_GEN_END
 }

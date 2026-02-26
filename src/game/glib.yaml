@@ -86,7 +86,7 @@ progression: ##
   - type: CLASS_BARBARIAN
 ##
 
-collision_flags: ##
+masks: ##
   - type: WALLS
   - type: PLAYER
   - type: MOBS
@@ -101,7 +101,7 @@ creatures: ##
   - type: PLAYER
     hp: 10
     speed: 4
-    collision_type: PLAYER
+    mask_type: PLAYER
   - type: MOB_SHOOTER
     hp: 3
     speed: 0.4
@@ -154,6 +154,32 @@ creatures: ##
     attack_cooldown_min: 2.0
     attack_cooldown_max: 3.0
     attack_distance: 3
+  - type: MOB_BOMB_INSIDE
+    hp: 3
+    speed: 0.8
+    attack_projectile_type: STAR_HIVE_INSIDE
+    attack_projectiles_spawn_at:
+      - 0.5
+    attack_duration: 1.0
+    attack_cooldown_min: 2.0
+    attack_cooldown_max: 3.0
+    attack_distance: 3
+  - type: MOB_JUMPER
+    hp: 5
+    speed: 1
+    attack_cooldown_min: 1.5
+    attack_cooldown_max: 2.2
+    attack_duration: 0.8
+    melee__damage: 1
+    melee__attack_collision_starts_at: 0.5
+    melee__attack_collision_ends_at: 0.6
+    melee__attack_stops_tracking_at: 0.2
+    melee__attack_circle:
+      radius: 1.5
+    melee__attack_dash_starts_at: 0.2
+    melee__attack_dash_ends_at: 0.63
+    melee__attack_dash_distance: 3
+    melee__attack_dash_pow: 1
   - type: MOB_BONKER
     hp: 5
     speed: 1
@@ -161,13 +187,14 @@ creatures: ##
     attack_cooldown_max: 2.2
     attack_duration: 0.8
     melee__damage: 1
-    melee__attack_polygon_starts_at: 0.5
-    melee__attack_polygon_ends_at: 0.6
+    melee__attack_collision_starts_at: 0.5
+    melee__attack_collision_ends_at: 0.6
     melee__attack_stops_tracking_at: 0.2
     melee__attack_polygon:
       distance_min: 1
       distance_max: 2
       angle_degrees: 90
+      anchor_x: 0.5
     melee__attack_dash_starts_at: 0.2
     melee__attack_dash_ends_at: 0.5
     melee__attack_dash_distance: 1
@@ -179,12 +206,13 @@ creatures: ##
     attack_cooldown_max: 2.2
     attack_duration: 0.8
     melee__damage: 1
-    melee__attack_polygon_starts_at: 0.4
-    melee__attack_polygon_ends_at: 1.1
+    melee__attack_collision_starts_at: 0.4
+    melee__attack_collision_ends_at: 1.1
     melee__attack_stops_tracking_at: 0.3
     melee__attack_polygon:
       distance_max: 2
       angle_degrees: 20
+      anchor_x: 0.5
     melee__attack_dash_starts_at: 0.4
     melee__attack_dash_ends_at: 1.1
     melee__attack_dash_distance: 4

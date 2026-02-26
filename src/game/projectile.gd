@@ -98,8 +98,8 @@ class UpdaterDefault extends UpdaterBase:
 		var q: Array[Dictionary]
 
 		for mask: int in [
-			glib.GCollisionType.WALLS,
-			glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER,
+			2 ** glib.GMaskType.WALLS,
+			2 ** glib.GMaskType.MOBS if is_player else 2 ** glib.GMaskType.PLAYER,
 		]:
 			if data.get_collider_radius():
 				q = Collisions.query_circle(
@@ -121,12 +121,12 @@ class UpdaterDefault extends UpdaterBase:
 					MAX_COLLISIONS_DEFAULT,
 				)
 
-			if data.get_damage() > 0:
-				for d: Dictionary in q:
-					if mask == glib.GCollisionType.WALLS:
-						x.queue_free()
-						break
+			if mask == 2 ** glib.GMaskType.WALLS:
+				if q:
+					x.queue_free()
 
+			elif data.get_damage() > 0:
+				for d: Dictionary in q:
 					var damaged_creature: Creature = d.collider
 					if damaged_creature in x.damaged_creatures:
 						continue
@@ -172,7 +172,7 @@ class UpdaterArc extends UpdaterBase:
 			)
 
 		if x.elapsed >= data.get_arc__duration():
-			var mask: int = glib.GCollisionType.MOBS if is_player else glib.GCollisionType.PLAYER
+			var mask: int = glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER
 
 			if data.get_damage() > 0:
 				for d: Dictionary in Collisions.query_circle(

@@ -210,7 +210,7 @@ def _process_glib(genline, glib) -> None:
     ## Creatures
     for x in glib["creatures"][1:]:
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
-        x["collision_type"] = x.get("collision_type", "MOBS")
+        x["mask_type"] = x.get("mask_type", "MOBS")
         if "melee__attack_polygon" in x:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
     ##

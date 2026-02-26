@@ -842,6 +842,16 @@
             "color": 0
           },
           {
+            "id": "MOB_BOMB_INSIDE",
+            "tileRect": null,
+            "color": 0
+          },
+          {
+            "id": "MOB_JUMPER",
+            "tileRect": null,
+            "color": 0
+          },
+          {
             "id": "MOB_BONKER",
             "tileRect": null,
             "color": 0
@@ -3451,7 +3461,7 @@
               "__identifier": "Creature",
               "__grid": [
                 14,
-                7
+                10
               ],
               "__pivot": [
                 0,
@@ -3466,7 +3476,7 @@
               "defUid": 30,
               "px": [
                 224,
-                112
+                160
               ],
               "fieldInstances": [
                 {
@@ -3486,7 +3496,7 @@
                 }
               ],
               "__worldX": 656,
-              "__worldY": 128
+              "__worldY": 176
             },
             {
               "__identifier": "Creature",
@@ -3733,6 +3743,47 @@
               ],
               "__worldX": 592,
               "__worldY": 176
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                13,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "a04a1d50-fa90-11f0-8eb1-9974d4510cc1",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                208,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_JUMPER",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_JUMPER"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 640,
+              "__worldY": 128
             }
           ]
         },
@@ -3959,6 +4010,8 @@
             1,
             1,
             1,
+            1,
+            1,
             0,
             0,
             0,
@@ -3970,16 +4023,14 @@
             0,
             0,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
             0,
             0,
             0,
