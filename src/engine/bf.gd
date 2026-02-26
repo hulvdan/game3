@@ -92,7 +92,8 @@ func invalid_path() -> void: ##
 ##
 
 
-func remove(arr: Array, value: Variant) -> void: ##
+# arr: Array[T], value: T
+func remove_single(arr: Array, value: Variant) -> void: ##
 	assert(len(arr))
 	var index := arr.find(value)
 	assert(index >= 0)
@@ -111,7 +112,8 @@ func unstable_remove_at(arr: Array, index: int) -> void: ##
 ##
 
 
-func unstable_remove(arr: Array, value: Variant) -> void: ##
+# arr: Array[T], value: T
+func unstable_remove_single(arr: Array, value: Variant) -> void: ##
 	unstable_remove_at(arr, arr.find(value))
 ##
 
@@ -144,6 +146,7 @@ func unstable_remove_indices(arr: Array, sorted_indices: Array[int]) -> void: ##
 ##
 
 
+# arr: Array[T], value: T
 func remove_all(arr: Array, value: Variant) -> void: ##
 	assert(!_remove_indices)
 	for i in range(len(arr)):
@@ -153,6 +156,7 @@ func remove_all(arr: Array, value: Variant) -> void: ##
 ##
 
 
+# arr: Array[T], value: T
 func unstable_remove_all(arr: Array, value: Variant) -> void: ##
 	assert(!_remove_indices)
 	for i in range(len(arr)):
@@ -162,6 +166,7 @@ func unstable_remove_all(arr: Array, value: Variant) -> void: ##
 ##
 
 
+# arr: Array[T], key: Callable[[T], bool]
 func remove_all_by_key(arr: Array, key: Callable) -> void: ##
 	assert(!_remove_indices)
 	for i in range(len(arr)):
@@ -171,6 +176,7 @@ func remove_all_by_key(arr: Array, key: Callable) -> void: ##
 ##
 
 
+# arr: Array[T], key: Callable[[T], bool]
 func unstable_remove_all_by_key(arr: Array, key: Callable) -> void: ##
 	assert(!_remove_indices)
 	for i in range(len(arr)):

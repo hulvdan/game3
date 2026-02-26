@@ -44,7 +44,7 @@ func _on_body_entered_damage(creature: Creature) -> void:
 
 
 func _on_body_exited_damage(creature: Creature) -> void:
-	bf.remove(creatures_to_damage, creature)
+	bf.remove_single(creatures_to_damage, creature)
 
 
 func try_activate() -> void:
