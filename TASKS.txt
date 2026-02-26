@@ -13,6 +13,11 @@ x figlet banners pre-commit
 x melee__dash_starts_at * melee__dash_ends_at
 x melee mob who dashes before swing
 
+* fix: after mob's attack going outside->inside of his range resets cooldown.
+  BUT IT SHOULD NOT RESET COOLDOWN!
+* моб, что взрывается на месте
+* моб, melee stomp
+*
 * marking attacks / proejctiles as only_perfect_blockable
   -> projectile/melee hitbox shows up as red
 *
@@ -46,9 +51,6 @@ x melee mob who dashes before swing
 * !!! mobs can't start attacking when there's no raycast from mob to player
 *
 * player melee attack
-*
-* fix: after mob's attack going outside->inside of his range resets cooldown.
-  BUT IT SHOULD NOT RESET COOLDOWN!
 *
 * player class feature: knockback: default, 1/3, immune
 *
