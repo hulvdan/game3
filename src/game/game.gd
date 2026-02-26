@@ -603,14 +603,14 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 		if data.type != glib.GDamageType.AOE:
 			if room.player.blocking_perfectly:
 				player_perfectly_blocked.emit(creature.transform.origin)
-				creature.evade_attack(data.attack_id)
+				creature.mark_attack_as_evaded(data.attack_id)
 				creature.add_impulse(
 					data.impulse_dir,
 					data.impulse * glib.v.get_impulse_block_scale(),
 				)
 				return false
 			elif room.player.blocking:
-				creature.evade_attack(data.attack_id)
+				creature.mark_attack_as_evaded(data.attack_id)
 				creature.blocked = true
 				player_blocked.emit(creature.transform.origin)
 				creature.add_impulse(
@@ -630,7 +630,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 					room.player.add_stamina(retrieve, 1)
 					room.player.rolling_retrievable_cost -= retrieve
 					player_perfectly_evaded.emit(creature.transform.origin)
-				creature.evade_attack(data.attack_id)
+				creature.mark_attack_as_evaded(data.attack_id)
 				return false
 
 		var invincibility_dur := glib.v.get_player().get_invincibility_after_hit_seconds()

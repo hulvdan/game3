@@ -37,7 +37,7 @@ class EvadedAttack:
 	var destroy_at: float
 
 
-var _evaded_attacks: Array[EvadedAttack]
+var _attack_ids_marked_as_evaded: Array[EvadedAttack]
 var melee_target_pos: Vector2
 var melee_target_dir: Vector2
 var speed_modifiers: Dictionary[String, float] = { "base": 0 }
@@ -99,18 +99,18 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 ##
 
 
-func evade_attack(id: int) -> void: ##
+func mark_attack_as_evaded(id: int) -> void: ##
 	if !id:
 		return
 	var x := EvadedAttack.new()
 	x.id = id
 	x.destroy_at = glib.v.get_blocked_attack_damages_again_after()
-	_evaded_attacks.append(x)
+	_attack_ids_marked_as_evaded.append(x)
 ##
 
 
 func is_attack_evaded(id: int) -> bool: ##
-	for x: EvadedAttack in _evaded_attacks:
+	for x: EvadedAttack in _attack_ids_marked_as_evaded:
 		if x.id == id:
 			return true
 	return false
@@ -118,10 +118,10 @@ func is_attack_evaded(id: int) -> bool: ##
 
 
 func explicit_process(_dt: float) -> void: ##
-	for i in range(len(_evaded_attacks)):
-		if _evaded_attacks[i].destroy_at >= Room.v.start_elapsed:
+	for i in range(len(_attack_ids_marked_as_evaded)):
+		if _attack_ids_marked_as_evaded[i].destroy_at >= Room.v.start_elapsed:
 			_evaded_attack_indices.append(i)
 	for i in range(len(_evaded_attack_indices)):
-		bf.unstable_remove_at(_evaded_attacks, len(_evaded_attack_indices) - i - 1)
+		bf.unstable_remove_at(_attack_ids_marked_as_evaded, len(_evaded_attack_indices) - i - 1)
 	_evaded_attack_indices.clear()
 ##
