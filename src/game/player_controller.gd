@@ -62,6 +62,13 @@ func push_action(type: ActionType, dir: Vector2) -> void: ##
 	a.type = type
 	a.shoot_or_move_or_roll__dir = dir
 	_buffer.append(a)
+
+	if type == ActionType.BLOCK:
+		bf.remove_all_by_key(
+			_buffer,
+			func(x: Action):
+				return Action.is_unblock(x)
+		)
 ##
 
 
@@ -143,6 +150,10 @@ class Action: ##
 	var type: ActionType
 	var created_at: float
 	var shoot_or_move_or_roll__dir: Vector2
+
+
+	static func is_unblock(x: Action) -> bool:
+		return x.type == ActionType.UNBLOCK
 ##
 
 
@@ -178,10 +189,8 @@ class PlayerBase: ##
 				_consumed_action_indices.append(i1)
 			elif consume_action(a):
 				_consumed_action_indices.append(i1)
-		for i2 in range(len(_consumed_action_indices)):
-			var v := _consumed_action_indices[len(_consumed_action_indices) - i2 - 1]
-			player._buffer.remove_at(v)
-		_consumed_action_indices.clear()
+
+		bf.unstable_remove_indices(player._buffer, _consumed_action_indices)
 ##
 
 

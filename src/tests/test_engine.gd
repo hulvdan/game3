@@ -1,5 +1,10 @@
 extends GutTest
 
-func test_player_health() -> void:
-	var player: int = 10
-	assert(player == 10)
+func test_remove_all() -> void:
+	var arr := [1, 3, 2, 1]
+	bf.remove_all(arr, 1)
+	assert(arr == [3, 2])
+
+	arr = [1, 3, 2, 1]
+	bf.unstable_remove_all(arr, 1)
+	assert(arr == [2, 3])

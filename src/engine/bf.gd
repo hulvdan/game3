@@ -3,6 +3,10 @@ extends Node
 # const INT_MAX = 9223372036854775807 # 2^63 - 1
 # const INT_MIN = -9223372036854775808 # -2^63
 
+## Private
+static var _remove_indices: Array[int]
+##
+
 const DIRECTION_OFFSETS: Array[Vector2i] = [
 	Vector2i(1, 0),
 	Vector2i(0, 1),
@@ -109,4 +113,68 @@ func unstable_remove_at(arr: Array, index: int) -> void: ##
 
 func unstable_remove(arr: Array, value: Variant) -> void: ##
 	unstable_remove_at(arr, arr.find(value))
+##
+
+
+func remove_indices(arr: Array, sorted_indices: Array[int]) -> void: ##
+	for i in range(len(sorted_indices) - 1):
+		assert(sorted_indices[i] < sorted_indices[i + 1])
+	for i in sorted_indices:
+		assert(i >= 0)
+		assert(i < len(arr))
+
+	for i2 in range(len(sorted_indices)):
+		var v := sorted_indices[len(sorted_indices) - i2 - 1]
+		arr.remove_at(v)
+	sorted_indices.clear()
+##
+
+
+func unstable_remove_indices(arr: Array, sorted_indices: Array[int]) -> void: ##
+	for i in range(len(sorted_indices) - 1):
+		assert(sorted_indices[i] < sorted_indices[i + 1])
+	for i in sorted_indices:
+		assert(i >= 0)
+		assert(i < len(arr))
+
+	for i2 in range(len(sorted_indices)):
+		var v := sorted_indices[len(sorted_indices) - i2 - 1]
+		unstable_remove_at(arr, v)
+	sorted_indices.clear()
+##
+
+
+func remove_all(arr: Array, value: Variant) -> void: ##
+	assert(!_remove_indices)
+	for i in range(len(arr)):
+		if arr[i] == value:
+			_remove_indices.append(i)
+	remove_indices(arr, _remove_indices)
+##
+
+
+func unstable_remove_all(arr: Array, value: Variant) -> void: ##
+	assert(!_remove_indices)
+	for i in range(len(arr)):
+		if arr[i] == value:
+			_remove_indices.append(i)
+	unstable_remove_indices(arr, _remove_indices)
+##
+
+
+func remove_all_by_key(arr: Array, key: Callable) -> void: ##
+	assert(!_remove_indices)
+	for i in range(len(arr)):
+		if key.call(arr[i]):
+			_remove_indices.append(i)
+	remove_indices(arr, _remove_indices)
+##
+
+
+func unstable_remove_all_by_key(arr: Array, key: Callable) -> void: ##
+	assert(!_remove_indices)
+	for i in range(len(arr)):
+		if key.call(arr[i]):
+			_remove_indices.append(i)
+	unstable_remove_indices(arr, _remove_indices)
 ##

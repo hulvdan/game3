@@ -1,21 +1,13 @@
 {
   "version": "2.0.0",
   "tasks": [
-    // {
-    //   "label": "codegen_and_lint",
-    //   "type": "shell",
-    //   "command": "uv run python cli/bf_cli.py codegen_and_lint windows debug",
-    //   "options": {
-    //     "shell": {
-    //       "executable": "cmd.exe",
-    //       "args": ["/c"]
-    //     }
-    //   }
-    //   // "group": {
-    //   //     "kind": "build",
-    //   //     "isDefault": true
-    //   // },
-    //   // "problemMatcher": []
-    // }
+    {
+      "label": "test",
+      "type": "shell",
+      "command": "uv run python cli/bf_cli.py test",
+      "icon": {
+        "id": "run"
+      }
+    }
   ]
 }
