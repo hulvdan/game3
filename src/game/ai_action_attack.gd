@@ -29,25 +29,23 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 	actor.attack_elapsed += get_physics_process_delta_time()
 
 	# Processing dash tag
-	for tag in data.get_melee__tags():
-		match tag.get_meleetag_type():
-			glib.GMeleeTagType.DASH:
-				actor.controller.move = actor.melee_target_dir
+	if data.get_melee__attack_dash_distance() > 0:
+		actor.controller.move = actor.melee_target_dir
 
-				var e: float = min(actor.attack_elapsed, data.get_attack_duration())
-				actor.speed_modifiers.melee_dash = 0
+		var e: float = min(actor.attack_elapsed, data.get_attack_duration())
+		actor.speed_modifiers.melee_dash = 0
 
-				var start := data.get_melee__attack_polygon_start_at()
-				var end := data.get_melee__attack_polygon_end_at()
-				var dur := end - start
+		var start := data.get_melee__attack_dash_starts_at()
+		var end := data.get_melee__attack_dash_ends_at()
+		var dur := end - start
 
-				if ((start <= actor.attack_elapsed) && (actor.attack_elapsed <= end)):
-					actor.speed_modifiers.melee_dash = bf.get_roll_speed(
-						tag.get_valuef1(),
-						dur,
-						e - start,
-						tag.get_valuef2(),
-					)
+		if ((start <= actor.attack_elapsed) && (actor.attack_elapsed <= end)):
+			actor.speed_modifiers.melee_dash = bf.get_roll_speed(
+				data.get_melee__attack_dash_distance(),
+				dur,
+				e - start,
+				data.get_melee__attack_dash_pow(),
+			)
 
 	## Spawning projectiles
 	if data.get_attack_projectile_type():

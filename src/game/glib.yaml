@@ -93,9 +93,7 @@ collision_flags: ##
 ##
 
 melee_tags: ##
-  - type: DASH
-    requires_valuef1: true # dash distance
-    requires_valuef2: true # dash pow (roll-like)
+  - type: INVALID
 ##
 
 creatures: ##
@@ -163,13 +161,17 @@ creatures: ##
     attack_cooldown_max: 2.2
     attack_duration: 0.8
     melee__damage: 1
-    melee__attack_polygon_start_at: 0.5
-    melee__attack_polygon_end_at: 0.6
+    melee__attack_polygon_starts_at: 0.5
+    melee__attack_polygon_ends_at: 0.6
     melee__attack_stops_tracking_at: 0.2
     melee__attack_polygon:
       distance_min: 1
       distance_max: 2
       angle_degrees: 90
+    melee__attack_dash_starts_at: 0.2
+    melee__attack_dash_ends_at: 0.5
+    melee__attack_dash_distance: 1
+    melee__attack_dash_pow: 1
   - type: MOB_SPEAR
     hp: 5
     speed: 1
@@ -177,16 +179,16 @@ creatures: ##
     attack_cooldown_max: 2.2
     attack_duration: 0.8
     melee__damage: 1
-    melee__attack_polygon_start_at: 0.4
-    melee__attack_polygon_end_at: 1.1
+    melee__attack_polygon_starts_at: 0.4
+    melee__attack_polygon_ends_at: 1.1
     melee__attack_stops_tracking_at: 0.3
     melee__attack_polygon:
       distance_max: 2
       angle_degrees: 20
-    melee__tags:
-      - meleetag_type: DASH
-        valuef1: 4
-        valuef2: 1
+    melee__attack_dash_starts_at: 0.4
+    melee__attack_dash_ends_at: 1.1
+    melee__attack_dash_distance: 4
+    melee__attack_dash_pow: 1
 
 ##
 

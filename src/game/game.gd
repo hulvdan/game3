@@ -423,9 +423,9 @@ func _physics_process(dt: float) -> void:
 			continue
 
 		var data := g_creatures[creature.type]
-		if creature.attack_elapsed < data.get_melee__attack_polygon_start_at():
+		if creature.attack_elapsed < data.get_melee__attack_polygon_starts_at():
 			continue
-		if creature.attack_elapsed > data.get_melee__attack_polygon_end_at():
+		if creature.attack_elapsed > data.get_melee__attack_polygon_ends_at():
 			continue
 
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)

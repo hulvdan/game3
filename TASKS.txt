@@ -10,12 +10,12 @@ PLAN
 x vscode test action
 x fix: adding BLOCK to buffer removes all UNBLOCK from it
 x figlet banners pre-commit
+x melee__dash_starts_at * melee__dash_ends_at
+x melee mob who dashes before swing
 
 * marking attacks / proejctiles as only_perfect_blockable
   -> projectile/melee hitbox shows up as red
 *
-* melee__dash_starts_at
-* melee__dash_ends_at
 * projectile blockable / not
 *
 * игрок может бросить бомбу

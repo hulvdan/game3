@@ -95,15 +95,19 @@ message GCreature {
   int32 attack_projectile_type = 11;
   repeated float attack_projectiles_spawn_at = 12;
 
-  float melee__attack_polygon_start_at = 13;
-  float melee__attack_polygon_end_at = 14;
-  float melee__attack_stops_tracking_at = 15;
-  int32 melee__damage = 16;
-  repeated GMeleeTagValue melee__tags = 17;
+  int32 melee__damage = 13;
+  float melee__attack_polygon_starts_at = 14;
+  float melee__attack_polygon_ends_at = 15;
+  float melee__attack_stops_tracking_at = 16;
+  float melee__attack_dash_starts_at = 17;
+  float melee__attack_dash_ends_at = 18;
+  float melee__attack_dash_distance = 19;
+  float melee__attack_dash_pow = 20;
+  repeated GMeleeTagValue melee__tags = 21;
 
-  int32 collision_type = 18;
-  GAttackPolygon melee__attack_polygon = 19;
-  repeated GCreatureDrop drops = 20;
+  int32 collision_type = 22;
+  GAttackPolygon melee__attack_polygon = 23;
+  repeated GCreatureDrop drops = 24;
 }
 
 message GDamage {

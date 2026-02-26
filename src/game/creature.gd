@@ -89,12 +89,11 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 	var attack_dist: = data.get_attack_distance()
 	if data.get_melee__attack_polygon():
 		attack_dist += data.get_melee__attack_polygon().get_distance_max()
-	for tag in data.get_melee__tags():
-		match tag.get_meleetag_type():
-			glib.GMeleeTagType.DASH:
-				var dash_dist := tag.get_valuef1()
-				attack_dist += dash_dist
-				attack_dist -= data.get_melee__attack_polygon().get_distance_max()
+
+	var dash_dist := data.get_melee__attack_dash_distance()
+	if dash_dist > 0:
+		attack_dist += dash_dist
+		attack_dist -= data.get_melee__attack_polygon().get_distance_max() / 2
 
 	chase.set_attack_distance(attack_dist)
 ##
