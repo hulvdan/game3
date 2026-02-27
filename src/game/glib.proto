@@ -287,6 +287,7 @@ message Lib {
 
   GV2i world_size = 14;
   GV2i progression_size = 15;
+
   // TABLE_GEN_START
   repeated GDamage damages = 16;
   repeated GProgression progression = 17;
