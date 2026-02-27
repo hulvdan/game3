@@ -120,16 +120,16 @@ creatures:
           - 0.1
         duration: 0.25
         tags:
-          # - attacktag_type: DASH
-          #   f1: 0.2 # starts_at
-          #   f2: 0.63 # ends_at
-          #   f3: 3 # distance
-          #   f4: 1 # pow
-          - attacktag_type: BLINK
-            f1: 0.02 # starts_at
-            f2: 0.04 # ends_at
-            f3: 2 # distance
-            f4: 0 # distance_delta
+        # - attacktag_type: DASH
+        #   f1: 0.2 # starts_at
+        #   f2: 0.63 # ends_at
+        #   f3: 3 # distance
+        #   f4: 1 # pow
+        # - attacktag_type: BLINK
+        #   f1: 0.02 # starts_at
+        #   f2: 0.04 # ends_at
+        #   f3: 2 # distance
+        #   f4: 0 # distance_delta
   ##
   - type: MOB_SHOOTER ##
     hp: 3

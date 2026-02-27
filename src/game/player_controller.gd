@@ -15,6 +15,7 @@ var dodging := false
 var blocking := false
 var blocking_perfectly := false
 var ki := false
+var aim_pos: Vector2
 var _stamina_depleted_at := 0.0
 var _next_block_at: float = 0.0
 var _next_roll_at: float = 0.0
@@ -236,6 +237,10 @@ class PlayerDefault extends PlayerBase: ##
 class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
+		player.consume_stamina(
+			glib.v.get_player().get_stamina_attack_cost(),
+			glib.v.get_player().get_stamina_attack_rally_scale(),
+		)
 		player.creature.speed_modifiers.shooting = glib.v.get_player().get_speed_scale__shooting()
 		player._stamina_regen_modifiers.shooting = glib.v.get_player().get_stamina_regen_scale__shooting()
 
@@ -253,7 +258,7 @@ class PlayerAttack extends PlayerBase: ##
 			player.creature,
 			null,
 			glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_attacks()[0],
-			bf.xz(player.creature.transform.origin) - bf.xz(player.bow.transform.basis.z),
+			player.aim_pos,
 		):
 			player._change_state(StateType.DEFAULT, null)
 

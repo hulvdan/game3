@@ -328,6 +328,7 @@ func _physics_process(dt: float) -> void:
 
 	## Updating player's bow direction
 	var end_point := get_mouse_world_point()
+	room.player.aim_pos = bf.xz(end_point)
 	if end_point != Vector3.INF:
 		room.player.bow.transform.basis = room.player.creature.transform.looking_at(end_point).basis
 	##
@@ -488,7 +489,7 @@ func _physics_process(dt: float) -> void:
 		Projectile.updaters[data.get_projectilefly_type()].explicit_process(
 			dt,
 			x,
-			(x.d.owner.type == glib.GCreatureType.PLAYER),
+			(x.d.owner_type == glib.GCreatureType.PLAYER),
 			data,
 		)
 		if x.is_queued_for_deletion():

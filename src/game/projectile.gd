@@ -14,6 +14,7 @@ static var updaters: Array[UpdaterBase] = [
 
 class Data:
 	var type: glib.GProjectileType
+	var owner_type: glib.GCreatureType
 	var owner: Creature
 	var pos: Vector2
 	var target: Vector2
@@ -65,6 +66,7 @@ func on_free(data: glib.GProjectile) -> void: ##
 
 					var c := Projectile.Data.new()
 					c.type = tag.get_projectile_type() as glib.GProjectileType
+					c.owner_type = d.owner_type
 					c.owner = d.owner
 					c.pos = bf.xz(transform.origin)
 					c.target = c.pos + Vector2(1, 0).rotated(angle)

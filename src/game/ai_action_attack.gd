@@ -80,6 +80,7 @@ static func explicit_update_attack(
 				c.attack_projectiles_spawned += 1
 				var d := Projectile.Data.new()
 				d.type = attack.get_projectile_type() as glib.GProjectileType
+				d.owner_type = c.type
 				d.owner = c
 				d.pos = bf.xz(c.transform.origin)
 				d.target = c.attack_target_pos
