@@ -12,8 +12,8 @@ x blinker: spawn projectile -> teleport mob upon it finishing
 x fused mob / player attacks: adapted schema
 x fused mob / player attacks: the same attack can be used by player/mob
 x fused mob / player attacks: test player can use blink
+x yamllint
 
-* yamllint
 * fused mob / player attacks: player's blink correct distance (set target to cursor)
 * fused mob / player attacks:
 * fused mob / player attacks:
