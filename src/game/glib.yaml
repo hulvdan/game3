@@ -27,8 +27,8 @@ player: ##
   stamina_regen_per_second: 20
   stamina_roll_cost:
     flat: 35
-    rally_pre_mult: 0.75
-    rally_flat: 10
+    rally_pre_mult: 0.5
+    rally_flat: 0
     rally_post_mult: 1
   stamina_rally_decay_after: 1
   stamina_rally_decay_per_second: 20
@@ -116,22 +116,22 @@ creatures:
     speed: 4
     mask_type: PLAYER
     attacks:
-      - duration: 0.3
-        stamina_cost:
-          flat: 0
-          rally_pre_mult: 1
-          rally_flat: 0
-          rally_post_mult: 1
-        stops_tracking_at: 0.1
-        melee:
-          damage: 1
-          starts_at: 0.1
-          ends_at: 0.2
-          polygon:
-            distance_min: 0.5
-            distance_max: 2
-            angle_degrees: 90
-            anchor_x: 0.5
+      # - duration: 0.3
+      #   stamina_cost:
+      #     flat: 0
+      #     rally_pre_mult: 1
+      #     rally_flat: 0
+      #     rally_post_mult: 1
+      #   stops_tracking_at: 0.1
+      #   melee:
+      #     damage: 1
+      #     starts_at: 0.1
+      #     ends_at: 0.2
+      #     polygon:
+      #       distance_min: 0.5
+      #       distance_max: 2
+      #       angle_degrees: 90
+      #       anchor_x: 0.5
       - projectile_type: ARROW
         projectiles_spawn_at:
           - 0.1
