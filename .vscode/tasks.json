@@ -12,7 +12,6 @@
     {
       "label": "gitf",
       "type": "shell",
-      // aboba
       "command": "uv run python cli/bf_cli.py gitf",
       "icon": {
         "id": "run"
