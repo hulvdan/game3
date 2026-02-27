@@ -15,6 +15,11 @@
       "command": "uv run python cli/bf_cli.py gitf",
       "icon": {
         "id": "run"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
       }
     }
   ]
