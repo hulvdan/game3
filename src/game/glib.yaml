@@ -196,19 +196,11 @@ creatures: ##
     speed: 1
     attack_cooldown_min: 1.5
     attack_cooldown_max: 2.2
-    attack_duration: 0.8
-    melee__damage: 1
-    melee__attack_collision_starts_at: 0.5
-    melee__attack_collision_ends_at: 0.6
-    melee__attack_stops_tracking_at: 0.2
-    melee__attack_circle:
-      radius: 1.5
-    melee__tags:
-      - meleetag_type: BLINK
-        f1: 0.2 # starts_at
-        f2: 0.63 # ends_at
-        f3: 3 # distance
-        f4: 0.2 # distance_delta
+    attack_duration: 1.2
+    attack_projectile_type: BLINK
+    attack_projectiles_spawn_at:
+      - 0.2
+    attack_distance: 4
   - type: MOB_BONKER
     hp: 5
     speed: 1
@@ -283,6 +275,8 @@ projectile_tags: ##
     requires_i1: true # child projectiles count
     requires_f1: true # child projectiles spawn time
     requires_projectile_type: true
+  - type: BLINK
+    requires_f1: true # blink_time
 ##
 
 projectiles: ##
@@ -337,5 +331,14 @@ projectiles: ##
     tags:
       - projectiletag_type: HOMING
         f1: 1.0
+  - type: BLINK
+    damage: 2
+    projectilefly_type: ARC
+    arc__duration: 1
+    collider_radius: 1
+    distance: 4
+    tags:
+      - projectiletag_type: BLINK
+        f1: 1.0 # blink_time
         ##
 

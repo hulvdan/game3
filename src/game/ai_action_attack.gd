@@ -75,7 +75,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 				projectiles_spawned += 1
 				var d := Projectile.Data.new()
 				d.type = data.get_attack_projectile_type() as glib.GProjectileType
-				d.owner = actor.type
+				d.owner = actor
 				d.pos = bf.xz(actor.transform.origin)
 				d.target = bf.xz(Room.v.player.creature.transform.origin)
 				d.homing__target = Room.v.player.creature

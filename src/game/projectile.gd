@@ -9,7 +9,7 @@ const MAX_COLLISIONS_AOE := 12
 ## Variables
 class Data:
 	var type: glib.GProjectileType
-	var owner: glib.GCreatureType
+	var owner: Creature
 	var pos: Vector2
 	var target: Vector2
 	var homing__target: Node3D
@@ -25,6 +25,7 @@ var attack_id: int
 var calculated__dir: Vector2
 var homing__velocity: Vector2
 var travelled: float
+var blinked: bool
 
 @onready var sprite: Sprite3D = %_sprite
 
@@ -32,6 +33,19 @@ static var updaters: Array[UpdaterBase] = [
 	UpdaterDefault.new(),
 	UpdaterArc.new(),
 ]
+##
+
+
+func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
+	elapsed += dt
+
+	for tag in data.get_tags():
+		match tag.get_projectiletag_type():
+			glib.GProjectileTagType.BLINK:
+				if !blinked && (elapsed >= tag.get_f1()):
+					blinked = true
+					d.owner.transform.origin = transform.origin
+					d.owner.reset_physics_interpolation()
 ##
 
 
@@ -62,8 +76,7 @@ class UpdaterBase:
 	static var damage_data := Game.ApplyDamageData.new()
 
 
-	func explicit_process(dt: float, x: Projectile, _is_player: bool, data: glib.GProjectile) -> void: ##
-		x.elapsed += dt
+	func explicit_process(_dt: float, x: Projectile, _is_player: bool, data: glib.GProjectile) -> void: ##
 		damage_data.attack_id = x.attack_id
 		if x.travelled > data.get_distance():
 			x.queue_free()

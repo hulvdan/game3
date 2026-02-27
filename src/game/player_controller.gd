@@ -254,7 +254,7 @@ class PlayerShoot extends PlayerBase: ##
 			)
 			var d := Projectile.Data.new()
 			d.type = glib.GProjectileType.ARROW
-			d.owner = glib.GCreatureType.PLAYER
+			d.owner = player.creature
 			d.pos = bf.xz(player.creature.transform.origin)
 			d.target = d.pos - bf.xz(player.bow.transform.basis.z)
 			Game.v.make_projectile(d)

@@ -7,8 +7,9 @@ BIG PLAN
 PLAN
 ============================================================
 
-* mob same as jumper but BLINKER (teleports in front of player)
-*
+x mob same as jumper but BLINKER (teleports in front of player)
+x blinker: spawn projectile -> teleport mob upon it finishing
+
 * obstacles:
   * axis:
     * size

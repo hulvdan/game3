@@ -483,10 +483,11 @@ func _physics_process(dt: float) -> void:
 	## - Updating projectiles + collisions + despawning
 	for x: Projectile in room.container_projectiles.get_children():
 		var data := g_projectiles[x.d.type]
+		x.explicit_process(dt, data)
 		Projectile.updaters[data.get_projectilefly_type()].explicit_process(
 			dt,
 			x,
-			(x.d.owner == glib.GCreatureType.PLAYER),
+			(x.d.owner.type == glib.GCreatureType.PLAYER),
 			data,
 		)
 		if x.is_queued_for_deletion():

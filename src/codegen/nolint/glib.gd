@@ -5824,6 +5824,7 @@ enum GProjectileFlyType {
 enum GProjectileTagType {
 	HOMING,
 	HIVE,
+	BLINK,
 	COUNT,
 }
 
@@ -5836,6 +5837,7 @@ enum GProjectileType {
 	STAR_HIVE,
 	STAR_BIT,
 	HOMING,
+	BLINK,
 	COUNT,
 }
 
