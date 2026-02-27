@@ -265,6 +265,9 @@ message GConfigPlayer {
 }
 
 message Lib {
+  // Engine
+
+  // Game
   GConfigControls controls = 1;
   GConfigPlayer player = 2;
   GConfigSpikes spikes = 3;
