@@ -92,22 +92,24 @@ masks: ##
   - type: MOBS
 ##
 
-melee_tags: ##
-  - type: DASH
+melee_tags:
+  - type: DASH ##
     requires_f1: true # starts_at
     requires_f2: true # ends_at
     requires_f3: true # distance
     requires_f4: true # pow
-  - type: BLINK
+  ##
+  - type: BLINK ##
     requires_f1: true # starts_at
     requires_f2: true # ends_at
     requires_f3: true # distance
     requires_f4: true # distance_delta
-##
+    ##
 
-creatures: ##
-  - type: INVALID
-  - type: PLAYER
+creatures:
+  - type: INVALID ##
+  ##
+  - type: PLAYER ##
     hp: 10
     speed: 4
     mask_type: PLAYER
@@ -116,7 +118,8 @@ creatures: ##
         projectiles_spawn_at:
           - 0.5
         duration: 0.8
-  - type: MOB_SHOOTER
+  ##
+  - type: MOB_SHOOTER ##
     hp: 3
     speed: 0.4
     attacks:
@@ -127,7 +130,8 @@ creatures: ##
         cooldown_min: 0.7
         cooldown_max: 1.2
         distance: 4
-  - type: MOB_MAGE
+  ##
+  - type: MOB_MAGE ##
     hp: 2
     speed: 0.4
     attacks:
@@ -140,7 +144,8 @@ creatures: ##
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 5
-  - type: MOB_HOMER
+  ##
+  - type: MOB_HOMER ##
     hp: 3
     speed: 0.8
     attacks:
@@ -151,7 +156,8 @@ creatures: ##
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 7
-  - type: MOB_HIVER
+  ##
+  - type: MOB_HIVER ##
     hp: 3
     speed: 0.8
     attacks:
@@ -162,7 +168,8 @@ creatures: ##
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 7
-  - type: MOB_HIVER_INSIDE
+  ##
+  - type: MOB_HIVER_INSIDE ##
     hp: 3
     speed: 0.8
     attacks:
@@ -173,7 +180,8 @@ creatures: ##
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 3
-  - type: MOB_BOMB_INSIDE
+  ##
+  - type: MOB_BOMB_INSIDE ##
     hp: 3
     speed: 0.8
     attacks:
@@ -184,7 +192,8 @@ creatures: ##
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 3
-  - type: MOB_JUMPER
+  ##
+  - type: MOB_JUMPER ##
     hp: 5
     speed: 1
     attacks:
@@ -203,7 +212,8 @@ creatures: ##
             f2: 0.63 # ends_at
             f3: 3 # distance
             f4: 1 # pow
-  - type: MOB_BLINKER
+  ##
+  - type: MOB_BLINKER ##
     hp: 5
     speed: 1
     attacks:
@@ -214,7 +224,8 @@ creatures: ##
         projectiles_spawn_at:
           - 0.2
         distance: 4
-  - type: MOB_BONKER
+  ##
+  - type: MOB_BONKER ##
     hp: 5
     speed: 1
     attacks:
@@ -236,7 +247,8 @@ creatures: ##
             f2: 0.5 # ends_at
             f3: 1 # distance
             f4: 1 # pow
-  - type: MOB_SPEAR
+  ##
+  - type: MOB_SPEAR ##
     hp: 5
     speed: 1
     attacks:
@@ -257,7 +269,7 @@ creatures: ##
             f2: 1.1 # ends_at
             f3: 4 # distance
             f4: 1 # pow
-##
+            ##
 
 items: ##
   - type: INVALID
@@ -267,52 +279,61 @@ items: ##
   - type: BONE
 ##
 
-collectibles: ##
-  - type: INVALID
-  - type: ORE
+collectibles:
+  - type: INVALID ##
+  ##
+  - type: ORE ##
     item_type: ORE
-  - type: PLANT
+  ##
+  - type: PLANT ##
     item_type: PLANT
-  - type: BONE
+  ##
+  - type: BONE ##
     item_type: BONE
-##
+    ##
 
 projectile_fly_types: ##
   - type: DEFAULT
   - type: ARC
 ##
 
-projectile_tags: ##
+projectile_tags:
   # TODO: Optional fields? Would allow validating
-  - type: HOMING
+  - type: HOMING ##
     requires_f1: true # rotation speed
-  - type: HIVE
+  ##
+  - type: HIVE ##
     requires_i1: true # child projectiles count
     requires_f1: true # child projectiles spawn time
     requires_projectile_type: true
-  - type: BLINK
+  ##
+  - type: BLINK ##
     requires_f1: true # blink_time
-##
+    ##
 
-projectiles: ##
-  - type: INVALID
-  - type: ARROW
+projectiles:
+  - type: INVALID ##
+  ##
+  - type: ARROW ##
     damage: 1
     default__speed: 14
     distance: 6
-  - type: BALL
+  ##
+  - type: BALL ##
     damage: 1
     default__speed: 3
     collider_radius: 0.3
     distance: 8
-  - type: BOMB
+  ##
+  - type: BOMB ##
     damage: 2
     projectilefly_type: ARC
     arc__height: 1
     arc__duration: 1
     collider_radius: 1
     distance: 5
-  - type: STAR_HIVE_INSIDE
+  ##
+  - type: STAR_HIVE_INSIDE ##
     projectilefly_type: ARC
     tags:
       - projectiletag_type: HIVE
@@ -322,7 +343,8 @@ projectiles: ##
     arc__height: 1
     arc__duration: 0.3
     collider_radius: 1
-  - type: STAR_HIVE
+  ##
+  - type: STAR_HIVE ##
     projectilefly_type: ARC
     tags:
       - projectiletag_type: HIVE
@@ -333,12 +355,14 @@ projectiles: ##
     arc__duration: 1
     collider_radius: 1
     distance: 5
-  - type: STAR_BIT
+  ##
+  - type: STAR_BIT ##
     damage: 1
     default__speed: 3
     collider_radius: 0.2
     distance: 3
-  - type: HOMING
+  ##
+  - type: HOMING ##
     damage: 1
     default__speed: 3
     collider_radius: 0.3
@@ -346,7 +370,8 @@ projectiles: ##
     tags:
       - projectiletag_type: HOMING
         f1: 1.0
-  - type: BLINK
+  ##
+  - type: BLINK ##
     damage: 2
     projectilefly_type: ARC
     arc__duration: 1
