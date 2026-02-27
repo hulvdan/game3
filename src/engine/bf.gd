@@ -3,16 +3,16 @@ extends Node
 # const INT_MAX = 9223372036854775807 # 2^63 - 1
 # const INT_MIN = -9223372036854775808 # -2^63
 
-## Private
-static var _remove_indices: Array[int]
-##
-
 const DIRECTION_OFFSETS: Array[Vector2i] = [
 	Vector2i(1, 0),
 	Vector2i(0, 1),
 	Vector2i(-1, 0),
 	Vector2i(0, -1),
 ]
+
+## Private
+static var _remove_indices: Array[int]
+##
 
 enum DirectionFlags {
 	NOT_SET = 0,

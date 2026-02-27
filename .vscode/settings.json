@@ -12,7 +12,7 @@
   },
   "runOnSave.commands": [
     {
-      "match": ".(yml|yaml|yamlfmt)$",
+      "match": ".(yml|yaml|yamlfmt|yamllint)$",
       "command": "yamlfmt ${file}",
       "runIn": "backend"
     },

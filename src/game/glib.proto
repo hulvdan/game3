@@ -70,13 +70,13 @@ message GCreatureDrop {
   int32 max = 3;
 }
 
-message GMeleeTag {
+message GAttackTag {
   int32 type = 1;
   string debug_name = 2;
 }
 
-message GMeleeTagValue {
-  int32 meleetag_type = 1;
+message GAttackTagValue {
+  int32 attacktag_type = 1;
   int32 i1 = 2;
   int32 i2 = 3;
   int32 i3 = 4;
@@ -93,15 +93,16 @@ message GAttack {
   float cooldown_max = 3;
   float distance = 4;
 
-  int32 projectile_type = 5;
-  repeated float projectiles_spawn_at = 6;
+  float stops_tracking_at = 5;
 
-  int32 melee__damage = 7;
-  float melee__collision_starts_at = 8;
-  float melee__collision_ends_at = 9;
-  float melee__stops_tracking_at = 10;
+  int32 projectile_type = 6;
+  repeated float projectiles_spawn_at = 7;
+
+  int32 melee__damage = 8;
+  float melee__collision_starts_at = 9;
+  float melee__collision_ends_at = 10;
   int32 melee__collider_type = 11;
-  repeated GMeleeTagValue melee__tags = 12;
+  repeated GAttackTagValue tags = 12;
 
   GAttackPolygon melee__polygon = 13;
   GAttackCircle melee__circle = 14;
@@ -259,6 +260,6 @@ message Lib {
   repeated GProjectileTag projectile_tags = 22;
   repeated GProjectile projectiles = 23;
   repeated GMask masks = 24;
-  repeated GMeleeTag melee_tags = 25;
+  repeated GAttackTag attack_tags = 25;
   // TABLE_GEN_END
 }

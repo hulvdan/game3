@@ -6,11 +6,13 @@ class_name ActionAttack
 var cooldown: ActionRandCooldown
 
 
-static func explicit_update_attack(dt: float, c: Creature, action_cooldown: ActionRandCooldown) -> bool: ##
-	c.attack_elapsed += dt
-	var data = glib.v.get_creatures()[c.type]
-
-	var attack := data.get_attacks()[0]
+static func explicit_update_attack(
+		dt: float,
+		c: Creature,
+		action_cooldown: ActionRandCooldown,
+		attack: glib.GAttack,
+		tracking_pos: Vector2,
+) -> bool:
 	var attack_duration := attack.get_duration()
 
 	## Attack start
@@ -26,19 +28,21 @@ static func explicit_update_attack(dt: float, c: Creature, action_cooldown: Acti
 				action_cooldown.cooldown_min = attack.get_cooldown_max() + attack_duration
 	##
 
-	## Tracking target (player)
-	if c.melee_attack and c.attack_elapsed <= attack.get_melee__stops_tracking_at():
-		c.attack_target_pos = bf.xz(Room.v.player.creature.transform.origin)
+	## Tracking target
+	if c.melee_attack && (c.attack_elapsed <= attack.get_stops_tracking_at()):
+		c.attack_target_pos = tracking_pos
 		c.attack_target_dir = bf.vector2_direction_or_random(
 			bf.xz(c.transform.origin),
 			c.attack_target_pos,
 		)
 	##
 
+	c.attack_elapsed += dt
+
 	# Processing tags
-	for tag in attack.get_melee__tags():
-		match tag.get_meleetag_type():
-			glib.GMeleeTagType.DASH: ##
+	for tag in attack.get_tags():
+		match tag.get_attacktag_type():
+			glib.GAttackTagType.DASH: ##
 				c.controller.move = c.attack_target_dir
 
 				var e: float = min(c.attack_elapsed, attack.get_duration())
@@ -56,7 +60,7 @@ static func explicit_update_attack(dt: float, c: Creature, action_cooldown: Acti
 						tag.get_f4(),
 					)
 			##
-			glib.GMeleeTagType.BLINK: ##
+			glib.GAttackTagType.BLINK: ##
 				if !c.attack_blinked:
 					var dur := tag.get_f2() - tag.get_f1()
 					if c.attack_elapsed >= dur / 2:
@@ -72,7 +76,7 @@ static func explicit_update_attack(dt: float, c: Creature, action_cooldown: Acti
 		var i: int = 0
 		for projectile_spawns_at in attack.get_projectiles_spawn_at():
 			i += 1
-			if c.attack_projectiles_spawned < i and projectile_spawns_at < c.attack_elapsed:
+			if (c.attack_projectiles_spawned < i) && (projectile_spawns_at < c.attack_elapsed):
 				c.attack_projectiles_spawned += 1
 				var d := Projectile.Data.new()
 				d.type = attack.get_projectile_type() as glib.GProjectileType
@@ -96,12 +100,18 @@ static func explicit_update_attack(dt: float, c: Creature, action_cooldown: Acti
 	##
 
 	return false
-##
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int: ##
 	var creature: Creature = actor
-	if explicit_update_attack(get_physics_process_delta_time(), creature, cooldown):
+	var attack: = glib.v.get_creatures()[creature.type].get_attacks()[0]
+	if explicit_update_attack(
+		get_physics_process_delta_time(),
+		creature,
+		cooldown,
+		attack,
+		bf.xz(Room.v.player.creature.transform.origin),
+	):
 		return SUCCESS
 	return RUNNING
 ##

@@ -2,11 +2,16 @@ extends Node3D
 
 class_name Projectile
 
+## Variables
 const MAX_COLLISIONS_DEFAULT := 4
 const MAX_COLLISIONS_AOE := 12
 
+static var updaters: Array[UpdaterBase] = [
+	UpdaterDefault.new(),
+	UpdaterArc.new(),
+]
 
-## Variables
+
 class Data:
 	var type: glib.GProjectileType
 	var owner: Creature
@@ -28,11 +33,6 @@ var travelled: float
 var blinked: bool
 
 @onready var sprite: Sprite3D = %_sprite
-
-static var updaters: Array[UpdaterBase] = [
-	UpdaterDefault.new(),
-	UpdaterArc.new(),
-]
 ##
 
 

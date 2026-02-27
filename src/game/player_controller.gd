@@ -59,14 +59,17 @@ func init(creature_: Creature, bow_: Node3D) -> void: ##
 
 
 func push_action(type: ActionType, dir: Vector2) -> void: ##
+	match type:
+		ActionType.BLOCK:
+			bf.remove_all_by_key(_buffer, Action.is_unblock)
+		ActionType.SET_MOVE_DIR:
+			bf.remove_all_by_key(_buffer, Action.is_set_move_dir)
+
 	var x := Action.new()
 	x.created_at = Room.v.start_elapsed
 	x.type = type
 	x.shoot_or_move_or_roll__dir = dir
 	_buffer.append(x)
-
-	if type == ActionType.BLOCK:
-		bf.remove_all_by_key(_buffer, Action.is_unblock)
 ##
 
 
@@ -153,6 +156,10 @@ class Action: ##
 	var shoot_or_move_or_roll__dir: Vector2
 
 
+	static func is_set_move_dir(x: Action) -> bool:
+		return x.type == ActionType.SET_MOVE_DIR
+
+
 	static func is_unblock(x: Action) -> bool:
 		return x.type == ActionType.UNBLOCK
 ##
@@ -222,8 +229,7 @@ class PlayerDefault extends PlayerBase: ##
 		if player.shoot_after_roll:
 			if player._can_start_shoot():
 				player._change_state(StateType.SHOOT, null)
-			else:
-				player.shoot_after_roll = false
+			player.shoot_after_roll = false
 ##
 
 
@@ -242,7 +248,13 @@ class PlayerAttack extends PlayerBase: ##
 
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
-		if ActionAttack.explicit_update_attack(dt, player.creature, null):
+		if ActionAttack.explicit_update_attack(
+			dt,
+			player.creature,
+			null,
+			glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_attacks()[0],
+			bf.xz(player.creature.transform.origin) - bf.xz(player.bow.transform.basis.z),
+		):
 			player._change_state(StateType.DEFAULT, null)
 
 

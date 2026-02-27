@@ -188,8 +188,9 @@ def run_command(
     )
 
     if p.returncode:
-        log.critical(f'Failed to execute: "{c}"')
-
+        msg = f'Failed to execute: "{c}"'
+        log.critical(msg)
+        assert False, msg
     ##
 
 

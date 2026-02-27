@@ -326,6 +326,12 @@ func _physics_process(dt: float) -> void:
 
 	room.player.explicit_process(dt)
 
+	## Updating player's bow direction
+	var end_point := get_mouse_world_point()
+	if end_point != Vector3.INF:
+		room.player.bow.transform.basis = room.player.creature.transform.looking_at(end_point).basis
+	##
+
 	## Creatures updating + moving
 	var impulse_dur := glib.v.get_impulse_duration_seconds()
 	var impulse_pow := glib.v.get_impulse_pow()
@@ -357,12 +363,6 @@ func _physics_process(dt: float) -> void:
 				_impulses_to_remove_indices[len(_impulses_to_remove_indices) - i - 1],
 			)
 		_impulses_to_remove_indices.clear()
-	##
-
-	## Updating player's bow direction
-	var end_point := get_mouse_world_point()
-	if end_point != Vector3.INF:
-		room.player.bow.transform.basis = room.player.creature.transform.looking_at(end_point).basis
 	##
 
 	## Spawning projectiles (flushing `projectiles_to_make`)

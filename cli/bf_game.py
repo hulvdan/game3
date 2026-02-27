@@ -213,6 +213,9 @@ def _process_glib(genline, glib) -> None:
         x["mask_type"] = x.get("mask_type", "MOBS")
         if "melee__attack_polygon" in x:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
+        for attack in x.get("attacks", []):
+            if "stops_tracking_at" not in attack:
+                attack["stops_tracking_at"] = attack["duration"]
     ##
 
     def process_tags(
@@ -245,7 +248,7 @@ def _process_glib(genline, glib) -> None:
     ##
 
     process_tags("projectiles", "tags", "projectile_tags", "projectiletag_type")
-    process_tags("creatures", "melee__tags", "melee_tags", "meleetag_type")
+    process_tags("creatures", "tags", "attack_tags", "meleetag_type")
 
     ## Projectiles
     for x in glib["projectiles"][1:]:

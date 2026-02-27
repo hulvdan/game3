@@ -42,10 +42,11 @@ class EvadedAttack:
 	var destroy_at: float
 
 
-var _attack_ids_marked_as_evaded: Array[EvadedAttack]
 var attack_target_pos: Vector2
 var attack_target_dir: Vector2
 var speed_modifiers: Dictionary[String, float] = { "base": 0 }
+
+var _attack_ids_marked_as_evaded: Array[EvadedAttack]
 
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
@@ -112,9 +113,9 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 
 		attack_dist += hitbox_dist
 
-		for tag in attack.get_melee__tags():
-			match tag.get_meleetag_type():
-				glib.GMeleeTagType.DASH, glib.GMeleeTagType.BLINK:
+		for tag in attack.get_tags():
+			match tag.get_attacktag_type():
+				glib.GAttackTagType.DASH, glib.GAttackTagType.BLINK:
 					attack_dist += tag.get_f3()
 					attack_dist -= hitbox_dist / 2
 

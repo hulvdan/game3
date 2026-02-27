@@ -92,7 +92,7 @@ masks: ##
   - type: MOBS
 ##
 
-melee_tags:
+attack_tags:
   # TODO: Optional fields? Would enable better validation
   - type: DASH ##
     requires_f1: true # starts_at
@@ -117,8 +117,19 @@ creatures:
     attacks:
       - projectile_type: ARROW
         projectiles_spawn_at:
-          - 0.5
-        duration: 0.8
+          - 0.1
+        duration: 0.25
+        tags:
+          # - attacktag_type: DASH
+          #   f1: 0.2 # starts_at
+          #   f2: 0.63 # ends_at
+          #   f3: 3 # distance
+          #   f4: 1 # pow
+          - attacktag_type: BLINK
+            f1: 0.02 # starts_at
+            f2: 0.04 # ends_at
+            f3: 2 # distance
+            f4: 0 # distance_delta
   ##
   - type: MOB_SHOOTER ##
     hp: 3
@@ -204,11 +215,11 @@ creatures:
         melee__damage: 1
         melee__collision_starts_at: 0.5
         melee__collision_ends_at: 0.6
-        melee__stops_tracking_at: 0.2
+        stops_tracking_at: 0.2
         melee__circle:
           radius: 1.5
-        melee__tags:
-          - meleetag_type: DASH
+        tags:
+          - attacktag_type: DASH
             f1: 0.2 # starts_at
             f2: 0.63 # ends_at
             f3: 3 # distance
@@ -236,14 +247,14 @@ creatures:
         melee__damage: 1
         melee__collision_starts_at: 0.5
         melee__collision_ends_at: 0.6
-        melee__stops_tracking_at: 0.2
+        stops_tracking_at: 0.2
         melee__polygon:
           distance_min: 0.5
           distance_max: 2
           angle_degrees: 90
           anchor_x: 0.5
-        melee__tags:
-          - meleetag_type: DASH
+        tags:
+          - attacktag_type: DASH
             f1: 0.2 # starts_at
             f2: 0.5 # ends_at
             f3: 1 # distance
@@ -259,13 +270,13 @@ creatures:
         melee__damage: 1
         melee__collision_starts_at: 0.4
         melee__collision_ends_at: 1.1
-        melee__stops_tracking_at: 0.3
+        stops_tracking_at: 0.3
         melee__polygon:
           distance_max: 2
           angle_degrees: 20
           anchor_x: 0.5
-        melee__tags:
-          - meleetag_type: DASH
+        tags:
+          - attacktag_type: DASH
             f1: 0.4 # starts_at
             f2: 1.1 # ends_at
             f3: 4 # distance
@@ -382,4 +393,3 @@ projectiles:
       - projectiletag_type: BLINK
         f1: 1.0 # blink_time
         ##
-
