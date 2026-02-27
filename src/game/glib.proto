@@ -103,6 +103,11 @@ message GStaminaCost {
   float rally_post_mult = 4;
 }
 
+message GProjectileSpawn {
+  float at = 1;
+  float angle = 2;
+}
+
 message GAttack {
   float duration = 1;
   float cooldown_min = 2;
@@ -115,7 +120,7 @@ message GAttack {
   float stops_tracking_at = 7;
 
   int32 projectile_type = 8;
-  repeated float projectiles_spawn_at = 9;
+  repeated GProjectileSpawn projectile_spawns = 9;
 
   GAttackMelee melee = 10;
   repeated GAttackTagValue tags = 11;

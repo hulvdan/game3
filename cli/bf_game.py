@@ -215,7 +215,7 @@ def _process_glib(genline, glib) -> None:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
         is_player = x["type"] == "PLAYER"
         for attack in x.get("attacks", []):
-            attack.get("projectiles_spawn_at", []).sort()
+            attack.get("projectiles_spawns", []).sort(key=lambda x: x["at"])
             if "stops_tracking_at" not in attack:
                 attack["stops_tracking_at"] = attack["duration"]
             if is_player:

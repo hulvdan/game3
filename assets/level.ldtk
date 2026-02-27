@@ -827,6 +827,11 @@
             "color": 0
           },
           {
+            "id": "MOB_MAGE_TRIPLE",
+            "tileRect": null,
+            "color": 0
+          },
+          {
             "id": "MOB_HOMER",
             "tileRect": null,
             "color": 0
@@ -3440,8 +3445,8 @@
             {
               "__identifier": "Creature",
               "__grid": [
-                13,
-                7
+                14,
+                10
               ],
               "__pivot": [
                 0,
@@ -3455,8 +3460,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                208,
-                112
+                224,
+                160
               ],
               "fieldInstances": [
                 {
@@ -3475,8 +3480,8 @@
                   ]
                 }
               ],
-              "__worldX": 640,
-              "__worldY": 128
+              "__worldX": 656,
+              "__worldY": 176
             },
             {
               "__identifier": "Creature",
@@ -3764,6 +3769,47 @@
               ],
               "__worldX": 672,
               "__worldY": 176
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                13,
+                7
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "08025bb0-fa90-11f0-90aa-79497212dc54",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                208,
+                112
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "MOB_MAGE_TRIPLE",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "MOB_MAGE_TRIPLE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 640,
+              "__worldY": 128
             }
           ]
         },

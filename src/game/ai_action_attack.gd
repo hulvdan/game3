@@ -43,8 +43,8 @@ static func explicit_update_attack(
 	## Player consuming stamina
 	if is_player:
 		var consume_stamina_at := INF
-		if attack.get_projectiles_spawn_at():
-			consume_stamina_at = min(consume_stamina_at, attack.get_projectiles_spawn_at()[0])
+		if attack.get_projectile_spawns():
+			consume_stamina_at = min(consume_stamina_at, attack.get_projectile_spawns()[0].get_at())
 		if melee:
 			consume_stamina_at = min(consume_stamina_at, melee.get_starts_at())
 		if consume_stamina_at == INF:
@@ -92,16 +92,16 @@ static func explicit_update_attack(
 	## Spawning projectiles
 	if attack.get_projectile_type():
 		var i: int = 0
-		for projectile_spawns_at in attack.get_projectiles_spawn_at():
+		for spawn in attack.get_projectile_spawns():
 			i += 1
-			if (c.attack_projectiles_spawned < i) && (projectile_spawns_at < c.attack_elapsed):
+			if (c.attack_projectiles_spawned < i) && (spawn.get_at() < c.attack_elapsed):
 				c.attack_projectiles_spawned += 1
 				var d := Projectile.Data.new()
 				d.type = attack.get_projectile_type() as glib.GProjectileType
 				d.owner_type = c.type
 				d.owner__mb_freed_or_null = c
 				d.pos = bf.xz(c.transform.origin)
-				d.target = c.attack_target_pos
+				d.target = d.pos + (c.attack_target_pos - d.pos).rotated(spawn.get_angle())
 				if c.type != glib.GCreatureType.PLAYER:
 					d.homing__target = Room.v.player.creature
 				Game.v.make_projectile(d)
