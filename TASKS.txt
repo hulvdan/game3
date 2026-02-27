@@ -22,7 +22,7 @@ x fix another crash after killing shrapnel projectile owner
 x player can move slowly while swinging
 x fix: spearman dashes
 
-* make MOB_JUMPER blockable
+* make MOB_BLINKER blockable
 *
 * projectiles impulse
 *

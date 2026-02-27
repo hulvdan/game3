@@ -23,6 +23,11 @@ script = ExtResource("5_3a6xa")
 text = "BLOCK"
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
+[sub_resource type="Resource" id="Resource_0g38w"]
+script = ExtResource("5_3a6xa")
+text = "KI"
+metadata/_custom_type_script = "uid://dhp1eiart43ss"
+
 [sub_resource type="Resource" id="Resource_xopim"]
 script = ExtResource("5_3a6xa")
 text = "BLOCK"
@@ -39,11 +44,6 @@ metadata/_custom_type_script = "uid://dhp1eiart43ss"
 script = ExtResource("5_3a6xa")
 text = "KI"
 color = Color(1, 0.8, 0, 1)
-metadata/_custom_type_script = "uid://dhp1eiart43ss"
-
-[sub_resource type="Resource" id="Resource_0g38w"]
-script = ExtResource("5_3a6xa")
-text = "KI"
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
 [node name="room" type="Node" unique_id=154726596]
