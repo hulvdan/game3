@@ -242,23 +242,7 @@ class PlayerAttack extends PlayerBase: ##
 
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
-
-		var dur := glib.v.get_player().get_shooting_seconds()
-		if player.shoot_after_roll:
-			dur = glib.v.get_player().get_shooting_after_roll_seconds()
-
-		if elapsed >= dur:
-			player.consume_stamina(
-				glib.v.get_player().get_stamina_attack_cost(),
-				glib.v.get_player().get_stamina_attack_rally_scale(),
-			)
-			var d := Projectile.Data.new()
-			d.type = glib.GProjectileType.ARROW
-			d.owner = player.creature
-			d.pos = bf.xz(player.creature.transform.origin)
-			d.target = d.pos - bf.xz(player.bow.transform.basis.z)
-			Game.v.make_projectile(d)
-			player.shoot_after_roll = false
+		if ActionAttack.explicit_update_attack(dt, player.creature, null):
 			player._change_state(StateType.DEFAULT, null)
 
 

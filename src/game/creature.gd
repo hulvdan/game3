@@ -16,10 +16,15 @@ var time_since_last_damage_taken_visual: float = INF
 
 var hp_bar: Bar
 var controller: Controller = Controller.new()
+
 var attack_elapsed: float
+var attack_projectiles_spawned: int
+var attack_blinked: bool
+
 var melee_attack: glib.GAttack
 var melee_attack_id: int
 var melee_damaged_creatures: Array[Creature]
+
 var blocked: bool
 
 
