@@ -26,6 +26,10 @@ x triple projectiles mage
 * make MOB_BLINKER blockable
 *
 * projectile SUMMON tag
+* projectile area effects
+  - long duration
+  - slowing mobs down
+  - enabling Area3D node on projectile -> storing collided creatures inside
 *
 * projectiles impulse
 *
