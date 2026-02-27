@@ -8,6 +8,14 @@
       "icon": {
         "id": "run"
       }
+    },
+    {
+      "label": "gitf",
+      "type": "shell",
+      "command": "uv run python cli/bf_cli.py gitf",
+      "icon": {
+        "id": "run"
+      }
     }
   ]
 }
