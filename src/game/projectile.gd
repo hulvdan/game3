@@ -15,7 +15,7 @@ static var updaters: Array[UpdaterBase] = [
 class Data:
 	var type: glib.GProjectileType
 	var owner_type: glib.GCreatureType
-	var owner: Creature
+	var owner__mb_freed_or_null: Creature
 	var pos: Vector2
 	var target: Vector2
 	var homing__target: Node3D
@@ -43,11 +43,11 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 	for tag in data.get_tags():
 		match tag.get_projectiletag_type():
 			glib.GProjectileTagType.BLINK:
-				if d.owner && !blinked && (elapsed >= tag.get_f1()):
+				if d.owner__mb_freed_or_null && !blinked && (elapsed >= tag.get_f1()):
 					blinked = true
-					if is_instance_valid(d.owner):
-						d.owner.transform.origin = transform.origin
-						d.owner.reset_physics_interpolation()
+					if is_instance_valid(d.owner__mb_freed_or_null):
+						d.owner__mb_freed_or_null.transform.origin = transform.origin
+						d.owner__mb_freed_or_null.reset_physics_interpolation()
 ##
 
 
@@ -66,7 +66,8 @@ func on_free(data: glib.GProjectile) -> void: ##
 					var c := Projectile.Data.new()
 					c.type = tag.get_projectile_type() as glib.GProjectileType
 					c.owner_type = d.owner_type
-					c.owner = d.owner
+					if is_instance_valid(d.owner__mb_freed_or_null):
+						c.owner__mb_freed_or_null = d.owner__mb_freed_or_null
 					c.pos = bf.xz(transform.origin)
 					c.target = c.pos + Vector2(1, 0).rotated(angle)
 					c.homing__target = d.homing__target

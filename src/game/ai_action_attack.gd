@@ -100,7 +100,7 @@ static func explicit_update_attack(
 				var d := Projectile.Data.new()
 				d.type = attack.get_projectile_type() as glib.GProjectileType
 				d.owner_type = c.type
-				d.owner = c
+				d.owner__mb_freed_or_null = c
 				d.pos = bf.xz(c.transform.origin)
 				d.target = c.attack_target_pos
 				if c.type != glib.GCreatureType.PLAYER:

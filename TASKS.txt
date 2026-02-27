@@ -18,8 +18,11 @@ x consume stamina upon spawning projectile / melee collider start
 x better stamina costs
 x ki action label
 x fix crash при убийстве blinker-а, пока он не телепортанулся (projectile крашит)
+x fix another crash after killing shrapnel projectile owner
 
 * player can move slowly while swinging
+*
+* recoverable ki stamina decreases after a short time of not using ki
 *
 * swing query_circle_segment smaller segments
 *
