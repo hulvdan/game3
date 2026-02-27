@@ -424,9 +424,13 @@ func _physics_process(dt: float) -> void:
 
 		var attack: glib.GAttack = creature.melee_attack
 
-		if creature.attack_elapsed < attack.get_melee__collision_starts_at():
+		var melee := attack.get_melee()
+		if !melee:
 			continue
-		if creature.attack_elapsed > attack.get_melee__collision_ends_at():
+
+		if creature.attack_elapsed < melee.get_starts_at():
+			continue
+		if creature.attack_elapsed > melee.get_ends_at():
 			continue
 
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)
@@ -436,8 +440,8 @@ func _physics_process(dt: float) -> void:
 		var attacker_pos := bf.xz(creature.transform.origin)
 
 		var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
-		var polygon := attack.get_melee__polygon()
-		var circle := attack.get_melee__circle()
+		var polygon := melee.get_polygon()
+		var circle := melee.get_circle()
 		if polygon:
 			assert(!circle)
 		if circle:
@@ -478,7 +482,7 @@ func _physics_process(dt: float) -> void:
 				bf.xz(damaged_creature.transform.origin),
 			)
 
-			if apply_damage(damaged_creature, attack.get_melee__damage(), apply_damage_melee_data):
+			if apply_damage(damaged_creature, melee.get_damage(), apply_damage_melee_data):
 				creature.melee_damaged_creatures.append(damaged_creature)
 	##
 

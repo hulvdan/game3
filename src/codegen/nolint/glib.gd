@@ -2379,6 +2379,342 @@ class GAttackTagValue:
 		return result
 
 
+class GAttackMelee:
+	func _init():
+		var service
+
+		__damage = PBField.new("damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __damage
+		data[__damage.tag] = service
+
+		__collider_type = PBField.new("collider_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __collider_type
+		data[__collider_type.tag] = service
+
+		__starts_at = PBField.new("starts_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __starts_at
+		data[__starts_at.tag] = service
+
+		__ends_at = PBField.new("ends_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __ends_at
+		data[__ends_at.tag] = service
+
+		__polygon = PBField.new("polygon", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __polygon
+		service.func_ref = Callable(self, "new_polygon")
+		data[__polygon.tag] = service
+
+		__circle = PBField.new("circle", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __circle
+		service.func_ref = Callable(self, "new_circle")
+		data[__circle.tag] = service
+
+
+	var data = { }
+
+	var __damage: PBField
+
+
+	func has_damage() -> bool:
+		if __damage.value != null:
+			return true
+		return false
+
+
+	func get_damage() -> int:
+		return __damage.value
+
+
+	func clear_damage() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_damage(value: int) -> void:
+		__damage.value = value
+
+
+	var __collider_type: PBField
+
+
+	func has_collider_type() -> bool:
+		if __collider_type.value != null:
+			return true
+		return false
+
+
+	func get_collider_type() -> int:
+		return __collider_type.value
+
+
+	func clear_collider_type() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__collider_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_collider_type(value: int) -> void:
+		__collider_type.value = value
+
+
+	var __starts_at: PBField
+
+
+	func has_starts_at() -> bool:
+		if __starts_at.value != null:
+			return true
+		return false
+
+
+	func get_starts_at() -> float:
+		return __starts_at.value
+
+
+	func clear_starts_at() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__starts_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_starts_at(value: float) -> void:
+		__starts_at.value = value
+
+
+	var __ends_at: PBField
+
+
+	func has_ends_at() -> bool:
+		if __ends_at.value != null:
+			return true
+		return false
+
+
+	func get_ends_at() -> float:
+		return __ends_at.value
+
+
+	func clear_ends_at() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__ends_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_ends_at(value: float) -> void:
+		__ends_at.value = value
+
+
+	var __polygon: PBField
+
+
+	func has_polygon() -> bool:
+		if __polygon.value != null:
+			return true
+		return false
+
+
+	func get_polygon() -> GAttackPolygon:
+		return __polygon.value
+
+
+	func clear_polygon() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__polygon.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_polygon() -> GAttackPolygon:
+		__polygon.value = GAttackPolygon.new()
+		return __polygon.value
+
+
+	var __circle: PBField
+
+
+	func has_circle() -> bool:
+		if __circle.value != null:
+			return true
+		return false
+
+
+	func get_circle() -> GAttackCircle:
+		return __circle.value
+
+
+	func clear_circle() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__circle.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_circle() -> GAttackCircle:
+		__circle.value = GAttackCircle.new()
+		return __circle.value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GStaminaCost:
+	func _init():
+		var service
+
+		__flat = PBField.new("flat", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __flat
+		data[__flat.tag] = service
+
+		__rally_pre_mult = PBField.new("rally_pre_mult", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __rally_pre_mult
+		data[__rally_pre_mult.tag] = service
+
+		__rally_flat = PBField.new("rally_flat", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __rally_flat
+		data[__rally_flat.tag] = service
+
+		__rally_post_mult = PBField.new("rally_post_mult", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __rally_post_mult
+		data[__rally_post_mult.tag] = service
+
+
+	var data = { }
+
+	var __flat: PBField
+
+
+	func has_flat() -> bool:
+		if __flat.value != null:
+			return true
+		return false
+
+
+	func get_flat() -> float:
+		return __flat.value
+
+
+	func clear_flat() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__flat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_flat(value: float) -> void:
+		__flat.value = value
+
+
+	var __rally_pre_mult: PBField
+
+
+	func has_rally_pre_mult() -> bool:
+		if __rally_pre_mult.value != null:
+			return true
+		return false
+
+
+	func get_rally_pre_mult() -> float:
+		return __rally_pre_mult.value
+
+
+	func clear_rally_pre_mult() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__rally_pre_mult.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_rally_pre_mult(value: float) -> void:
+		__rally_pre_mult.value = value
+
+
+	var __rally_flat: PBField
+
+
+	func has_rally_flat() -> bool:
+		if __rally_flat.value != null:
+			return true
+		return false
+
+
+	func get_rally_flat() -> float:
+		return __rally_flat.value
+
+
+	func clear_rally_flat() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__rally_flat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_rally_flat(value: float) -> void:
+		__rally_flat.value = value
+
+
+	var __rally_post_mult: PBField
+
+
+	func has_rally_post_mult() -> bool:
+		if __rally_post_mult.value != null:
+			return true
+		return false
+
+
+	func get_rally_post_mult() -> float:
+		return __rally_post_mult.value
+
+
+	func clear_rally_post_mult() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__rally_post_mult.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_rally_post_mult(value: float) -> void:
+		__rally_post_mult.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GAttack:
 	func _init():
 		var service
@@ -2408,60 +2744,40 @@ class GAttack:
 		service.field = __movement_scale
 		data[__movement_scale.tag] = service
 
-		__stops_tracking_at = PBField.new("stops_tracking_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_cost = PBField.new("stamina_cost", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __stamina_cost
+		service.func_ref = Callable(self, "new_stamina_cost")
+		data[__stamina_cost.tag] = service
+
+		__stops_tracking_at = PBField.new("stops_tracking_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stops_tracking_at
 		data[__stops_tracking_at.tag] = service
 
-		__projectile_type = PBField.new("projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__projectile_type = PBField.new("projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __projectile_type
 		data[__projectile_type.tag] = service
 
 		var __projectiles_spawn_at_default: Array[float] = []
-		__projectiles_spawn_at = PBField.new("projectiles_spawn_at", PB_DATA_TYPE.FLOAT, PB_RULE.REPEATED, 8, true, __projectiles_spawn_at_default)
+		__projectiles_spawn_at = PBField.new("projectiles_spawn_at", PB_DATA_TYPE.FLOAT, PB_RULE.REPEATED, 9, true, __projectiles_spawn_at_default)
 		service = PBServiceField.new()
 		service.field = __projectiles_spawn_at
 		data[__projectiles_spawn_at.tag] = service
 
-		__melee__damage = PBField.new("melee__damage", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__melee = PBField.new("melee", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
-		service.field = __melee__damage
-		data[__melee__damage.tag] = service
-
-		__melee__collision_starts_at = PBField.new("melee__collision_starts_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __melee__collision_starts_at
-		data[__melee__collision_starts_at.tag] = service
-
-		__melee__collision_ends_at = PBField.new("melee__collision_ends_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __melee__collision_ends_at
-		data[__melee__collision_ends_at.tag] = service
-
-		__melee__collider_type = PBField.new("melee__collider_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __melee__collider_type
-		data[__melee__collider_type.tag] = service
+		service.field = __melee
+		service.func_ref = Callable(self, "new_melee")
+		data[__melee.tag] = service
 
 		var __tags_default: Array[GAttackTagValue] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 13, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 11, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
 		data[__tags.tag] = service
-
-		__melee__polygon = PBField.new("melee__polygon", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
-		service = PBServiceField.new()
-		service.field = __melee__polygon
-		service.func_ref = Callable(self, "new_melee__polygon")
-		data[__melee__polygon.tag] = service
-
-		__melee__circle = PBField.new("melee__circle", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
-		service = PBServiceField.new()
-		service.field = __melee__circle
-		service.func_ref = Callable(self, "new_melee__circle")
-		data[__melee__circle.tag] = service
 
 
 	var data = { }
@@ -2576,6 +2892,29 @@ class GAttack:
 		__movement_scale.value = value
 
 
+	var __stamina_cost: PBField
+
+
+	func has_stamina_cost() -> bool:
+		if __stamina_cost.value != null:
+			return true
+		return false
+
+
+	func get_stamina_cost() -> GStaminaCost:
+		return __stamina_cost.value
+
+
+	func clear_stamina_cost() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__stamina_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_stamina_cost() -> GStaminaCost:
+		__stamina_cost.value = GStaminaCost.new()
+		return __stamina_cost.value
+
+
 	var __stops_tracking_at: PBField
 
 
@@ -2590,7 +2929,7 @@ class GAttack:
 
 
 	func clear_stops_tracking_at() -> void:
-		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.UNFILLED
 		__stops_tracking_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -2612,7 +2951,7 @@ class GAttack:
 
 
 	func clear_projectile_type() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -2628,7 +2967,7 @@ class GAttack:
 
 
 	func clear_projectiles_spawn_at() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__projectiles_spawn_at.value.clear()
 
 
@@ -2636,92 +2975,27 @@ class GAttack:
 		__projectiles_spawn_at.value.append(value)
 
 
-	var __melee__damage: PBField
+	var __melee: PBField
 
 
-	func has_melee__damage() -> bool:
-		if __melee__damage.value != null:
+	func has_melee() -> bool:
+		if __melee.value != null:
 			return true
 		return false
 
 
-	func get_melee__damage() -> int:
-		return __melee__damage.value
+	func get_melee() -> GAttackMelee:
+		return __melee.value
 
 
-	func clear_melee__damage() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
-		__melee__damage.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_melee__damage(value: int) -> void:
-		__melee__damage.value = value
-
-
-	var __melee__collision_starts_at: PBField
-
-
-	func has_melee__collision_starts_at() -> bool:
-		if __melee__collision_starts_at.value != null:
-			return true
-		return false
-
-
-	func get_melee__collision_starts_at() -> float:
-		return __melee__collision_starts_at.value
-
-
-	func clear_melee__collision_starts_at() -> void:
+	func clear_melee() -> void:
 		data[10].state = PB_SERVICE_STATE.UNFILLED
-		__melee__collision_starts_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__melee.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func set_melee__collision_starts_at(value: float) -> void:
-		__melee__collision_starts_at.value = value
-
-
-	var __melee__collision_ends_at: PBField
-
-
-	func has_melee__collision_ends_at() -> bool:
-		if __melee__collision_ends_at.value != null:
-			return true
-		return false
-
-
-	func get_melee__collision_ends_at() -> float:
-		return __melee__collision_ends_at.value
-
-
-	func clear_melee__collision_ends_at() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__melee__collision_ends_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_melee__collision_ends_at(value: float) -> void:
-		__melee__collision_ends_at.value = value
-
-
-	var __melee__collider_type: PBField
-
-
-	func has_melee__collider_type() -> bool:
-		if __melee__collider_type.value != null:
-			return true
-		return false
-
-
-	func get_melee__collider_type() -> int:
-		return __melee__collider_type.value
-
-
-	func clear_melee__collider_type() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
-		__melee__collider_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_melee__collider_type(value: int) -> void:
-		__melee__collider_type.value = value
+	func new_melee() -> GAttackMelee:
+		__melee.value = GAttackMelee.new()
+		return __melee.value
 
 
 	var __tags: PBField
@@ -2732,7 +3006,7 @@ class GAttack:
 
 
 	func clear_tags() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 
@@ -2740,52 +3014,6 @@ class GAttack:
 		var element = GAttackTagValue.new()
 		__tags.value.append(element)
 		return element
-
-
-	var __melee__polygon: PBField
-
-
-	func has_melee__polygon() -> bool:
-		if __melee__polygon.value != null:
-			return true
-		return false
-
-
-	func get_melee__polygon() -> GAttackPolygon:
-		return __melee__polygon.value
-
-
-	func clear_melee__polygon() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
-		__melee__polygon.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-
-
-	func new_melee__polygon() -> GAttackPolygon:
-		__melee__polygon.value = GAttackPolygon.new()
-		return __melee__polygon.value
-
-
-	var __melee__circle: PBField
-
-
-	func has_melee__circle() -> bool:
-		if __melee__circle.value != null:
-			return true
-		return false
-
-
-	func get_melee__circle() -> GAttackCircle:
-		return __melee__circle.value
-
-
-	func clear_melee__circle() -> void:
-		data[15].state = PB_SERVICE_STATE.UNFILLED
-		__melee__circle.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-
-
-	func new_melee__circle() -> GAttackCircle:
-		__melee__circle.value = GAttackCircle.new()
-		return __melee__circle.value
 
 
 	func _to_string() -> String:
@@ -4335,9 +4563,10 @@ class GConfigPlayer:
 		service.field = __stamina_regen_per_second
 		data[__stamina_regen_per_second.tag] = service
 
-		__stamina_roll_cost = PBField.new("stamina_roll_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_roll_cost = PBField.new("stamina_roll_cost", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __stamina_roll_cost
+		service.func_ref = Callable(self, "new_stamina_roll_cost")
 		data[__stamina_roll_cost.tag] = service
 
 		__dodge_stamina_retrieve_percent = PBField.new("dodge_stamina_retrieve_percent", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
@@ -4672,17 +4901,18 @@ class GConfigPlayer:
 		return false
 
 
-	func get_stamina_roll_cost() -> float:
+	func get_stamina_roll_cost() -> GStaminaCost:
 		return __stamina_roll_cost.value
 
 
 	func clear_stamina_roll_cost() -> void:
 		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__stamina_roll_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__stamina_roll_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func set_stamina_roll_cost(value: float) -> void:
-		__stamina_roll_cost.value = value
+	func new_stamina_roll_cost() -> GStaminaCost:
+		__stamina_roll_cost.value = GStaminaCost.new()
+		return __stamina_roll_cost.value
 
 
 	var __dodge_stamina_retrieve_percent: PBField

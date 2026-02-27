@@ -87,6 +87,22 @@ message GAttackTagValue {
   float f4 = 9;
 }
 
+message GAttackMelee {
+  int32 damage = 1;
+  int32 collider_type = 2;
+  float starts_at = 3;
+  float ends_at = 4;
+  GAttackPolygon polygon = 5;
+  GAttackCircle circle = 6;
+}
+
+message GStaminaCost {
+  float flat = 1;
+  float rally_pre_mult = 2;
+  float rally_flat = 3;
+  float rally_post_mult = 4;
+}
+
 message GAttack {
   float duration = 1;
   float cooldown_min = 2;
@@ -94,20 +110,15 @@ message GAttack {
   float distance = 4;
 
   float movement_scale = 5;
+  GStaminaCost stamina_cost = 6;
 
-  float stops_tracking_at = 6;
+  float stops_tracking_at = 7;
 
-  int32 projectile_type = 7;
-  repeated float projectiles_spawn_at = 8;
+  int32 projectile_type = 8;
+  repeated float projectiles_spawn_at = 9;
 
-  int32 melee__damage = 9;
-  float melee__collision_starts_at = 10;
-  float melee__collision_ends_at = 11;
-  int32 melee__collider_type = 12;
-  repeated GAttackTagValue tags = 13;
-
-  GAttackPolygon melee__polygon = 14;
-  GAttackCircle melee__circle = 15;
+  GAttackMelee melee = 10;
+  repeated GAttackTagValue tags = 11;
 }
 
 message GCreature {
@@ -206,7 +217,7 @@ message GConfigPlayer {
 
   float stamina = 9;
   float stamina_regen_per_second = 10;
-  float stamina_roll_cost = 11;
+  GStaminaCost stamina_roll_cost = 11;
   float dodge_stamina_retrieve_percent = 12;
   float stamina_rally_decay_after = 13;
   float stamina_rally_decay_per_second = 14;

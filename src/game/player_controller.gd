@@ -6,6 +6,9 @@ var bow: Node3D
 var inside_enemy_t := 0.0
 var shoot_after_roll := false
 var rolling_retrievable_cost := 0.0
+
+var attack_consumed_stamina: bool
+
 var stamina := 0.0
 var stamina_rally := 0.0
 var stamina_ki := 0.0
@@ -16,6 +19,7 @@ var blocking := false
 var blocking_perfectly := false
 var ki := false
 var aim_pos: Vector2
+
 var _stamina_depleted_at := 0.0
 var _next_block_at: float = 0.0
 var _next_roll_at: float = 0.0
@@ -132,16 +136,21 @@ func add_stamina(value: float, rallies_scale: float) -> void: ##
 ##
 
 
-func consume_stamina(value: float, rally_lerp_t: float) -> void: ##
-	assert(value > 0)
+func consume_stamina(cost: glib.GStaminaCost) -> void: ##
 	assert(stamina > 0)
+	assert(stamina_rally >= stamina)
 	elapsed_since_stamina_consumed = 0.0
-	stamina = max(0, stamina - value)
+
+	stamina_rally -= (stamina_rally - stamina) * (1 - cost.get_rally_pre_mult())
+	stamina -= cost.get_flat()
+	stamina = max(0, stamina)
+	stamina_rally -= cost.get_rally_flat()
+	stamina_rally = max(stamina_rally, stamina)
+	stamina_rally -= (stamina_rally - stamina) * (1 - cost.get_rally_post_mult())
+	assert(stamina_rally >= 0)
 	if stamina <= 0:
 		_stamina_depleted_at = Room.v.start_elapsed
 	stamina_ki = stamina
-	if stamina_rally > stamina:
-		stamina_rally = lerp(stamina, stamina_rally, rally_lerp_t)
 ##
 
 
@@ -237,10 +246,6 @@ class PlayerDefault extends PlayerBase: ##
 class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		player.consume_stamina(
-			glib.v.get_player().get_stamina_attack_cost(),
-			glib.v.get_player().get_stamina_attack_rally_scale(),
-		)
 		player.creature.speed_modifiers.shooting = glib.v.get_player().get_speed_scale__shooting()
 		player._stamina_regen_modifiers.shooting = glib.v.get_player().get_stamina_regen_scale__shooting()
 
@@ -279,11 +284,9 @@ class PlayerAttack extends PlayerBase: ##
 class PlayerRoll extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		player.consume_stamina(
-			glib.v.get_player().get_stamina_roll_cost(),
-			glib.v.get_player().get_stamina_roll_rally_scale(),
-		)
-		player.rolling_retrievable_cost = glib.v.get_player().get_stamina_roll_cost()
+		var cost := glib.v.get_player().get_stamina_roll_cost()
+		player.consume_stamina(cost)
+		player.rolling_retrievable_cost = cost.get_flat()
 		player.dodging = false
 
 

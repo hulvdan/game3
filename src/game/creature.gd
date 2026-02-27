@@ -21,7 +21,6 @@ var attack_elapsed: float
 var attack_projectiles_spawned: int
 var attack_blinked: bool
 var attack_dashed: bool
-var attack_consumed_stamina: bool
 
 var melee_attack: glib.GAttack
 var melee_attack_id: int
@@ -99,27 +98,30 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 	# FIXME: Only 1st attack gets used
 	for attack in data.get_attacks():
 		var attack_dist: = attack.get_distance()
-		var polygon := attack.get_melee__polygon()
-		var circle := attack.get_melee__circle()
 
-		if polygon:
-			assert(!circle)
-		if circle:
-			assert(!polygon)
+		var melee := attack.get_melee()
+		var melee_hitbox_dist := 0.0
+		if melee:
+			var polygon := melee.get_polygon()
+			var circle := melee.get_circle()
 
-		var hitbox_dist: float
-		if polygon:
-			hitbox_dist = polygon.get_distance_max() * (polygon.get_anchor_x() + 0.5)
-		if circle:
-			hitbox_dist = circle.get_radius() * (circle.get_anchor_x() + 0.5)
+			if polygon:
+				assert(!circle)
+			if circle:
+				assert(!polygon)
 
-		attack_dist += hitbox_dist
+			if polygon:
+				melee_hitbox_dist = polygon.get_distance_max() * (polygon.get_anchor_x() + 0.5)
+			if circle:
+				melee_hitbox_dist = circle.get_radius() * (circle.get_anchor_x() + 0.5)
+
+			attack_dist += melee_hitbox_dist
 
 		for tag in attack.get_tags():
 			match tag.get_attacktag_type():
 				glib.GAttackTagType.DASH, glib.GAttackTagType.BLINK:
 					attack_dist += tag.get_f3()
-					attack_dist -= hitbox_dist / 2
+					attack_dist -= melee_hitbox_dist / 2
 
 		action_chase.set_attack_distance(attack_dist)
 		break

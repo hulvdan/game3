@@ -213,9 +213,13 @@ def _process_glib(genline, glib) -> None:
         x["mask_type"] = x.get("mask_type", "MOBS")
         if "melee__attack_polygon" in x:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
+        is_player = x["type"] == "PLAYER"
         for attack in x.get("attacks", []):
+            attack.get("projectiles_spawn_at", []).sort()
             if "stops_tracking_at" not in attack:
                 attack["stops_tracking_at"] = attack["duration"]
+            if is_player:
+                assert "stamina_cost" in attack
     ##
 
     def process_tags(
