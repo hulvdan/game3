@@ -39,21 +39,32 @@ static func explicit_update_attack(
 
 	c.attack_elapsed += dt
 
+	var consume_stamina_at := 0.0
+	if (
+		(c.type == glib.GCreatureType.PLAYER)
+		&& !c.attack_consumed_stamina
+		&& (c.attack_elapsed >= consume_stamina_at)
+	):
+		c.attack_consumed_stamina = true
+		c.consume_stamina(
+			glib.v.get_player().get_stamina_attack_cost(),
+			glib.v.get_player().get_stamina_attack_rally_scale(),
+		)
+
 	# Processing tags
 	for tag in attack.get_tags():
 		match tag.get_attacktag_type():
 			glib.GAttackTagType.DASH: ##
-				c.controller.move = c.attack_target_dir
-
 				var e: float = min(c.attack_elapsed, attack.get_duration())
-				c.speed_modifiers.melee_dash = 0
+				c.speed_modifiers.dash = 0
 
 				var start := tag.get_f1()
 				var end := tag.get_f2()
 				var dur := end - start
 
-				if (start <= c.attack_elapsed) && (c.attack_elapsed <= end):
-					c.speed_modifiers.melee_dash = bf.get_roll_speed(
+				if !c.attack_dashed && (start <= c.attack_elapsed):
+					c.attack_dashed = true
+					c.speed_modifiers.dash = bf.get_roll_speed(
 						tag.get_f3(),
 						dur,
 						e - start,
@@ -96,7 +107,7 @@ static func explicit_update_attack(
 		c.attack_projectiles_spawned = 0
 		c.melee_attack = null
 		c.controller.move = Vector2(0, 0)
-		c.speed_modifiers.melee_dash = 1
+		c.speed_modifiers.dash = 1
 		return true
 	##
 

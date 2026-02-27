@@ -15,6 +15,13 @@ x fused mob / player attacks: test player can use blink
 x yamllint
 x fused mob / player attacks: player's blink correct distance (set target to cursor)
 
+* consume stamina upon spawning projectile / melee collider start
+*
+* player can move slowly while swinging
+* fix crash при убийстве blinker-а, пока он не телепортанулся (projectile крашит)
+*
+* swing query_circle_segment smaller segments
+*
 * hades-like щит у врагов сбивается charge атакой
 *
 * obstacles:

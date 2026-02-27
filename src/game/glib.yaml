@@ -115,15 +115,32 @@ creatures:
     speed: 4
     mask_type: PLAYER
     attacks:
+      # - duration: 0.3
+      #   melee__damage: 1
+      #   melee__collision_starts_at: 0.1
+      #   melee__collision_ends_at: 0.2
+      #   movement_scale: 0.2
+      #   stops_tracking_at: 0.1
+      #   melee__polygon:
+      #     distance_min: 0.5
+      #     distance_max: 2
+      #     angle_degrees: 90
+      #     anchor_x: 0.5
+      #   tags:
+      #     - attacktag_type: DASH
+      #       f1: 0.0 # starts_at
+      #       f2: 0.2 # ends_at
+      #       f3: 0.3 # distance
+      #       f4: 1 # pow
       - projectile_type: ARROW
         projectiles_spawn_at:
           - 0.1
         duration: 0.25
         tags:
         # - attacktag_type: DASH
-        #   f1: 0.2 # starts_at
-        #   f2: 0.63 # ends_at
-        #   f3: 3 # distance
+        #   f1: 0.0 # starts_at
+        #   f2: 0.3 # ends_at
+        #   f3: -1 # distance
         #   f4: 1 # pow
         # - attacktag_type: BLINK
         #   f1: 0.02 # starts_at
