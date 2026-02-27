@@ -24,6 +24,8 @@ x fix: spearman dashes
 x triple projectiles mage
 
 * make MOB_BLINKER blockable
+* make creature impulses pow + duration controllable in creature.gd
+  -> would allow easier dash on AI
 *
 * projectile SUMMON tag
 * projectile area effects
