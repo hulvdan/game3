@@ -22,7 +22,6 @@ static func explicit_update_attack(
 		c.melee_attack = attack
 		c.melee_attack_id = Room.v.get_next_attack_id()
 		c.melee_damaged_creatures.clear()
-		c.controller.move = Vector2(0, 0)
 		if c.type != glib.GCreatureType.PLAYER:
 			Game.v.enemy_started_attack.emit(c.transform.origin)
 			if action_cooldown:
@@ -70,8 +69,8 @@ static func explicit_update_attack(
 				var end := tag.get_f2()
 				var dur := end - start
 
-				if !c.attack_dashed && (start <= c.attack_elapsed):
-					c.attack_dashed = true
+				if (start <= c.attack_elapsed) && (c.attack_elapsed <= end):
+					c.controller.move = c.attack_target_dir
 					c.speed_modifiers.dash = bf.get_roll_speed(
 						tag.get_f3(),
 						dur,

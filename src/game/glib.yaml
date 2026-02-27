@@ -132,10 +132,10 @@ creatures:
       #       distance_max: 2
       #       angle_degrees: 90
       #       anchor_x: 0.5
-      - projectile_type: ARROW
+      - duration: 0.25
+        projectile_type: ARROW
         projectiles_spawn_at:
           - 0.1
-        duration: 0.25
         stamina_cost:
           flat: 25
           rally_pre_mult: 1
@@ -146,10 +146,10 @@ creatures:
     hp: 3
     speed: 0.4
     attacks:
-      - projectile_type: BOMB
+      - duration: 0.8
+        projectile_type: BOMB
         projectiles_spawn_at:
           - 0.5
-        duration: 0.8
         cooldown_min: 0.7
         cooldown_max: 1.2
         distance: 4
@@ -158,12 +158,12 @@ creatures:
     hp: 2
     speed: 0.4
     attacks:
-      - projectile_type: BALL
+      - duration: 2
+        projectile_type: BALL
         projectiles_spawn_at:
           - 0.5
           - 1.0
           - 1.5
-        duration: 2
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 5
@@ -172,10 +172,10 @@ creatures:
     hp: 3
     speed: 0.8
     attacks:
-      - projectile_type: HOMING
+      - duration: 1.3
+        projectile_type: HOMING
         projectiles_spawn_at:
           - 0.8
-        duration: 1.3
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 7
@@ -184,10 +184,10 @@ creatures:
     hp: 3
     speed: 0.8
     attacks:
-      - projectile_type: STAR_HIVE
+      - duration: 1.3
+        projectile_type: STAR_HIVE
         projectiles_spawn_at:
           - 0.8
-        duration: 1.3
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 7
@@ -196,10 +196,10 @@ creatures:
     hp: 3
     speed: 0.8
     attacks:
-      - projectile_type: STAR_HIVE_INSIDE
+      - duration: 1.0
+        projectile_type: STAR_HIVE_INSIDE
         projectiles_spawn_at:
           - 0.5
-        duration: 1.0
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 3
@@ -208,10 +208,10 @@ creatures:
     hp: 3
     speed: 0.8
     attacks:
-      - projectile_type: STAR_HIVE_INSIDE
+      - duration: 1.0
+        projectile_type: STAR_HIVE_INSIDE
         projectiles_spawn_at:
           - 0.5
-        duration: 1.0
         cooldown_min: 2.0
         cooldown_max: 3.0
         distance: 3
@@ -220,9 +220,9 @@ creatures:
     hp: 5
     speed: 1
     attacks:
-      - cooldown_min: 1.5
+      - duration: 0.8
+        cooldown_min: 1.5
         cooldown_max: 2.2
-        duration: 0.8
         melee:
           damage: 1
           starts_at: 0.5
@@ -241,9 +241,9 @@ creatures:
     hp: 5
     speed: 1
     attacks:
-      - cooldown_min: 1.5
+      - duration: 1.2
+        cooldown_min: 1.5
         cooldown_max: 2.2
-        duration: 1.2
         projectile_type: BLINK
         projectiles_spawn_at:
           - 0.2
@@ -253,9 +253,9 @@ creatures:
     hp: 5
     speed: 1
     attacks:
-      - cooldown_min: 1.5
+      - duration: 0.8
+        cooldown_min: 1.5
         cooldown_max: 2.2
-        duration: 0.8
         melee:
           damage: 1
           starts_at: 0.5
@@ -277,12 +277,12 @@ creatures:
     hp: 5
     speed: 1
     attacks:
-      - cooldown_min: 1.5
+      - duration: 0.8
+        cooldown_min: 1.5
         cooldown_max: 2.2
-        duration: 0.8
         melee:
           damage: 1
-          starts_at: 0.4
+          starts_at: 0.5
           ends_at: 1.1
           polygon:
             distance_max: 2

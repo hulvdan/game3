@@ -20,6 +20,7 @@ x ki action label
 x fix crash при убийстве blinker-а, пока он не телепортанулся (projectile крашит)
 x fix another crash after killing shrapnel projectile owner
 x player can move slowly while swinging
+x fix: spearman dashes
 
 * make MOB_JUMPER blockable
 *
