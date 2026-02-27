@@ -20,6 +20,8 @@ func _ready() -> void: ##
 	Game.v.enemy_started_attack.connect(_make_action_label.bind(_options["enemy_started_attack"]))
 	Game.v.player_blocked.connect(_make_action_label.bind(_options["player_blocked"]))
 	Game.v.player_perfectly_blocked.connect(_make_action_label.bind(_options["player_perfectly_blocked"]))
+	Game.v.player_ki.connect(_make_action_label.bind(_options["player_ki"]))
+	Game.v.player_perfectly_ki.connect(_make_action_label.bind(_options["player_perfectly_ki"]))
 	Game.v.damaged.connect(
 		func(world_pos: Vector3, value: int, type: Game.WhoGotDamagedType) -> void:
 			_damage_opts.text = str(value)

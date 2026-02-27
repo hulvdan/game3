@@ -147,10 +147,12 @@ func consume_stamina(cost: glib.GStaminaCost) -> void: ##
 	stamina_rally -= cost.get_rally_flat()
 	stamina_rally = max(stamina_rally, stamina)
 	stamina_rally -= (stamina_rally - stamina) * (1 - cost.get_rally_post_mult())
-	assert(stamina_rally >= 0)
 	if stamina <= 0:
 		_stamina_depleted_at = Room.v.start_elapsed
 	stamina_ki = stamina
+	assert(stamina_rally >= 0)
+	assert(stamina >= 0)
+	assert(stamina_ki >= 0)
 ##
 
 
@@ -334,6 +336,13 @@ class PlayerBlock extends PlayerBase: ##
 
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
+
+		if player.stamina < player.stamina_ki:
+			if player.stamina_ki >= player.stamina_rally:
+				Game.v.player_perfectly_ki.emit(player.creature.transform.origin)
+			else:
+				Game.v.player_ki.emit(player.creature.transform.origin)
+
 		player.creature.speed_modifiers.block = glib.v.get_player().get_speed_scale__blocking()
 		player.stamina = max(player.stamina, player.stamina_ki)
 		player.stamina_rally = player.stamina

@@ -35,6 +35,17 @@ text = "DODGE"
 color = Color(0.67058825, 0.5803922, 0.47843137, 1)
 metadata/_custom_type_script = "uid://dhp1eiart43ss"
 
+[sub_resource type="Resource" id="Resource_srj3g"]
+script = ExtResource("5_3a6xa")
+text = "KI"
+color = Color(1, 0.8, 0, 1)
+metadata/_custom_type_script = "uid://dhp1eiart43ss"
+
+[sub_resource type="Resource" id="Resource_0g38w"]
+script = ExtResource("5_3a6xa")
+text = "KI"
+metadata/_custom_type_script = "uid://dhp1eiart43ss"
+
 [node name="room" type="Node" unique_id=154726596]
 script = ExtResource("1_3cfnp")
 
@@ -76,8 +87,10 @@ _label_duration_fade = 0.2
 _options = Dictionary[String, ExtResource("5_3a6xa")]({
 "enemy_started_attack": SubResource("Resource_um0rl"),
 "player_blocked": SubResource("Resource_ca2fg"),
+"player_ki": SubResource("Resource_0g38w"),
 "player_perfectly_blocked": SubResource("Resource_xopim"),
-"player_perfectly_evaded": SubResource("Resource_ljbfl")
+"player_perfectly_evaded": SubResource("Resource_ljbfl"),
+"player_perfectly_ki": SubResource("Resource_srj3g")
 })
 _damage_number_player_color = Color(0.9098039, 0.23137255, 0.23137255, 1)
 _damage_number_mob_color = Color(0.9843137, 1, 0.5254902, 1)

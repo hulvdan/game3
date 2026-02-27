@@ -14,9 +14,10 @@ x fused mob / player attacks: the same attack can be used by player/mob
 x fused mob / player attacks: test player can use blink
 x yamllint
 x fused mob / player attacks: player's blink correct distance (set target to cursor)
+x consume stamina upon spawning projectile / melee collider start
+x better stamina costs
+x ki action label
 
-* consume stamina upon spawning projectile / melee collider start
-*
 * player can move slowly while swinging
 * fix crash при убийстве blinker-а, пока он не телепортанулся (projectile крашит)
 *

@@ -7,6 +7,8 @@ signal player_perfectly_evaded(world_pos: Vector3)
 signal enemy_started_attack(world_pos: Vector3)
 signal player_blocked(world_pos: Vector3)
 signal player_perfectly_blocked(world_pos: Vector3)
+signal player_ki(world_pos: Vector3)
+signal player_perfectly_ki(world_pos: Vector3)
 signal damaged(world_pos: Vector3, value: int, type: WhoGotDamagedType)
 
 const GROUP_TARGET_CAMERA := "target_camera"
