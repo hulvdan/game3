@@ -17,7 +17,7 @@ var time_since_last_damage_taken_visual: float = INF
 var hp_bar: Bar
 var controller: Controller = Controller.new()
 var attack_elapsed: float
-var melee_attacking: bool
+var melee_attack: glib.GAttack
 var melee_attack_id: int
 var melee_damaged_creatures: Array[Creature]
 var blocked: bool
@@ -78,39 +78,43 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 	var data: glib.GCreature = glib.v.get_creatures()[type]
 
 	add_child(tree)
-	var cooldown_path: String = tree.get_meta("cooldown")
-	var cooldown: ActionRandCooldown = tree.get_node(cooldown_path)
-	cooldown.cooldown_min = data.get_attack_cooldown_min()
-	cooldown.cooldown_max = data.get_attack_cooldown_max()
 
-	var chase_path: String = tree.get_meta("chase")
-	var chase: ActionChase = tree.get_node(chase_path)
+	var gn = func(x: String) -> Node:
+		var p: String = tree.get_meta(x)
+		return tree.get_node(p)
 
-	var attack_dist: = data.get_attack_distance()
+	var action_cooldown: ActionRandCooldown = gn.call("cooldown")
+	var action_chase: ActionChase = gn.call("chase")
+	var action_attack: ActionAttack = gn.call("attack")
+	action_attack.cooldown = action_cooldown
 
-	var polygon := data.get_melee__attack_polygon()
-	var circle := data.get_melee__attack_circle()
+	# FIXME: Only 1st attack gets used
+	for attack in data.get_attacks():
+		var attack_dist: = attack.get_distance()
+		var polygon := attack.get_melee__polygon()
+		var circle := attack.get_melee__circle()
 
-	if polygon:
-		assert(!circle)
-	if circle:
-		assert(!polygon)
+		if polygon:
+			assert(!circle)
+		if circle:
+			assert(!polygon)
 
-	var hitbox_dist: float
-	if polygon:
-		hitbox_dist = polygon.get_distance_max() * (polygon.get_anchor_x() + 0.5)
-	if circle:
-		hitbox_dist = circle.get_radius() * (circle.get_anchor_x() + 0.5)
+		var hitbox_dist: float
+		if polygon:
+			hitbox_dist = polygon.get_distance_max() * (polygon.get_anchor_x() + 0.5)
+		if circle:
+			hitbox_dist = circle.get_radius() * (circle.get_anchor_x() + 0.5)
 
-	attack_dist += hitbox_dist
+		attack_dist += hitbox_dist
 
-	for tag in data.get_melee__tags():
-		match tag.get_meleetag_type():
-			glib.GMeleeTagType.DASH, glib.GMeleeTagType.BLINK:
-				attack_dist += tag.get_f3()
-				attack_dist -= hitbox_dist / 2
+		for tag in attack.get_melee__tags():
+			match tag.get_meleetag_type():
+				glib.GMeleeTagType.DASH, glib.GMeleeTagType.BLINK:
+					attack_dist += tag.get_f3()
+					attack_dist -= hitbox_dist / 2
 
-	chase.set_attack_distance(attack_dist)
+		action_chase.set_attack_distance(attack_dist)
+		break
 ##
 
 

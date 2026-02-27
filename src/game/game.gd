@@ -418,13 +418,14 @@ func _physics_process(dt: float) -> void:
 	## - Melee attacks collisions
 	var apply_damage_melee_data := ApplyDamageData.new()
 	for creature: Creature in room.container_creatures.get_children():
-		if !creature.melee_attacking:
+		if !creature.melee_attack:
 			continue
 
-		var data := g_creatures[creature.type]
-		if creature.attack_elapsed < data.get_melee__attack_collision_starts_at():
+		var attack: glib.GAttack = creature.melee_attack
+
+		if creature.attack_elapsed < attack.get_melee__collision_starts_at():
 			continue
-		if creature.attack_elapsed > data.get_melee__attack_collision_ends_at():
+		if creature.attack_elapsed > attack.get_melee__collision_ends_at():
 			continue
 
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)
@@ -434,8 +435,8 @@ func _physics_process(dt: float) -> void:
 		var attacker_pos := bf.xz(creature.transform.origin)
 
 		var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
-		var polygon := data.get_melee__attack_polygon()
-		var circle := data.get_melee__attack_circle()
+		var polygon := attack.get_melee__polygon()
+		var circle := attack.get_melee__circle()
 		if polygon:
 			assert(!circle)
 		if circle:
@@ -476,7 +477,7 @@ func _physics_process(dt: float) -> void:
 				bf.xz(damaged_creature.transform.origin),
 			)
 
-			if apply_damage(damaged_creature, data.get_melee__damage(), apply_damage_melee_data):
+			if apply_damage(damaged_creature, attack.get_melee__damage(), apply_damage_melee_data):
 				creature.melee_damaged_creatures.append(damaged_creature)
 	##
 

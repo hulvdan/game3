@@ -93,6 +93,7 @@ masks: ##
 ##
 
 melee_tags:
+  # TODO: Optional fields? Would enable better validation
   - type: DASH ##
     requires_f1: true # starts_at
     requires_f2: true # ends_at
@@ -201,10 +202,10 @@ creatures:
         cooldown_max: 2.2
         duration: 0.8
         melee__damage: 1
-        melee__attack_collision_starts_at: 0.5
-        melee__attack_collision_ends_at: 0.6
-        melee__attack_stops_tracking_at: 0.2
-        melee__attack_circle:
+        melee__collision_starts_at: 0.5
+        melee__collision_ends_at: 0.6
+        melee__stops_tracking_at: 0.2
+        melee__circle:
           radius: 1.5
         melee__tags:
           - meleetag_type: DASH
@@ -233,10 +234,10 @@ creatures:
         cooldown_max: 2.2
         duration: 0.8
         melee__damage: 1
-        melee__attack_collision_starts_at: 0.5
-        melee__attack_collision_ends_at: 0.6
-        melee__attack_stops_tracking_at: 0.2
-        melee__attack_polygon:
+        melee__collision_starts_at: 0.5
+        melee__collision_ends_at: 0.6
+        melee__stops_tracking_at: 0.2
+        melee__polygon:
           distance_min: 0.5
           distance_max: 2
           angle_degrees: 90
@@ -256,10 +257,10 @@ creatures:
         cooldown_max: 2.2
         duration: 0.8
         melee__damage: 1
-        melee__attack_collision_starts_at: 0.4
-        melee__attack_collision_ends_at: 1.1
-        melee__attack_stops_tracking_at: 0.3
-        melee__attack_polygon:
+        melee__collision_starts_at: 0.4
+        melee__collision_ends_at: 1.1
+        melee__stops_tracking_at: 0.3
+        melee__polygon:
           distance_max: 2
           angle_degrees: 20
           anchor_x: 0.5
@@ -298,7 +299,7 @@ projectile_fly_types: ##
 ##
 
 projectile_tags:
-  # TODO: Optional fields? Would allow validating
+  # TODO: Optional fields? Would enable better validation
   - type: HOMING ##
     requires_f1: true # rotation speed
   ##

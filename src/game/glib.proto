@@ -97,14 +97,14 @@ message GAttack {
   repeated float projectiles_spawn_at = 6;
 
   int32 melee__damage = 7;
-  float melee__attack_collision_starts_at = 8;
-  float melee__attack_collision_ends_at = 9;
-  float melee__attack_stops_tracking_at = 10;
-  int32 melee__attack_collider_type = 11;
+  float melee__collision_starts_at = 8;
+  float melee__collision_ends_at = 9;
+  float melee__stops_tracking_at = 10;
+  int32 melee__collider_type = 11;
   repeated GMeleeTagValue melee__tags = 12;
 
-  GAttackPolygon melee__attack_polygon = 13;
-  GAttackCircle melee__attack_circle = 14;
+  GAttackPolygon melee__polygon = 13;
+  GAttackCircle melee__circle = 14;
 }
 
 message GCreature {

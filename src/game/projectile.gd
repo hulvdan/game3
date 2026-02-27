@@ -44,8 +44,9 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 			glib.GProjectileTagType.BLINK:
 				if !blinked && (elapsed >= tag.get_f1()):
 					blinked = true
-					d.owner.transform.origin = transform.origin
-					d.owner.reset_physics_interpolation()
+					if is_instance_valid(d.owner):
+						d.owner.transform.origin = transform.origin
+						d.owner.reset_physics_interpolation()
 ##
 
 

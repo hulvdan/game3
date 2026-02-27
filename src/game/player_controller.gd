@@ -30,7 +30,7 @@ var _buffer: Array[Action]
 var _states: Array[PlayerBase] = [
 	null,
 	PlayerDefault.new(),
-	PlayerShoot.new(),
+	PlayerAttack.new(),
 	PlayerRoll.new(),
 	PlayerBlock.new(),
 ]
@@ -227,7 +227,7 @@ class PlayerDefault extends PlayerBase: ##
 ##
 
 
-class PlayerShoot extends PlayerBase: ##
+class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
 		player.creature.speed_modifiers.shooting = glib.v.get_player().get_speed_scale__shooting()
