@@ -93,7 +93,15 @@ masks: ##
 ##
 
 melee_tags: ##
-  - type: INVALID
+  - type: DASH
+    requires_f1: true # starts_at
+    requires_f2: true # ends_at
+    requires_f3: true # distance
+    requires_f4: true # pow
+  - type: BLINK
+    requires_f1: true # starts_at
+    requires_f2: true # ends_at
+    requires_f3: true # distance
 ##
 
 creatures: ##
@@ -176,10 +184,29 @@ creatures: ##
     melee__attack_stops_tracking_at: 0.2
     melee__attack_circle:
       radius: 1.5
-    melee__attack_dash_starts_at: 0.2
-    melee__attack_dash_ends_at: 0.63
-    melee__attack_dash_distance: 3
-    melee__attack_dash_pow: 1
+    melee__tags:
+      - meleetag_type: DASH
+        f1: 0.2 # starts_at
+        f2: 0.63 # ends_at
+        f3: 3 # distance
+        f4: 1 # pow
+  - type: MOB_BLINKER
+    hp: 5
+    speed: 1
+    attack_cooldown_min: 1.5
+    attack_cooldown_max: 2.2
+    attack_duration: 0.8
+    melee__damage: 1
+    melee__attack_collision_starts_at: 0.5
+    melee__attack_collision_ends_at: 0.6
+    melee__attack_stops_tracking_at: 0.2
+    melee__attack_circle:
+      radius: 1.5
+    melee__tags:
+      - meleetag_type: BLINK
+        f1: 0.2 # starts_at
+        f2: 0.63 # ends_at
+        f3: 3 # distance
   - type: MOB_BONKER
     hp: 5
     speed: 1
@@ -195,10 +222,12 @@ creatures: ##
       distance_max: 2
       angle_degrees: 90
       anchor_x: 0.5
-    melee__attack_dash_starts_at: 0.2
-    melee__attack_dash_ends_at: 0.5
-    melee__attack_dash_distance: 1
-    melee__attack_dash_pow: 1
+    melee__tags:
+      - meleetag_type: DASH
+        f1: 0.2 # starts_at
+        f2: 0.5 # ends_at
+        f3: 1 # distance
+        f4: 1 # pow
   - type: MOB_SPEAR
     hp: 5
     speed: 1
@@ -213,11 +242,12 @@ creatures: ##
       distance_max: 2
       angle_degrees: 20
       anchor_x: 0.5
-    melee__attack_dash_starts_at: 0.4
-    melee__attack_dash_ends_at: 1.1
-    melee__attack_dash_distance: 4
-    melee__attack_dash_pow: 1
-
+    melee__tags:
+      - meleetag_type: DASH
+        f1: 0.4 # starts_at
+        f2: 1.1 # ends_at
+        f3: 4 # distance
+        f4: 1 # pow
 ##
 
 items: ##
@@ -246,10 +276,10 @@ projectile_fly_types: ##
 projectile_tags: ##
   # TODO: Optional fields? Would allow validating
   - type: HOMING
-    requires_valuef: true # rotation speed
+    requires_f1: true # rotation speed
   - type: HIVE
-    requires_valuei: true # child projectiles count
-    requires_valuef: true # child projectiles spawn time
+    requires_i1: true # child projectiles count
+    requires_f1: true # child projectiles spawn time
     requires_projectile_type: true
 ##
 
@@ -275,8 +305,8 @@ projectiles: ##
     projectilefly_type: ARC
     tags:
       - projectiletag_type: HIVE
-        valuef: 1.0
-        valuei: 5
+        f1: 1.0
+        i1: 5
         projectile_type: STAR_BIT
     arc__height: 1
     arc__duration: 0.3
@@ -285,8 +315,8 @@ projectiles: ##
     projectilefly_type: ARC
     tags:
       - projectiletag_type: HIVE
-        valuef: 1.0
-        valuei: 5
+        f1: 1.0
+        i1: 5
         projectile_type: STAR_BIT
     arc__height: 1
     arc__duration: 1
@@ -304,6 +334,6 @@ projectiles: ##
     distance: 8
     tags:
       - projectiletag_type: HOMING
-        valuef: 1.0
+        f1: 1.0
         ##
 

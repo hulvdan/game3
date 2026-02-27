@@ -40,7 +40,7 @@ func on_free(data: glib.GProjectile) -> void: ##
 		match tag.get_projectiletag_type():
 			glib.GProjectileTagType.HIVE:
 				var angle := calculated__dir.angle()
-				var children_count := tag.get_valuei()
+				var children_count := tag.get_i1()
 				assert(children_count > 0)
 
 				var angle_step := 2 * PI / children_count
@@ -91,7 +91,7 @@ class UpdaterDefault extends UpdaterBase:
 						lerp_angle(
 							x.calculated__dir.angle(),
 							target_dir.angle(),
-							tag.get_valuef() * dt,
+							tag.get_f1() * dt,
 						),
 					)
 

@@ -77,12 +77,14 @@ message GMeleeTag {
 
 message GMeleeTagValue {
   int32 meleetag_type = 1;
-  int32 valuei1 = 2;
-  int32 valuei2 = 3;
-  int32 valuei3 = 4;
-  float valuef1 = 5;
-  float valuef2 = 6;
-  float valuef3 = 7;
+  int32 i1 = 2;
+  int32 i2 = 3;
+  int32 i3 = 4;
+  int32 i4 = 5;
+  float f1 = 6;
+  float f2 = 7;
+  float f3 = 8;
+  float f4 = 9;
 }
 
 message GCreature {
@@ -105,17 +107,13 @@ message GCreature {
   float melee__attack_collision_starts_at = 14;
   float melee__attack_collision_ends_at = 15;
   float melee__attack_stops_tracking_at = 16;
-  float melee__attack_dash_starts_at = 17;
-  float melee__attack_dash_ends_at = 18;
-  float melee__attack_dash_distance = 19;
-  float melee__attack_dash_pow = 20;
-  int32 melee__attack_collider_type = 21;
-  repeated GMeleeTagValue melee__tags = 22;
+  int32 melee__attack_collider_type = 17;
+  repeated GMeleeTagValue melee__tags = 18;
 
-  int32 mask_type = 23;
-  GAttackPolygon melee__attack_polygon = 24;
-  GAttackCircle melee__attack_circle = 25;
-  repeated GCreatureDrop drops = 26;
+  int32 mask_type = 19;
+  GAttackPolygon melee__attack_polygon = 20;
+  GAttackCircle melee__attack_circle = 21;
+  repeated GCreatureDrop drops = 22;
 }
 
 message GDamage {
@@ -146,8 +144,8 @@ message GProjectileTag {
 
 message GProjectileTagValue {
   int32 projectiletag_type = 1;
-  int32 valuei = 2;
-  float valuef = 3;
+  int32 i1 = 2;
+  float f1 = 3;
   int32 projectile_type = 4;
 }
 

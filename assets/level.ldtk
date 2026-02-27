@@ -852,6 +852,11 @@
             "color": 0
           },
           {
+            "id": "MOB_BLINKER",
+            "tileRect": null,
+            "color": 0
+          },
+          {
             "id": "MOB_BONKER",
             "tileRect": null,
             "color": 0

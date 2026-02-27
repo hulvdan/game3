@@ -7,20 +7,24 @@ BIG PLAN
 PLAN
 ============================================================
 
-x vscode test action
-x fix: adding BLOCK to buffer removes all UNBLOCK from it
-x figlet banners pre-commit
-x melee__dash_starts_at * melee__dash_ends_at
-x melee mob who dashes before swing
-x fix: after mob's attack going outside->inside of his range resets cooldown.
-  BUT IT SHOULD NOT RESET COOLDOWN!
-x melee mob who attacks in circle around him
-x attack polygon / circle anchor_x
-
 * mob same as jumper but BLINKER (teleports in front of player)
 *
+* obstacles:
+  * axis:
+    * size
+    * how can be removed
+      - can't be damaged/removed (e.g. lake)
+      - needs small damage (e.g. barrel)
+      - needs moderate damage (e.g. stone obstacle)
+      - needs ability
+    * who can damage
+    * can it even be damaged
+    * what removing does
+      - just unlocks path
+      - does area damage (e.g. explosive damage)
+      - grants money ()
+*
 * контроль кривизны query_circle_segment (для широкой пули)
-* query_rect?
 *
 * моб, что взрывается на месте
 * моб, что при выстреле откидывается назад (projectile spawn impulse)
