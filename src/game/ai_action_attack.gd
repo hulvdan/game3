@@ -4,6 +4,7 @@ extends ActionLeaf
 class_name ActionAttack
 
 var projectiles_spawned: int
+var blinked := false
 
 
 func tick(actor_: Node, _blackboard: Blackboard) -> int:
@@ -30,25 +31,39 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 
 	actor.attack_elapsed += get_physics_process_delta_time()
 
-	## Processing dash
-	if data.get_melee__attack_dash_distance() > 0:
-		actor.controller.move = actor.melee_target_dir
+	# Processing tags
+	for tag in data.get_melee__tags():
+		match tag.get_meleetag_type():
+			glib.GMeleeTagType.DASH: ##
+				actor.controller.move = actor.melee_target_dir
 
-		var e: float = min(actor.attack_elapsed, data.get_attack_duration())
-		actor.speed_modifiers.melee_dash = 0
+				var e: float = min(actor.attack_elapsed, data.get_attack_duration())
+				actor.speed_modifiers.melee_dash = 0
 
-		var start := data.get_melee__attack_dash_starts_at()
-		var end := data.get_melee__attack_dash_ends_at()
-		var dur := end - start
+				var start := tag.get_f1()
+				var end := tag.get_f2()
+				var dur := end - start
 
-		if ((start <= actor.attack_elapsed) && (actor.attack_elapsed <= end)):
-			actor.speed_modifiers.melee_dash = bf.get_roll_speed(
-				data.get_melee__attack_dash_distance(),
-				dur,
-				e - start,
-				data.get_melee__attack_dash_pow(),
-			)
-	##
+				if ((start <= actor.attack_elapsed) && (actor.attack_elapsed <= end)):
+					actor.speed_modifiers.melee_dash = bf.get_roll_speed(
+						tag.get_f3(),
+						dur,
+						e - start,
+						tag.get_f4(),
+					)
+			##
+			glib.GMeleeTagType.BLINK: ##
+				if !blinked:
+					var start := tag.get_f1()
+					var end := tag.get_f2()
+					var dur := end - start
+					var e: float = min(actor.attack_elapsed, data.get_attack_duration())
+					if e >= dur / 2:
+						blinked = true
+						var d := actor.melee_target_pos - bf.xz(actor.transform.origin)
+						var l: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
+						actor.transform.origin += bf.to_xz(actor.melee_target_dir * l)
+			##
 
 	## Spawning projectiles
 	if data.get_attack_projectile_type():
@@ -68,6 +83,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 
 	## Attack finish
 	if actor.attack_elapsed >= data.get_attack_duration():
+		blinked = false
 		actor.attack_elapsed = 0.0
 		projectiles_spawned = 0
 		actor.melee_attacking = false

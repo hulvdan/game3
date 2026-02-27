@@ -41,6 +41,8 @@ enum ActionType { NONE, SHOOT, ROLL, BLOCK, UNBLOCK, SET_MOVE_DIR }
 
 
 func init(creature_: Creature, bow_: Node3D) -> void: ##
+	_states[StateType.ROLL].inside_enemies_t_affects_speed = false
+
 	for s: PlayerBase in _states:
 		if s:
 			s.player = self
@@ -70,11 +72,14 @@ func push_action(type: ActionType, dir: Vector2) -> void: ##
 
 func explicit_process(dt: float) -> void: ##
 	assert(glib.v.get_controls().get_action_consumption_duration() >= 0)
-	creature.speed_modifiers.inside_enemies_t = lerp(
-		1.0,
-		glib.v.get_player().get_speed_scale__inside_enemies(),
-		inside_enemy_t,
-	)
+
+	creature.speed_modifiers.inside_enemies_t = 1.0
+	if _states[_current_state].inside_enemies_t_affects_speed:
+		creature.speed_modifiers.inside_enemies_t = lerp(
+			1.0,
+			glib.v.get_player().get_speed_scale__inside_enemies(),
+			inside_enemy_t,
+		)
 
 	if _change_state_to:
 		if _change_state_to != _current_state:
@@ -157,6 +162,7 @@ class Action: ##
 class PlayerBase: ##
 	var elapsed: float
 	var player: PlayerController
+	var inside_enemies_t_affects_speed := true
 
 	var _consumed_action_indices: Array[int]
 
