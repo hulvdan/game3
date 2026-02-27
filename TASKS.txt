@@ -10,6 +10,10 @@ PLAN
 x mob same as jumper but BLINKER (teleports in front of player)
 x blinker: spawn projectile -> teleport mob upon it finishing
 
+* мобы, как и игрок, могут использовать одни и те же атаки
+*
+* hades-like щит у врагов сбивается charge атакой
+*
 * obstacles:
   * axis:
     * size
