@@ -42,7 +42,8 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 	for tag in data.get_tags():
 		match tag.get_projectiletag_type():
 			glib.GProjectileTagType.BLINK:
-				if !blinked && (elapsed >= tag.get_f1()):
+				assert(d.owner)
+				if d.owner && !blinked && (elapsed >= tag.get_f1()):
 					blinked = true
 					if is_instance_valid(d.owner):
 						d.owner.transform.origin = transform.origin

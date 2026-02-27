@@ -59,11 +59,11 @@ func init(creature_: Creature, bow_: Node3D) -> void: ##
 
 
 func push_action(type: ActionType, dir: Vector2) -> void: ##
-	var a := Action.new()
-	a.created_at = Room.v.start_elapsed
-	a.type = type
-	a.shoot_or_move_or_roll__dir = dir
-	_buffer.append(a)
+	var x := Action.new()
+	x.created_at = Room.v.start_elapsed
+	x.type = type
+	x.shoot_or_move_or_roll__dir = dir
+	_buffer.append(x)
 
 	if type == ActionType.BLOCK:
 		bf.remove_all_by_key(_buffer, Action.is_unblock)
