@@ -31,6 +31,8 @@ x triple projectiles mage
   - slowing mobs down
   - enabling Area3D node on projectile -> storing collided creatures inside
 *
+* projectile spawn pos offset (for reverse shrapnel)
+*
 * projectiles impulse
 *
 * recoverable ki stamina decreases after a short time of not using ki
