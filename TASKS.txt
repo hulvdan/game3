@@ -17,9 +17,9 @@ x fused mob / player attacks: player's blink correct distance (set target to cur
 x consume stamina upon spawning projectile / melee collider start
 x better stamina costs
 x ki action label
+x fix crash при убийстве blinker-а, пока он не телепортанулся (projectile крашит)
 
 * player can move slowly while swinging
-* fix crash при убийстве blinker-а, пока он не телепортанулся (projectile крашит)
 *
 * swing query_circle_segment smaller segments
 *
