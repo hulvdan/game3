@@ -43,8 +43,8 @@ class EvadedAttack:
 
 
 var _attack_ids_marked_as_evaded: Array[EvadedAttack]
-var melee_target_pos: Vector2
-var melee_target_dir: Vector2
+var attack_target_pos: Vector2
+var attack_target_dir: Vector2
 var speed_modifiers: Dictionary[String, float] = { "base": 0 }
 
 @onready var node_target_camera: Node3D = %_rotate

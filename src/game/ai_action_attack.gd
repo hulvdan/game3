@@ -6,32 +6,32 @@ class_name ActionAttack
 var cooldown: ActionRandCooldown
 
 
-static func explicit_update_attack(dt: float, creature: Creature, action_cooldown: ActionRandCooldown) -> bool: ##
-	creature.attack_elapsed += dt
-	var data = glib.v.get_creatures()[creature.type]
+static func explicit_update_attack(dt: float, c: Creature, action_cooldown: ActionRandCooldown) -> bool: ##
+	c.attack_elapsed += dt
+	var data = glib.v.get_creatures()[c.type]
 
 	var attack := data.get_attacks()[0]
 	var attack_duration := attack.get_duration()
 
 	## Attack start
-	if !creature.attack_elapsed:
-		creature.melee_attack = attack
-		creature.melee_attack_id = Room.v.get_next_attack_id()
-		creature.melee_damaged_creatures.clear()
-		creature.controller.move = Vector2(0, 0)
-		if creature.type != glib.GCreatureType.PLAYER:
-			Game.v.enemy_started_attack.emit(creature.transform.origin)
+	if !c.attack_elapsed:
+		c.melee_attack = attack
+		c.melee_attack_id = Room.v.get_next_attack_id()
+		c.melee_damaged_creatures.clear()
+		c.controller.move = Vector2(0, 0)
+		if c.type != glib.GCreatureType.PLAYER:
+			Game.v.enemy_started_attack.emit(c.transform.origin)
 			if action_cooldown:
 				action_cooldown.cooldown_min = attack.get_cooldown_min() + attack_duration
 				action_cooldown.cooldown_min = attack.get_cooldown_max() + attack_duration
 	##
 
 	## Tracking target (player)
-	if creature.melee_attack and creature.attack_elapsed <= attack.get_melee__stops_tracking_at():
-		creature.melee_target_pos = bf.xz(Room.v.player.creature.transform.origin)
-		creature.melee_target_dir = bf.vector2_direction_or_random(
-			bf.xz(creature.transform.origin),
-			creature.melee_target_pos,
+	if c.melee_attack and c.attack_elapsed <= attack.get_melee__stops_tracking_at():
+		c.attack_target_pos = bf.xz(Room.v.player.creature.transform.origin)
+		c.attack_target_dir = bf.vector2_direction_or_random(
+			bf.xz(c.transform.origin),
+			c.attack_target_pos,
 		)
 	##
 
@@ -39,17 +39,17 @@ static func explicit_update_attack(dt: float, creature: Creature, action_cooldow
 	for tag in attack.get_melee__tags():
 		match tag.get_meleetag_type():
 			glib.GMeleeTagType.DASH: ##
-				creature.controller.move = creature.melee_target_dir
+				c.controller.move = c.attack_target_dir
 
-				var e: float = min(creature.attack_elapsed, attack.get_duration())
-				creature.speed_modifiers.melee_dash = 0
+				var e: float = min(c.attack_elapsed, attack.get_duration())
+				c.speed_modifiers.melee_dash = 0
 
 				var start := tag.get_f1()
 				var end := tag.get_f2()
 				var dur := end - start
 
-				if (start <= creature.attack_elapsed) && (creature.attack_elapsed <= end):
-					creature.speed_modifiers.melee_dash = bf.get_roll_speed(
+				if (start <= c.attack_elapsed) && (c.attack_elapsed <= end):
+					c.speed_modifiers.melee_dash = bf.get_roll_speed(
 						tag.get_f3(),
 						dur,
 						e - start,
@@ -57,14 +57,14 @@ static func explicit_update_attack(dt: float, creature: Creature, action_cooldow
 					)
 			##
 			glib.GMeleeTagType.BLINK: ##
-				if !creature.attack_blinked:
+				if !c.attack_blinked:
 					var dur := tag.get_f2() - tag.get_f1()
-					if creature.attack_elapsed >= dur / 2:
-						creature.attack_blinked = true
-						var d := creature.melee_target_pos - bf.xz(creature.transform.origin)
+					if c.attack_elapsed >= dur / 2:
+						c.attack_blinked = true
+						var d := c.attack_target_pos - bf.xz(c.transform.origin)
 						var l: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
-						creature.transform.origin += bf.to_xz(creature.melee_target_dir * l)
-						creature.reset_physics_interpolation()
+						c.transform.origin += bf.to_xz(c.attack_target_dir * l)
+						c.reset_physics_interpolation()
 			##
 
 	## Spawning projectiles
@@ -72,25 +72,26 @@ static func explicit_update_attack(dt: float, creature: Creature, action_cooldow
 		var i: int = 0
 		for projectile_spawns_at in attack.get_projectiles_spawn_at():
 			i += 1
-			if creature.attack_projectiles_spawned < i and projectile_spawns_at < creature.attack_elapsed:
-				creature.attack_projectiles_spawned += 1
+			if c.attack_projectiles_spawned < i and projectile_spawns_at < c.attack_elapsed:
+				c.attack_projectiles_spawned += 1
 				var d := Projectile.Data.new()
 				d.type = attack.get_projectile_type() as glib.GProjectileType
-				d.owner = creature
-				d.pos = bf.xz(creature.transform.origin)
-				d.target = bf.xz(Room.v.player.creature.transform.origin)
-				d.homing__target = Room.v.player.creature
+				d.owner = c
+				d.pos = bf.xz(c.transform.origin)
+				d.target = c.attack_target_pos
+				if c.type != glib.GCreatureType.PLAYER:
+					d.homing__target = Room.v.player.creature
 				Game.v.make_projectile(d)
 	##
 
 	## Attack finish
-	if creature.attack_elapsed >= attack_duration:
-		creature.attack_blinked = false
-		creature.attack_elapsed = 0.0
-		creature.attack_projectiles_spawned = 0
-		creature.melee_attack = null
-		creature.controller.move = Vector2(0, 0)
-		creature.speed_modifiers.melee_dash = 1
+	if c.attack_elapsed >= attack_duration:
+		c.attack_blinked = false
+		c.attack_elapsed = 0.0
+		c.attack_projectiles_spawned = 0
+		c.melee_attack = null
+		c.controller.move = Vector2(0, 0)
+		c.speed_modifiers.melee_dash = 1
 		return true
 	##
 

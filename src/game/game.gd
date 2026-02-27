@@ -444,12 +444,12 @@ func _physics_process(dt: float) -> void:
 
 		var q: Array[Dictionary]
 		if polygon:
-			var off := creature.melee_target_dir * (polygon.get_distance_max() * (polygon.get_anchor_x() - 0.5))
+			var off := creature.attack_target_dir * (polygon.get_distance_max() * (polygon.get_anchor_x() - 0.5))
 			q = Collisions.query_circle_segment(
 				attacker_pos + off,
 				polygon.get_distance_min(),
 				polygon.get_distance_max(),
-				-creature.melee_target_dir.angle(),
+				-creature.attack_target_dir.angle(),
 				polygon.get_angle(),
 				mask,
 				true,
@@ -457,7 +457,7 @@ func _physics_process(dt: float) -> void:
 				12,
 			)
 		if circle:
-			var off := creature.melee_target_dir * circle.get_radius() * circle.get_anchor_x()
+			var off := creature.attack_target_dir * circle.get_radius() * circle.get_anchor_x()
 			q = Collisions.query_circle(
 				attacker_pos + off,
 				circle.get_radius(),

@@ -98,17 +98,18 @@ class UpdaterDefault extends UpdaterBase:
 		for tag in data.get_tags():
 			match tag.get_projectiletag_type():
 				glib.GProjectileTagType.HOMING:
-					var target_dir := bf.vector2_direction_or_random(
-						bf.xz(x.transform.origin),
-						bf.xz(x.d.homing__target.transform.origin),
-					)
-					x.calculated__dir = Vector2(1, 0).rotated(
-						lerp_angle(
-							x.calculated__dir.angle(),
-							target_dir.angle(),
-							tag.get_f1() * dt,
-						),
-					)
+					if x.d.homing__target:
+						var target_dir := bf.vector2_direction_or_random(
+							bf.xz(x.transform.origin),
+							bf.xz(x.d.homing__target.transform.origin),
+						)
+						x.calculated__dir = Vector2(1, 0).rotated(
+							lerp_angle(
+								x.calculated__dir.angle(),
+								target_dir.angle(),
+								tag.get_f1() * dt,
+							),
+						)
 
 		var q: Array[Dictionary]
 
