@@ -63,6 +63,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int:
 						var d := actor.melee_target_pos - bf.xz(actor.transform.origin)
 						var l: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
 						actor.transform.origin += bf.to_xz(actor.melee_target_dir * l)
+						actor.reset_physics_interpolation()
 			##
 
 	## Spawning projectiles
