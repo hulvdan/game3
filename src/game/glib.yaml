@@ -391,8 +391,8 @@ creatures:
         projectile_type: AREA_SLOWDOWN
         projectile_spawns:
           - at: 0.5
-        cooldown_min: 10.0
-        cooldown_max: 10.0
+        cooldown_min: 30.0
+        cooldown_max: 30.0
         distance: 4
         ##
 
@@ -513,7 +513,7 @@ projectiles:
   ##
   - type: AREA_SLOWDOWN ##
     projectilefly_type: ARC
-    arc__duration: 8
+    arc__duration: 30
     collider_radius: 1.8
     distance: 4
     evade_flags: *evade_flags_default

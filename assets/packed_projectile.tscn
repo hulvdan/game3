@@ -3,8 +3,19 @@
 [ext_resource type="Script" uid="uid://bfsuyjxdth4us" path="res://src/game/projectile.gd" id="1_m1wom"]
 [ext_resource type="Texture2D" uid="uid://dmvkulolq5k7p" path="res://assets/art/textures/removeme/arrow.png" id="1_quauw"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_rixsa"]
+
 [node name="arrow" type="Node3D" unique_id=1961089291]
 script = ExtResource("1_m1wom")
+
+[node name="_area_sphere" type="Area3D" parent="." unique_id=308382262]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="_area_sphere" unique_id=1835534987]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+shape = SubResource("SphereShape3D_rixsa")
 
 [node name="Node3D" type="Node3D" parent="." unique_id=1671833346]
 

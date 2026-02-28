@@ -34,6 +34,7 @@ var travelled: float
 var blinked: bool
 
 @onready var sprite: Sprite3D = %_sprite
+@onready var area_sphere: Area3D = %_area_sphere
 ##
 
 
@@ -49,6 +50,22 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 						d.owner__mb_freed_or_null.transform.origin = transform.origin
 						d.owner__mb_freed_or_null.reset_physics_interpolation()
 ##
+
+
+func on_body_entered(creature: Creature) -> void: ##
+	for tag in glib.v.get_projectiles()[d.type].get_tags():
+		match tag.get_tag_type():
+			glib.GTagType.SCALE_MOVEMENT_SPEED:
+				creature.speed_modifiers['pr%d' % get_instance_id()] = tag.get_f1()
+	##
+
+
+func on_body_exited(creature: Creature) -> void: ##
+	for tag in glib.v.get_projectiles()[d.type].get_tags():
+		match tag.get_tag_type():
+			glib.GTagType.SCALE_MOVEMENT_SPEED:
+				creature.speed_modifiers.erase('pr%d' % get_instance_id())
+	##
 
 
 func on_free(data: glib.GProjectile) -> void: ##

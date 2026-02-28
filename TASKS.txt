@@ -21,8 +21,18 @@ x player roll impulse refactor
 x JUMPER dash in front of player (blink-like distance limiting)
 x projectile SUMMON tag
 x merge attack & projectile tags
+x slowdown area: shown on screen
+x slowdown area: make it downscale player's speed
 
-* projectile area effect: slowdown
+* slowdown area: add flytype AREA so that projectile's position
+  is fixed and Area3D is in center of Gizmos circle
+* slowdown area:
+* slowdown area:
+* slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.owner)
+*
+* fix: godot debug error: when shooting: det == 0
+* fix: cooldown is being reset upon interrupt. It shouldn't
+*
 * projectile area effects
   - long duration
   - slowing mobs down

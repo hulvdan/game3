@@ -28,23 +28,27 @@ func init(_room: Room) -> void: ##
 ##
 
 
-func _on_body_entered_trigger(creature: Creature) -> void:
+func _on_body_entered_trigger(creature: Creature) -> void: ##
 	if creature.type == glib.GCreatureType.PLAYER:
 		player_is_inside = true
+##
 
 
-func _on_body_exited_trigger(creature: Creature) -> void:
+func _on_body_exited_trigger(creature: Creature) -> void: ##
 	if creature.type == glib.GCreatureType.PLAYER:
 		player_is_inside = false
+##
 
 
-func _on_body_entered_damage(creature: Creature) -> void:
+func _on_body_entered_damage(creature: Creature) -> void: ##
 	assert(creature not in creatures_to_damage)
 	creatures_to_damage.append(creature)
+##
 
 
-func _on_body_exited_damage(creature: Creature) -> void:
+func _on_body_exited_damage(creature: Creature) -> void: ##
 	bf.remove_single(creatures_to_damage, creature)
+##
 
 
 func try_activate() -> void:
