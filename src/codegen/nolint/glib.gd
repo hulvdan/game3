@@ -5719,15 +5719,15 @@ class Lib:
 		service.field = __creatures_push_force
 		data[__creatures_push_force.tag] = service
 
-		__impulse_duration_seconds = PBField.new("impulse_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default_impulse_duration_seconds = PBField.new("default_impulse_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __impulse_duration_seconds
-		data[__impulse_duration_seconds.tag] = service
+		service.field = __default_impulse_duration_seconds
+		data[__default_impulse_duration_seconds.tag] = service
 
-		__impulse_pow = PBField.new("impulse_pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default_impulse_pow = PBField.new("default_impulse_pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __impulse_pow
-		data[__impulse_pow.tag] = service
+		service.field = __default_impulse_pow
+		data[__default_impulse_pow.tag] = service
 
 		__impulse_block_scale = PBField.new("impulse_block_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -6045,48 +6045,48 @@ class Lib:
 		__creatures_push_force.value = value
 
 
-	var __impulse_duration_seconds: PBField
+	var __default_impulse_duration_seconds: PBField
 
 
-	func has_impulse_duration_seconds() -> bool:
-		if __impulse_duration_seconds.value != null:
+	func has_default_impulse_duration_seconds() -> bool:
+		if __default_impulse_duration_seconds.value != null:
 			return true
 		return false
 
 
-	func get_impulse_duration_seconds() -> float:
-		return __impulse_duration_seconds.value
+	func get_default_impulse_duration_seconds() -> float:
+		return __default_impulse_duration_seconds.value
 
 
-	func clear_impulse_duration_seconds() -> void:
+	func clear_default_impulse_duration_seconds() -> void:
 		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__impulse_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__default_impulse_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_impulse_duration_seconds(value: float) -> void:
-		__impulse_duration_seconds.value = value
+	func set_default_impulse_duration_seconds(value: float) -> void:
+		__default_impulse_duration_seconds.value = value
 
 
-	var __impulse_pow: PBField
+	var __default_impulse_pow: PBField
 
 
-	func has_impulse_pow() -> bool:
-		if __impulse_pow.value != null:
+	func has_default_impulse_pow() -> bool:
+		if __default_impulse_pow.value != null:
 			return true
 		return false
 
 
-	func get_impulse_pow() -> float:
-		return __impulse_pow.value
+	func get_default_impulse_pow() -> float:
+		return __default_impulse_pow.value
 
 
-	func clear_impulse_pow() -> void:
+	func clear_default_impulse_pow() -> void:
 		data[12].state = PB_SERVICE_STATE.UNFILLED
-		__impulse_pow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__default_impulse_pow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_impulse_pow(value: float) -> void:
-		__impulse_pow.value = value
+	func set_default_impulse_pow(value: float) -> void:
+		__default_impulse_pow.value = value
 
 
 	var __impulse_block_scale: PBField

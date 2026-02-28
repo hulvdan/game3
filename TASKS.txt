@@ -15,9 +15,9 @@ x make AOE projectiles blockable: glib flags for spikes and rolling stamina retr
 x make AOE projectiles blockable: all calls to apply_damage have correct flags arg
 x make AOE projectiles blockable: flags work with apply_damage
 x ref apply_damage immediate into rollable + perfect_rollable
+x make creature impulses pow + duration controllable in creature.gd
 
-* make creature impulses pow + duration controllable in creature.gd
-  -> would allow easier dash on AI -> * refactor dash/roll impulse
+* refactor dash/roll impulse
 *
 * projectile SUMMON tag
 * projectile area effects

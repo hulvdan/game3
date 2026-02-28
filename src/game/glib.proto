@@ -291,8 +291,8 @@ message Lib {
   float creatures_push_radius = 9;
   float creatures_push_force = 10;
 
-  float impulse_duration_seconds = 11;
-  float impulse_pow = 12;
+  float default_impulse_duration_seconds = 11;
+  float default_impulse_pow = 12;
   float impulse_block_scale = 13;
 
   GV2i world_size = 14;

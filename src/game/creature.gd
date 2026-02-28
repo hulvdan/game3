@@ -31,6 +31,8 @@ var blocked: bool
 class Impulse:
 	var dir: Vector2
 	var dist: float
+	var pow_: float
+	var dur: float
 	var created_at: float
 
 
@@ -54,13 +56,15 @@ var _attack_ids_marked_as_evaded: Array[EvadedAttack]
 ##
 
 
-func add_impulse(dir: Vector2, dist: float) -> void: ##
+func add_impulse(dir: Vector2, dist: float, dur: float, pow_: float) -> void: ##
 	assert(dist >= 0)
 	if dist <= 0:
 		return
 	var x := Impulse.new()
 	x.dir = dir
 	x.dist = dist
+	x.pow_ = pow_
+	x.dur = dur
 	x.created_at = Room.v.start_elapsed
 	impulses.append(x)
 ##

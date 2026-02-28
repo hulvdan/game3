@@ -343,8 +343,6 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Creatures updating + moving
-	var impulse_dur := glib.v.get_impulse_duration_seconds()
-	var impulse_pow := glib.v.get_impulse_pow()
 	for creature: Creature in room.container_creatures.get_children():
 		creature.explicit_process(dt)
 
@@ -357,22 +355,14 @@ func _physics_process(dt: float) -> void:
 		for impulse in creature.impulses:
 			impulse_index += 1
 			var e := Room.v.start_elapsed - impulse.created_at
-			var speed := bf.get_roll_speed(
-				impulse.dist,
-				impulse_dur,
-				e,
-				impulse_pow,
-			)
+			var speed := bf.get_roll_speed(impulse.dist, impulse.dur, e, impulse.pow_)
 			bf.move_body_with_speed(creature.node_body, impulse.dir, speed)
-			if e > impulse_dur:
+			if e > impulse.dur:
 				_impulses_to_remove_indices.append(impulse_index)
-
-		for i in range(len(_impulses_to_remove_indices)):
-			bf.unstable_remove_at(
-				creature.impulses,
-				_impulses_to_remove_indices[len(_impulses_to_remove_indices) - i - 1],
-			)
-		_impulses_to_remove_indices.clear()
+		bf.unstable_remove_indices(
+			creature.impulses,
+			_impulses_to_remove_indices,
+		)
 	##
 
 	## Spawning projectiles (flushing `projectiles_to_make`)
@@ -643,6 +633,9 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	if creature.is_attack_evaded(data.attack_id):
 		return false
 
+	var impulse_dur := glib.v.get_default_impulse_duration_seconds()
+	var impulse_pow := glib.v.get_default_impulse_pow()
+
 	var player_got_damaged := (creature.type == glib.GCreatureType.PLAYER)
 	if player_got_damaged:
 		if (data.evade_flags & glib.GEvadeType.PERFECT_BLOCKABLE) && room.player.blocking_perfectly:
@@ -651,8 +644,11 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			creature.add_impulse(
 				data.impulse_dir,
 				data.impulse * glib.v.get_impulse_block_scale(),
+				impulse_dur,
+				impulse_pow,
 			)
 			return false
+
 		elif (data.evade_flags & glib.GEvadeType.JUST_BLOCKABLE) && room.player.blocking:
 			creature.mark_attack_as_evaded(data.attack_id)
 			creature.blocked = true
@@ -660,11 +656,14 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			creature.add_impulse(
 				data.impulse_dir,
 				data.impulse * glib.v.get_impulse_block_scale(),
+				impulse_dur,
+				impulse_pow,
 			)
 			damage /= 2
 			assert(damage >= 0)
 			if damage <= 0:
 				return false
+
 		elif (data.evade_flags & glib.GEvadeType.ROLLABLE) && room.player.dodging:
 			if data.evade_flags & glib.GEvadeType.STAMINA_RECOVERING_ROLLABLE:
 				var retrieve := (
@@ -706,7 +705,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 		damage,
 		WhoGotDamagedType.PLAYER if player_got_damaged else WhoGotDamagedType.MOB,
 	)
-	creature.add_impulse(data.impulse_dir, data.impulse)
+	creature.add_impulse(data.impulse_dir, data.impulse, impulse_dur, impulse_pow)
 
 	return true
 ##

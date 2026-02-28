@@ -15,7 +15,7 @@ class-definitions-order:
   - others
 class-load-variable-name: (([A-Z][a-z0-9]*)+|_?_?[a-z][a-z0-9]*(_[a-z0-9]+)*)
 class-name: ([A-Z][a-z0-9]*)+
-class-variable-name: _?[a-z][a-z0-9]*(__?[a-z0-9]+)*
+class-variable-name: _?[a-z][a-z0-9_]*
 comparison-with-itself: null
 constant-name: _?[A-Z][A-Z0-9]*(__?[A-Z0-9]+)*
 duplicated-load: null

@@ -173,7 +173,6 @@ class UpdaterArc extends UpdaterBase:
 		x.transform.origin = pos
 
 		_damage_data.evade_flags = data.get_evade_flags()
-		print(_damage_data.evade_flags)
 		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
 
 		if glib.v.get_debug_collisions():
