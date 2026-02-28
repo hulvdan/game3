@@ -369,10 +369,12 @@ func _physics_process(dt: float) -> void:
 		var x: Projectile = packed_projectile.instantiate()
 		room.container_projectiles.add_child(x)
 
-		x.area_sphere.body_entered.connect(x.on_body_entered)
-		x.area_sphere.body_exited.connect(x.on_body_exited)
-		x.area_sphere.scale = Vector3(1, 1, 1) * data.get_collider_radius()
-		x.area_sphere.collision_mask = 2 ** glib.GMaskType.PLAYER
+		if data.get_collider_radius() > 0:
+			x.area_sphere.body_entered.connect(x.on_body_entered)
+			x.area_sphere.body_exited.connect(x.on_body_exited)
+			x.shape_sphere.disabled = false
+			x.area_sphere.scale = Vector3(1, 1, 1) * data.get_collider_radius()
+			x.area_sphere.collision_mask = 2 ** glib.GMaskType.PLAYER
 
 		x.attack_id = room.get_next_attack_id()
 		if data.get_collider_radius():

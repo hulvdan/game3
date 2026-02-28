@@ -13,9 +13,11 @@ unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="_area_sphere" unique_id=1835534987]
+[node name="_shape_sphere" type="CollisionShape3D" parent="_area_sphere" unique_id=1835534987]
+unique_name_in_owner = true
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 shape = SubResource("SphereShape3D_rixsa")
+disabled = true
 
 [node name="Node3D" type="Node3D" parent="." unique_id=1671833346]
 

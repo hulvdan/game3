@@ -36,6 +36,7 @@ var blinked: bool
 
 @onready var sprite: Sprite3D = %_sprite
 @onready var area_sphere: Area3D = %_area_sphere
+@onready var shape_sphere: CollisionShape3D = %_shape_sphere
 ##
 
 
