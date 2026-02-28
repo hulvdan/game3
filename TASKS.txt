@@ -18,8 +18,8 @@ x ref apply_damage immediate into rollable + perfect_rollable
 x make creature impulses pow + duration controllable in creature.gd
 x refactor dash/roll impulse
 x player roll impulse refactor
+x JUMPER dash in front of player (blink-like distance limiting)
 
-* JUMPER dash in front of player (blink-like distance limiting)
 *
 * projectile SUMMON tag
 * projectile area effects
