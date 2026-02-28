@@ -144,7 +144,7 @@ func consume_stamina(cost: glib.GStaminaCost) -> void: ##
 	stamina_rally -= (stamina_rally - stamina) * (1 - cost.get_rally_pre_mult())
 	stamina -= cost.get_flat()
 	stamina = max(0, stamina)
-	stamina_rally -= cost.get_rally_flat()
+	stamina_rally -= cost.get_rally()
 	stamina_rally = max(stamina_rally, stamina)
 	stamina_rally -= (stamina_rally - stamina) * (1 - cost.get_rally_post_mult())
 	if stamina <= 0:

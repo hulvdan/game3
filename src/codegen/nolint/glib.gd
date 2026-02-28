@@ -2590,10 +2590,10 @@ class GStaminaCost:
 		service.field = __rally_pre_mult
 		data[__rally_pre_mult.tag] = service
 
-		__rally_flat = PBField.new("rally_flat", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__rally = PBField.new("rally", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __rally_flat
-		data[__rally_flat.tag] = service
+		service.field = __rally
+		data[__rally.tag] = service
 
 		__rally_post_mult = PBField.new("rally_post_mult", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -2647,26 +2647,26 @@ class GStaminaCost:
 		__rally_pre_mult.value = value
 
 
-	var __rally_flat: PBField
+	var __rally: PBField
 
 
-	func has_rally_flat() -> bool:
-		if __rally_flat.value != null:
+	func has_rally() -> bool:
+		if __rally.value != null:
 			return true
 		return false
 
 
-	func get_rally_flat() -> float:
-		return __rally_flat.value
+	func get_rally() -> float:
+		return __rally.value
 
 
-	func clear_rally_flat() -> void:
+	func clear_rally() -> void:
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		__rally_flat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__rally.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_rally_flat(value: float) -> void:
-		__rally_flat.value = value
+	func set_rally(value: float) -> void:
+		__rally.value = value
 
 
 	var __rally_post_mult: PBField
@@ -6165,6 +6165,9 @@ enum GDamageType {
 	DEFAULT,
 	SPIKE,
 	AOE,
+	BLOCKABLE,
+	PERFECT_BLOCKABLE,
+	ROLLABLE,
 	COUNT,
 }
 

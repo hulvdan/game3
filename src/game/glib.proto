@@ -115,7 +115,7 @@ message GAttackMelee {
 message GStaminaCost {
   float flat = 1;
   float rally_pre_mult = 2;
-  float rally_flat = 3;
+  float rally = 3;
   float rally_post_mult = 4;
 }
 

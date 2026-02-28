@@ -10,6 +10,9 @@ damages: ##
   - type: DEFAULT
   - type: SPIKE
   - type: AOE
+  - type: BLOCKABLE
+  - type: PERFECT_BLOCKABLE
+  - type: ROLLABLE
     ##
 
 player: ##
@@ -28,7 +31,7 @@ player: ##
   stamina_roll_cost:
     flat: 35
     rally_pre_mult: 0.5
-    rally_flat: 0
+    rally: 0
     rally_post_mult: 1
   stamina_rally_decay_after: 1
   stamina_rally_decay_per_second: 20
@@ -120,7 +123,7 @@ creatures:
       #   stamina_cost:
       #     flat: 0
       #     rally_pre_mult: 1
-      #     rally_flat: 0
+      #     rally: 0
       #     rally_post_mult: 1
       #   stops_tracking_at: 0.1
       #   melee:
@@ -139,7 +142,7 @@ creatures:
         stamina_cost:
           flat: 25
           rally_pre_mult: 1
-          rally_flat: 5
+          rally: 5
           rally_post_mult: 1
   ##
   - type: MOB_SHOOTER ##
