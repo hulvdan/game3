@@ -122,7 +122,8 @@ def _process_glib(genline, glib) -> None:
         x: dict, types_field: str = "evade_types", flags_field: str = "evade_flags"
     ) -> None:  ##
         evade_flags = 0
-        for t in x.pop(types_field, []):
+        assert types_field in x
+        for t in x.pop(types_field):
             evade_flags = evade_flags | evade_type_2_value[t]
         x[flags_field] = evade_flags
         ##

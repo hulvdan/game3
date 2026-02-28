@@ -6,3 +6,4 @@ formatter:
   eof_newline: true
   force_quote_style: double
   indentless_arrays: false
+  drop_merge_tag: true
