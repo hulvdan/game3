@@ -105,11 +105,12 @@ message GAttackTagValue {
 
 message GAttackMelee {
   int32 damage = 1;
-  int32 collider_type = 2;
-  float starts_at = 3;
-  float ends_at = 4;
-  GAttackPolygon polygon = 5;
-  GAttackCircle circle = 6;
+  int32 evade_flags = 2;
+  int32 collider_type = 3;
+  float starts_at = 4;
+  float ends_at = 5;
+  GAttackPolygon polygon = 6;
+  GAttackCircle circle = 7;
 }
 
 message GStaminaCost {
@@ -161,6 +162,11 @@ message GDamage {
   string debug_name = 2;
 }
 
+message GEvade {
+  int32 type = 1;
+  string debug_name = 2;
+}
+
 message GItem {
   int32 type = 1;
   string debug_name = 2;
@@ -196,18 +202,20 @@ message GProjectile {
   string res = 3;
 
   int32 damage = 4;
-  int32 pierce = 5;
-  float collider_radius = 6;
-  float distance = 7;
+  int32 evade_flags = 5;
 
-  int32 projectilefly_type = 8;
+  int32 pierce = 6;
+  float collider_radius = 7;
+  float distance = 8;
 
-  float arc__height = 9;
-  float arc__duration = 10;
+  int32 projectilefly_type = 9;
 
-  float default__speed = 11;
+  float arc__height = 10;
+  float arc__duration = 11;
 
-  repeated GProjectileTagValue tags = 12;
+  float default__speed = 12;
+
+  repeated GProjectileTagValue tags = 13;
 }
 
 message GMask {
@@ -290,14 +298,15 @@ message Lib {
 
   // TABLE_GEN_START
   repeated GDamage damages = 16;
-  repeated GProgression progression = 17;
-  repeated GCreature creatures = 18;
-  repeated GItem items = 19;
-  repeated GCollectible collectibles = 20;
-  repeated GProjectileFly projectile_fly_types = 21;
-  repeated GProjectileTag projectile_tags = 22;
-  repeated GProjectile projectiles = 23;
-  repeated GMask masks = 24;
-  repeated GAttackTag attack_tags = 25;
+  repeated GEvade evades = 17;
+  repeated GProgression progression = 18;
+  repeated GCreature creatures = 19;
+  repeated GItem items = 20;
+  repeated GCollectible collectibles = 21;
+  repeated GProjectileFly projectile_fly_types = 22;
+  repeated GProjectileTag projectile_tags = 23;
+  repeated GProjectile projectiles = 24;
+  repeated GMask masks = 25;
+  repeated GAttackTag attack_tags = 26;
   // TABLE_GEN_END
 }

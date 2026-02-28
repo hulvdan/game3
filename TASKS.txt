@@ -10,11 +10,14 @@ PLAN
 x essay pdfs
 x better bf.recursive_visiter
 x better default values on stamina costs
+x make AOE projectiles blockable: glib flags
 
-* make AOE projectiles blockable
+* make AOE projectiles blockable:
+* make AOE projectiles blockable:
+* make AOE projectiles blockable:
 *
 * make creature impulses pow + duration controllable in creature.gd
-  -> would allow easier dash on AI
+  -> would allow easier dash on AI -> * refactor dash/roll impulse
 *
 * projectile SUMMON tag
 * projectile area effects

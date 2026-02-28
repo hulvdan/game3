@@ -272,13 +272,13 @@ def genenum(
     *,
     add_count: bool = False,
     flag_values: bool = False,
-    override_values: Sequence[Any] | None = None,
+    overridden_values: Sequence[Any] | None = None,
     enumerate_values: bool = False,
     add_to_string: bool = False,
     comments: list[str] | None = None,
 ) -> None:  ##
     assert not (flag_values and enumerate_values)
-    assert not (override_values and enumerate_values)
+    assert not (overridden_values and enumerate_values)
 
     if add_count or flag_values:
         assert add_count != flag_values
@@ -295,9 +295,9 @@ def genenum(
     if flag_values:
         for i, value in enumerate(values):
             genline_with_comment("    {} = {},".format(value, hex(2**i)), i)
-    elif override_values:
+    elif overridden_values:
         i = 0
-        for value, value2 in zip(values, override_values, strict=True):
+        for value, value2 in zip(values, overridden_values, strict=True):
             genline_with_comment("    {} = {},".format(value, value2), i)
             i += 1
     else:

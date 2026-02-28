@@ -15,6 +15,7 @@ USAGE:
 
 ## Imports
 import json
+from functools import reduce
 from pathlib import Path
 
 import bf_lib as bf
@@ -112,6 +113,19 @@ def _process_glib(genline, glib) -> None:
     #     ##
 
     transforms: list[tuple[str, str, str, dict[str, int]]] = []
+
+    evade_type_2_value: dict[str, int] = {
+        x["type"]: x["enum__value"] for x in glib["evades"]
+    }
+
+    def transform_evade_types_to_flags(
+        x: dict, types_field: str = "evade_types", flags_field: str = "evade_flags"
+    ) -> None:  ##
+        evade_flags = 0
+        for t in x.pop(types_field, []):
+            evade_flags = evade_flags | evade_type_2_value[t]
+        x[flags_field] = evade_flags
+        ##
 
     ## LDTK. Enums
     ldtk_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
@@ -216,6 +230,8 @@ def _process_glib(genline, glib) -> None:
         is_player = x["type"] == "PLAYER"
         for attack in x.get("attacks", []):
             attack.get("projectiles_spawns", []).sort(key=lambda x: x["at"])
+            if "melee" in attack:
+                transform_evade_types_to_flags(attack["melee"])
             if "stops_tracking_at" not in attack:
                 attack["stops_tracking_at"] = attack["duration"]
             if is_player:
@@ -248,8 +264,7 @@ def _process_glib(genline, glib) -> None:
             glib[tags_table][i] = {
                 k: v for k, v in tag.items() if not k.startswith("requires_")
             }
-
-    ##
+        ##
 
     process_tags("projectiles", "tags", "projectile_tags", "projectiletag_type")
     process_tags("creatures", "tags", "attack_tags", "meleetag_type")
@@ -257,6 +272,7 @@ def _process_glib(genline, glib) -> None:
     ## Projectiles
     for x in glib["projectiles"][1:]:
         x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
+        transform_evade_types_to_flags(x)
     ##
 
     ## Progression
@@ -304,7 +320,8 @@ def _process_glib(genline, glib) -> None:
 
     print(f"{table_field_name_type_pairs=}")
     for field_name, type_name in table_field_name_type_pairs:
-        types = [x["type"] for x in glib[field_name]]
+        table = glib[field_name]
+        types = [x["type"] for x in table]
         for t in types:
             assert t.upper() == t, (
                 "{}. {}. `type` fields must be in CONSTANT_CASE".format(field_name, t)
@@ -314,11 +331,18 @@ def _process_glib(genline, glib) -> None:
             container[i]["type"] = i
         bf.check_duplicates(types)
         flags = field_name.endswith("flags")
+        overridden_values = [x.pop("enum__value", None) for x in table]
+        assert bf.all_are_none(overridden_values) or bf.all_are_not_none(
+            overridden_values
+        ), "All entries must have enum__value field specified in {}".format(field_name)
         bf.genenum(
             genline,
             type_name + "Type",
             types,
             flag_values=flags,
+            overridden_values=(
+                None if bf.all_are_none(overridden_values) else overridden_values
+            ),
             add_count=not flags,
         )
         transforms.append(

@@ -91,6 +91,7 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
     bf.run_command("uv run yamllint src/game/glib.yaml -s -f parsable")
     with open("src/game/glib.yaml", encoding="utf-8") as glib_file:
         glib = yaml.safe_load(glib_file)
+        glib.pop("_anchors", None)
 
     ## Codegen glib.gd + glib.binpb + glib itself
     temp_glib_path = Path(".temp/glib.gd")

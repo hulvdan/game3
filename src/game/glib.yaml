@@ -10,10 +10,16 @@ damages: ##
   - type: DEFAULT
   - type: SPIKE
   - type: AOE
-  - type: BLOCKABLE
-  - type: PERFECT_BLOCKABLE
-  - type: ROLLABLE
     ##
+
+evades: ##
+  - type: BLOCKABLE
+    enum__value: 3
+  - type: PERFECT_BLOCKABLE
+    enum__value: 2
+  - type: ROLLABLE
+    enum__value: 4
+##
 
 player: ##
   speed_scale__shooting: 0.2
@@ -119,11 +125,15 @@ creatures:
     mask_type: PLAYER
     attacks:
       # - duration: 0.3
+      #   stamina_cost:
       #     flat: 0
       #     rally: 0
       #   stops_tracking_at: 0.1
       #   melee:
       #     damage: 1
+      #     evade_types:
+      #       - BLOCKABLE
+      #       - ROLLABLE
       #     starts_at: 0.1
       #     ends_at: 0.2
       #     polygon:
@@ -238,6 +248,9 @@ creatures:
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
+          evade_types:
+            - BLOCKABLE
+            - ROLLABLE
           damage: 1
           starts_at: 0.5
           ends_at: 0.6
@@ -272,6 +285,9 @@ creatures:
         cooldown_max: 2.2
         melee:
           damage: 1
+          evade_types:
+            - BLOCKABLE
+            - ROLLABLE
           starts_at: 0.5
           ends_at: 0.6
           polygon:
@@ -296,6 +312,9 @@ creatures:
         cooldown_max: 2.2
         melee:
           damage: 1
+          evade_types:
+            - BLOCKABLE
+            - ROLLABLE
           starts_at: 0.5
           ends_at: 1.1
           polygon:
@@ -351,6 +370,16 @@ projectile_tags:
     requires_f1: true # blink_time
     ##
 
+_anchors:
+  evades_default: &evades_default
+    evade_types:
+      - BLOCKABLE
+      - ROLLABLE
+
+  evades_perfect: &evades_perfect
+    evade_types:
+      - PERFECT_BLOCKABLE
+
 projectiles:
   - type: INVALID ##
   ##
@@ -358,12 +387,14 @@ projectiles:
     damage: 1
     default__speed: 14
     distance: 6
+    !!merge <<: *evades_default
   ##
   - type: BALL ##
     damage: 1
     default__speed: 3
     collider_radius: 0.3
     distance: 8
+    !!merge <<: *evades_default
   ##
   - type: BOMB ##
     damage: 2
@@ -372,6 +403,7 @@ projectiles:
     arc__duration: 1
     collider_radius: 1
     distance: 5
+    !!merge <<: *evades_perfect
   ##
   - type: STAR_HIVE_INSIDE ##
     projectilefly_type: ARC
@@ -383,6 +415,7 @@ projectiles:
     arc__height: 1
     arc__duration: 0.3
     collider_radius: 1
+    !!merge <<: *evades_default
   ##
   - type: STAR_HIVE ##
     projectilefly_type: ARC
@@ -395,12 +428,14 @@ projectiles:
     arc__duration: 1
     collider_radius: 1
     distance: 5
+    !!merge <<: *evades_default
   ##
   - type: STAR_BIT ##
     damage: 1
     default__speed: 3
     collider_radius: 0.2
     distance: 3
+    !!merge <<: *evades_default
   ##
   - type: HOMING ##
     damage: 1
@@ -410,13 +445,19 @@ projectiles:
     tags:
       - projectiletag_type: HOMING
         f1: 1.0
+    !!merge <<: *evades_default
   ##
   - type: BLINK ##
     damage: 2
     projectilefly_type: ARC
+    evade_types:
+      - BLOCKABLE
+      - PERFECT_BLOCKABLE
+      - ROLLABLE
     arc__duration: 1
     collider_radius: 1
     distance: 4
+    !!merge <<: *evades_default
     tags:
       - projectiletag_type: BLINK
         f1: 1.0 # blink_time
