@@ -27,6 +27,10 @@ x slowdown area: add flytype AREA so that projectile's position
   is fixed and Area3D is in center of Gizmos circle
 x fix: godot debug error: when shooting: det == 0
 x slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.owner)
+- моб, что при выстреле откидывается назад (projectile spawn impulse)
+- моб, melee stomp (blink instead of dash)
+x fix: player shouldn't be able to block spikes
+- player melee attack
 
 * fix: cooldown is being reset upon interrupt. It shouldn't
 *
@@ -68,15 +72,11 @@ x slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.ow
 *
 * контроль кривизны query_circle_segment (для широкой пули)
 *
-* моб, что взрывается на месте
-* моб, что при выстреле откидывается назад (projectile spawn impulse)
-* моб, melee stomp (blink instead of dash)
+* моб, что сам себя взрывает на месте?
 *
 * some mobs can damage other mobs
   (melee attack mask type + exclude this mob)
   (projectile attack mask type + exclude this mob)
-*
-* fix: player shouldn't be able to block spikes
 *
 * marking attacks / proejctiles as only_perfect_blockable
   -> projectile/melee hitbox shows up as red
@@ -110,8 +110,6 @@ x slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.ow
 * !!! mobs movement navigation
 * !!! mobs can't start attacking when there's no raycast from mob to player
 *
-* player melee attack
-*
 * player class feature: knockback: default, 1/3, immune
 *
 * hp rally
@@ -127,8 +125,6 @@ x slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.ow
 * room generation:
 *
 * drop items
-*
-*
 *
 * floating spiky ball trap
 *
@@ -171,25 +167,6 @@ x slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.ow
     * ricochet wall
     * piercing arrow
 *
-*
-*
-*
-*
-*
-*
-*
-*
-* progression:
-* progression:
-* progression:
-* progression:
-*
-*
-*
-*
-*
-*
-*
 * glib texture_id
   -> use textures array: glib.textures
   -> query it using glib.textures[glib.v.rooms[0].texture_id]
@@ -202,16 +179,6 @@ x slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.ow
 * Отрисовать древо прогрессии
 * Продумать ресурсы (собираемые / с мобов / с элит. мобов / с боссов)
 * collectible
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
 
 PRE RELEASE
 ============================================================

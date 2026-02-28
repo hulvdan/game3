@@ -86,8 +86,13 @@ spikes: ##
   duration_seconds: 2
   damage_starts_at: 0.5
   damage: 1
-  initial_evade_flags: *evade_flags_default
-  continuous_evade_flags: *evade_flags_default_no_stamina_recovering
+  initial_evade_flags:
+    - PERFECT_BLOCKABLE
+    - ROLLABLE
+    - STAMINA_RECOVERING_ROLLABLE
+  continuous_evade_flags:
+    - ROLLABLE
+    - STAMINA_RECOVERING_ROLLABLE
 ##
 
 creatures_push_radius: 1.0
