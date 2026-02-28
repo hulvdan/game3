@@ -2134,25 +2134,45 @@ class GAttackTagValue:
 		service.field = __i4
 		data[__i4.tag] = service
 
-		__f1 = PBField.new("f1", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__i5 = PBField.new("i5", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __i5
+		data[__i5.tag] = service
+
+		__i6 = PBField.new("i6", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __i6
+		data[__i6.tag] = service
+
+		__f1 = PBField.new("f1", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __f1
 		data[__f1.tag] = service
 
-		__f2 = PBField.new("f2", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__f2 = PBField.new("f2", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __f2
 		data[__f2.tag] = service
 
-		__f3 = PBField.new("f3", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__f3 = PBField.new("f3", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __f3
 		data[__f3.tag] = service
 
-		__f4 = PBField.new("f4", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__f4 = PBField.new("f4", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __f4
 		data[__f4.tag] = service
+
+		__f5 = PBField.new("f5", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __f5
+		data[__f5.tag] = service
+
+		__f6 = PBField.new("f6", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __f6
+		data[__f6.tag] = service
 
 
 	var data = { }
@@ -2267,6 +2287,50 @@ class GAttackTagValue:
 		__i4.value = value
 
 
+	var __i5: PBField
+
+
+	func has_i5() -> bool:
+		if __i5.value != null:
+			return true
+		return false
+
+
+	func get_i5() -> int:
+		return __i5.value
+
+
+	func clear_i5() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__i5.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_i5(value: int) -> void:
+		__i5.value = value
+
+
+	var __i6: PBField
+
+
+	func has_i6() -> bool:
+		if __i6.value != null:
+			return true
+		return false
+
+
+	func get_i6() -> int:
+		return __i6.value
+
+
+	func clear_i6() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__i6.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_i6(value: int) -> void:
+		__i6.value = value
+
+
 	var __f1: PBField
 
 
@@ -2281,7 +2345,7 @@ class GAttackTagValue:
 
 
 	func clear_f1() -> void:
-		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__f1.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -2303,7 +2367,7 @@ class GAttackTagValue:
 
 
 	func clear_f2() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__f2.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -2325,7 +2389,7 @@ class GAttackTagValue:
 
 
 	func clear_f3() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__f3.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -2347,12 +2411,56 @@ class GAttackTagValue:
 
 
 	func clear_f4() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__f4.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
 	func set_f4(value: float) -> void:
 		__f4.value = value
+
+
+	var __f5: PBField
+
+
+	func has_f5() -> bool:
+		if __f5.value != null:
+			return true
+		return false
+
+
+	func get_f5() -> float:
+		return __f5.value
+
+
+	func clear_f5() -> void:
+		data[12].state = PB_SERVICE_STATE.UNFILLED
+		__f5.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_f5(value: float) -> void:
+		__f5.value = value
+
+
+	var __f6: PBField
+
+
+	func has_f6() -> bool:
+		if __f6.value != null:
+			return true
+		return false
+
+
+	func get_f6() -> float:
+		return __f6.value
+
+
+	func clear_f6() -> void:
+		data[13].state = PB_SERVICE_STATE.UNFILLED
+		__f6.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_f6(value: float) -> void:
+		__f6.value = value
 
 
 	func _to_string() -> String:

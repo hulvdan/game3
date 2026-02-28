@@ -128,7 +128,8 @@ attack_tags:
     requires_f1: true # starts_at
     requires_f2: true # ends_at
     requires_f3: true # distance
-    requires_f4: true # pow
+    requires_f4: true # distance_delta
+    requires_f5: true # pow
   ##
   - type: BLINK ##
     requires_f1: true # starts_at
@@ -279,7 +280,8 @@ creatures:
             f1: 0.2 # starts_at
             f2: 0.63 # ends_at
             f3: 3 # distance
-            f4: 1 # pow
+            f4: 0.2 # distance_delta
+            f5: 1 # pow
   ##
   - type: MOB_BLINKER ##
     hp: 5
