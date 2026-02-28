@@ -3948,7 +3948,7 @@
               "__identifier": "Creature",
               "__grid": [
                 12,
-                11
+                24
               ],
               "__pivot": [
                 0,
@@ -3963,7 +3963,7 @@
               "defUid": 30,
               "px": [
                 192,
-                176
+                384
               ],
               "fieldInstances": [
                 {
@@ -3983,7 +3983,7 @@
                 }
               ],
               "__worldX": 688,
-              "__worldY": -80
+              "__worldY": 128
             }
           ]
         },

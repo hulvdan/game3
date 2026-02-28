@@ -447,7 +447,7 @@ projectiles:
     evade_flags: *evade_flags_perfect
   ##
   - type: STAR_HIVE_INSIDE ##
-    projectilefly_type: ARC
+    projectilefly_type: AREA
     tags:
       - tag_type: HIVE
         f1: 1.0
@@ -501,7 +501,7 @@ projectiles:
         f1: 1.0 # blink_time
   ##
   - type: SUMMON ##
-    projectilefly_type: ARC
+    projectilefly_type: AREA
     arc_or_area__duration: 1
     collider_radius: 0.6
     distance: 1
