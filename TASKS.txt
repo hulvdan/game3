@@ -7,22 +7,6 @@ BIG PLAN
 PLAN
 ============================================================
 
-x mob same as jumper but BLINKER (teleports in front of player)
-x blinker: spawn projectile -> teleport mob upon it finishing
-x fused mob / player attacks: adapted schema
-x fused mob / player attacks: the same attack can be used by player/mob
-x fused mob / player attacks: test player can use blink
-x yamllint
-x fused mob / player attacks: player's blink correct distance (set target to cursor)
-x consume stamina upon spawning projectile / melee collider start
-x better stamina costs
-x ki action label
-x fix crash при убийстве blinker-а, пока он не телепортанулся (projectile крашит)
-x fix another crash after killing shrapnel projectile owner
-x player can move slowly while swinging
-x fix: spearman dashes
-x triple projectiles mage
-
 * make MOB_BLINKER blockable
 * make creature impulses pow + duration controllable in creature.gd
   -> would allow easier dash on AI
