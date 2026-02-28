@@ -19,9 +19,8 @@ x make creature impulses pow + duration controllable in creature.gd
 x refactor dash/roll impulse
 x player roll impulse refactor
 x JUMPER dash in front of player (blink-like distance limiting)
+x projectile SUMMON tag
 
-*
-* projectile SUMMON tag
 * projectile area effects
   - long duration
   - slowing mobs down
@@ -32,6 +31,12 @@ x JUMPER dash in front of player (blink-like distance limiting)
 * projectiles impulse
 *
 * recoverable ki stamina decreases after a short time of not using ki
+*
+* summoners: limit max count of summonees
+* summoners: can set summon projectile angles + offsets
+* summoners: summoner goes away when player gets too close (pathfinding)
+* summoners:
+* summoners:
 *
 * swing query_circle_segment smaller segments
 *

@@ -197,6 +197,7 @@ message GProjectileTagValue {
   int32 i1 = 2;
   float f1 = 3;
   int32 projectile_type = 4;
+  int32 creature_type = 5;
 }
 
 message GProjectile {

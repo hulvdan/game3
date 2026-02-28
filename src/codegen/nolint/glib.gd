@@ -4094,6 +4094,11 @@ class GProjectileTagValue:
 		service.field = __projectile_type
 		data[__projectile_type.tag] = service
 
+		__creature_type = PBField.new("creature_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __creature_type
+		data[__creature_type.tag] = service
+
 
 	var data = { }
 
@@ -4183,6 +4188,28 @@ class GProjectileTagValue:
 
 	func set_projectile_type(value: int) -> void:
 		__projectile_type.value = value
+
+
+	var __creature_type: PBField
+
+
+	func has_creature_type() -> bool:
+		if __creature_type.value != null:
+			return true
+		return false
+
+
+	func get_creature_type() -> int:
+		return __creature_type.value
+
+
+	func clear_creature_type() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__creature_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_creature_type(value: int) -> void:
+		__creature_type.value = value
 
 
 	func _to_string() -> String:
@@ -6559,6 +6586,7 @@ enum GCreatureType {
 	MOB_BLINKER,
 	MOB_BONKER,
 	MOB_SPEAR,
+	MOB_SUMMONER,
 	COUNT,
 }
 
@@ -6589,6 +6617,7 @@ enum GProjectileTagType {
 	HOMING,
 	HIVE,
 	BLINK,
+	SUMMON,
 	COUNT,
 }
 
@@ -6602,6 +6631,7 @@ enum GProjectileType {
 	STAR_BIT,
 	HOMING,
 	BLINK,
+	SUMMON,
 	COUNT,
 }
 

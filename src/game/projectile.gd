@@ -72,6 +72,9 @@ func on_free(data: glib.GProjectile) -> void: ##
 					c.target = c.pos + Vector2(1, 0).rotated(angle)
 					c.homing__target = d.homing__target
 					Game.v.make_projectile(c)
+			glib.GProjectileTagType.SUMMON:
+				Game.v.make_creature(tag.get_creature_type(), d.target)
+
 ##
 
 

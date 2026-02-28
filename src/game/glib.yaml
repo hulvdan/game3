@@ -344,6 +344,18 @@ creatures:
             f3: 4 # distance
             f4: 1 # pow
             ##
+  - type: MOB_SUMMONER ##
+    hp: 2
+    speed: 0.4
+    attacks:
+      - duration: 3
+        projectile_type: SUMMON
+        projectile_spawns:
+          - at: 0.5
+        cooldown_min: 8.0
+        cooldown_max: 12.0
+        distance: 7
+        ##
 
 items: ##
   - type: INVALID
@@ -383,6 +395,9 @@ projectile_tags:
   ##
   - type: BLINK ##
     requires_f1: true # blink_time
+    ##
+  - type: SUMMON ##
+    requires_creature_type: true
     ##
 
 projectiles:
@@ -463,4 +478,14 @@ projectiles:
     tags:
       - projectiletag_type: BLINK
         f1: 1.0 # blink_time
+        ##
+  - type: SUMMON ##
+    projectilefly_type: ARC
+    arc__duration: 1
+    collider_radius: 0.6
+    distance: 1
+    evade_flags: *evade_flags_default
+    tags:
+      - projectiletag_type: SUMMON
+        creature_type: MOB_SHOOTER
         ##
