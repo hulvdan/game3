@@ -152,6 +152,13 @@ message GAttack {
   repeated GTagValue tags = 11;
 }
 
+message GAbility {
+  int32 type = 1;
+  string debug_name = 2;
+  GAttack attack = 3;
+  int32 recovering_attacks = 4;
+}
+
 message GCreature {
   int32 type = 1;
   string debug_name = 2;
@@ -164,6 +171,7 @@ message GCreature {
   repeated GCreatureDrop drops = 8;
 
   repeated GAttack attacks = 9;
+  repeated int32 ability_types = 10;
 }
 
 message GDamage {
@@ -304,12 +312,13 @@ message Lib {
   repeated GEvade evades = 17;
   repeated GTeam teams = 18;
   repeated GProgression progression = 19;
-  repeated GCreature creatures = 20;
-  repeated GItem items = 21;
-  repeated GCollectible collectibles = 22;
-  repeated GProjectileFly projectile_fly_types = 23;
-  repeated GProjectile projectiles = 24;
-  repeated GMask masks = 25;
-  repeated GTag tags = 26;
+  repeated GAbility abilities = 20;
+  repeated GCreature creatures = 21;
+  repeated GItem items = 22;
+  repeated GCollectible collectibles = 23;
+  repeated GProjectileFly projectile_fly_types = 24;
+  repeated GProjectile projectiles = 25;
+  repeated GMask masks = 26;
+  repeated GTag tags = 27;
   // TABLE_GEN_END
 }

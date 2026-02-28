@@ -287,6 +287,15 @@ def _process_glib(genline, glib) -> None:
             validate_tags(attack.get("tags", []), "attack")
             context.pop()
         context.pop()
+        context.append("abilities")
+        for i, ability in enumerate(x.get("abilities", [])):
+            context.append(i)
+            if "attack" in ability:
+                context.append("attack")
+                validate_tags(attack.get("tags", []), "attack")
+                context.pop()
+            context.pop()
+        context.pop()
         context.pop()
     context.pop()
     ##

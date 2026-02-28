@@ -3,6 +3,11 @@ https://www.timeanddate.com/date/durationresult.html?d1=3&m1=2&y1=2026
 
 BIG PLAN
 ============================================================
+* несколько обязательных челленджовых механик
+  x roll
+  x блок
+  * charge / perfect charge атака
+  * абилка крюк
 
 PLAN
 ============================================================
@@ -31,7 +36,15 @@ x slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.ow
 - моб, melee stomp (blink instead of dash)
 x fix: player shouldn't be able to block spikes
 - player melee attack
+x ability hook: added in proto + glib.yml
 
+* ability hook: pressing E sets player to ATTACK state with GAttack of first ability
+* ability hook: hooking works (hitting enemy gives him reverse impulse towards player)
+* ability hook:
+* ability hook:
+* ability hook:
+* ability hook:
+*
 * fix: cooldown is being reset upon interrupt. It shouldn't
 *
 * projectile area effects

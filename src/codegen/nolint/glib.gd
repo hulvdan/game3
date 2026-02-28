@@ -3344,6 +3344,147 @@ class GAttack:
 		return result
 
 
+class GAbility:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+		__attack = PBField.new("attack", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __attack
+		service.func_ref = Callable(self, "new_attack")
+		data[__attack.tag] = service
+
+		__recovering_attacks = PBField.new("recovering_attacks", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __recovering_attacks
+		data[__recovering_attacks.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	var __attack: PBField
+
+
+	func has_attack() -> bool:
+		if __attack.value != null:
+			return true
+		return false
+
+
+	func get_attack() -> GAttack:
+		return __attack.value
+
+
+	func clear_attack() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__attack.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_attack() -> GAttack:
+		__attack.value = GAttack.new()
+		return __attack.value
+
+
+	var __recovering_attacks: PBField
+
+
+	func has_recovering_attacks() -> bool:
+		if __recovering_attacks.value != null:
+			return true
+		return false
+
+
+	func get_recovering_attacks() -> int:
+		return __recovering_attacks.value
+
+
+	func clear_recovering_attacks() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__recovering_attacks.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_recovering_attacks(value: int) -> void:
+		__recovering_attacks.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GCreature:
 	func _init():
 		var service
@@ -3396,6 +3537,12 @@ class GCreature:
 		service.field = __attacks
 		service.func_ref = Callable(self, "add_attacks")
 		data[__attacks.tag] = service
+
+		var __ability_types_default: Array[int] = []
+		__ability_types = PBField.new("ability_types", PB_DATA_TYPE.INT32, PB_RULE.REPEATED, 10, true, __ability_types_default)
+		service = PBServiceField.new()
+		service.field = __ability_types
+		data[__ability_types.tag] = service
 
 
 	var data = { }
@@ -3588,6 +3735,22 @@ class GCreature:
 		var element = GAttack.new()
 		__attacks.value.append(element)
 		return element
+
+
+	var __ability_types: PBField
+
+
+	func get_ability_types() -> Array[int]:
+		return __ability_types.value
+
+
+	func clear_ability_types() -> void:
+		data[10].state = PB_SERVICE_STATE.UNFILLED
+		__ability_types.value.clear()
+
+
+	func add_ability_types(value: int) -> void:
+		__ability_types.value.append(value)
 
 
 	func _to_string() -> String:
@@ -5797,50 +5960,57 @@ class Lib:
 		service.func_ref = Callable(self, "add_progression")
 		data[__progression.tag] = service
 
+		var __abilities_default: Array[GAbility] = []
+		__abilities = PBField.new("abilities", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __abilities_default)
+		service = PBServiceField.new()
+		service.field = __abilities
+		service.func_ref = Callable(self, "add_abilities")
+		data[__abilities.tag] = service
+
 		var __creatures_default: Array[GCreature] = []
-		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __creatures_default)
+		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 21, true, __creatures_default)
 		service = PBServiceField.new()
 		service.field = __creatures
 		service.func_ref = Callable(self, "add_creatures")
 		data[__creatures.tag] = service
 
 		var __items_default: Array[GItem] = []
-		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 21, true, __items_default)
+		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __items_default)
 		service = PBServiceField.new()
 		service.field = __items
 		service.func_ref = Callable(self, "add_items")
 		data[__items.tag] = service
 
 		var __collectibles_default: Array[GCollectible] = []
-		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __collectibles_default)
+		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __collectibles_default)
 		service = PBServiceField.new()
 		service.field = __collectibles
 		service.func_ref = Callable(self, "add_collectibles")
 		data[__collectibles.tag] = service
 
 		var __projectile_fly_types_default: Array[GProjectileFly] = []
-		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __projectile_fly_types_default)
+		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __projectile_fly_types_default)
 		service = PBServiceField.new()
 		service.field = __projectile_fly_types
 		service.func_ref = Callable(self, "add_projectile_fly_types")
 		data[__projectile_fly_types.tag] = service
 
 		var __projectiles_default: Array[GProjectile] = []
-		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __projectiles_default)
+		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 25, true, __projectiles_default)
 		service = PBServiceField.new()
 		service.field = __projectiles
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
 
 		var __masks_default: Array[GMask] = []
-		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 25, true, __masks_default)
+		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 26, true, __masks_default)
 		service = PBServiceField.new()
 		service.field = __masks
 		service.func_ref = Callable(self, "add_masks")
 		data[__masks.tag] = service
 
 		var __tags_default: Array[GTag] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 26, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 27, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
@@ -6252,6 +6422,24 @@ class Lib:
 		return element
 
 
+	var __abilities: PBField
+
+
+	func get_abilities() -> Array[GAbility]:
+		return __abilities.value
+
+
+	func clear_abilities() -> void:
+		data[20].state = PB_SERVICE_STATE.UNFILLED
+		__abilities.value.clear()
+
+
+	func add_abilities() -> GAbility:
+		var element = GAbility.new()
+		__abilities.value.append(element)
+		return element
+
+
 	var __creatures: PBField
 
 
@@ -6260,7 +6448,7 @@ class Lib:
 
 
 	func clear_creatures() -> void:
-		data[20].state = PB_SERVICE_STATE.UNFILLED
+		data[21].state = PB_SERVICE_STATE.UNFILLED
 		__creatures.value.clear()
 
 
@@ -6278,7 +6466,7 @@ class Lib:
 
 
 	func clear_items() -> void:
-		data[21].state = PB_SERVICE_STATE.UNFILLED
+		data[22].state = PB_SERVICE_STATE.UNFILLED
 		__items.value.clear()
 
 
@@ -6296,7 +6484,7 @@ class Lib:
 
 
 	func clear_collectibles() -> void:
-		data[22].state = PB_SERVICE_STATE.UNFILLED
+		data[23].state = PB_SERVICE_STATE.UNFILLED
 		__collectibles.value.clear()
 
 
@@ -6314,7 +6502,7 @@ class Lib:
 
 
 	func clear_projectile_fly_types() -> void:
-		data[23].state = PB_SERVICE_STATE.UNFILLED
+		data[24].state = PB_SERVICE_STATE.UNFILLED
 		__projectile_fly_types.value.clear()
 
 
@@ -6332,7 +6520,7 @@ class Lib:
 
 
 	func clear_projectiles() -> void:
-		data[24].state = PB_SERVICE_STATE.UNFILLED
+		data[25].state = PB_SERVICE_STATE.UNFILLED
 		__projectiles.value.clear()
 
 
@@ -6350,7 +6538,7 @@ class Lib:
 
 
 	func clear_masks() -> void:
-		data[25].state = PB_SERVICE_STATE.UNFILLED
+		data[26].state = PB_SERVICE_STATE.UNFILLED
 		__masks.value.clear()
 
 
@@ -6368,7 +6556,7 @@ class Lib:
 
 
 	func clear_tags() -> void:
-		data[26].state = PB_SERVICE_STATE.UNFILLED
+		data[27].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 
@@ -6440,6 +6628,11 @@ enum GProgressionType {
 	COUNT,
 }
 
+enum GAbilityType {
+	HOOK,
+	COUNT,
+}
+
 enum GCreatureType {
 	INVALID,
 	PLAYER,
@@ -6487,6 +6680,7 @@ enum GProjectileType {
 	INVALID,
 	ARROW,
 	BALL,
+	HOOK,
 	BOMB,
 	STAR_HIVE_INSIDE,
 	STAR_HIVE,
@@ -6513,5 +6707,6 @@ enum GTagType {
 	HIVE,
 	SUMMON,
 	SCALE_MOVEMENT_SPEED,
+	HOOK,
 	COUNT,
 }

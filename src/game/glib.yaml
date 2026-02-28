@@ -165,7 +165,10 @@ tags:
     projectile_requirements:
       f1: # scale
       team_flags:
-      ##
+  ##
+  - type: HOOK ##
+    projectile_requirements:
+    ##
 
 teams: ##
   - type: ME
@@ -175,6 +178,14 @@ teams: ##
   - type: ENEMIES
     enum__value: 0b100
 ##
+
+abilities:
+  - type: HOOK ##
+    attack:
+      projectile_type: HOOK
+      projectile_spawns:
+        - at: 0.0
+          ##
 
 creatures:
   - type: INVALID ##
@@ -216,6 +227,8 @@ creatures:
         stamina_cost:
           flat: 25
           rally: 5
+    ability_types:
+      - HOOK
   ##
   - type: MOB_SHOOTER ##
     hp: 3
@@ -461,6 +474,14 @@ projectiles:
     collider_radius: 0.3
     distance: 8
     evade_flags: *evade_flags_default
+  ##
+  - type: HOOK ##
+    damage: 0
+    default__speed: 3
+    collider_radius: 0.3
+    distance: 5
+    tags:
+      - tag_type: HOOK
   ##
   - type: BOMB ##
     damage: 2
