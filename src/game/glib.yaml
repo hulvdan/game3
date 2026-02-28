@@ -2,14 +2,17 @@ debug_collisions: 1
 debug_collisions__chase: 0
 
 _anchors: ##
-  evades_default: &evades_default
-    evade_types:
-      - BLOCKABLE
-      - ROLLABLE
+  evade_flags_default: &evade_flags_default
+    - BLOCKABLE
+    - ROLLABLE
+    - STAMINA_RECOVERING_ROLLABLE
 
-  evades_perfect: &evades_perfect
-    evade_types:
-      - PERFECT_BLOCKABLE
+  evade_flags_default_no_stamina_recovering: &evade_flags_default_no_stamina_recovering
+    - BLOCKABLE
+    - ROLLABLE
+
+  evade_flags_perfect: &evade_flags_perfect
+    - PERFECT_BLOCKABLE
 ##
 
 world_size: ##
@@ -25,11 +28,13 @@ damages: ##
 
 evades: ##
   - type: BLOCKABLE
-    enum__value: 3
+    enum__value: 0b0011
   - type: PERFECT_BLOCKABLE
-    enum__value: 2
+    enum__value: 0b0010
   - type: ROLLABLE
-    enum__value: 4
+    enum__value: 0b0100
+  - type: STAMINA_RECOVERING_ROLLABLE
+    enum__value: 0b1100
 ##
 
 player: ##
@@ -80,6 +85,8 @@ spikes: ##
   duration_seconds: 2
   damage_starts_at: 0.5
   damage: 1
+  initial_evade_flags: *evade_flags_default
+  continuous_evade_flags: *evade_flags_default_no_stamina_recovering
 ##
 
 creatures_push_radius: 1.0
@@ -149,7 +156,7 @@ creatures:
       #       distance_max: 2
       #       angle_degrees: 90
       #       anchor_x: 0.5
-      #     <<: *evades_default
+      #     evade_flags: *evade_flags_default
       - duration: 0.25
         projectile_type: ARROW
         projectile_spawns:
@@ -262,7 +269,7 @@ creatures:
           ends_at: 0.6
           circle:
             radius: 1.5
-          <<: *evades_default
+          evade_flags: *evade_flags_default
         stops_tracking_at: 0.2
         tags:
           - attacktag_type: DASH
@@ -299,7 +306,7 @@ creatures:
             distance_max: 2
             angle_degrees: 90
             anchor_x: 0.5
-          <<: *evades_default
+          evade_flags: *evade_flags_default
         stops_tracking_at: 0.2
         tags:
           - attacktag_type: DASH
@@ -317,15 +324,13 @@ creatures:
         cooldown_max: 2.2
         melee:
           damage: 1
-          evade_types:
-            - BLOCKABLE
-            - ROLLABLE
           starts_at: 0.5
           ends_at: 1.1
           polygon:
             distance_max: 2
             angle_degrees: 20
             anchor_x: 0.5
+          evade_flags: *evade_flags_default
         stops_tracking_at: 0.3
         tags:
           - attacktag_type: DASH
@@ -382,14 +387,14 @@ projectiles:
     damage: 1
     default__speed: 14
     distance: 6
-    <<: *evades_default
+    evade_flags: *evade_flags_default
   ##
   - type: BALL ##
     damage: 1
     default__speed: 3
     collider_radius: 0.3
     distance: 8
-    <<: *evades_default
+    evade_flags: *evade_flags_default
   ##
   - type: BOMB ##
     damage: 2
@@ -398,7 +403,7 @@ projectiles:
     arc__duration: 1
     collider_radius: 1
     distance: 5
-    <<: *evades_perfect
+    evade_flags: *evade_flags_perfect
   ##
   - type: STAR_HIVE_INSIDE ##
     projectilefly_type: ARC
@@ -410,7 +415,7 @@ projectiles:
     arc__height: 1
     arc__duration: 0.3
     collider_radius: 1
-    <<: *evades_default
+    evade_flags: *evade_flags_default
   ##
   - type: STAR_HIVE ##
     projectilefly_type: ARC
@@ -423,14 +428,14 @@ projectiles:
     arc__duration: 1
     collider_radius: 1
     distance: 5
-    <<: *evades_default
+    evade_flags: *evade_flags_default
   ##
   - type: STAR_BIT ##
     damage: 1
     default__speed: 3
     collider_radius: 0.2
     distance: 3
-    <<: *evades_default
+    evade_flags: *evade_flags_default
   ##
   - type: HOMING ##
     damage: 1
@@ -440,19 +445,15 @@ projectiles:
     tags:
       - projectiletag_type: HOMING
         f1: 1.0
-    <<: *evades_default
+    evade_flags: *evade_flags_default
   ##
   - type: BLINK ##
     damage: 2
     projectilefly_type: ARC
-    evade_types:
-      - BLOCKABLE
-      - PERFECT_BLOCKABLE
-      - ROLLABLE
     arc__duration: 1
     collider_radius: 1
     distance: 4
-    <<: *evades_default
+    evade_flags: *evade_flags_default
     tags:
       - projectiletag_type: BLINK
         f1: 1.0 # blink_time

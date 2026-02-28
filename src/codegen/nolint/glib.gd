@@ -4643,6 +4643,16 @@ class GConfigSpikes:
 		service.field = __damage
 		data[__damage.tag] = service
 
+		__initial_evade_flags = PBField.new("initial_evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __initial_evade_flags
+		data[__initial_evade_flags.tag] = service
+
+		__continuous_evade_flags = PBField.new("continuous_evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __continuous_evade_flags
+		data[__continuous_evade_flags.tag] = service
+
 
 	var data = { }
 
@@ -4710,6 +4720,50 @@ class GConfigSpikes:
 
 	func set_damage(value: int) -> void:
 		__damage.value = value
+
+
+	var __initial_evade_flags: PBField
+
+
+	func has_initial_evade_flags() -> bool:
+		if __initial_evade_flags.value != null:
+			return true
+		return false
+
+
+	func get_initial_evade_flags() -> int:
+		return __initial_evade_flags.value
+
+
+	func clear_initial_evade_flags() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__initial_evade_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_initial_evade_flags(value: int) -> void:
+		__initial_evade_flags.value = value
+
+
+	var __continuous_evade_flags: PBField
+
+
+	func has_continuous_evade_flags() -> bool:
+		if __continuous_evade_flags.value != null:
+			return true
+		return false
+
+
+	func get_continuous_evade_flags() -> int:
+		return __continuous_evade_flags.value
+
+
+	func clear_continuous_evade_flags() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__continuous_evade_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_continuous_evade_flags(value: int) -> void:
+		__continuous_evade_flags.value = value
 
 
 	func _to_string() -> String:
@@ -6336,6 +6390,7 @@ enum GEvadeType {
 	BLOCKABLE = 3,
 	PERFECT_BLOCKABLE = 2,
 	ROLLABLE = 4,
+	STAMINA_RECOVERING_ROLLABLE = 12,
 	COUNT,
 }
 

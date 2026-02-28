@@ -438,6 +438,7 @@ func _physics_process(dt: float) -> void:
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)
 		apply_damage_melee_data.attack_id = creature.melee_attack_id
 		apply_damage_melee_data.impulse = 1
+		apply_damage_melee_data.evade_flags = melee.get_evade_flags()
 
 		var attacker_pos := bf.xz(creature.transform.origin)
 
@@ -613,6 +614,7 @@ func _process(dt: float) -> void:
 
 class ApplyDamageData: ##
 	var type := glib.GDamageType.DEFAULT
+	var evade_flags: int
 	var immediate := true
 	var attack_id := 0
 	var impulse := 0

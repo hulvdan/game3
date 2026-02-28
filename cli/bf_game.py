@@ -118,15 +118,16 @@ def _process_glib(genline, glib) -> None:
         x["type"]: x["enum__value"] for x in glib["evades"]
     }
 
-    def transform_evade_types_to_flags(
-        x: dict, types_field: str = "evade_types", flags_field: str = "evade_flags"
-    ) -> None:  ##
+    def transform_evade_flags_list_of_strings_to_number(x: list[str], setter) -> None:  ##
         evade_flags = 0
-        assert types_field in x
-        for t in x.pop(types_field):
+        for t in x:
             evade_flags = evade_flags | evade_type_2_value[t]
-        x[flags_field] = evade_flags
+        setter(evade_flags)
         ##
+
+    bf.recursive_visiter(
+        glib, "evade_flags", None, transform_evade_flags_list_of_strings_to_number
+    )
 
     ## LDTK. Enums
     ldtk_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
@@ -231,8 +232,6 @@ def _process_glib(genline, glib) -> None:
         is_player = x["type"] == "PLAYER"
         for attack in x.get("attacks", []):
             attack.get("projectiles_spawns", []).sort(key=lambda x: x["at"])
-            if "melee" in attack:
-                transform_evade_types_to_flags(attack["melee"])
             if "stops_tracking_at" not in attack:
                 attack["stops_tracking_at"] = attack["duration"]
             if is_player:
@@ -273,7 +272,6 @@ def _process_glib(genline, glib) -> None:
     ## Projectiles
     for x in glib["projectiles"][1:]:
         x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
-        transform_evade_types_to_flags(x)
     ##
 
     ## Progression
@@ -368,7 +366,7 @@ def _process_glib(genline, glib) -> None:
 
     tres_errors = []
 
-    def tres_callback(value: str) -> None:
+    def tres_callback(value: str, _) -> None:
         if not value.startswith("res://src/game/res_"):
             tres_errors.append(("INVALID PREFIX", value))
             return

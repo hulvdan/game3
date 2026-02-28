@@ -10,6 +10,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from functools import partial
 from pathlib import Path
 from typing import Any, Callable, Iterator, Sequence, TypeAlias, TypeVar
 
@@ -198,9 +199,10 @@ def recursive_mkdir(path: Path | str) -> None:
     Path(path).mkdir(parents=True, exist_ok=True)
 
 
-def batched(list_: list[T], n: int) -> Iterator[list[T]]:
+def batched(list_: list[T], n: int) -> Iterator[list[T]]:  ##
     for i in range(0, len(list_), n):
         yield list_[i : i + n]
+    ##
 
 
 def check_duplicates(values: list | tuple) -> None:  ##
@@ -336,11 +338,19 @@ _call_stack: list[str | int] = []
 _recursive_replace_transform_patterns: Any = None
 
 
+def _recursive_visiter_setter_list(value, l, i) -> None:
+    l[i] = value
+
+
+def _recursive_visiter_setter_dict(value, d, k) -> None:
+    d[k] = value
+
+
 def recursive_visiter(
     glib_recursed,
-    key_suffix_single: str,
-    key_suffix_list: str,
-    callback: Callable[[str], None],
+    key_suffix_single: str | None,
+    key_suffix_list: str | None,
+    callback: Callable[[Any, Callable[[Any], None]], None],
     *,
     root: bool = True,
 ) -> None:  ##
@@ -350,22 +360,30 @@ def recursive_visiter(
         return
 
     if root:
-        _recursive_visiter_patterns = (
-            re.compile(f"(.*_)?{key_suffix_single}(_\\d+)?$"),
-            re.compile(f"(.*_)?{key_suffix_list}(_\\d+)?$"),
-        )
+        assert key_suffix_single or key_suffix_list
+        p1 = None
+        if key_suffix_single:
+            p1 = re.compile(f"(.*_)?{key_suffix_single}(_\\d+)?$")
+        p2 = None
+        if key_suffix_list:
+            p2 = re.compile(f"(.*_)?{key_suffix_list}(_\\d+)?$")
+        _recursive_visiter_patterns = (p1, p2)
+
+    p1, p2 = _recursive_visiter_patterns
 
     for key, value in glib_recursed.items():
-        if re.match(_recursive_visiter_patterns[0], key) or re.match(
-            _recursive_visiter_patterns[1], key
-        ):
-            if re.match(_recursive_visiter_patterns[1], key):
+        p1v = p1 and re.match(p1, key)
+        p2v = p2 and re.match(p2, key)
+        if p1v or p2v:
+            if p2v:
                 assert isinstance(value, list)
-                for v in value:
+                for i, v in enumerate(value):
                     assert isinstance(v, str)
-                    callback(v)
+                    callback(v, partial(_recursive_visiter_setter_list, l=value, i=i))
             else:
-                callback(value)
+                callback(
+                    value, partial(_recursive_visiter_setter_dict, d=glib_recursed, k=key)
+                )
 
         elif isinstance(value, dict):
             recursive_visiter(

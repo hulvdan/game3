@@ -231,6 +231,8 @@ message GConfigSpikes {
   float duration_seconds = 1;
   float damage_starts_at = 2;
   int32 damage = 3;
+  int32 initial_evade_flags = 4;
+  int32 continuous_evade_flags = 5;
 }
 
 message GConfigPlayer {
