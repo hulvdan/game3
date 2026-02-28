@@ -22,6 +22,7 @@ x JUMPER dash in front of player (blink-like distance limiting)
 x projectile SUMMON tag
 x merge attack & projectile tags
 
+* projectile area effect: slowdown
 * projectile area effects
   - long duration
   - slowing mobs down

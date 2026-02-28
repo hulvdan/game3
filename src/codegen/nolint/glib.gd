@@ -6365,6 +6365,7 @@ enum GCreatureType {
 	MOB_BONKER,
 	MOB_SPEAR,
 	MOB_SUMMONER,
+	MOB_SLOWDOWNER,
 	COUNT,
 }
 
@@ -6402,6 +6403,7 @@ enum GProjectileType {
 	HOMING,
 	BLINK,
 	SUMMON,
+	AREA_SLOWDOWN,
 	COUNT,
 }
 
@@ -6418,5 +6420,6 @@ enum GTagType {
 	HOMING,
 	HIVE,
 	SUMMON,
+	SCALE_MOVEMENT_SPEED,
 	COUNT,
 }

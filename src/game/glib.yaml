@@ -158,6 +158,10 @@ tags:
     projectile_requirements:
       creature_type:
       ##
+  - type: SCALE_MOVEMENT_SPEED ##
+    projectile_requirements:
+      f1: # scale
+      ##
 
 creatures:
   - type: INVALID ##
@@ -379,6 +383,18 @@ creatures:
         cooldown_max: 12.0
         distance: 7
         ##
+  - type: MOB_SLOWDOWNER ##
+    hp: 3
+    speed: 0.4
+    attacks:
+      - duration: 0.8
+        projectile_type: AREA_SLOWDOWN
+        projectile_spawns:
+          - at: 0.5
+        cooldown_min: 10.0
+        cooldown_max: 10.0
+        distance: 4
+        ##
 
 items: ##
   - type: INVALID
@@ -484,7 +500,7 @@ projectiles:
     tags:
       - tag_type: BLINK
         f1: 1.0 # blink_time
-        ##
+  ##
   - type: SUMMON ##
     projectilefly_type: ARC
     arc__duration: 1
@@ -494,4 +510,14 @@ projectiles:
     tags:
       - tag_type: SUMMON
         creature_type: MOB_SHOOTER
+  ##
+  - type: AREA_SLOWDOWN ##
+    projectilefly_type: ARC
+    arc__duration: 8
+    collider_radius: 1.8
+    distance: 4
+    evade_flags: *evade_flags_default
+    tags:
+      - tag_type: SCALE_MOVEMENT_SPEED
+        f1: 0.3 # scale
         ##
