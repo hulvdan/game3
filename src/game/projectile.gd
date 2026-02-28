@@ -42,7 +42,7 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 
 	for tag in data.get_tags():
 		match tag.get_tag_type():
-			glib.GProjectileTagType.BLINK:
+			glib.GTagType.BLINK:
 				if d.owner__mb_freed_or_null && !blinked && (elapsed >= tag.get_f1()):
 					blinked = true
 					if is_instance_valid(d.owner__mb_freed_or_null):
@@ -54,7 +54,7 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 func on_free(data: glib.GProjectile) -> void: ##
 	for tag in data.get_tags():
 		match tag.get_tag_type():
-			glib.GProjectileTagType.HIVE:
+			glib.GTagType.HIVE:
 				var angle := calculated__dir.angle()
 				var children_count := tag.get_i1()
 				assert(children_count > 0)
@@ -72,7 +72,7 @@ func on_free(data: glib.GProjectile) -> void: ##
 					c.target = c.pos + Vector2(1, 0).rotated(angle)
 					c.homing__target = d.homing__target
 					Game.v.make_projectile(c)
-			glib.GProjectileTagType.SUMMON:
+			glib.GTagType.SUMMON:
 				Game.v.make_creature(tag.get_creature_type(), d.target)
 
 ##
@@ -101,7 +101,7 @@ class UpdaterDefault extends UpdaterBase:
 		x.transform.origin += bf.to_xz(moved)
 		for tag in data.get_tags():
 			match tag.get_tag_type():
-				glib.GProjectileTagType.HOMING:
+				glib.GTagType.HOMING:
 					if x.d.homing__target:
 						var target_dir := bf.vector2_direction_or_random(
 							bf.xz(x.transform.origin),

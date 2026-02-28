@@ -61,7 +61,7 @@ static func explicit_update_attack(
 	# Processing tags
 	for tag in attack.get_tags():
 		match tag.get_tag_type():
-			glib.GAttackTagType.DASH: ##
+			glib.GTagType.DASH: ##
 				if !c.attack_dashed:
 					var start := tag.get_f1()
 					if start <= c.attack_elapsed:
@@ -71,7 +71,7 @@ static func explicit_update_attack(
 						var pow_ := tag.get_f5()
 						c.add_impulse(c.attack_target_dir, dist, tag.get_f2() - start, pow_)
 			##
-			glib.GAttackTagType.BLINK: ##
+			glib.GTagType.BLINK: ##
 				if !c.attack_blinked:
 					var dur := tag.get_f2() - tag.get_f1()
 					if c.attack_elapsed >= dur / 2:
