@@ -3445,8 +3445,8 @@
             {
               "__identifier": "Creature",
               "__grid": [
-                14,
-                7
+                8,
+                11
               ],
               "__pivot": [
                 0,
@@ -3460,8 +3460,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                224,
-                112
+                128,
+                176
               ],
               "fieldInstances": [
                 {
@@ -3480,8 +3480,8 @@
                   ]
                 }
               ],
-              "__worldX": 656,
-              "__worldY": 128
+              "__worldX": 560,
+              "__worldY": 192
             },
             {
               "__identifier": "Creature",
@@ -3691,8 +3691,8 @@
             {
               "__identifier": "Creature",
               "__grid": [
-                15,
-                10
+                14,
+                7
               ],
               "__pivot": [
                 0,
@@ -3706,8 +3706,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                240,
-                160
+                224,
+                112
               ],
               "fieldInstances": [
                 {
@@ -3726,8 +3726,8 @@
                   ]
                 }
               ],
-              "__worldX": 672,
-              "__worldY": 176
+              "__worldX": 656,
+              "__worldY": 128
             },
             {
               "__identifier": "Creature",

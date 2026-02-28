@@ -350,19 +350,16 @@ func _physics_process(dt: float) -> void:
 		if dir != Vector2(0, 0):
 			creature.controller.last_move = dir
 		bf.move_body_with_speed(creature.node_body, dir, creature.get_speed())
-
 		var impulse_index := -1
 		for impulse in creature.impulses:
 			impulse_index += 1
 			var e := Room.v.start_elapsed - impulse.created_at
-			var speed := bf.get_roll_speed(impulse.dist, impulse.dur, e, impulse.pow_)
-			bf.move_body_with_speed(creature.node_body, impulse.dir, speed)
-			if e > impulse.dur:
+			if e < impulse.dur:
+				var speed := bf.get_roll_speed(impulse.dist, impulse.dur, e, impulse.pow_)
+				bf.move_body_with_speed(creature.node_body, impulse.dir, speed)
+			else:
 				_impulses_to_remove_indices.append(impulse_index)
-		bf.unstable_remove_indices(
-			creature.impulses,
-			_impulses_to_remove_indices,
-		)
+		bf.unstable_remove_indices(creature.impulses, _impulses_to_remove_indices)
 	##
 
 	## Spawning projectiles (flushing `projectiles_to_make`)

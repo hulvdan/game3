@@ -20,6 +20,7 @@ var controller: Controller = Controller.new()
 var attack_elapsed: float
 var attack_projectiles_spawned: int
 var attack_blinked: bool
+var attack_dashed: bool
 
 var melee_attack: glib.GAttack
 var melee_attack_id: int

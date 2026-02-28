@@ -245,33 +245,34 @@ message GConfigPlayer {
   float roll_invincibility_start = 6;
   float roll_invincibility_end = 7;
   float roll_duration_seconds = 8;
+  float roll_control_return_starts_at = 9;
 
-  float stamina = 9;
-  float stamina_regen_per_second = 10;
-  GStaminaCost roll_stamina_cost = 11;
-  float dodge_stamina_retrieve_percent = 12;
-  float stamina_rally_decay_after = 13;
-  float stamina_rally_decay_per_second = 14;
-  float stamina_attack_cost = 15;
-  float stamina_attack_rally_scale = 16;
-  float stamina_roll_rally_scale = 17;
-  float stamina_regen_on_kill = 18;
+  float stamina = 10;
+  float stamina_regen_per_second = 11;
+  GStaminaCost roll_stamina_cost = 12;
+  float dodge_stamina_retrieve_percent = 13;
+  float stamina_rally_decay_after = 14;
+  float stamina_rally_decay_per_second = 15;
+  float stamina_attack_cost = 16;
+  float stamina_attack_rally_scale = 17;
+  float stamina_roll_rally_scale = 18;
+  float stamina_regen_on_kill = 19;
 
-  float stamina_regen_scale__blocking = 19;
-  float stamina_regen_scale__shooting = 20;
+  float stamina_regen_scale__blocking = 20;
+  float stamina_regen_scale__shooting = 21;
 
-  float block__activation_start = 21;
-  float ki__rally_increase_per_second = 22;
-  float block__min_duration = 23;
-  float block__idle_after_block = 24;
-  float cooldown__block = 25;
-  float cooldown__roll = 26;
-  float block__perfect_end = 27;
+  float block__activation_start = 22;
+  float ki__rally_increase_per_second = 23;
+  float block__min_duration = 24;
+  float block__idle_after_block = 25;
+  float cooldown__block = 26;
+  float cooldown__roll = 27;
+  float block__perfect_end = 28;
 
-  float stamina_depletion_regen_delay = 28;
-  float invincibility_after_hit_seconds = 29;
-  float shooting_seconds = 30;
-  float shooting_after_roll_seconds = 31;
+  float stamina_depletion_regen_delay = 29;
+  float invincibility_after_hit_seconds = 30;
+  float shooting_seconds = 31;
+  float shooting_after_roll_seconds = 32;
 }
 
 message Lib {

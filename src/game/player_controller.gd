@@ -286,16 +286,28 @@ class PlayerAttack extends PlayerBase: ##
 class PlayerRoll extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		var cost := glib.v.get_player().get_roll_stamina_cost()
+
+		var pl := glib.v.get_player()
+
+		var cost := pl.get_roll_stamina_cost()
 		player.consume_stamina(cost)
 		player.rolling_retrievable_cost = cost.get_flat()
 		player.dodging = false
+
+		player.creature.speed_modifiers.roll = 0
+
+		player.creature.add_impulse(
+			player.creature.controller.last_move,
+			pl.get_roll_distance(),
+			pl.get_roll_duration_seconds(),
+			pl.get_roll_pow(),
+		)
 
 
 	func on_exit() -> void:
 		super.on_exit()
 		player.rolling_retrievable_cost = 0
-		player.creature.speed_modifiers.base = glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_speed()
+		player.creature.speed_modifiers.roll = 1
 		player.dodging = false
 		player._next_roll_at = Room.v.start_elapsed + glib.v.get_player().get_cooldown__roll()
 
@@ -303,18 +315,15 @@ class PlayerRoll extends PlayerBase: ##
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
 
+		var pl := glib.v.get_player()
+
 		player.dodging = (
-			(glib.v.get_player().get_roll_invincibility_start() <= elapsed)
-			&& (elapsed <= glib.v.get_player().get_roll_invincibility_end())
+			(pl.get_roll_invincibility_start() <= elapsed)
+			&& (elapsed <= pl.get_roll_invincibility_end())
 		)
 
-		player.creature.controller.move = player.creature.controller.last_move
-		player.creature.speed_modifiers.base = bf.get_roll_speed(
-			glib.v.get_player().get_roll_distance(),
-			glib.v.get_player().get_roll_duration_seconds(),
-			elapsed,
-			glib.v.get_player().get_roll_pow(),
-		)
+		var t := (elapsed - pl.get_roll_control_return_starts_at()) / (pl.get_roll_duration_seconds() - pl.get_roll_control_return_starts_at())
+		player.creature.speed_modifiers.roll = clamp(t, 0, 1)
 
 		if elapsed >= glib.v.get_player().get_roll_duration_seconds():
 			player._change_state(StateType.DEFAULT, null)
@@ -326,6 +335,9 @@ class PlayerRoll extends PlayerBase: ##
 				if player._can_start_shoot():
 					player.shoot_after_roll = true
 					return true
+			ActionType.SET_MOVE_DIR:
+				player.creature.controller.move = a.shoot_or_move_or_roll__dir
+				return true
 		return false
 ##
 

@@ -62,21 +62,13 @@ static func explicit_update_attack(
 	for tag in attack.get_tags():
 		match tag.get_attacktag_type():
 			glib.GAttackTagType.DASH: ##
-				var e: float = min(c.attack_elapsed, attack.get_duration())
-				c.speed_modifiers.dash = 0
-
-				var start := tag.get_f1()
-				var end := tag.get_f2()
-				var dur := end - start
-
-				if (start <= c.attack_elapsed) && (c.attack_elapsed <= end):
-					c.controller.move = c.attack_target_dir
-					c.speed_modifiers.dash = bf.get_roll_speed(
-						tag.get_f3(),
-						dur,
-						e - start,
-						tag.get_f4(),
-					)
+				if !c.attack_dashed:
+					var start := tag.get_f1()
+					if start <= c.attack_elapsed:
+						c.attack_dashed = true
+						var dist := tag.get_f3()
+						var pow_ := tag.get_f4()
+						c.add_impulse(c.attack_target_dir, dist, tag.get_f2() - start, pow_)
 			##
 			glib.GAttackTagType.BLINK: ##
 				if !c.attack_blinked:
@@ -112,11 +104,11 @@ static func explicit_update_attack(
 		if is_player:
 			Room.v.player.attack_consumed_stamina = false
 		c.attack_blinked = false
+		c.attack_dashed = false
 		c.attack_elapsed = 0.0
 		c.attack_projectiles_spawned = 0
 		c.melee_attack = null
 		c.controller.move = Vector2(0, 0)
-		c.speed_modifiers.dash = 1
 		return true
 	##
 

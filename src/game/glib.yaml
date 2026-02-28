@@ -44,9 +44,10 @@ player: ##
   speed_scale__blocking: 0.2
   speed_scale__inside_enemies: 0.3
 
-  roll_distance: 3.15
-  roll_pow: 0.1
-  roll_duration_seconds: 0.4
+  roll_distance: 3
+  roll_pow: 0.3
+  roll_duration_seconds: 0.5
+  roll_control_return_starts_at: 0.25
   roll_invincibility_start: 0.00
   roll_invincibility_end: 0.25
 
@@ -95,7 +96,7 @@ creatures_push_radius: 1.0
 creatures_push_force: 4
 
 default_impulse_duration_seconds: 0.25
-default_impulse_pow: 0.1
+default_impulse_pow: 0.2
 impulse_block_scale: 0.5
 
 mob_invincibility_spikes_seconds: 0.25

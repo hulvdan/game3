@@ -4834,118 +4834,123 @@ class GConfigPlayer:
 		service.field = __roll_duration_seconds
 		data[__roll_duration_seconds.tag] = service
 
-		__stamina = PBField.new("stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__roll_control_return_starts_at = PBField.new("roll_control_return_starts_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __roll_control_return_starts_at
+		data[__roll_control_return_starts_at.tag] = service
+
+		__stamina = PBField.new("stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina
 		data[__stamina.tag] = service
 
-		__stamina_regen_per_second = PBField.new("stamina_regen_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_regen_per_second = PBField.new("stamina_regen_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_regen_per_second
 		data[__stamina_regen_per_second.tag] = service
 
-		__roll_stamina_cost = PBField.new("roll_stamina_cost", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__roll_stamina_cost = PBField.new("roll_stamina_cost", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __roll_stamina_cost
 		service.func_ref = Callable(self, "new_roll_stamina_cost")
 		data[__roll_stamina_cost.tag] = service
 
-		__dodge_stamina_retrieve_percent = PBField.new("dodge_stamina_retrieve_percent", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__dodge_stamina_retrieve_percent = PBField.new("dodge_stamina_retrieve_percent", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __dodge_stamina_retrieve_percent
 		data[__dodge_stamina_retrieve_percent.tag] = service
 
-		__stamina_rally_decay_after = PBField.new("stamina_rally_decay_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_rally_decay_after = PBField.new("stamina_rally_decay_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_rally_decay_after
 		data[__stamina_rally_decay_after.tag] = service
 
-		__stamina_rally_decay_per_second = PBField.new("stamina_rally_decay_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_rally_decay_per_second = PBField.new("stamina_rally_decay_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_rally_decay_per_second
 		data[__stamina_rally_decay_per_second.tag] = service
 
-		__stamina_attack_cost = PBField.new("stamina_attack_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_attack_cost = PBField.new("stamina_attack_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_attack_cost
 		data[__stamina_attack_cost.tag] = service
 
-		__stamina_attack_rally_scale = PBField.new("stamina_attack_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_attack_rally_scale = PBField.new("stamina_attack_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_attack_rally_scale
 		data[__stamina_attack_rally_scale.tag] = service
 
-		__stamina_roll_rally_scale = PBField.new("stamina_roll_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_roll_rally_scale = PBField.new("stamina_roll_rally_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 18, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_roll_rally_scale
 		data[__stamina_roll_rally_scale.tag] = service
 
-		__stamina_regen_on_kill = PBField.new("stamina_regen_on_kill", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 18, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_regen_on_kill = PBField.new("stamina_regen_on_kill", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 19, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_regen_on_kill
 		data[__stamina_regen_on_kill.tag] = service
 
-		__stamina_regen_scale__blocking = PBField.new("stamina_regen_scale__blocking", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 19, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_regen_scale__blocking = PBField.new("stamina_regen_scale__blocking", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_regen_scale__blocking
 		data[__stamina_regen_scale__blocking.tag] = service
 
-		__stamina_regen_scale__shooting = PBField.new("stamina_regen_scale__shooting", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 20, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_regen_scale__shooting = PBField.new("stamina_regen_scale__shooting", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_regen_scale__shooting
 		data[__stamina_regen_scale__shooting.tag] = service
 
-		__block__activation_start = PBField.new("block__activation_start", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 21, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__activation_start = PBField.new("block__activation_start", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 22, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __block__activation_start
 		data[__block__activation_start.tag] = service
 
-		__ki__rally_increase_per_second = PBField.new("ki__rally_increase_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 22, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__ki__rally_increase_per_second = PBField.new("ki__rally_increase_per_second", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 23, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __ki__rally_increase_per_second
 		data[__ki__rally_increase_per_second.tag] = service
 
-		__block__min_duration = PBField.new("block__min_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 23, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__min_duration = PBField.new("block__min_duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __block__min_duration
 		data[__block__min_duration.tag] = service
 
-		__block__idle_after_block = PBField.new("block__idle_after_block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 24, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__idle_after_block = PBField.new("block__idle_after_block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __block__idle_after_block
 		data[__block__idle_after_block.tag] = service
 
-		__cooldown__block = PBField.new("cooldown__block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 25, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__cooldown__block = PBField.new("cooldown__block", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __cooldown__block
 		data[__cooldown__block.tag] = service
 
-		__cooldown__roll = PBField.new("cooldown__roll", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 26, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__cooldown__roll = PBField.new("cooldown__roll", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __cooldown__roll
 		data[__cooldown__roll.tag] = service
 
-		__block__perfect_end = PBField.new("block__perfect_end", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 27, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__block__perfect_end = PBField.new("block__perfect_end", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __block__perfect_end
 		data[__block__perfect_end.tag] = service
 
-		__stamina_depletion_regen_delay = PBField.new("stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 28, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__stamina_depletion_regen_delay = PBField.new("stamina_depletion_regen_delay", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 29, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __stamina_depletion_regen_delay
 		data[__stamina_depletion_regen_delay.tag] = service
 
-		__invincibility_after_hit_seconds = PBField.new("invincibility_after_hit_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 29, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__invincibility_after_hit_seconds = PBField.new("invincibility_after_hit_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 30, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __invincibility_after_hit_seconds
 		data[__invincibility_after_hit_seconds.tag] = service
 
-		__shooting_seconds = PBField.new("shooting_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 30, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__shooting_seconds = PBField.new("shooting_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 31, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __shooting_seconds
 		data[__shooting_seconds.tag] = service
 
-		__shooting_after_roll_seconds = PBField.new("shooting_after_roll_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 31, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__shooting_after_roll_seconds = PBField.new("shooting_after_roll_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 32, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __shooting_after_roll_seconds
 		data[__shooting_after_roll_seconds.tag] = service
@@ -5129,6 +5134,28 @@ class GConfigPlayer:
 		__roll_duration_seconds.value = value
 
 
+	var __roll_control_return_starts_at: PBField
+
+
+	func has_roll_control_return_starts_at() -> bool:
+		if __roll_control_return_starts_at.value != null:
+			return true
+		return false
+
+
+	func get_roll_control_return_starts_at() -> float:
+		return __roll_control_return_starts_at.value
+
+
+	func clear_roll_control_return_starts_at() -> void:
+		data[9].state = PB_SERVICE_STATE.UNFILLED
+		__roll_control_return_starts_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_roll_control_return_starts_at(value: float) -> void:
+		__roll_control_return_starts_at.value = value
+
+
 	var __stamina: PBField
 
 
@@ -5143,7 +5170,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5165,7 +5192,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_regen_per_second() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_regen_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5187,7 +5214,7 @@ class GConfigPlayer:
 
 
 	func clear_roll_stamina_cost() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
+		data[12].state = PB_SERVICE_STATE.UNFILLED
 		__roll_stamina_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -5210,7 +5237,7 @@ class GConfigPlayer:
 
 
 	func clear_dodge_stamina_retrieve_percent() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
+		data[13].state = PB_SERVICE_STATE.UNFILLED
 		__dodge_stamina_retrieve_percent.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5232,7 +5259,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_rally_decay_after() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[14].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_rally_decay_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5254,7 +5281,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_rally_decay_per_second() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
+		data[15].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_rally_decay_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5276,7 +5303,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_attack_cost() -> void:
-		data[15].state = PB_SERVICE_STATE.UNFILLED
+		data[16].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_attack_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5298,7 +5325,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_attack_rally_scale() -> void:
-		data[16].state = PB_SERVICE_STATE.UNFILLED
+		data[17].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_attack_rally_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5320,7 +5347,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_roll_rally_scale() -> void:
-		data[17].state = PB_SERVICE_STATE.UNFILLED
+		data[18].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_roll_rally_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5342,7 +5369,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_regen_on_kill() -> void:
-		data[18].state = PB_SERVICE_STATE.UNFILLED
+		data[19].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_regen_on_kill.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5364,7 +5391,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_regen_scale__blocking() -> void:
-		data[19].state = PB_SERVICE_STATE.UNFILLED
+		data[20].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_regen_scale__blocking.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5386,7 +5413,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_regen_scale__shooting() -> void:
-		data[20].state = PB_SERVICE_STATE.UNFILLED
+		data[21].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_regen_scale__shooting.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5408,7 +5435,7 @@ class GConfigPlayer:
 
 
 	func clear_block__activation_start() -> void:
-		data[21].state = PB_SERVICE_STATE.UNFILLED
+		data[22].state = PB_SERVICE_STATE.UNFILLED
 		__block__activation_start.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5430,7 +5457,7 @@ class GConfigPlayer:
 
 
 	func clear_ki__rally_increase_per_second() -> void:
-		data[22].state = PB_SERVICE_STATE.UNFILLED
+		data[23].state = PB_SERVICE_STATE.UNFILLED
 		__ki__rally_increase_per_second.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5452,7 +5479,7 @@ class GConfigPlayer:
 
 
 	func clear_block__min_duration() -> void:
-		data[23].state = PB_SERVICE_STATE.UNFILLED
+		data[24].state = PB_SERVICE_STATE.UNFILLED
 		__block__min_duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5474,7 +5501,7 @@ class GConfigPlayer:
 
 
 	func clear_block__idle_after_block() -> void:
-		data[24].state = PB_SERVICE_STATE.UNFILLED
+		data[25].state = PB_SERVICE_STATE.UNFILLED
 		__block__idle_after_block.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5496,7 +5523,7 @@ class GConfigPlayer:
 
 
 	func clear_cooldown__block() -> void:
-		data[25].state = PB_SERVICE_STATE.UNFILLED
+		data[26].state = PB_SERVICE_STATE.UNFILLED
 		__cooldown__block.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5518,7 +5545,7 @@ class GConfigPlayer:
 
 
 	func clear_cooldown__roll() -> void:
-		data[26].state = PB_SERVICE_STATE.UNFILLED
+		data[27].state = PB_SERVICE_STATE.UNFILLED
 		__cooldown__roll.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5540,7 +5567,7 @@ class GConfigPlayer:
 
 
 	func clear_block__perfect_end() -> void:
-		data[27].state = PB_SERVICE_STATE.UNFILLED
+		data[28].state = PB_SERVICE_STATE.UNFILLED
 		__block__perfect_end.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5562,7 +5589,7 @@ class GConfigPlayer:
 
 
 	func clear_stamina_depletion_regen_delay() -> void:
-		data[28].state = PB_SERVICE_STATE.UNFILLED
+		data[29].state = PB_SERVICE_STATE.UNFILLED
 		__stamina_depletion_regen_delay.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5584,7 +5611,7 @@ class GConfigPlayer:
 
 
 	func clear_invincibility_after_hit_seconds() -> void:
-		data[29].state = PB_SERVICE_STATE.UNFILLED
+		data[30].state = PB_SERVICE_STATE.UNFILLED
 		__invincibility_after_hit_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5606,7 +5633,7 @@ class GConfigPlayer:
 
 
 	func clear_shooting_seconds() -> void:
-		data[30].state = PB_SERVICE_STATE.UNFILLED
+		data[31].state = PB_SERVICE_STATE.UNFILLED
 		__shooting_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -5628,7 +5655,7 @@ class GConfigPlayer:
 
 
 	func clear_shooting_after_roll_seconds() -> void:
-		data[31].state = PB_SERVICE_STATE.UNFILLED
+		data[32].state = PB_SERVICE_STATE.UNFILLED
 		__shooting_after_roll_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
