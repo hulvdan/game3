@@ -420,6 +420,7 @@ collectibles:
 projectile_fly_types: ##
   - type: DEFAULT
   - type: ARC
+  - type: AREA
 ##
 
 projectiles:
@@ -442,7 +443,7 @@ projectiles:
     damage: 2
     projectilefly_type: ARC
     arc__height: 1
-    arc__duration: 1
+    arc_or_area__duration: 1
     collider_radius: 1
     distance: 5
     evade_flags: *evade_flags_perfect
@@ -455,7 +456,7 @@ projectiles:
         i1: 5
         projectile_type: STAR_BIT
     arc__height: 1
-    arc__duration: 0.3
+    arc_or_area__duration: 0.3
     collider_radius: 1
     evade_flags: *evade_flags_default
   ##
@@ -467,7 +468,7 @@ projectiles:
         i1: 5
         projectile_type: STAR_BIT
     arc__height: 1
-    arc__duration: 1
+    arc_or_area__duration: 1
     collider_radius: 1
     distance: 5
     evade_flags: *evade_flags_default
@@ -492,7 +493,7 @@ projectiles:
   - type: BLINK ##
     damage: 2
     projectilefly_type: ARC
-    arc__duration: 1
+    arc_or_area__duration: 1
     collider_radius: 1
     distance: 4
     # evade_flags: *evade_flags_default
@@ -503,7 +504,7 @@ projectiles:
   ##
   - type: SUMMON ##
     projectilefly_type: ARC
-    arc__duration: 1
+    arc_or_area__duration: 1
     collider_radius: 0.6
     distance: 1
     evade_flags: *evade_flags_default
@@ -512,8 +513,8 @@ projectiles:
         creature_type: MOB_SHOOTER
   ##
   - type: AREA_SLOWDOWN ##
-    projectilefly_type: ARC
-    arc__duration: 30
+    projectilefly_type: AREA
+    arc_or_area__duration: 30
     collider_radius: 1.8
     distance: 4
     evade_flags: *evade_flags_default

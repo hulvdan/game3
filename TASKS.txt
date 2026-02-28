@@ -23,9 +23,9 @@ x projectile SUMMON tag
 x merge attack & projectile tags
 x slowdown area: shown on screen
 x slowdown area: make it downscale player's speed
-
-* slowdown area: add flytype AREA so that projectile's position
+x slowdown area: add flytype AREA so that projectile's position
   is fixed and Area3D is in center of Gizmos circle
+
 * slowdown area:
 * slowdown area:
 * slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.owner)

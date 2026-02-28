@@ -207,7 +207,7 @@ message GProjectile {
   int32 projectilefly_type = 9;
 
   float arc__height = 10;
-  float arc__duration = 11;
+  float arc_or_area__duration = 11;
 
   float default__speed = 12;
 

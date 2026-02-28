@@ -9,6 +9,7 @@ const MAX_COLLISIONS_AOE := 12
 static var updaters: Array[UpdaterBase] = [
 	UpdaterDefault.new(),
 	UpdaterArc.new(),
+	UpdaterArea.new(),
 ]
 
 
@@ -104,6 +105,9 @@ class UpdaterBase:
 		_damage_data.attack_id = x.attack_id
 		if x.travelled > data.get_distance():
 			x.queue_free()
+
+		_damage_data.evade_flags = data.get_evade_flags()
+		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
 	##
 
 
@@ -133,9 +137,6 @@ class UpdaterDefault extends UpdaterBase:
 						)
 
 		var q: Array[Dictionary]
-
-		_damage_data.evade_flags = data.get_evade_flags()
-		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
 
 		for mask: int in [
 			2 ** glib.GMaskType.WALLS,
@@ -186,14 +187,11 @@ class UpdaterArc extends UpdaterBase:
 	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
 
-		var t := x.elapsed / data.get_arc__duration()
+		var t := x.elapsed / data.get_arc_or_area__duration()
 		var p: Vector2 = lerp(x.d.pos, x.d.target, t)
 		var pos: Vector3 = bf.to_xz(p)
 		pos.y = data.get_arc__height() * sin(t * PI)
 		x.transform.origin = pos
-
-		_damage_data.evade_flags = data.get_evade_flags()
-		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
 
 		if glib.v.get_debug_collisions():
 			var trr := Transform3D()
@@ -211,7 +209,54 @@ class UpdaterArc extends UpdaterBase:
 				t * data.get_collider_radius(),
 			)
 
-		if x.elapsed >= data.get_arc__duration():
+		if x.elapsed >= data.get_arc_or_area__duration():
+			var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
+
+			if data.get_damage() > 0:
+				for d: Dictionary in Collisions.query_circle(
+					bf.xz(x.transform.origin),
+					data.get_collider_radius(),
+					mask,
+					true,
+					false,
+					MAX_COLLISIONS_AOE,
+				):
+					var damaged_creature: Creature = d.collider
+					if damaged_creature in x.damaged_creatures:
+						continue
+
+					if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
+						x.damaged_creatures.append(damaged_creature)
+
+			x.queue_free()
+			for z: Node3D in x.zones:
+				Room.v.container_zones.remove_child(z)
+	##
+
+
+class UpdaterArea extends UpdaterBase:
+	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
+		super.explicit_process(dt, x, is_player, data)
+
+		x.transform.origin = bf.to_xz(x.d.target)
+
+		if glib.v.get_debug_collisions():
+			var trr := Transform3D()
+			trr.origin = bf.to_xz(x.d.target)
+			trr.basis = x.transform.basis
+			ImmediateGizmos3D.set_transform(trr)
+			ImmediateGizmos3D.line_circle(
+				Vector3(0, 0, 0),
+				Vector3(0, 1, 0),
+				data.get_collider_radius(),
+			)
+			ImmediateGizmos3D.line_circle(
+				Vector3(0, 0, 0),
+				Vector3(0, 1, 0),
+				x.elapsed / data.get_arc_or_area__duration() * data.get_collider_radius(),
+			)
+
+		if x.elapsed >= data.get_arc_or_area__duration():
 			var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
 
 			if data.get_damage() > 0:

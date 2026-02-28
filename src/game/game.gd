@@ -397,7 +397,7 @@ func _physics_process(dt: float) -> void:
 					bf.to_xz(x.calculated__dir),
 				)
 
-		elif data.get_projectilefly_type() == glib.GProjectileFlyType.ARC:
+		elif data.get_projectilefly_type() in [glib.GProjectileFlyType.ARC, glib.GProjectileFlyType.AREA]:
 			var target_scale := Vector3(1, 1, 1) * data.get_collider_radius() * 2.0
 			for i in range(2):
 				var zone: Node3D = packed_zone_circle.instantiate()
@@ -407,7 +407,7 @@ func _physics_process(dt: float) -> void:
 				var tween = create_tween()
 				if i:
 					tween.tween_property(zone, "scale", Vector3(0, 1, 0), 0)
-					tween.tween_property(zone, "scale", target_scale, data.get_arc__duration())
+					tween.tween_property(zone, "scale", target_scale, data.get_arc_or_area__duration())
 				else:
 					tween.tween_property(zone, "scale", target_scale, 0)
 				x.zones.append(zone)

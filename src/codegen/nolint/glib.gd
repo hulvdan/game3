@@ -4093,10 +4093,10 @@ class GProjectile:
 		service.field = __arc__height
 		data[__arc__height.tag] = service
 
-		__arc__duration = PBField.new("arc__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc_or_area__duration = PBField.new("arc_or_area__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __arc__duration
-		data[__arc__duration.tag] = service
+		service.field = __arc_or_area__duration
+		data[__arc_or_area__duration.tag] = service
 
 		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -4333,26 +4333,26 @@ class GProjectile:
 		__arc__height.value = value
 
 
-	var __arc__duration: PBField
+	var __arc_or_area__duration: PBField
 
 
-	func has_arc__duration() -> bool:
-		if __arc__duration.value != null:
+	func has_arc_or_area__duration() -> bool:
+		if __arc_or_area__duration.value != null:
 			return true
 		return false
 
 
-	func get_arc__duration() -> float:
-		return __arc__duration.value
+	func get_arc_or_area__duration() -> float:
+		return __arc_or_area__duration.value
 
 
-	func clear_arc__duration() -> void:
+	func clear_arc_or_area__duration() -> void:
 		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__arc__duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__arc_or_area__duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_arc__duration(value: float) -> void:
-		__arc__duration.value = value
+	func set_arc_or_area__duration(value: float) -> void:
+		__arc_or_area__duration.value = value
 
 
 	var __default__speed: PBField
@@ -6389,6 +6389,7 @@ enum GCollectibleType {
 enum GProjectileFlyType {
 	DEFAULT,
 	ARC,
+	AREA,
 	COUNT,
 }
 
