@@ -76,7 +76,7 @@ func on_body_entered(creature: Creature) -> void: ##
 
 		match tag.get_tag_type():
 			glib.GTagType.SCALE_MOVEMENT_SPEED:
-				creature.speed_modifiers['pr%d' % get_instance_id()] = tag.get_f1()
+				creature.speed_modifiers['pr_sms_%d' % get_instance_id()] = tag.get_f1()
 	##
 
 
@@ -84,7 +84,7 @@ func on_body_exited(creature: Creature) -> void: ##
 	for tag in glib.v.get_projectiles()[d.type].get_tags():
 		match tag.get_tag_type():
 			glib.GTagType.SCALE_MOVEMENT_SPEED:
-				creature.speed_modifiers.erase('pr%d' % get_instance_id())
+				creature.speed_modifiers.erase('pr_sms_%d' % get_instance_id())
 	##
 
 
