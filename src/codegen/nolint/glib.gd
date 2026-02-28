@@ -4883,16 +4883,6 @@ class GConfigPlayer:
 		service.field = __invincibility_after_hit_seconds
 		data[__invincibility_after_hit_seconds.tag] = service
 
-		__shooting_seconds = PBField.new("shooting_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 31, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __shooting_seconds
-		data[__shooting_seconds.tag] = service
-
-		__shooting_after_roll_seconds = PBField.new("shooting_after_roll_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 32, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __shooting_after_roll_seconds
-		data[__shooting_after_roll_seconds.tag] = service
-
 
 	var data = { }
 
@@ -5555,50 +5545,6 @@ class GConfigPlayer:
 
 	func set_invincibility_after_hit_seconds(value: float) -> void:
 		__invincibility_after_hit_seconds.value = value
-
-
-	var __shooting_seconds: PBField
-
-
-	func has_shooting_seconds() -> bool:
-		if __shooting_seconds.value != null:
-			return true
-		return false
-
-
-	func get_shooting_seconds() -> float:
-		return __shooting_seconds.value
-
-
-	func clear_shooting_seconds() -> void:
-		data[31].state = PB_SERVICE_STATE.UNFILLED
-		__shooting_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_shooting_seconds(value: float) -> void:
-		__shooting_seconds.value = value
-
-
-	var __shooting_after_roll_seconds: PBField
-
-
-	func has_shooting_after_roll_seconds() -> bool:
-		if __shooting_after_roll_seconds.value != null:
-			return true
-		return false
-
-
-	func get_shooting_after_roll_seconds() -> float:
-		return __shooting_after_roll_seconds.value
-
-
-	func clear_shooting_after_roll_seconds() -> void:
-		data[32].state = PB_SERVICE_STATE.UNFILLED
-		__shooting_after_roll_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_shooting_after_roll_seconds(value: float) -> void:
-		__shooting_after_roll_seconds.value = value
 
 
 	func _to_string() -> String:

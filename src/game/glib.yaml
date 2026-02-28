@@ -76,8 +76,6 @@ player: ##
 
   dodge_stamina_retrieve_percent: 75
   invincibility_after_hit_seconds: 0.5
-  shooting_seconds: 0.25
-  shooting_after_roll_seconds: 0.1
 ##
 
 controls: ##

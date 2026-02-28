@@ -267,8 +267,6 @@ message GConfigPlayer {
 
   float stamina_depletion_regen_delay = 29;
   float invincibility_after_hit_seconds = 30;
-  float shooting_seconds = 31;
-  float shooting_after_roll_seconds = 32;
 }
 
 message Lib {

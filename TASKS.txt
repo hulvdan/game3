@@ -26,11 +26,12 @@ x slowdown area: make it downscale player's speed
 x slowdown area: add flytype AREA so that projectile's position
   is fixed and Area3D is in center of Gizmos circle
 
-* slowdown area:
-* slowdown area:
-* slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.owner)
-*
 * fix: godot debug error: when shooting: det == 0
+*
+* slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.owner)
+* slowdown area:
+* slowdown area:
+*
 * fix: cooldown is being reset upon interrupt. It shouldn't
 *
 * projectile area effects
