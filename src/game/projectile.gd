@@ -111,6 +111,25 @@ class UpdaterBase:
 	##
 
 
+	func draw_circle_gizmos(pos: Vector2, radius: float, t: float) -> void: ##
+		if !glib.v.get_debug_collisions():
+			return
+		var trr := Transform3D()
+		trr.origin = bf.to_xz(pos)
+		ImmediateGizmos3D.set_transform(trr)
+		ImmediateGizmos3D.line_circle(
+			Vector3(0, 0, 0),
+			Vector3(0, 1, 0),
+			radius,
+		)
+		ImmediateGizmos3D.line_circle(
+			Vector3(0, 0, 0),
+			Vector3(0, 1, 0),
+			t * radius,
+		)
+	##
+
+
 class UpdaterDefault extends UpdaterBase:
 	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
@@ -193,21 +212,7 @@ class UpdaterArc extends UpdaterBase:
 		pos.y = data.get_arc__height() * sin(t * PI)
 		x.transform.origin = pos
 
-		if glib.v.get_debug_collisions():
-			var trr := Transform3D()
-			trr.origin = bf.to_xz(x.d.target)
-			trr.basis = x.transform.basis
-			ImmediateGizmos3D.set_transform(trr)
-			ImmediateGizmos3D.line_circle(
-				Vector3(0, 0, 0),
-				Vector3(0, 1, 0),
-				data.get_collider_radius(),
-			)
-			ImmediateGizmos3D.line_circle(
-				Vector3(0, 0, 0),
-				Vector3(0, 1, 0),
-				t * data.get_collider_radius(),
-			)
+		draw_circle_gizmos(x.d.target, data.get_collider_radius(), t)
 
 		if x.elapsed >= data.get_arc_or_area__duration():
 			var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
@@ -240,41 +245,9 @@ class UpdaterArea extends UpdaterBase:
 
 		x.transform.origin = bf.to_xz(x.d.target)
 
-		if glib.v.get_debug_collisions():
-			var trr := Transform3D()
-			trr.origin = bf.to_xz(x.d.target)
-			trr.basis = x.transform.basis
-			ImmediateGizmos3D.set_transform(trr)
-			ImmediateGizmos3D.line_circle(
-				Vector3(0, 0, 0),
-				Vector3(0, 1, 0),
-				data.get_collider_radius(),
-			)
-			ImmediateGizmos3D.line_circle(
-				Vector3(0, 0, 0),
-				Vector3(0, 1, 0),
-				x.elapsed / data.get_arc_or_area__duration() * data.get_collider_radius(),
-			)
+		draw_circle_gizmos(x.d.target, data.get_collider_radius(), x.elapsed / data.get_arc_or_area__duration())
 
 		if x.elapsed >= data.get_arc_or_area__duration():
-			var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
-
-			if data.get_damage() > 0:
-				for d: Dictionary in Collisions.query_circle(
-					bf.xz(x.transform.origin),
-					data.get_collider_radius(),
-					mask,
-					true,
-					false,
-					MAX_COLLISIONS_AOE,
-				):
-					var damaged_creature: Creature = d.collider
-					if damaged_creature in x.damaged_creatures:
-						continue
-
-					if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
-						x.damaged_creatures.append(damaged_creature)
-
 			x.queue_free()
 			for z: Node3D in x.zones:
 				Room.v.container_zones.remove_child(z)
