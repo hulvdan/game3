@@ -141,12 +141,12 @@ func consume_stamina(cost: glib.GStaminaCost) -> void: ##
 	assert(stamina_rally >= stamina)
 	elapsed_since_stamina_consumed = 0.0
 
-	stamina_rally -= (stamina_rally - stamina) * (1 - cost.get_rally_pre_mult())
+	stamina_rally -= (stamina_rally - stamina) * cost.get_rally_discard_mult_pre()
 	stamina -= cost.get_flat()
 	stamina = max(0, stamina)
 	stamina_rally -= cost.get_rally()
 	stamina_rally = max(stamina_rally, stamina)
-	stamina_rally -= (stamina_rally - stamina) * (1 - cost.get_rally_post_mult())
+	stamina_rally -= (stamina_rally - stamina) * cost.get_rally_discard_mult_post()
 	if stamina <= 0:
 		_stamina_depleted_at = Room.v.start_elapsed
 	stamina_ki = stamina
@@ -286,7 +286,7 @@ class PlayerAttack extends PlayerBase: ##
 class PlayerRoll extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		var cost := glib.v.get_player().get_stamina_roll_cost()
+		var cost := glib.v.get_player().get_roll_stamina_cost()
 		player.consume_stamina(cost)
 		player.rolling_retrievable_cost = cost.get_flat()
 		player.dodging = false

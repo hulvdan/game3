@@ -7,7 +7,11 @@ BIG PLAN
 PLAN
 ============================================================
 
+x essay pdfs
+x better bf.recursive_visiter
+
 * make MOB_BLINKER blockable
+*
 * make creature impulses pow + duration controllable in creature.gd
   -> would allow easier dash on AI
 *

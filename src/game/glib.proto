@@ -114,9 +114,9 @@ message GAttackMelee {
 
 message GStaminaCost {
   float flat = 1;
-  float rally_pre_mult = 2;
+  float rally_discard_mult_pre = 2;
   float rally = 3;
-  float rally_post_mult = 4;
+  float rally_discard_mult_post = 4;
 }
 
 message GProjectileSpawn {
@@ -238,7 +238,7 @@ message GConfigPlayer {
 
   float stamina = 9;
   float stamina_regen_per_second = 10;
-  GStaminaCost stamina_roll_cost = 11;
+  GStaminaCost roll_stamina_cost = 11;
   float dodge_stamina_retrieve_percent = 12;
   float stamina_rally_decay_after = 13;
   float stamina_rally_decay_per_second = 14;

@@ -338,8 +338,8 @@ _recursive_replace_transform_patterns: Any = None
 
 def recursive_visiter(
     glib_recursed,
-    key_postfix_single: str,
-    key_postfix_list: str,
+    key_suffix_single: str,
+    key_suffix_list: str,
     callback: Callable[[str], None],
     *,
     root: bool = True,
@@ -351,19 +351,13 @@ def recursive_visiter(
 
     if root:
         _recursive_visiter_patterns = (
-            re.compile(f"(.*_)?{key_postfix_single}(_\\d+)?$"),
-            re.compile(f"(.*_)?{key_postfix_list}(_\\d+)?$"),
+            re.compile(f"(.*_)?{key_suffix_single}(_\\d+)?$"),
+            re.compile(f"(.*_)?{key_suffix_list}(_\\d+)?$"),
         )
 
     for key, value in glib_recursed.items():
-        if isinstance(value, dict):
-            recursive_visiter(
-                value, key_postfix_single, key_postfix_list, callback, root=False
-            )
-
-        elif isinstance(key, str) and (
-            re.match(_recursive_visiter_patterns[0], key)
-            or re.match(_recursive_visiter_patterns[1], key)
+        if re.match(_recursive_visiter_patterns[0], key) or re.match(
+            _recursive_visiter_patterns[1], key
         ):
             if re.match(_recursive_visiter_patterns[1], key):
                 assert isinstance(value, list)
@@ -371,24 +365,26 @@ def recursive_visiter(
                     assert isinstance(v, str)
                     callback(v)
             else:
-                assert isinstance(value, str)
                 callback(value)
+
+        elif isinstance(value, dict):
+            recursive_visiter(
+                value, key_suffix_single, key_suffix_list, callback, root=False
+            )
 
         elif isinstance(value, list):
             for v in value:
-                if not isinstance(v, dict):
-                    continue
-
-                recursive_visiter(
-                    v, key_postfix_single, key_postfix_list, callback, root=False
-                )
+                if isinstance(v, dict):
+                    recursive_visiter(
+                        v, key_suffix_single, key_suffix_list, callback, root=False
+                    )
     ##
 
 
 def recursive_replace_transform(
     glib_recursed,
-    key_postfix_single: str,
-    key_postfix_list: str,
+    key_suffix_single: str,
+    key_suffix_list: str,
     codename_to_index: dict[str, int],
     *,
     root: bool = True,
@@ -401,8 +397,8 @@ def recursive_replace_transform(
 
     if root:
         _recursive_replace_transform_patterns = (
-            re.compile(f"(.*_)?{key_postfix_single}(_\\d+)?$"),
-            re.compile(f"(.*_)?{key_postfix_list}(_\\d+)?$"),
+            re.compile(f"(.*_)?{key_suffix_single}(_\\d+)?$"),
+            re.compile(f"(.*_)?{key_suffix_list}(_\\d+)?$"),
         )
 
     for key, value in glib_recursed.items():
@@ -416,7 +412,7 @@ def recursive_replace_transform(
                 added_type = True
 
             more_errors = recursive_replace_transform(
-                value, key_postfix_single, key_postfix_list, codename_to_index, root=False
+                value, key_suffix_single, key_suffix_list, codename_to_index, root=False
             )
             if more_errors:
                 if not errors:
@@ -464,8 +460,8 @@ def recursive_replace_transform(
 
                 more_errors = recursive_replace_transform(
                     v,
-                    key_postfix_single,
-                    key_postfix_list,
+                    key_suffix_single,
+                    key_suffix_list,
                     codename_to_index,
                     root=False,
                 )
@@ -489,7 +485,7 @@ def recursive_replace_transform(
 
     if root and errors:
         message = "recursive_replace_transform({}, {}):\nNot found:\n{}".format(
-            key_postfix_single, key_postfix_list, "\n".join(sorted(set(errors)))
+            key_suffix_single, key_suffix_list, "\n".join(sorted(set(errors)))
         )
         raise AssertionError(message)
 
@@ -499,8 +495,8 @@ def recursive_replace_transform(
 
 def recursive_flattenizer(
     glib_recursed,
-    key_postfix_single: str,
-    key_postfix_list: str,
+    key_suffix_single: str,
+    key_suffix_list: str,
     root_list_field: str,
     *,
     list_to_fill: list | None = None,
@@ -515,10 +511,8 @@ def recursive_flattenizer(
         list_to_fill = [{}]
 
     for key, value in glib_recursed.items():
-        if isinstance(key, str) and (
-            key.endswith((key_postfix_single, key_postfix_list))
-        ):
-            if key.endswith(key_postfix_list):
+        if isinstance(key, str) and (key.endswith((key_suffix_single, key_suffix_list))):
+            if key.endswith(key_suffix_list):
                 assert isinstance(value, list)
                 start = len(list_to_fill)
                 list_to_fill.extend(value)
@@ -530,8 +524,8 @@ def recursive_flattenizer(
         elif isinstance(value, dict):
             recursive_flattenizer(
                 value,
-                key_postfix_single,
-                key_postfix_list,
+                key_suffix_single,
+                key_suffix_list,
                 root_list_field,
                 list_to_fill=list_to_fill,
             )
@@ -543,8 +537,8 @@ def recursive_flattenizer(
 
                 recursive_flattenizer(
                     v,
-                    key_postfix_single,
-                    key_postfix_list,
+                    key_suffix_single,
+                    key_suffix_list,
                     root_list_field,
                     list_to_fill=list_to_fill,
                 )

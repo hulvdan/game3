@@ -2585,20 +2585,20 @@ class GStaminaCost:
 		service.field = __flat
 		data[__flat.tag] = service
 
-		__rally_pre_mult = PBField.new("rally_pre_mult", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__rally_discard_mult_pre = PBField.new("rally_discard_mult_pre", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __rally_pre_mult
-		data[__rally_pre_mult.tag] = service
+		service.field = __rally_discard_mult_pre
+		data[__rally_discard_mult_pre.tag] = service
 
 		__rally = PBField.new("rally", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __rally
 		data[__rally.tag] = service
 
-		__rally_post_mult = PBField.new("rally_post_mult", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__rally_discard_mult_post = PBField.new("rally_discard_mult_post", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
-		service.field = __rally_post_mult
-		data[__rally_post_mult.tag] = service
+		service.field = __rally_discard_mult_post
+		data[__rally_discard_mult_post.tag] = service
 
 
 	var data = { }
@@ -2625,26 +2625,26 @@ class GStaminaCost:
 		__flat.value = value
 
 
-	var __rally_pre_mult: PBField
+	var __rally_discard_mult_pre: PBField
 
 
-	func has_rally_pre_mult() -> bool:
-		if __rally_pre_mult.value != null:
+	func has_rally_discard_mult_pre() -> bool:
+		if __rally_discard_mult_pre.value != null:
 			return true
 		return false
 
 
-	func get_rally_pre_mult() -> float:
-		return __rally_pre_mult.value
+	func get_rally_discard_mult_pre() -> float:
+		return __rally_discard_mult_pre.value
 
 
-	func clear_rally_pre_mult() -> void:
+	func clear_rally_discard_mult_pre() -> void:
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		__rally_pre_mult.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__rally_discard_mult_pre.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_rally_pre_mult(value: float) -> void:
-		__rally_pre_mult.value = value
+	func set_rally_discard_mult_pre(value: float) -> void:
+		__rally_discard_mult_pre.value = value
 
 
 	var __rally: PBField
@@ -2669,26 +2669,26 @@ class GStaminaCost:
 		__rally.value = value
 
 
-	var __rally_post_mult: PBField
+	var __rally_discard_mult_post: PBField
 
 
-	func has_rally_post_mult() -> bool:
-		if __rally_post_mult.value != null:
+	func has_rally_discard_mult_post() -> bool:
+		if __rally_discard_mult_post.value != null:
 			return true
 		return false
 
 
-	func get_rally_post_mult() -> float:
-		return __rally_post_mult.value
+	func get_rally_discard_mult_post() -> float:
+		return __rally_discard_mult_post.value
 
 
-	func clear_rally_post_mult() -> void:
+	func clear_rally_discard_mult_post() -> void:
 		data[4].state = PB_SERVICE_STATE.UNFILLED
-		__rally_post_mult.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__rally_discard_mult_post.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
-	func set_rally_post_mult(value: float) -> void:
-		__rally_post_mult.value = value
+	func set_rally_discard_mult_post(value: float) -> void:
+		__rally_discard_mult_post.value = value
 
 
 	func _to_string() -> String:
@@ -4651,11 +4651,11 @@ class GConfigPlayer:
 		service.field = __stamina_regen_per_second
 		data[__stamina_regen_per_second.tag] = service
 
-		__stamina_roll_cost = PBField.new("stamina_roll_cost", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__roll_stamina_cost = PBField.new("roll_stamina_cost", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
-		service.field = __stamina_roll_cost
-		service.func_ref = Callable(self, "new_stamina_roll_cost")
-		data[__stamina_roll_cost.tag] = service
+		service.field = __roll_stamina_cost
+		service.func_ref = Callable(self, "new_roll_stamina_cost")
+		data[__roll_stamina_cost.tag] = service
 
 		__dodge_stamina_retrieve_percent = PBField.new("dodge_stamina_retrieve_percent", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
@@ -4980,27 +4980,27 @@ class GConfigPlayer:
 		__stamina_regen_per_second.value = value
 
 
-	var __stamina_roll_cost: PBField
+	var __roll_stamina_cost: PBField
 
 
-	func has_stamina_roll_cost() -> bool:
-		if __stamina_roll_cost.value != null:
+	func has_roll_stamina_cost() -> bool:
+		if __roll_stamina_cost.value != null:
 			return true
 		return false
 
 
-	func get_stamina_roll_cost() -> GStaminaCost:
-		return __stamina_roll_cost.value
+	func get_roll_stamina_cost() -> GStaminaCost:
+		return __roll_stamina_cost.value
 
 
-	func clear_stamina_roll_cost() -> void:
+	func clear_roll_stamina_cost() -> void:
 		data[11].state = PB_SERVICE_STATE.UNFILLED
-		__stamina_roll_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		__roll_stamina_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func new_stamina_roll_cost() -> GStaminaCost:
-		__stamina_roll_cost.value = GStaminaCost.new()
-		return __stamina_roll_cost.value
+	func new_roll_stamina_cost() -> GStaminaCost:
+		__roll_stamina_cost.value = GStaminaCost.new()
+		return __roll_stamina_cost.value
 
 
 	var __dodge_stamina_retrieve_percent: PBField
