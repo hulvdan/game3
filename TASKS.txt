@@ -9,8 +9,9 @@ PLAN
 
 x essay pdfs
 x better bf.recursive_visiter
+x better default values on stamina costs
 
-* make MOB_BLINKER blockable
+* make AOE projectiles blockable
 *
 * make creature impulses pow + duration controllable in creature.gd
   -> would allow easier dash on AI
