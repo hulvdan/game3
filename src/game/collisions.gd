@@ -31,6 +31,12 @@ static func init_frame() -> void: ##
 ##
 
 
+static func set_gizmos_color(color: Color) -> void: ##
+	EditorImmediateGizmos.draw_color = color
+	_color = color
+##
+
+
 static func query_circle(
 		pos: Vector2,
 		radius: float,

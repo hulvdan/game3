@@ -77,11 +77,11 @@ func on_free(data: glib.GProjectile) -> void: ##
 
 @abstract
 class UpdaterBase:
-	static var damage_data := Game.ApplyDamageData.new()
+	static var _damage_data := Game.ApplyDamageData.new()
 
 
 	func explicit_process(_dt: float, x: Projectile, _is_player: bool, data: glib.GProjectile) -> void: ##
-		damage_data.attack_id = x.attack_id
+		_damage_data.attack_id = x.attack_id
 		if x.travelled > data.get_distance():
 			x.queue_free()
 	##
@@ -91,7 +91,6 @@ class UpdaterDefault extends UpdaterBase:
 	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
 
-		damage_data.type = glib.GDamageType.DEFAULT
 		var projectile_travelled := data.get_default__speed() * dt
 		x.travelled += projectile_travelled
 
@@ -114,6 +113,9 @@ class UpdaterDefault extends UpdaterBase:
 						)
 
 		var q: Array[Dictionary]
+
+		_damage_data.evade_flags = data.get_evade_flags()
+		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
 
 		for mask: int in [
 			2 ** glib.GMaskType.WALLS,
@@ -150,7 +152,7 @@ class UpdaterDefault extends UpdaterBase:
 					if damaged_creature in x.damaged_creatures:
 						continue
 
-					if Game.v.apply_damage(damaged_creature, data.get_damage(), damage_data):
+					if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
 						x.damaged_creatures.append(damaged_creature)
 						x.default__pierced += 1
 						if x.default__pierced > data.get_pierce():
@@ -163,7 +165,6 @@ class UpdaterDefault extends UpdaterBase:
 class UpdaterArc extends UpdaterBase:
 	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
-		damage_data.type = glib.GDamageType.AOE
 
 		var t := x.elapsed / data.get_arc__duration()
 		var p: Vector2 = lerp(x.d.pos, x.d.target, t)
@@ -171,23 +172,24 @@ class UpdaterArc extends UpdaterBase:
 		pos.y = data.get_arc__height() * sin(t * PI)
 		x.transform.origin = pos
 
+		_damage_data.evade_flags = data.get_evade_flags()
+		print(_damage_data.evade_flags)
+		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
+
 		if glib.v.get_debug_collisions():
 			var trr := Transform3D()
 			trr.origin = bf.to_xz(x.d.target)
 			trr.basis = x.transform.basis
 			ImmediateGizmos3D.set_transform(trr)
-			var color := Color(1, 0, 0, 1) if data.get_damage() > 0 else Color(1, 1, 1, 1)
 			ImmediateGizmos3D.line_circle(
 				Vector3(0, 0, 0),
 				Vector3(0, 1, 0),
 				data.get_collider_radius(),
-				color,
 			)
 			ImmediateGizmos3D.line_circle(
 				Vector3(0, 0, 0),
 				Vector3(0, 1, 0),
 				t * data.get_collider_radius(),
-				color,
 			)
 
 		if x.elapsed >= data.get_arc__duration():
@@ -206,7 +208,7 @@ class UpdaterArc extends UpdaterBase:
 					if damaged_creature in x.damaged_creatures:
 						continue
 
-					if Game.v.apply_damage(damaged_creature, data.get_damage(), damage_data):
+					if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
 						x.damaged_creatures.append(damaged_creature)
 
 			x.queue_free()

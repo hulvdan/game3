@@ -131,6 +131,13 @@ func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 	##
 
 
+static func set_gizmos_color_according_to_evade_flags(flags: int) -> void: ##
+	Collisions.set_gizmos_color(
+		Color.YELLOW if (flags & glib.GEvadeType.JUST_BLOCKABLE) else Color.RED,
+	)
+##
+
+
 func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	var player_hp := glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_hp()
 
@@ -450,6 +457,8 @@ func _physics_process(dt: float) -> void:
 		if circle:
 			assert(!polygon)
 
+		Game.set_gizmos_color_according_to_evade_flags(apply_damage_melee_data.evade_flags)
+
 		var q: Array[Dictionary]
 		if polygon:
 			var off := creature.attack_target_dir * (polygon.get_distance_max() * (polygon.get_anchor_x() - 0.5))
@@ -487,6 +496,8 @@ func _physics_process(dt: float) -> void:
 
 			if apply_damage(damaged_creature, melee.get_damage(), apply_damage_melee_data):
 				creature.melee_damaged_creatures.append(damaged_creature)
+
+	Collisions.set_gizmos_color(Color.YELLOW)
 	##
 
 	## - Updating projectiles + collisions + despawning
@@ -501,19 +512,23 @@ func _physics_process(dt: float) -> void:
 		)
 		if x.is_queued_for_deletion():
 			x.on_free(data)
+
+	Collisions.set_gizmos_color(Color.YELLOW)
 	##
 
 	## Spike collisions
 	if 1:
-		var apply_damage_spike_data := ApplyDamageData.new()
-		apply_damage_spike_data.type = glib.GDamageType.SPIKE
+		var dd := ApplyDamageData.new()
+		dd.type = glib.GDamageType.SPIKE
+		var spikes_data := glib.v.get_spikes()
+		var evade_flags := [spikes_data.get_initial_evade_flags(), spikes_data.get_continuous_evade_flags()]
 		for spike: Spike in room.container_spikes.get_children():
 			if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes().get_damage_starts_at()):
-				apply_damage_spike_data.immediate = !spike.striked
-				apply_damage_spike_data.attack_id = spike.attack_id
+				dd.evade_flags = evade_flags[int(spike.striked)]
+				dd.attack_id = spike.attack_id
 				spike.striked = true
 				for creature: Creature in spike.creatures_to_damage:
-					apply_damage(creature, glib.v.get_spikes().get_damage(), apply_damage_spike_data)
+					apply_damage(creature, glib.v.get_spikes().get_damage(), dd)
 	##
 
 	## Pushing creatures apart from each other
@@ -615,7 +630,6 @@ func _process(dt: float) -> void:
 class ApplyDamageData: ##
 	var type := glib.GDamageType.DEFAULT
 	var evade_flags: int
-	var immediate := true
 	var attack_id := 0
 	var impulse := 0
 	var impulse_dir := Vector2(0, 0)
@@ -631,38 +645,37 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 
 	var player_got_damaged := (creature.type == glib.GCreatureType.PLAYER)
 	if player_got_damaged:
-		if data.type != glib.GDamageType.AOE:
-			if room.player.blocking_perfectly:
-				player_perfectly_blocked.emit(creature.transform.origin)
-				creature.mark_attack_as_evaded(data.attack_id)
-				creature.add_impulse(
-					data.impulse_dir,
-					data.impulse * glib.v.get_impulse_block_scale(),
-				)
+		if (data.evade_flags & glib.GEvadeType.PERFECT_BLOCKABLE) && room.player.blocking_perfectly:
+			player_perfectly_blocked.emit(creature.transform.origin)
+			creature.mark_attack_as_evaded(data.attack_id)
+			creature.add_impulse(
+				data.impulse_dir,
+				data.impulse * glib.v.get_impulse_block_scale(),
+			)
+			return false
+		elif (data.evade_flags & glib.GEvadeType.JUST_BLOCKABLE) && room.player.blocking:
+			creature.mark_attack_as_evaded(data.attack_id)
+			creature.blocked = true
+			player_blocked.emit(creature.transform.origin)
+			creature.add_impulse(
+				data.impulse_dir,
+				data.impulse * glib.v.get_impulse_block_scale(),
+			)
+			damage /= 2
+			assert(damage >= 0)
+			if damage <= 0:
 				return false
-			elif room.player.blocking:
-				creature.mark_attack_as_evaded(data.attack_id)
-				creature.blocked = true
-				player_blocked.emit(creature.transform.origin)
-				creature.add_impulse(
-					data.impulse_dir,
-					data.impulse * glib.v.get_impulse_block_scale(),
+		elif (data.evade_flags & glib.GEvadeType.ROLLABLE) && room.player.dodging:
+			if data.evade_flags & glib.GEvadeType.STAMINA_RECOVERING_ROLLABLE:
+				var retrieve := (
+					room.player.rolling_retrievable_cost
+					* glib.v.get_player().get_dodge_stamina_retrieve_percent() / 100.0
 				)
-				damage /= 2
-				assert(damage >= 0)
-				if damage <= 0:
-					return false
-			elif room.player.dodging:
-				if data.immediate:
-					var retrieve := (
-						room.player.rolling_retrievable_cost
-						* glib.v.get_player().get_dodge_stamina_retrieve_percent() / 100.0
-					)
-					room.player.add_stamina(retrieve, 1)
-					room.player.rolling_retrievable_cost -= retrieve
-					player_perfectly_evaded.emit(creature.transform.origin)
-				creature.mark_attack_as_evaded(data.attack_id)
-				return false
+				room.player.add_stamina(retrieve, 1)
+				room.player.rolling_retrievable_cost -= retrieve
+				player_perfectly_evaded.emit(creature.transform.origin)
+			creature.mark_attack_as_evaded(data.attack_id)
+			return false
 
 		var invincibility_dur := glib.v.get_player().get_invincibility_after_hit_seconds()
 		if creature.time_since_last_damage_taken <= invincibility_dur:

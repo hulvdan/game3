@@ -3,12 +3,12 @@ debug_collisions__chase: 0
 
 _anchors: ##
   evade_flags_default: &evade_flags_default
-    - BLOCKABLE
+    - BLOCKABLE_IN_ANY_WAY
     - ROLLABLE
     - STAMINA_RECOVERING_ROLLABLE
 
   evade_flags_default_no_stamina_recovering: &evade_flags_default_no_stamina_recovering
-    - BLOCKABLE
+    - BLOCKABLE_IN_ANY_WAY
     - ROLLABLE
 
   evade_flags_perfect: &evade_flags_perfect
@@ -27,14 +27,16 @@ damages: ##
     ##
 
 evades: ##
-  - type: BLOCKABLE
+  - type: BLOCKABLE_IN_ANY_WAY
     enum__value: 0b0011
   - type: PERFECT_BLOCKABLE
     enum__value: 0b0010
+  - type: JUST_BLOCKABLE
+    enum__value: 0b0001
   - type: ROLLABLE
     enum__value: 0b0100
   - type: STAMINA_RECOVERING_ROLLABLE
-    enum__value: 0b1100
+    enum__value: 0b1000
 ##
 
 player: ##
@@ -53,7 +55,7 @@ player: ##
   roll_stamina_cost:
     flat: 35
     rally_discard_mult_pre: 0.5
-    rally: 0
+    rally: 5
   stamina_rally_decay_after: 1
   stamina_rally_decay_per_second: 20
   stamina_depletion_regen_delay: 1.3
@@ -453,7 +455,8 @@ projectiles:
     arc__duration: 1
     collider_radius: 1
     distance: 4
-    evade_flags: *evade_flags_default
+    # evade_flags: *evade_flags_default
+    evade_flags: *evade_flags_perfect
     tags:
       - projectiletag_type: BLINK
         f1: 1.0 # blink_time

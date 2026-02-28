@@ -12,12 +12,10 @@ x better bf.recursive_visiter
 x better default values on stamina costs
 x make AOE projectiles blockable: glib flags
 x make AOE projectiles blockable: glib flags for spikes and rolling stamina retrieve
+x make AOE projectiles blockable: all calls to apply_damage have correct flags arg
+x make AOE projectiles blockable: flags work with apply_damage
+x ref apply_damage immediate into rollable + perfect_rollable
 
-* make AOE projectiles blockable:
-* make AOE projectiles blockable:
-*
-* ref apply_damage immediate into rollable + perfect_rollable
-*
 * make creature impulses pow + duration controllable in creature.gd
   -> would allow easier dash on AI -> * refactor dash/roll impulse
 *
