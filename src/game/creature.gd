@@ -122,7 +122,7 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 			attack_dist += melee_hitbox_dist
 
 		for tag in attack.get_tags():
-			match tag.get_attacktag_type():
+			match tag.get_tag_type():
 				glib.GAttackTagType.DASH, glib.GAttackTagType.BLINK:
 					attack_dist += tag.get_f3()
 					attack_dist -= melee_hitbox_dist / 2

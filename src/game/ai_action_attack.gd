@@ -60,7 +60,7 @@ static func explicit_update_attack(
 
 	# Processing tags
 	for tag in attack.get_tags():
-		match tag.get_attacktag_type():
+		match tag.get_tag_type():
 			glib.GAttackTagType.DASH: ##
 				if !c.attack_dashed:
 					var start := tag.get_f1()

@@ -2020,7 +2020,7 @@ class GCreatureDrop:
 		return result
 
 
-class GAttackTag:
+class GTag:
 	func _init():
 		var service
 
@@ -2105,14 +2105,14 @@ class GAttackTag:
 		return result
 
 
-class GAttackTagValue:
+class GTagValue:
 	func _init():
 		var service
 
-		__attacktag_type = PBField.new("attacktag_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__tag_type = PBField.new("tag_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
-		service.field = __attacktag_type
-		data[__attacktag_type.tag] = service
+		service.field = __tag_type
+		data[__tag_type.tag] = service
 
 		__i1 = PBField.new("i1", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
@@ -2174,29 +2174,39 @@ class GAttackTagValue:
 		service.field = __f6
 		data[__f6.tag] = service
 
+		__projectile_type = PBField.new("projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __projectile_type
+		data[__projectile_type.tag] = service
+
+		__creature_type = PBField.new("creature_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __creature_type
+		data[__creature_type.tag] = service
+
 
 	var data = { }
 
-	var __attacktag_type: PBField
+	var __tag_type: PBField
 
 
-	func has_attacktag_type() -> bool:
-		if __attacktag_type.value != null:
+	func has_tag_type() -> bool:
+		if __tag_type.value != null:
 			return true
 		return false
 
 
-	func get_attacktag_type() -> int:
-		return __attacktag_type.value
+	func get_tag_type() -> int:
+		return __tag_type.value
 
 
-	func clear_attacktag_type() -> void:
+	func clear_tag_type() -> void:
 		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__attacktag_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+		__tag_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
-	func set_attacktag_type(value: int) -> void:
-		__attacktag_type.value = value
+	func set_tag_type(value: int) -> void:
+		__tag_type.value = value
 
 
 	var __i1: PBField
@@ -2461,6 +2471,50 @@ class GAttackTagValue:
 
 	func set_f6(value: float) -> void:
 		__f6.value = value
+
+
+	var __projectile_type: PBField
+
+
+	func has_projectile_type() -> bool:
+		if __projectile_type.value != null:
+			return true
+		return false
+
+
+	func get_projectile_type() -> int:
+		return __projectile_type.value
+
+
+	func clear_projectile_type() -> void:
+		data[14].state = PB_SERVICE_STATE.UNFILLED
+		__projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_projectile_type(value: int) -> void:
+		__projectile_type.value = value
+
+
+	var __creature_type: PBField
+
+
+	func has_creature_type() -> bool:
+		if __creature_type.value != null:
+			return true
+		return false
+
+
+	func get_creature_type() -> int:
+		return __creature_type.value
+
+
+	func clear_creature_type() -> void:
+		data[15].state = PB_SERVICE_STATE.UNFILLED
+		__creature_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_creature_type(value: int) -> void:
+		__creature_type.value = value
 
 
 	func _to_string() -> String:
@@ -2993,7 +3047,7 @@ class GAttack:
 		service.func_ref = Callable(self, "new_melee")
 		data[__melee.tag] = service
 
-		var __tags_default: Array[GAttackTagValue] = []
+		var __tags_default: Array[GTagValue] = []
 		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 11, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
@@ -3224,7 +3278,7 @@ class GAttack:
 	var __tags: PBField
 
 
-	func get_tags() -> Array[GAttackTagValue]:
+	func get_tags() -> Array[GTagValue]:
 		return __tags.value
 
 
@@ -3233,8 +3287,8 @@ class GAttack:
 		__tags.value.clear()
 
 
-	func add_tags() -> GAttackTagValue:
-		var element = GAttackTagValue.new()
+	func add_tags() -> GTagValue:
+		var element = GTagValue.new()
 		__tags.value.append(element)
 		return element
 
@@ -3985,257 +4039,6 @@ class GProjectileFly:
 		return result
 
 
-class GProjectileTag:
-	func _init():
-		var service
-
-		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __type
-		data[__type.tag] = service
-
-		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
-		service = PBServiceField.new()
-		service.field = __debug_name
-		data[__debug_name.tag] = service
-
-
-	var data = { }
-
-	var __type: PBField
-
-
-	func has_type() -> bool:
-		if __type.value != null:
-			return true
-		return false
-
-
-	func get_type() -> int:
-		return __type.value
-
-
-	func clear_type() -> void:
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_type(value: int) -> void:
-		__type.value = value
-
-
-	var __debug_name: PBField
-
-
-	func has_debug_name() -> bool:
-		if __debug_name.value != null:
-			return true
-		return false
-
-
-	func get_debug_name() -> String:
-		return __debug_name.value
-
-
-	func clear_debug_name() -> void:
-		data[2].state = PB_SERVICE_STATE.UNFILLED
-		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
-
-
-	func set_debug_name(value: String) -> void:
-		__debug_name.value = value
-
-
-	func _to_string() -> String:
-		return PBPacker.message_to_string(data)
-
-
-	func to_bytes() -> PackedByteArray:
-		return PBPacker.pack_message(data)
-
-
-	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
-		var cur_limit = bytes.size()
-		if limit != -1:
-			cur_limit = limit
-		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
-		if result == cur_limit:
-			if PBPacker.check_required(data):
-				if limit == -1:
-					return PB_ERR.NO_ERRORS
-			else:
-				return PB_ERR.REQUIRED_FIELDS
-		elif limit == -1 && result > 0:
-			return PB_ERR.PARSE_INCOMPLETE
-		return result
-
-
-class GProjectileTagValue:
-	func _init():
-		var service
-
-		__projectiletag_type = PBField.new("projectiletag_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __projectiletag_type
-		data[__projectiletag_type.tag] = service
-
-		__i1 = PBField.new("i1", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __i1
-		data[__i1.tag] = service
-
-		__f1 = PBField.new("f1", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __f1
-		data[__f1.tag] = service
-
-		__projectile_type = PBField.new("projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __projectile_type
-		data[__projectile_type.tag] = service
-
-		__creature_type = PBField.new("creature_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __creature_type
-		data[__creature_type.tag] = service
-
-
-	var data = { }
-
-	var __projectiletag_type: PBField
-
-
-	func has_projectiletag_type() -> bool:
-		if __projectiletag_type.value != null:
-			return true
-		return false
-
-
-	func get_projectiletag_type() -> int:
-		return __projectiletag_type.value
-
-
-	func clear_projectiletag_type() -> void:
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		__projectiletag_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_projectiletag_type(value: int) -> void:
-		__projectiletag_type.value = value
-
-
-	var __i1: PBField
-
-
-	func has_i1() -> bool:
-		if __i1.value != null:
-			return true
-		return false
-
-
-	func get_i1() -> int:
-		return __i1.value
-
-
-	func clear_i1() -> void:
-		data[2].state = PB_SERVICE_STATE.UNFILLED
-		__i1.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_i1(value: int) -> void:
-		__i1.value = value
-
-
-	var __f1: PBField
-
-
-	func has_f1() -> bool:
-		if __f1.value != null:
-			return true
-		return false
-
-
-	func get_f1() -> float:
-		return __f1.value
-
-
-	func clear_f1() -> void:
-		data[3].state = PB_SERVICE_STATE.UNFILLED
-		__f1.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_f1(value: float) -> void:
-		__f1.value = value
-
-
-	var __projectile_type: PBField
-
-
-	func has_projectile_type() -> bool:
-		if __projectile_type.value != null:
-			return true
-		return false
-
-
-	func get_projectile_type() -> int:
-		return __projectile_type.value
-
-
-	func clear_projectile_type() -> void:
-		data[4].state = PB_SERVICE_STATE.UNFILLED
-		__projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_projectile_type(value: int) -> void:
-		__projectile_type.value = value
-
-
-	var __creature_type: PBField
-
-
-	func has_creature_type() -> bool:
-		if __creature_type.value != null:
-			return true
-		return false
-
-
-	func get_creature_type() -> int:
-		return __creature_type.value
-
-
-	func clear_creature_type() -> void:
-		data[5].state = PB_SERVICE_STATE.UNFILLED
-		__creature_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_creature_type(value: int) -> void:
-		__creature_type.value = value
-
-
-	func _to_string() -> String:
-		return PBPacker.message_to_string(data)
-
-
-	func to_bytes() -> PackedByteArray:
-		return PBPacker.pack_message(data)
-
-
-	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
-		var cur_limit = bytes.size()
-		if limit != -1:
-			cur_limit = limit
-		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
-		if result == cur_limit:
-			if PBPacker.check_required(data):
-				if limit == -1:
-					return PB_ERR.NO_ERRORS
-			else:
-				return PB_ERR.REQUIRED_FIELDS
-		elif limit == -1 && result > 0:
-			return PB_ERR.PARSE_INCOMPLETE
-		return result
-
-
 class GProjectile:
 	func _init():
 		var service
@@ -4300,7 +4103,7 @@ class GProjectile:
 		service.field = __default__speed
 		data[__default__speed.tag] = service
 
-		var __tags_default: Array[GProjectileTagValue] = []
+		var __tags_default: Array[GTagValue] = []
 		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 13, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
@@ -4577,7 +4380,7 @@ class GProjectile:
 	var __tags: PBField
 
 
-	func get_tags() -> Array[GProjectileTagValue]:
+	func get_tags() -> Array[GTagValue]:
 		return __tags.value
 
 
@@ -4586,8 +4389,8 @@ class GProjectile:
 		__tags.value.clear()
 
 
-	func add_tags() -> GProjectileTagValue:
-		var element = GProjectileTagValue.new()
+	func add_tags() -> GTagValue:
+		var element = GTagValue.new()
 		__tags.value.append(element)
 		return element
 
@@ -5957,33 +5760,26 @@ class Lib:
 		service.func_ref = Callable(self, "add_projectile_fly_types")
 		data[__projectile_fly_types.tag] = service
 
-		var __projectile_tags_default: Array[GProjectileTag] = []
-		__projectile_tags = PBField.new("projectile_tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __projectile_tags_default)
-		service = PBServiceField.new()
-		service.field = __projectile_tags
-		service.func_ref = Callable(self, "add_projectile_tags")
-		data[__projectile_tags.tag] = service
-
 		var __projectiles_default: Array[GProjectile] = []
-		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __projectiles_default)
+		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __projectiles_default)
 		service = PBServiceField.new()
 		service.field = __projectiles
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
 
 		var __masks_default: Array[GMask] = []
-		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 25, true, __masks_default)
+		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __masks_default)
 		service = PBServiceField.new()
 		service.field = __masks
 		service.func_ref = Callable(self, "add_masks")
 		data[__masks.tag] = service
 
-		var __attack_tags_default: Array[GAttackTag] = []
-		__attack_tags = PBField.new("attack_tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 26, true, __attack_tags_default)
+		var __tags_default: Array[GTag] = []
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 25, true, __tags_default)
 		service = PBServiceField.new()
-		service.field = __attack_tags
-		service.func_ref = Callable(self, "add_attack_tags")
-		data[__attack_tags.tag] = service
+		service.field = __tags
+		service.func_ref = Callable(self, "add_tags")
+		data[__tags.tag] = service
 
 
 	var data = { }
@@ -6445,24 +6241,6 @@ class Lib:
 		return element
 
 
-	var __projectile_tags: PBField
-
-
-	func get_projectile_tags() -> Array[GProjectileTag]:
-		return __projectile_tags.value
-
-
-	func clear_projectile_tags() -> void:
-		data[23].state = PB_SERVICE_STATE.UNFILLED
-		__projectile_tags.value.clear()
-
-
-	func add_projectile_tags() -> GProjectileTag:
-		var element = GProjectileTag.new()
-		__projectile_tags.value.append(element)
-		return element
-
-
 	var __projectiles: PBField
 
 
@@ -6471,7 +6249,7 @@ class Lib:
 
 
 	func clear_projectiles() -> void:
-		data[24].state = PB_SERVICE_STATE.UNFILLED
+		data[23].state = PB_SERVICE_STATE.UNFILLED
 		__projectiles.value.clear()
 
 
@@ -6489,7 +6267,7 @@ class Lib:
 
 
 	func clear_masks() -> void:
-		data[25].state = PB_SERVICE_STATE.UNFILLED
+		data[24].state = PB_SERVICE_STATE.UNFILLED
 		__masks.value.clear()
 
 
@@ -6499,21 +6277,21 @@ class Lib:
 		return element
 
 
-	var __attack_tags: PBField
+	var __tags: PBField
 
 
-	func get_attack_tags() -> Array[GAttackTag]:
-		return __attack_tags.value
+	func get_tags() -> Array[GTag]:
+		return __tags.value
 
 
-	func clear_attack_tags() -> void:
-		data[26].state = PB_SERVICE_STATE.UNFILLED
-		__attack_tags.value.clear()
+	func clear_tags() -> void:
+		data[25].state = PB_SERVICE_STATE.UNFILLED
+		__tags.value.clear()
 
 
-	func add_attack_tags() -> GAttackTag:
-		var element = GAttackTag.new()
-		__attack_tags.value.append(element)
+	func add_tags() -> GTag:
+		var element = GTag.new()
+		__tags.value.append(element)
 		return element
 
 
@@ -6613,14 +6391,6 @@ enum GProjectileFlyType {
 	COUNT,
 }
 
-enum GProjectileTagType {
-	HOMING,
-	HIVE,
-	BLINK,
-	SUMMON,
-	COUNT,
-}
-
 enum GProjectileType {
 	INVALID,
 	ARROW,
@@ -6642,8 +6412,11 @@ enum GMaskType {
 	COUNT,
 }
 
-enum GAttackTagType {
+enum GTagType {
 	DASH,
 	BLINK,
+	HOMING,
+	HIVE,
+	SUMMON,
 	COUNT,
 }

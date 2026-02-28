@@ -122,21 +122,42 @@ masks: ##
   - type: MOBS
 ##
 
-attack_tags:
+tags:
   # TODO: Optional fields? Would enable better validation
   - type: DASH ##
-    requires_f1: true # starts_at
-    requires_f2: true # ends_at
-    requires_f3: true # distance
-    requires_f4: true # distance_delta
-    requires_f5: true # pow
+    attack_requirements:
+      - f1 # starts_at
+      - f2 # ends_at
+      - f3 # distance
+      - f4 # distance_delta
+      - f5 # pow
   ##
   - type: BLINK ##
-    requires_f1: true # starts_at
-    requires_f2: true # ends_at
-    requires_f3: true # distance
-    requires_f4: true # distance_delta
-    ##
+    attack_requirements:
+      - f1 # starts_at
+      - f2 # ends_at
+      - f3 # distance
+      - f4 # distance_delta
+    projectile_requirements:
+      - f1 # blink_time
+      ##
+  - type: HOMING ##
+    projectile_requirements:
+      - f1 # rotation speed
+  ##
+  - type: HIVE ##
+    projectile_requirements:
+      - i1 # child projectiles count
+      - f1 # child projectiles spawn time
+      - projectile_type
+  ##
+  - type: SUMMON ##
+    attack_requirements:
+      - f1 # child projectiles spawn time
+      - creature_type
+    projectile_requirements:
+      - creature_type
+      ##
 
 creatures:
   - type: INVALID ##
@@ -276,7 +297,7 @@ creatures:
           evade_flags: *evade_flags_default
         stops_tracking_at: 0.2
         tags:
-          - attacktag_type: DASH
+          - tag_type: DASH
             f1: 0.2 # starts_at
             f2: 0.63 # ends_at
             f3: 3 # distance
@@ -314,11 +335,12 @@ creatures:
           evade_flags: *evade_flags_default
         stops_tracking_at: 0.2
         tags:
-          - attacktag_type: DASH
+          - tag_type: DASH
             f1: 0.2 # starts_at
             f2: 0.5 # ends_at
             f3: 1 # distance
-            f4: 1 # pow
+            f4: 0.2 # distance_delta
+            f5: 1 # pow
   ##
   - type: MOB_SPEAR ##
     hp: 5
@@ -338,11 +360,12 @@ creatures:
           evade_flags: *evade_flags_default
         stops_tracking_at: 0.3
         tags:
-          - attacktag_type: DASH
+          - tag_type: DASH
             f1: 0.4 # starts_at
             f2: 1.1 # ends_at
             f3: 4 # distance
-            f4: 1 # pow
+            f4: 0.2 # distance_delta
+            f5: 1 # pow
             ##
   - type: MOB_SUMMONER ##
     hp: 2
@@ -383,23 +406,6 @@ projectile_fly_types: ##
   - type: ARC
 ##
 
-projectile_tags:
-  # TODO: Optional fields? Would enable better validation
-  - type: HOMING ##
-    requires_f1: true # rotation speed
-  ##
-  - type: HIVE ##
-    requires_i1: true # child projectiles count
-    requires_f1: true # child projectiles spawn time
-    requires_projectile_type: true
-  ##
-  - type: BLINK ##
-    requires_f1: true # blink_time
-    ##
-  - type: SUMMON ##
-    requires_creature_type: true
-    ##
-
 projectiles:
   - type: INVALID ##
   ##
@@ -428,7 +434,7 @@ projectiles:
   - type: STAR_HIVE_INSIDE ##
     projectilefly_type: ARC
     tags:
-      - projectiletag_type: HIVE
+      - tag_type: HIVE
         f1: 1.0
         i1: 5
         projectile_type: STAR_BIT
@@ -440,7 +446,7 @@ projectiles:
   - type: STAR_HIVE ##
     projectilefly_type: ARC
     tags:
-      - projectiletag_type: HIVE
+      - tag_type: HIVE
         f1: 1.0
         i1: 5
         projectile_type: STAR_BIT
@@ -463,7 +469,7 @@ projectiles:
     collider_radius: 0.3
     distance: 8
     tags:
-      - projectiletag_type: HOMING
+      - tag_type: HOMING
         f1: 1.0
     evade_flags: *evade_flags_default
   ##
@@ -476,7 +482,7 @@ projectiles:
     # evade_flags: *evade_flags_default
     evade_flags: *evade_flags_perfect
     tags:
-      - projectiletag_type: BLINK
+      - tag_type: BLINK
         f1: 1.0 # blink_time
         ##
   - type: SUMMON ##
@@ -486,6 +492,6 @@ projectiles:
     distance: 1
     evade_flags: *evade_flags_default
     tags:
-      - projectiletag_type: SUMMON
+      - tag_type: SUMMON
         creature_type: MOB_SHOOTER
         ##

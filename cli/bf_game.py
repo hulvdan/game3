@@ -15,7 +15,7 @@ USAGE:
 
 ## Imports
 import json
-from functools import reduce
+from collections import defaultdict
 from pathlib import Path
 
 import bf_lib as bf
@@ -223,55 +223,69 @@ def _process_glib(genline, glib) -> None:
     glib["rooms"] = rooms
     ##
 
+    context = []
+    not_found_tag_fields = []
+
+    entity_2_tag_required_fields: dict[str, dict[str, list[str]]] = defaultdict(
+        defaultdict
+    )
+    for tag in glib["tags"]:
+        for k, v in tag.items():
+            if not k.endswith("_requirements"):
+                continue
+            table = k.removesuffix("_requirements")
+            entity_2_tag_required_fields[table][tag["type"]] = v or []
+
+    def validate_tags(tags: list, entity: str) -> None:  ##
+        assert entity in entity_2_tag_required_fields
+        for tag in tags:
+            assert tag["tag_type"] in entity_2_tag_required_fields[entity], (
+                "{}: Tag {} can't be used on {} because it doesn't have `{}`".format(
+                    context, tag["tag_type"], entity, f"{entity}_requirements"
+                )
+            )
+            for field in entity_2_tag_required_fields[entity][tag["tag_type"]]:
+                if field not in tag:
+                    not_found_tag_fields.append(field)
+            assert not not_found_tag_fields, (
+                "{}: Tag {} doesn't have required fields: {}".format(
+                    context, tag["tag_type"], not_found_tag_fields
+                )
+            )
+        ##
+
     ## Creatures
+    context.append("creatures")
     for x in glib["creatures"][1:]:
+        context.append(x["type"])
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
         x["mask_type"] = x.get("mask_type", "MOBS")
         if "melee__attack_polygon" in x:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
         is_player = x["type"] == "PLAYER"
-        for attack in x.get("attacks", []):
+        context.append("attacks")
+        for i, attack in enumerate(x.get("attacks", [])):
+            context.append(i)
             attack.get("projectiles_spawns", []).sort(key=lambda x: x["at"])
             if "stops_tracking_at" not in attack:
                 attack["stops_tracking_at"] = attack["duration"]
             if is_player:
                 assert "stamina_cost" in attack
+            validate_tags(attack.get("tags", []), "attack")
+            context.pop()
+        context.pop()
+        context.pop()
+    context.pop()
     ##
 
-    def process_tags(
-        entities_table: str,
-        entity_tags_key: str,
-        tags_table: str,
-        tag_type_key: str,
-    ) -> None:  ##
-        entities = glib[entities_table]
-        for x in entities:
-            tag_type_2_tag = {x["type"]: x for x in glib[tags_table]}
-            for tag in x.get(entity_tags_key, []):
-                tag_type = tag[tag_type_key]
-                tag_data = tag_type_2_tag[tag_type]
-                for req in tag_data:
-                    if req.startswith("requires_"):
-                        stripped_field = req.removeprefix("requires_")
-                        assert stripped_field in tag, (
-                            "{}: {} tag {} field '{}' must me specified".format(
-                                entities_table, x["type"], tag_type, stripped_field
-                            )
-                        )
-
-        # Stripping 'requires_' from tags table
-        for i, tag in enumerate(glib[tags_table]):
-            glib[tags_table][i] = {
-                k: v for k, v in tag.items() if not k.startswith("requires_")
-            }
-        ##
-
-    process_tags("projectiles", "tags", "projectile_tags", "projectiletag_type")
-    process_tags("creatures", "tags", "attack_tags", "meleetag_type")
-
     ## Projectiles
+    context.append("projectiles")
     for x in glib["projectiles"][1:]:
+        context.append(x["type"])
         x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
+        validate_tags(x.get("tags", []), "projectile")
+        context.pop()
+    context.pop()
     ##
 
     ## Progression
@@ -290,6 +304,12 @@ def _process_glib(genline, glib) -> None:
         f"The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
     )
     glib["progression_size"] = bf.as_dict(level_progression.size)
+    ##
+
+    ## Tags
+    for tag in glib["tags"]:
+        for k in [k for k in tag if k.endswith("_requirements")]:
+            tag.pop(k)
     ##
 
     ## Tables
