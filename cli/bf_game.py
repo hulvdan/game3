@@ -234,7 +234,7 @@ def _process_glib(genline, glib) -> None:
             if not k.endswith("_requirements"):
                 continue
             table = k.removesuffix("_requirements")
-            entity_2_tag_required_fields[table][tag["type"]] = v or []
+            entity_2_tag_required_fields[table][tag["type"]] = list(v.keys()) if v else []
 
     def validate_tags(tags: list, entity: str) -> None:  ##
         assert entity in entity_2_tag_required_fields

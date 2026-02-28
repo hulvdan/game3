@@ -126,37 +126,37 @@ tags:
   # TODO: Optional fields? Would enable better validation
   - type: DASH ##
     attack_requirements:
-      - f1 # starts_at
-      - f2 # ends_at
-      - f3 # distance
-      - f4 # distance_delta
-      - f5 # pow
+      f1: # starts_at
+      f2: # ends_at
+      f3: # distance
+      f4: # distance_delta
+      f5: # pow
   ##
   - type: BLINK ##
     attack_requirements:
-      - f1 # starts_at
-      - f2 # ends_at
-      - f3 # distance
-      - f4 # distance_delta
+      f1: # starts_at
+      f2: # ends_at
+      f3: # distance
+      f4: # distance_delta
     projectile_requirements:
-      - f1 # blink_time
+      f1: # blink_time
       ##
   - type: HOMING ##
     projectile_requirements:
-      - f1 # rotation speed
+      f1: # rotation speed
   ##
   - type: HIVE ##
     projectile_requirements:
-      - i1 # child projectiles count
-      - f1 # child projectiles spawn time
-      - projectile_type
+      i1: # child projectiles count
+      f1: # child projectiles spawn time
+      projectile_type:
   ##
   - type: SUMMON ##
     attack_requirements:
-      - f1 # child projectiles spawn time
-      - creature_type
+      f1: # child projectiles spawn time
+      creature_type:
     projectile_requirements:
-      - creature_type
+      creature_type:
       ##
 
 creatures:
