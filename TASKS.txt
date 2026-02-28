@@ -40,7 +40,7 @@ x ability hook: added in proto + glib.yml
 
 * ability hook: pressing E sets player to ATTACK state with GAttack of first ability
 * ability hook: hooking works (hitting enemy gives him reverse impulse towards player)
-* ability hook:
+* ability hook: AREA HOOK ??? 0_o
 * ability hook:
 * ability hook:
 * ability hook:
