@@ -55,7 +55,25 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 
 
 func on_body_entered(creature: Creature) -> void: ##
+	var is_me := (creature == owner)
+	var is_on_my_team := !is_me && (
+		(creature.type == glib.GCreatureType.PLAYER)
+		== (d.owner_type == glib.GCreatureType.PLAYER)
+	)
+	var is_enemy := !is_me && !is_on_my_team
+
 	for tag in glib.v.get_projectiles()[d.type].get_tags():
+		var activate := false
+		var flags := tag.get_team_flags()
+		if (flags & glib.GTeamType.ME) && is_me:
+			activate = true
+		elif (flags & glib.GTeamType.COMRADES) && is_on_my_team:
+			activate = true
+		elif (flags & glib.GTeamType.ENEMIES) && is_enemy:
+			activate = true
+		if !activate:
+			break
+
 		match tag.get_tag_type():
 			glib.GTagType.SCALE_MOVEMENT_SPEED:
 				creature.speed_modifiers['pr%d' % get_instance_id()] = tag.get_f1()

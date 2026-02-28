@@ -159,7 +159,17 @@ tags:
   - type: SCALE_MOVEMENT_SPEED ##
     projectile_requirements:
       f1: # scale
+      team_flags:
       ##
+
+teams: ##
+  - type: ME
+    enum__value: 0b001
+  - type: COMRADES
+    enum__value: 0b010
+  - type: ENEMIES
+    enum__value: 0b100
+##
 
 creatures:
   - type: INVALID ##
@@ -184,6 +194,16 @@ creatures:
       #       angle_degrees: 90
       #       anchor_x: 0.5
       #     evade_flags: *evade_flags_default
+      # - duration: 0.2
+      #   projectile_type: AREA_SPEEDUP
+      #   projectile_spawns:
+      #     - at: 0.1
+      #   cooldown_min: 30.0
+      #   cooldown_max: 30.0
+      #   distance: 4
+      #   stamina_cost:
+      #     flat: 25
+      #     rally: 5
       - duration: 0.25
         projectile_type: ARROW
         projectile_spawns:
@@ -518,4 +538,18 @@ projectiles:
     tags:
       - tag_type: SCALE_MOVEMENT_SPEED
         f1: 0.3 # scale
+        team_flags:
+          - ENEMIES
+          ##
+  - type: AREA_SPEEDUP ##
+    projectilefly_type: AREA
+    arc_or_area__duration: 30
+    collider_radius: 1.8
+    distance: 4
+    tags:
+      - tag_type: SCALE_MOVEMENT_SPEED
+        f1: 2.0 # scale
+        team_flags:
+          - ME
+          - COMRADES
         ##

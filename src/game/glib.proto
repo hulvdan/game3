@@ -109,6 +109,7 @@ message GTagValue {
 
   int32 projectile_type = 14;
   int32 creature_type = 15;
+  int32 team_flags = 16;
 }
 
 message GAttackMelee {
@@ -171,6 +172,11 @@ message GDamage {
 }
 
 message GEvade {
+  int32 type = 1;
+  string debug_name = 2;
+}
+
+message GTeam {
   int32 type = 1;
   string debug_name = 2;
 }
@@ -296,13 +302,14 @@ message Lib {
   // TABLE_GEN_START
   repeated GDamage damages = 16;
   repeated GEvade evades = 17;
-  repeated GProgression progression = 18;
-  repeated GCreature creatures = 19;
-  repeated GItem items = 20;
-  repeated GCollectible collectibles = 21;
-  repeated GProjectileFly projectile_fly_types = 22;
-  repeated GProjectile projectiles = 23;
-  repeated GMask masks = 24;
-  repeated GTag tags = 25;
+  repeated GTeam teams = 18;
+  repeated GProgression progression = 19;
+  repeated GCreature creatures = 20;
+  repeated GItem items = 21;
+  repeated GCollectible collectibles = 22;
+  repeated GProjectileFly projectile_fly_types = 23;
+  repeated GProjectile projectiles = 24;
+  repeated GMask masks = 25;
+  repeated GTag tags = 26;
   // TABLE_GEN_END
 }

@@ -117,16 +117,29 @@ def _process_glib(genline, glib) -> None:
     evade_type_2_value: dict[str, int] = {
         x["type"]: x["enum__value"] for x in glib["evades"]
     }
+    team_type_2_value: dict[str, int] = {
+        x["type"]: x["enum__value"] for x in glib["teams"]
+    }
 
     def transform_evade_flags_list_of_strings_to_number(x: list[str], setter) -> None:  ##
-        evade_flags = 0
+        flags = 0
         for t in x:
-            evade_flags = evade_flags | evade_type_2_value[t]
-        setter(evade_flags)
+            flags = flags | evade_type_2_value[t]
+        setter(flags)
+        ##
+
+    def transform_team_flags_list_of_strings_to_number(x: list[str], setter) -> None:  ##
+        flags = 0
+        for t in x or []:
+            flags = flags | team_type_2_value[t]
+        setter(flags)
         ##
 
     bf.recursive_visiter(
         glib, "evade_flags", None, transform_evade_flags_list_of_strings_to_number
+    )
+    bf.recursive_visiter(
+        glib, "team_flags", None, transform_team_flags_list_of_strings_to_number
     )
 
     ## LDTK. Enums

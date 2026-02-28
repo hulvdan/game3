@@ -374,7 +374,7 @@ func _physics_process(dt: float) -> void:
 			x.area_sphere.body_exited.connect(x.on_body_exited)
 			x.shape_sphere.disabled = false
 			x.area_sphere.scale = Vector3(1, 1, 1) * data.get_collider_radius()
-			x.area_sphere.collision_mask = 2 ** glib.GMaskType.PLAYER
+			x.area_sphere.collision_mask = 2 ** glib.GMaskType.PLAYER + 2 ** glib.GMaskType.MOBS
 
 		x.attack_id = room.get_next_attack_id()
 		if data.get_collider_radius():

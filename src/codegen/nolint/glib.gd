@@ -2184,6 +2184,11 @@ class GTagValue:
 		service.field = __creature_type
 		data[__creature_type.tag] = service
 
+		__team_flags = PBField.new("team_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __team_flags
+		data[__team_flags.tag] = service
+
 
 	var data = { }
 
@@ -2515,6 +2520,28 @@ class GTagValue:
 
 	func set_creature_type(value: int) -> void:
 		__creature_type.value = value
+
+
+	var __team_flags: PBField
+
+
+	func has_team_flags() -> bool:
+		if __team_flags.value != null:
+			return true
+		return false
+
+
+	func get_team_flags() -> int:
+		return __team_flags.value
+
+
+	func clear_team_flags() -> void:
+		data[16].state = PB_SERVICE_STATE.UNFILLED
+		__team_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_team_flags(value: int) -> void:
+		__team_flags.value = value
 
 
 	func _to_string() -> String:
@@ -3673,6 +3700,91 @@ class GDamage:
 
 
 class GEvade:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
+class GTeam:
 	func _init():
 		var service
 
@@ -5671,57 +5783,64 @@ class Lib:
 		service.func_ref = Callable(self, "add_evades")
 		data[__evades.tag] = service
 
+		var __teams_default: Array[GTeam] = []
+		__teams = PBField.new("teams", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __teams_default)
+		service = PBServiceField.new()
+		service.field = __teams
+		service.func_ref = Callable(self, "add_teams")
+		data[__teams.tag] = service
+
 		var __progression_default: Array[GProgression] = []
-		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __progression_default)
+		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __progression_default)
 		service = PBServiceField.new()
 		service.field = __progression
 		service.func_ref = Callable(self, "add_progression")
 		data[__progression.tag] = service
 
 		var __creatures_default: Array[GCreature] = []
-		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __creatures_default)
+		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __creatures_default)
 		service = PBServiceField.new()
 		service.field = __creatures
 		service.func_ref = Callable(self, "add_creatures")
 		data[__creatures.tag] = service
 
 		var __items_default: Array[GItem] = []
-		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __items_default)
+		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 21, true, __items_default)
 		service = PBServiceField.new()
 		service.field = __items
 		service.func_ref = Callable(self, "add_items")
 		data[__items.tag] = service
 
 		var __collectibles_default: Array[GCollectible] = []
-		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 21, true, __collectibles_default)
+		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __collectibles_default)
 		service = PBServiceField.new()
 		service.field = __collectibles
 		service.func_ref = Callable(self, "add_collectibles")
 		data[__collectibles.tag] = service
 
 		var __projectile_fly_types_default: Array[GProjectileFly] = []
-		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __projectile_fly_types_default)
+		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __projectile_fly_types_default)
 		service = PBServiceField.new()
 		service.field = __projectile_fly_types
 		service.func_ref = Callable(self, "add_projectile_fly_types")
 		data[__projectile_fly_types.tag] = service
 
 		var __projectiles_default: Array[GProjectile] = []
-		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __projectiles_default)
+		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __projectiles_default)
 		service = PBServiceField.new()
 		service.field = __projectiles
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
 
 		var __masks_default: Array[GMask] = []
-		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __masks_default)
+		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 25, true, __masks_default)
 		service = PBServiceField.new()
 		service.field = __masks
 		service.func_ref = Callable(self, "add_masks")
 		data[__masks.tag] = service
 
 		var __tags_default: Array[GTag] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 25, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 26, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
@@ -6097,6 +6216,24 @@ class Lib:
 		return element
 
 
+	var __teams: PBField
+
+
+	func get_teams() -> Array[GTeam]:
+		return __teams.value
+
+
+	func clear_teams() -> void:
+		data[18].state = PB_SERVICE_STATE.UNFILLED
+		__teams.value.clear()
+
+
+	func add_teams() -> GTeam:
+		var element = GTeam.new()
+		__teams.value.append(element)
+		return element
+
+
 	var __progression: PBField
 
 
@@ -6105,7 +6242,7 @@ class Lib:
 
 
 	func clear_progression() -> void:
-		data[18].state = PB_SERVICE_STATE.UNFILLED
+		data[19].state = PB_SERVICE_STATE.UNFILLED
 		__progression.value.clear()
 
 
@@ -6123,7 +6260,7 @@ class Lib:
 
 
 	func clear_creatures() -> void:
-		data[19].state = PB_SERVICE_STATE.UNFILLED
+		data[20].state = PB_SERVICE_STATE.UNFILLED
 		__creatures.value.clear()
 
 
@@ -6141,7 +6278,7 @@ class Lib:
 
 
 	func clear_items() -> void:
-		data[20].state = PB_SERVICE_STATE.UNFILLED
+		data[21].state = PB_SERVICE_STATE.UNFILLED
 		__items.value.clear()
 
 
@@ -6159,7 +6296,7 @@ class Lib:
 
 
 	func clear_collectibles() -> void:
-		data[21].state = PB_SERVICE_STATE.UNFILLED
+		data[22].state = PB_SERVICE_STATE.UNFILLED
 		__collectibles.value.clear()
 
 
@@ -6177,7 +6314,7 @@ class Lib:
 
 
 	func clear_projectile_fly_types() -> void:
-		data[22].state = PB_SERVICE_STATE.UNFILLED
+		data[23].state = PB_SERVICE_STATE.UNFILLED
 		__projectile_fly_types.value.clear()
 
 
@@ -6195,7 +6332,7 @@ class Lib:
 
 
 	func clear_projectiles() -> void:
-		data[23].state = PB_SERVICE_STATE.UNFILLED
+		data[24].state = PB_SERVICE_STATE.UNFILLED
 		__projectiles.value.clear()
 
 
@@ -6213,7 +6350,7 @@ class Lib:
 
 
 	func clear_masks() -> void:
-		data[24].state = PB_SERVICE_STATE.UNFILLED
+		data[25].state = PB_SERVICE_STATE.UNFILLED
 		__masks.value.clear()
 
 
@@ -6231,7 +6368,7 @@ class Lib:
 
 
 	func clear_tags() -> void:
-		data[25].state = PB_SERVICE_STATE.UNFILLED
+		data[26].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 
@@ -6278,6 +6415,13 @@ enum GEvadeType {
 	JUST_BLOCKABLE = 1,
 	ROLLABLE = 4,
 	STAMINA_RECOVERING_ROLLABLE = 8,
+	COUNT,
+}
+
+enum GTeamType {
+	ME = 1,
+	COMRADES = 2,
+	ENEMIES = 4,
 	COUNT,
 }
 
@@ -6351,6 +6495,7 @@ enum GProjectileType {
 	BLINK,
 	SUMMON,
 	AREA_SLOWDOWN,
+	AREA_SPEEDUP,
 	COUNT,
 }
 
