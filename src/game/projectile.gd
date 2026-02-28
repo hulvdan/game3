@@ -55,7 +55,7 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 
 
 func on_body_entered(creature: Creature) -> void: ##
-	var is_me := (creature == owner)
+	var is_me := is_instance_valid(owner) && (creature == owner)
 	var is_on_my_team := !is_me && (
 		(creature.type == glib.GCreatureType.PLAYER)
 		== (d.owner_type == glib.GCreatureType.PLAYER)
