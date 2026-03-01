@@ -38,6 +38,7 @@ x fix: player shouldn't be able to block spikes
 - player melee attack
 x ability hook: added in proto + glib.yml
 x ability hook: pressing E sets player to ATTACK state with GAttack of first ability
+x ref player_controller attack after roll
 
 * ability hook: hooking works (hitting enemy gives him reverse impulse towards player)
 * ability hook: AREA HOOK ??? 0_o

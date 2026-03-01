@@ -79,7 +79,7 @@ player: ##
 ##
 
 controls: ##
-  action_consumption_duration: 0.3
+  action_consumption_duration: 0.4
 ##
 
 spikes: ##
@@ -92,7 +92,6 @@ spikes: ##
     - STAMINA_RECOVERING_ROLLABLE
   continuous_evade_flags:
     - ROLLABLE
-    - STAMINA_RECOVERING_ROLLABLE
 ##
 
 creatures_push_radius: 1.0
