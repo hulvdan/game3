@@ -22,9 +22,12 @@ var attack_projectiles_spawned: int
 var attack_blinked: bool
 var attack_dashed: bool
 
-var melee_attack: glib.GAttack
-var melee_attack_id: int
-var melee_damaged_creatures: Array[Creature]
+var attack_id: int
+var attack_damaged_creatures: Array[Creature]
+
+var current_attack: glib.GAttack
+var change_attack_to: glib.GAttack
+var change_ability_to: glib.GAbility
 
 var blocked: bool
 
@@ -54,6 +57,18 @@ var _attack_ids_marked_as_evaded: Array[EvadedAttack]
 @onready var node_target_camera: Node3D = %_rotate
 @onready var node_sprite: Sprite3D = %_sprite
 @onready var node_shape: CollisionShape3D = %_shape
+##
+
+
+func enqueue_attack(value: glib.GAttack) -> void: ##
+	change_attack_to = value
+	change_ability_to = null
+##
+
+
+func enqueue_ability(value: glib.GAbility) -> void: ##
+	change_ability_to = value
+	change_attack_to = null
 ##
 
 

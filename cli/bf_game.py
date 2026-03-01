@@ -267,24 +267,28 @@ def _process_glib(genline, glib) -> None:
             )
         ##
 
+    def validate_attack(x: dict, is_player: bool) -> None:  ##
+        x.get("projectiles_spawns", []).sort(key=lambda x: x["at"])
+        if "stops_tracking_at" not in x:
+            x["stops_tracking_at"] = x["duration"]
+        if is_player:
+            assert "stamina_cost" in x
+        validate_tags(x.get("tags", []), "attack")
+        ##
+
     ## Creatures
     context.append("creatures")
     for x in glib["creatures"][1:]:
         context.append(x["type"])
+        is_player = x["type"] == "PLAYER"
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
         x["mask_type"] = x.get("mask_type", "MOBS")
         if "melee__attack_polygon" in x:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
-        is_player = x["type"] == "PLAYER"
         context.append("attacks")
         for i, attack in enumerate(x.get("attacks", [])):
             context.append(i)
-            attack.get("projectiles_spawns", []).sort(key=lambda x: x["at"])
-            if "stops_tracking_at" not in attack:
-                attack["stops_tracking_at"] = attack["duration"]
-            if is_player:
-                assert "stamina_cost" in attack
-            validate_tags(attack.get("tags", []), "attack")
+            validate_attack(attack, is_player)
             context.pop()
         context.pop()
         context.append("abilities")
@@ -295,6 +299,17 @@ def _process_glib(genline, glib) -> None:
                 validate_tags(attack.get("tags", []), "attack")
                 context.pop()
             context.pop()
+        context.pop()
+        context.pop()
+    context.pop()
+    ##
+
+    ## Abilities
+    context.append("abilities")
+    for i, x in enumerate(glib["abilities"]):
+        context.append(i)
+        context.append("attack")
+        validate_attack(x["attack"], True)
         context.pop()
         context.pop()
     context.pop()

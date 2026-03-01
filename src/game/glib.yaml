@@ -182,10 +182,15 @@ teams: ##
 abilities:
   - type: HOOK ##
     attack:
+      duration: 0.9
       projectile_type: HOOK
+      stops_tracking_at: 0.3
       projectile_spawns:
-        - at: 0.0
-          ##
+        - at: 0.2
+      stamina_cost:
+        flat: 20
+        rally: 5
+        ##
 
 creatures:
   - type: INVALID ##
@@ -477,7 +482,7 @@ projectiles:
   ##
   - type: HOOK ##
     damage: 0
-    default__speed: 3
+    default__speed: 9
     collider_radius: 0.3
     distance: 5
     tags:

@@ -10,27 +10,35 @@ static func explicit_update_attack(
 		dt: float,
 		c: Creature,
 		action_cooldown: ActionRandCooldown,
-		attack: glib.GAttack,
 		tracking_pos: Vector2,
 ) -> bool:
 	var is_player := c.type == glib.GCreatureType.PLAYER
-	var attack_duration := attack.get_duration()
-	var melee := attack.get_melee()
 
 	## Attack start
 	if !c.attack_elapsed:
-		c.melee_attack = attack
-		c.melee_attack_id = Room.v.get_next_attack_id()
-		c.melee_damaged_creatures.clear()
+		if c.change_attack_to:
+			c.current_attack = c.change_attack_to
+		elif c.change_ability_to:
+			c.current_attack = c.change_ability_to.get_attack()
+		else:
+			bf.invalid_path()
+
+		c.attack_id = Room.v.get_next_attack_id()
+		c.attack_damaged_creatures.clear()
+
+		var dur := c.current_attack.get_duration()
 		if c.type != glib.GCreatureType.PLAYER:
 			Game.v.enemy_started_attack.emit(c.transform.origin)
 			if action_cooldown:
-				action_cooldown.cooldown_min = attack.get_cooldown_min() + attack_duration
-				action_cooldown.cooldown_min = attack.get_cooldown_max() + attack_duration
+				action_cooldown.cooldown_min = c.current_attack.get_cooldown_min() + dur
+				action_cooldown.cooldown_min = c.current_attack.get_cooldown_max() + dur
 	##
 
+	var attack := c.current_attack
+	var melee := attack.get_melee()
+
 	## Tracking target
-	if c.melee_attack && (c.attack_elapsed <= attack.get_stops_tracking_at()):
+	if c.attack_elapsed <= attack.get_stops_tracking_at():
 		c.attack_target_pos = tracking_pos
 		c.attack_target_dir = bf.vector2_direction_or_random(
 			bf.xz(c.transform.origin),
@@ -101,14 +109,15 @@ static func explicit_update_attack(
 	##
 
 	## Attack finish
-	if c.attack_elapsed >= attack_duration:
+	if c.attack_elapsed >= c.current_attack.get_duration():
 		if is_player:
 			Room.v.player.attack_consumed_stamina = false
 		c.attack_blinked = false
 		c.attack_dashed = false
 		c.attack_elapsed = 0.0
 		c.attack_projectiles_spawned = 0
-		c.melee_attack = null
+		c.attack_id = 0
+		c.attack_damaged_creatures.clear()
 		c.controller.move = Vector2(0, 0)
 		return true
 	##
@@ -119,11 +128,11 @@ static func explicit_update_attack(
 func tick(actor: Node, _blackboard: Blackboard) -> int: ##
 	var creature: Creature = actor
 	var attack: = glib.v.get_creatures()[creature.type].get_attacks()[0]
+	creature.change_attack_to = attack
 	if explicit_update_attack(
 		get_physics_process_delta_time(),
 		creature,
 		cooldown,
-		attack,
 		bf.xz(Room.v.player.creature.transform.origin),
 	):
 		return SUCCESS

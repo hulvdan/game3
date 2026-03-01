@@ -324,7 +324,11 @@ func _physics_process(dt: float) -> void:
 		if Input.is_action_just_released("block"):
 			room.player.push_action(PlayerController.ActionType.UNBLOCK, Vector2.INF)
 		if Input.is_action_just_pressed("shoot"):
-			room.player.push_action(PlayerController.ActionType.SHOOT, Vector2.INF)
+			room.player.push_action(PlayerController.ActionType.ATTACK, Vector2.INF)
+		if Input.is_action_just_pressed("ability_1"):
+			room.player.push_action(PlayerController.ActionType.ABILITY_1, Vector2.INF)
+		if Input.is_action_just_pressed("ability_2"):
+			room.player.push_action(PlayerController.ActionType.ABILITY_2, Vector2.INF)
 		if Input.is_action_just_pressed("roll"):
 			room.player.push_action(PlayerController.ActionType.ROLL, Vector2.INF)
 		room.player.push_action(
@@ -423,11 +427,10 @@ func _physics_process(dt: float) -> void:
 	## - Melee attacks collisions
 	var apply_damage_melee_data := ApplyDamageData.new()
 	for creature: Creature in room.container_creatures.get_children():
-		if !creature.melee_attack:
+		if !creature.attack_id:
 			continue
 
-		var attack: glib.GAttack = creature.melee_attack
-
+		var attack := creature.current_attack
 		var melee := attack.get_melee()
 		if !melee:
 			continue
@@ -438,7 +441,7 @@ func _physics_process(dt: float) -> void:
 			continue
 
 		var is_player := (creature.type == glib.GCreatureType.PLAYER)
-		apply_damage_melee_data.attack_id = creature.melee_attack_id
+		apply_damage_melee_data.attack_id = creature.attack_id
 		apply_damage_melee_data.impulse = 1
 		apply_damage_melee_data.evade_flags = melee.get_evade_flags()
 
@@ -481,7 +484,7 @@ func _physics_process(dt: float) -> void:
 
 		for d: Dictionary in q:
 			var damaged_creature: Creature = d.collider
-			if damaged_creature in creature.melee_damaged_creatures:
+			if damaged_creature in creature.attack_damaged_creatures:
 				continue
 
 			apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
@@ -490,7 +493,7 @@ func _physics_process(dt: float) -> void:
 			)
 
 			if apply_damage(damaged_creature, melee.get_damage(), apply_damage_melee_data):
-				creature.melee_damaged_creatures.append(damaged_creature)
+				creature.attack_damaged_creatures.append(damaged_creature)
 
 	Collisions.set_gizmos_color(Color.YELLOW)
 	##

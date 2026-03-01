@@ -4,7 +4,7 @@ class_name PlayerController
 var creature: Creature
 var bow: Node3D
 var inside_enemy_t := 0.0
-var shoot_after_roll := false
+var attack_after_roll := false
 var rolling_retrievable_cost := 0.0
 
 var attack_consumed_stamina: bool
@@ -40,8 +40,24 @@ var _states: Array[PlayerBase] = [
 	PlayerBlock.new(),
 ]
 
-enum StateType { NONE, DEFAULT, SHOOT, ROLL, BLOCK }
-enum ActionType { NONE, SHOOT, ROLL, BLOCK, UNBLOCK, SET_MOVE_DIR }
+enum StateType {
+	NONE,
+	DEFAULT,
+	ATTACK,
+	ROLL,
+	BLOCK,
+}
+
+enum ActionType {
+	NONE,
+	ATTACK,
+	ROLL,
+	BLOCK,
+	UNBLOCK,
+	SET_MOVE_DIR,
+	ABILITY_1,
+	ABILITY_2,
+}
 ##
 
 
@@ -218,9 +234,20 @@ class PlayerBase: ##
 class PlayerDefault extends PlayerBase: ##
 	func consume_action(a: Action) -> bool:
 		match a.type:
-			ActionType.SHOOT:
-				if player._can_start_shoot():
-					player._change_state(StateType.SHOOT, a)
+			ActionType.ATTACK:
+				if player._can_start_attack():
+					player.creature.enqueue_attack(glib.v.get_creatures()[player.creature.type].get_attacks()[0])
+					player._change_state(StateType.ATTACK, a)
+					return true
+			ActionType.ABILITY_1:
+				if player._can_start_attack():
+					player.creature.enqueue_ability(glib.v.get_abilities()[0])
+					player._change_state(StateType.ATTACK, a)
+					return true
+			ActionType.ABILITY_2:
+				if player._can_start_attack():
+					player.creature.enqueue_ability(glib.v.get_abilities()[1])
+					player._change_state(StateType.ATTACK, a)
 					return true
 			ActionType.ROLL:
 				if player._can_start_roll():
@@ -238,24 +265,24 @@ class PlayerDefault extends PlayerBase: ##
 
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
-		if player.shoot_after_roll:
-			if player._can_start_shoot():
-				player._change_state(StateType.SHOOT, null)
-			player.shoot_after_roll = false
+		if player.attack_after_roll:
+			if player._can_start_attack():
+				player._change_state(StateType.ATTACK, null)
+			player.attack_after_roll = false
 ##
 
 
 class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		player.creature.speed_modifiers.shooting = glib.v.get_player().get_speed_scale__shooting()
-		player._stamina_regen_modifiers.shooting = glib.v.get_player().get_stamina_regen_scale__shooting()
+		player.creature.speed_modifiers.attacking = glib.v.get_player().get_speed_scale__shooting()
+		player._stamina_regen_modifiers.attacking = glib.v.get_player().get_stamina_regen_scale__shooting()
 
 
 	func on_exit() -> void:
 		super.on_exit()
-		player.creature.speed_modifiers.shooting = 1
-		player._stamina_regen_modifiers.shooting = 1
+		player.creature.speed_modifiers.attacking = 1
+		player._stamina_regen_modifiers.attacking = 1
 
 
 	func explicit_process(dt: float) -> void:
@@ -264,7 +291,6 @@ class PlayerAttack extends PlayerBase: ##
 			dt,
 			player.creature,
 			null,
-			glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_attacks()[0],
 			player.aim_pos,
 		):
 			player._change_state(StateType.DEFAULT, null)
@@ -331,9 +357,20 @@ class PlayerRoll extends PlayerBase: ##
 
 	func consume_action(a: Action) -> bool:
 		match a.type:
-			ActionType.SHOOT:
-				if player._can_start_shoot():
-					player.shoot_after_roll = true
+			ActionType.ATTACK:
+				if player._can_start_attack():
+					player.creature.enqueue_attack(glib.v.get_creatures()[player.creature.type].get_attacks()[0])
+					player.attack_after_roll = true
+					return true
+			ActionType.ABILITY_1:
+				if player._can_start_attack():
+					player.creature.enqueue_ability(glib.v.get_abilities()[0])
+					player.attack_after_roll = true
+					return true
+			ActionType.ABILITY_2:
+				if player._can_start_attack():
+					player.creature.enqueue_ability(glib.v.get_abilities()[1])
+					player.attack_after_roll = true
 					return true
 			ActionType.SET_MOVE_DIR:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
@@ -412,7 +449,7 @@ class PlayerBlock extends PlayerBase: ##
 ##
 
 
-func _can_start_shoot() -> bool: ##
+func _can_start_attack() -> bool: ##
 	return stamina > 0
 ##
 
