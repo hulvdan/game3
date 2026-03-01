@@ -629,7 +629,7 @@ class ApplyDamageData: ##
 	var type := glib.GDamageType.DEFAULT
 	var evade_flags: int
 	var attack_id := 0
-	var impulse := 0
+	var impulse := 0.0
 	var impulse_dir := Vector2(0, 0)
 ##
 
@@ -708,11 +708,12 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 		if creature.type != glib.GCreatureType.PLAYER:
 			room.container_mob_hp_bars.remove_child(creature.hp_bar)
 
-	damaged.emit(
-		creature.transform.origin,
-		damage,
-		WhoGotDamagedType.PLAYER if player_got_damaged else WhoGotDamagedType.MOB,
-	)
+	if damage > 0:
+		damaged.emit(
+			creature.transform.origin,
+			damage,
+			WhoGotDamagedType.PLAYER if player_got_damaged else WhoGotDamagedType.MOB,
+		)
 	creature.add_impulse(data.impulse_dir, data.impulse, impulse_dur, impulse_pow)
 
 	return true

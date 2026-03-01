@@ -26,7 +26,7 @@ var elapsed: float
 var d: Data
 var res: ResProjectile
 var zones: Array[Node3D]
-var damaged_creatures: Array[Creature]
+var touched_creatures: Array[Creature]
 var default__pierced: int
 var attack_id: int
 var calculated__dir: Vector2
@@ -205,15 +205,39 @@ class UpdaterDefault extends UpdaterBase:
 				if q:
 					x.queue_free()
 
-			elif data.get_damage() > 0:
+			else:
+				var hook := false
+				var hook_dur := 0.0
+				var hook_pow := 0.0
+				var hook_distance_delta := 0.0
+
+				for tag in data.get_tags():
+					match tag.get_tag_type():
+						glib.GTagType.HOOK:
+							hook = is_instance_valid(x.d.owner__mb_freed_or_null)
+							hook_dur = tag.get_f1()
+							hook_pow = tag.get_f2()
+							hook_distance_delta = tag.get_f3()
+
 				for d: Dictionary in q:
-					var damaged_creature: Creature = d.collider
-					if damaged_creature in x.damaged_creatures:
+					var creature: Creature = d.collider
+					if creature in x.touched_creatures:
 						continue
 
-					if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
-						x.damaged_creatures.append(damaged_creature)
+					if Game.v.apply_damage(creature, data.get_damage(), _damage_data):
+						x.touched_creatures.append(creature)
 						x.default__pierced += 1
+
+						if hook:
+							var dd := bf.xz(creature.transform.origin) - bf.xz(x.d.owner__mb_freed_or_null.transform.origin)
+							var hook_dist: float = max(0.0, dd.length() - hook_distance_delta)
+							creature.add_impulse(
+								bf.vector2_direction_or_random(dd, Vector2(0, 0)),
+								hook_dist,
+								hook_dur,
+								hook_pow,
+							)
+
 						if x.default__pierced > data.get_pierce():
 							x.queue_free()
 							break
@@ -246,11 +270,11 @@ class UpdaterArc extends UpdaterBase:
 					MAX_COLLISIONS_AOE,
 				):
 					var damaged_creature: Creature = d.collider
-					if damaged_creature in x.damaged_creatures:
+					if damaged_creature in x.touched_creatures:
 						continue
 
 					if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
-						x.damaged_creatures.append(damaged_creature)
+						x.touched_creatures.append(damaged_creature)
 
 			x.queue_free()
 			for z: Node3D in x.zones:

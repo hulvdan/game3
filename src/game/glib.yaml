@@ -167,7 +167,9 @@ tags:
   ##
   - type: HOOK ##
     projectile_requirements:
-    ##
+      f1: # dur
+      f2: # pow
+      ##
 
 teams: ##
   - type: ME
@@ -486,6 +488,9 @@ projectiles:
     distance: 5
     tags:
       - tag_type: HOOK
+        f1: 0.4 # dur
+        f2: 1 # pow
+        f3: 0.8 # distance_delta
   ##
   - type: BOMB ##
     damage: 2
