@@ -336,6 +336,11 @@ def _process_glib(genline, glib) -> None:
     context.pop()
     ##
 
+    ## Interactables
+    for x in glib["interactables"][1:]:
+        x["res"] = "res://src/game/res_interactables/_{}.tres".format(x["type"].lower())
+    ##
+
     ## Progression
     prog_type_2_prog = {x["type"]: x for x in glib["progression"][1:]}
     required_to_specify_progression_types = list(prog_type_2_prog.keys())

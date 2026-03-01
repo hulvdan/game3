@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ResInteractable" format=3 uid="uid://sx1xj5oor0n7"]
+
+[ext_resource type="Script" uid="uid://c1q2rjs3ek85i" path="res://src/game/res_interactable.gd" id="1_6djya"]
+[ext_resource type="Texture2D" uid="uid://bf722st4gyw8s" path="res://assets/art/textures/removeme/_tile_08_maroon_flush.png" id="2_lr1m7"]
+
+[resource]
+script = ExtResource("1_6djya")
+texture = ExtResource("2_lr1m7")

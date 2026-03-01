@@ -6,6 +6,7 @@ class_name Interactable
 @export var node_body: RigidBody3D
 
 var type: glib.GInteractableType
+var res: ResInteractable
 
 @onready var node_target_camera: Node3D = %_target_camera
 @onready var node_sprite: Sprite3D = %_sprite

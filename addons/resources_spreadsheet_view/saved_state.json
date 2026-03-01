@@ -25,6 +25,17 @@
         "visibility": 1.0
       }
     },
+    "res://src/game/res_interactables/": {
+      "metadata/_custom_type_script": {
+        "visibility": 0
+      },
+      "resource_local_to_scene": {
+        "visibility": 0
+      },
+      "resource_name": {
+        "visibility": 0
+      }
+    },
     "res://src/game/res_projectiles/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
@@ -39,7 +50,8 @@
   },
   "recent_paths": [
     "res://src/game/res_creatures/",
-    "res://src/game/res_projectiles/"
+    "res://src/game/res_projectiles/",
+    "res://src/game/res_interactables/"
   ],
   "table_functions": {
     "filter": [

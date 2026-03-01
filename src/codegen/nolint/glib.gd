@@ -4820,17 +4820,22 @@ class GInteractable:
 		service.field = __debug_name
 		data[__debug_name.tag] = service
 
-		__hp = PBField.new("hp", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__res = PBField.new("res", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __res
+		data[__res.tag] = service
+
+		__hp = PBField.new("hp", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __hp
 		data[__hp.tag] = service
 
-		__projectile_type = PBField.new("projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__projectile_type = PBField.new("projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __projectile_type
 		data[__projectile_type.tag] = service
 
-		__mass = PBField.new("mass", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__mass = PBField.new("mass", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __mass
 		data[__mass.tag] = service
@@ -4882,6 +4887,28 @@ class GInteractable:
 		__debug_name.value = value
 
 
+	var __res: PBField
+
+
+	func has_res() -> bool:
+		if __res.value != null:
+			return true
+		return false
+
+
+	func get_res() -> String:
+		return __res.value
+
+
+	func clear_res() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__res.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_res(value: String) -> void:
+		__res.value = value
+
+
 	var __hp: PBField
 
 
@@ -4896,7 +4923,7 @@ class GInteractable:
 
 
 	func clear_hp() -> void:
-		data[3].state = PB_SERVICE_STATE.UNFILLED
+		data[4].state = PB_SERVICE_STATE.UNFILLED
 		__hp.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4918,7 +4945,7 @@ class GInteractable:
 
 
 	func clear_projectile_type() -> void:
-		data[4].state = PB_SERVICE_STATE.UNFILLED
+		data[5].state = PB_SERVICE_STATE.UNFILLED
 		__projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4940,7 +4967,7 @@ class GInteractable:
 
 
 	func clear_mass() -> void:
-		data[5].state = PB_SERVICE_STATE.UNFILLED
+		data[6].state = PB_SERVICE_STATE.UNFILLED
 		__mass.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 

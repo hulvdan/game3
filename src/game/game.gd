@@ -222,11 +222,13 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 
 		var x: Interactable = packed_interactable.instantiate()
 		x.type = type
+		x.res = load(d.get_res())
 		x.transform.origin = bf.to_xz(glib.ToV2(xd.get_pos()))
 		room.container_interactables.add_child(x)
 
 		x.node_body.mass = d.get_mass()
 		x.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
+		x.node_sprite.texture = x.res.texture
 	##
 
 	## Placing player and other creatures
