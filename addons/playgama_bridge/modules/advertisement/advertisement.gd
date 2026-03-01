@@ -64,7 +64,7 @@ func show_rewarded(placement = null):
 func check_adblock(callback):
 	if _check_adblock_callback != null:
 		return
-	
+
 	_check_adblock_callback = callback
 	_js_advertisement.checkAdBlock().then(_js_check_adblock_then).catch(_js_check_adblock_catch)
 

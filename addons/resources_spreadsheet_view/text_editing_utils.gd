@@ -27,7 +27,7 @@ static func show_non_typing(text : String) -> String:
 	text = text\
 		.replace(non_typing_paragraph, "\n")\
 		.replace(non_typing_space, " ")
-	
+
 	if text.ends_with("\n"):
 		text = text.left(text.length() - 1) + non_typing_paragraph
 
@@ -49,13 +49,13 @@ static func revert_non_typing(text : String) -> String:
 
 static func get_caret_movement_from_key(keycode : int) -> int:
 	match keycode:
-		KEY_LEFT: 
+		KEY_LEFT:
 			return -1
-		KEY_RIGHT: 
+		KEY_RIGHT:
 			return +1
-		KEY_HOME: 
+		KEY_HOME:
 			return -2
-		KEY_END: 
+		KEY_END:
 			return +2
 
 	return 0
@@ -87,7 +87,7 @@ static func multi_erase_right(values : Array, cursor_positions : Array, whole_wo
 		cursor_positions[i] = _step_cursor(values[i], cursor_positions[i], 1, whole_word)
 
 		cursor_positions[i] = min(
-			cursor_positions[i], 
+			cursor_positions[i],
 			values[i].length()
 		)
 		values[i] = (

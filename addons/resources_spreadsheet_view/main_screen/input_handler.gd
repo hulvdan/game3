@@ -50,14 +50,14 @@ func _gui_input(event : InputEvent):
 func _input(event : InputEvent):
 	if !event is InputEventKey or !event.pressed:
 		return
-	
+
 	if !editor_view.has_focus() or selection.edited_cells.size() == 0:
 		return
 
 	if event.keycode == KEY_CTRL or event.keycode == KEY_SHIFT or event.keycode == KEY_META:
 		# Modifier keys do not get processed.
 		return
-	
+
 	# Ctrl + Z (before, and instead of, committing the action!)
 	if event.is_command_or_control_pressed():
 		if event.keycode == KEY_Z or event.keycode == KEY_Y:
@@ -82,7 +82,7 @@ func _key_specific_action(event : InputEvent):
 
 	elif Input.is_key_pressed(KEY_SHIFT) and event.keycode == KEY_TAB:
 		_move_selection_on_grid(-grid_move_offset, 0)
-	
+
 	elif event.keycode == KEY_TAB:
 		_move_selection_on_grid(+grid_move_offset, 0)
 
@@ -104,7 +104,7 @@ func _key_specific_action(event : InputEvent):
 	# The following actions do not work on non-editable cells.
 	if !selection.column_editors[column].is_text() or editor_view.columns[column] == "resource_path":
 		return
-	
+
 	# ERASING
 	elif event.keycode == KEY_BACKSPACE:
 		editor_view.set_edited_cells_values_text(TextEditingUtilsClass.multi_erase_left(

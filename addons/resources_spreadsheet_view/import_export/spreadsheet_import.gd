@@ -165,7 +165,7 @@ func property_to_string(value, col_index : int) -> String:
 			for k in dict:
 				if dict[k] == value:
 					return change_name_to_format(k, enum_format[0], enum_format[1])
-		
+
 	return str(value)
 
 
@@ -209,7 +209,7 @@ func create_property_line_for_prop(col_index : int) -> String:
 func _escape_forbidden_enum_names(string : String) -> String:
 	if ClassDB.class_exists(string):
 		return string + "_"
-	
+
 	# Not in ClassDB, but are engine types and can be property names
 	if string in [
 		"Color", "String", "Plane", "Projection",
@@ -236,7 +236,7 @@ func create_enum_for_prop(col_index) -> String:
 			+ ",\r\n"
 		)
 	result += "\tMAX,\r\n}\r\n\r\n"
-	
+
 	return result
 
 
@@ -247,18 +247,18 @@ func generate_script(entries, has_classname = true) -> GDScript:
 #
 #	else:
 	source = "extends Resource\r\n\r\n"
-	
+
 	# Enums
 	uniques = get_uniques(entries)
 	for i in prop_types.size():
 		if prop_types[i] == PropType.ENUM:
 			source += create_enum_for_prop(i)
-	
+
 	# Properties
 	for i in prop_names.size():
 		if (prop_names[i] != "resource_path") and (prop_names[i] != "resource_name"):
 			source += create_property_line_for_prop(i)
-	
+
 	var created_script : GDScript = GDScript.new()
 	created_script.source_code = source
 	created_script.reload()
@@ -301,10 +301,10 @@ func load_external_script(script_res : Script):
 	new_script = script_res
 	var result := {}
 	for x in script_res.get_script_property_list():
-		
+
 		if x.hint != PROPERTY_HINT_ENUM or x.type != TYPE_INT:
 			continue
-		
+
 		var cur_value := ""
 		var result_for_prop := {}
 		result[prop_names.find(x.name)] = result_for_prop
@@ -327,13 +327,13 @@ func strings_to_resource(strings : Array, destination_path : String) -> Resource
 	if destination_path == "":
 		destination_path = edited_path.get_base_dir().path_join("import/")
 		DirAccess.make_dir_recursive_absolute(destination_path)
-	
+
 	# If a full path is provided this catches that case
 	var new_path : String = strings[prop_names.find(prop_used_as_filename)]
-	
+
 	if !FileAccess.file_exists(new_path):
 		new_path = destination_path.path_join(new_path).trim_suffix(".tres") + ".tres"
-	
+
 	if !FileAccess.file_exists(new_path):
 		new_path = (strings[prop_names.find(prop_used_as_filename)]
 			.trim_prefix(destination_path)
@@ -375,7 +375,7 @@ func resource_to_strings(res : Resource):
 	strings.resize(prop_names.size())
 	for i in prop_names.size():
 		strings[i] = property_to_string(res.get(prop_names[i]), i)
-	
+
 	return PackedStringArray(strings)
 
 
@@ -391,10 +391,10 @@ func get_uniques(entries : Array) -> Dictionary:
 				cur_value = entries[j][i].capitalize().to_upper().replace(" ", "_")
 				if cur_value == "":
 					cur_value = "N_A"
-				
+
 				if !result[i].has(cur_value):
 					result[i][cur_value] = result[i].size()
-	
+
 	return result
 
 
@@ -442,5 +442,5 @@ static func get_resource_property_types(res : Resource, properties : Array, uniq
 
 			else:
 				result[poroperty_index] = TYPE_MAP.get(x[&"type"], PropType.STRING)
-	
+
 	return result

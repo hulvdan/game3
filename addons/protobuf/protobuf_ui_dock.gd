@@ -42,74 +42,74 @@ func _ready():
 	pass
 
 func _on_InputFileButton_pressed():
-	
+
 	show_dialog($InputFileDialog)
 	$InputFileDialog.invalidate()
 
 func _on_OutputFileButton_pressed():
-	
+
 	show_dialog($OutputFileDialog)
 	$OutputFileDialog.invalidate()
 
 func _on_InputFileDialog_file_selected(path):
-	
+
 	input_file_path = path
 	$HBoxContainer/InputFileEdit.text = path
 
 func _on_OutputFileDialog_file_selected(path):
-	
+
 	output_file_path = path
 	$HBoxContainer2/OutputFileEdit.text = path
 
 func show_dialog(dialog):
-	
+
 	dialog.popup_centered()
 
 func _on_CompileButton_pressed():
-	
+
 	if input_file_path == null || output_file_path == null:
 		show_dialog($FilesErrorAcceptDialog)
 		return
-	
+
 	var file = FileAccess.open(input_file_path, FileAccess.READ)
 	if file == null:
 		print("File: '", input_file_path, "' not found.")
 		show_dialog($FailAcceptDialog)
 		return
-	
+
 	var parser = Parser.new()
-	
+
 	if parser.work(Util.extract_dir(input_file_path), Util.extract_filename(input_file_path), \
 		output_file_path, "res://addons/protobuf/protobuf_core.gd"):
 		show_dialog($SuccessAcceptDialog)
 	else:
 		show_dialog($FailAcceptDialog)
-	
+
 	file.close()
-	
+
 	return
 
 func execute_unit_tests(source_name, script_name, compiled_script_name):
-	
+
 	var test_path = "res://addons/protobuf/test/"
 	var test_input_file_path = test_path + "source/" + source_name
 	var test_output_dir_path = test_path + "temp"
 	var test_output_file_path = test_output_dir_path + "/" + compiled_script_name
-	
+
 	var output_dir = DirAccess.make_dir_absolute(test_output_dir_path)
 	if output_dir == null:
 		print("Cannot create output directory: '", test_output_dir_path, "'.")
 		show_dialog($FailAcceptDialog)
 		return
-	
+
 	var test_file = FileAccess.open(test_input_file_path, FileAccess.READ)
 	if test_file == null:
 		print("File: '", input_file_path, "' not found.")
 		show_dialog($FailAcceptDialog)
 		return
-	
+
 	var parser = Parser.new()
-	
+
 	if parser.work("", test_input_file_path, test_output_file_path, "res://addons/protobuf/protobuf_core.gd"):
 		var test_script = load(test_path + "script/" + script_name).new(test_path, test_output_file_path)
 		if test_script.exec_all(false):
@@ -118,15 +118,15 @@ func execute_unit_tests(source_name, script_name, compiled_script_name):
 			show_dialog($FailTestDialog)
 	else:
 		show_dialog($FailAcceptDialog)
-	
+
 	test_file.close()
-	
+
 	return
 
 func _on_TestButton2_pressed() :
-	
+
 	execute_unit_tests("pbtest2.proto", "unit_tests_proto2.gd", "proto2.gd")
 
 func _on_TestButton3_pressed() :
-	
+
 	execute_unit_tests("pbtest3.proto", "unit_tests_proto3.gd", "proto3.gd")

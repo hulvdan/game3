@@ -8,10 +8,10 @@ var extra : get = _extra_getter
 
 func _is_authorization_supported_getter():
 	return false
-	
+
 func _is_authorized_getter():
 	return false
-	
+
 func _id_getter():
 	return null
 

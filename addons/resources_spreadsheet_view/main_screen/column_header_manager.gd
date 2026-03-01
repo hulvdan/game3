@@ -67,7 +67,7 @@ func set_column_property(column_index : int, property_key : StringName, property
 	if !dict.has(editor_view.current_path):
 		dict[editor_view.current_path] = {}
 
-	dict = dict[editor_view.current_path]	
+	dict = dict[editor_view.current_path]
 	if !dict.has(columns[column_index]):
 		dict[columns[column_index]] = {}
 
@@ -80,7 +80,7 @@ func get_column_property(column_index : int, property_key : StringName, property
 	if !dict.has(editor_view.current_path):
 		return property_default
 
-	dict = dict[editor_view.current_path]	
+	dict = dict[editor_view.current_path]
 	if !dict.has(columns[column_index]):
 		return property_default
 
@@ -95,7 +95,7 @@ func select_column(column_index : int):
 func _update_column_sizes():
 	if grid.get_child_count() == 0:
 		return
-		
+
 	await get_tree().process_frame
 	var column_headers := get_children()
 
@@ -103,7 +103,7 @@ func _update_column_sizes():
 	if column_headers.size() != columns.size():
 		editor_view.refresh()
 		return
-	
+
 	var clip_text : bool = ProjectSettings.get_setting(TablesPluginSettingsClass.PREFIX + "clip_headers")
 	var visible_column_minsizes : Array[float] = []
 	for i in column_headers.size():

@@ -35,11 +35,11 @@ const PROTO_VERSION_CONST : String = "const PROTO_VERSION = "
 const PROTO_VERSION_DEFAULT : String = PROTO_VERSION_CONST + "0"
 
 class Document:
-	
+
 	func _init(doc_name : String, doc_text : String):
 		name = doc_name
 		text = doc_text
-	
+
 	var name : String
 	var text : String
 
@@ -60,7 +60,7 @@ class Helper:
 		var str_num : int
 		var column : int
 		var length : int
-	
+
 	static func str_pos(text : String, position : TokenPosition) -> StringPosition:
 		var cur_str : int = 1
 		var cur_col : int = 1
@@ -78,7 +78,7 @@ class Helper:
 				break
 			cur_col += 1
 		return StringPosition.new(res_str, res_col, res_length)
-	
+
 	static func text_pos(tokens : Array, index : int) -> TokenPosition:
 		var res_begin : int = 0
 		var res_end : int = 0
@@ -86,7 +86,7 @@ class Helper:
 			res_begin = tokens[index].position.begin
 			res_end = tokens[index].position.end
 		return TokenPosition.new(res_begin, res_end)
-	
+
 	static func error_string(file_name, col, row, error_text):
 		return file_name + ":" + str(col) + ":" + str(row) + ": error: " + error_text
 
@@ -100,7 +100,7 @@ class AnalyzeResult:
 	var syntax : Analysis.TranslationResult
 	var imports : Array = []
 	var doc : Document
-	
+
 	func soft_copy() -> AnalyzeResult:
 		var res : AnalyzeResult = AnalyzeResult.new()
 		res.classes = classes
@@ -115,14 +115,14 @@ class AnalyzeResult:
 		return res
 
 class Analysis:
-	
+
 	func _init(path : String, doc : Document):
 		path_dir = path
 		document = doc
-	
+
 	var document : Document
 	var path_dir : String
-	
+
 	const LEX = {
 		LETTER = "[A-Za-z]",
 		DIGIT_DEC = "[0-9]",
@@ -144,7 +144,7 @@ class Analysis:
 		QUOTE_SINGLE = "'",
 		QUOTE_DOUBLE = "\"",
 	}
-	
+
 	const TOKEN_IDENT : String = "(" + LEX.LETTER + "+" + "(" + LEX.LETTER + "|" + LEX.DIGIT_DEC + "|" + "_)*)"
 	const TOKEN_FULL_IDENT : String = TOKEN_IDENT + "{0,1}(\\." + TOKEN_IDENT + ")+"
 	const TOKEN_BRACKET_ROUND_LEFT : String = "(" + LEX.BRACKET_ROUND_LEFT + ")"
@@ -176,7 +176,7 @@ class Analysis:
 	const TOKEN_STRING_DOUBLE : String = "(\"" + TOKEN_CHAR_VALUE + "*?\")"
 	const TOKEN_COMMENT_SINGLE : String = "((//[^\\n\\r]*[^\\s])|//)"
 	const TOKEN_COMMENT_MULTI : String = "/\\*(.|[\\n\\r])*?\\*/"
-	
+
 	const TOKEN_SECOND_MESSAGE : String = "^message$"
 	const TOKEN_SECOND_SIMPLE_DATA_TYPE : String = "^(double|float|int32|int64|uint32|uint64|sint32|sint64|fixed32|fixed64|sfixed32|sfixed64|bool|string|bytes)$"
 	const TOKEN_SECOND_ENUM : String = "^enum$"
@@ -194,7 +194,7 @@ class Analysis:
 	const TOKEN_SECOND_ENUM_OPTION : String = "^allow_alias$"
 	const TOKEN_SECOND_QUALIFICATION : String = "^(custom_option|extensions)$"
 	const TOKEN_SECOND_FIELD_OPTION : String = "^packed$"
-	
+
 	class TokenEntrance:
 		func _init(i : int, b : int, e : int, t : String):
 			position = TokenPosition.new(b, e)
@@ -203,7 +203,7 @@ class Analysis:
 		var position : TokenPosition
 		var text : String
 		var id : int
-	
+
 	enum RANGE_STATE {
 		INCLUDE = 0,
 		EXCLUDE_LEFT = 1,
@@ -212,14 +212,14 @@ class Analysis:
 		EQUAL = 4,
 		ENTERS = 5
 	}
-	
+
 	class TokenRange:
 		func _init(b : int, e : int, s):
 			position = TokenPosition.new(b, e)
 			state = s
 		var position : TokenPosition
 		var state
-	
+
 	class Token:
 		var _regex : RegEx
 		var _entrance : TokenEntrance = null
@@ -228,14 +228,14 @@ class Analysis:
 		var _id : int
 		var _ignore : bool
 		var _clarification : String
-		
+
 		func _init(id : int, clarification : String, regex_str : String, ignore = false):
 			_id = id
 			_regex = RegEx.new()
 			_regex.compile(regex_str)
 			_clarification = clarification
 			_ignore = ignore
-			
+
 		func find(text : String, start : int) -> TokenEntrance:
 			_entrance = null
 			if !_regex.is_valid():
@@ -248,7 +248,7 @@ class Analysis:
 					return null
 				_entrance = TokenEntrance.new(_id, match_result.get_start(0), capture.length() - 1 + match_result.get_start(0), capture)
 			return _entrance
-			
+
 		func find_all(text : String) -> Array:
 			var pos : int = 0
 			clear()
@@ -256,41 +256,41 @@ class Analysis:
 				_entrances.append(_entrance)
 				pos = _entrance.position.end + 1
 			return _entrances
-		
+
 		func add_entrance(entrance) -> void:
 			_entrances.append(entrance)
-		
+
 		func clear() -> void:
 			_entrance = null
 			_entrances = []
 			_entrance_index = 0
-			
+
 		func get_entrances() -> Array:
 			return _entrances
-		
+
 		func remove_entrance(index) -> void:
 			if index < _entrances.size():
 				_entrances.remove_at(index)
-		
+
 		func get_index() -> int:
 			return _entrance_index
-			
+
 		func set_index(index : int) -> void:
 			if index < _entrances.size():
 				_entrance_index = index
 			else:
 				_entrance_index = 0
-		
+
 		func is_ignore() -> bool:
 			return _ignore
-			
+
 		func get_clarification() -> String:
 			return _clarification
-	
+
 	class TokenResult:
 		var tokens : Array = []
 		var errors : Array = []
-	
+
 	enum TOKEN_ID {
 		UNDEFINED = -1,
 		IDENT = 0,
@@ -314,7 +314,7 @@ class Analysis:
 		STRING_DOUBLE = 18,
 		COMMENT_SINGLE = 19,
 		COMMENT_MULTI = 20,
-		
+
 		MESSAGE = 21,
 		SIMPLE_DATA_TYPE = 22,
 		ENUM = 23,
@@ -332,10 +332,10 @@ class Analysis:
 		ENUM_OPTION = 35,
 		QUALIFICATION = 36,
 		FIELD_OPTION = 37,
-		
+
 		STRING = 38
 	}
-	
+
 	var TOKEN = {
 		TOKEN_ID.IDENT: Token.new(TOKEN_ID.IDENT, "Identifier", TOKEN_IDENT),
 		TOKEN_ID.FULL_IDENT: Token.new(TOKEN_ID.FULL_IDENT, "Full identifier", TOKEN_FULL_IDENT),
@@ -357,7 +357,7 @@ class Analysis:
 		TOKEN_ID.STRING_DOUBLE: Token.new(TOKEN_ID.STRING_DOUBLE, "\"String\"", TOKEN_STRING_DOUBLE),
 		TOKEN_ID.COMMENT_SINGLE: Token.new(TOKEN_ID.COMMENT_SINGLE, "//Comment", TOKEN_COMMENT_SINGLE),
 		TOKEN_ID.COMMENT_MULTI: Token.new(TOKEN_ID.COMMENT_MULTI, "/*Comment*/", TOKEN_COMMENT_MULTI),
-		
+
 		TOKEN_ID.MESSAGE: Token.new(TOKEN_ID.MESSAGE, "Message", TOKEN_SECOND_MESSAGE, true),
 		TOKEN_ID.SIMPLE_DATA_TYPE: Token.new(TOKEN_ID.SIMPLE_DATA_TYPE, "Data type", TOKEN_SECOND_SIMPLE_DATA_TYPE, true),
 		TOKEN_ID.ENUM: Token.new(TOKEN_ID.ENUM, "Enum", TOKEN_SECOND_ENUM, true),
@@ -375,10 +375,10 @@ class Analysis:
 		TOKEN_ID.ENUM_OPTION: Token.new(TOKEN_ID.ENUM_OPTION, "Enum option", TOKEN_SECOND_ENUM_OPTION, true),
 		TOKEN_ID.QUALIFICATION: Token.new(TOKEN_ID.QUALIFICATION, "Qualification", TOKEN_SECOND_QUALIFICATION, true),
 		TOKEN_ID.FIELD_OPTION: Token.new(TOKEN_ID.FIELD_OPTION, "Field option", TOKEN_SECOND_FIELD_OPTION, true),
-		
+
 		TOKEN_ID.STRING: Token.new(TOKEN_ID.STRING, "String", "", true)
 	}
-	
+
 	static func check_range(main : TokenEntrance, current : TokenEntrance) -> TokenRange:
 		if main.position.begin > current.position.begin:
 			if main.position.end > current.position.end:
@@ -426,7 +426,7 @@ class Analysis:
 		second_tokens.append(TOKEN[TOKEN_ID.ENUM_OPTION])
 		second_tokens.append(TOKEN[TOKEN_ID.QUALIFICATION])
 		second_tokens.append(TOKEN[TOKEN_ID.FIELD_OPTION])
-		
+
 		var ident_token : Token = TOKEN[TOKEN_ID.IDENT]
 		for sec_token in second_tokens:
 			var remove_indexes : Array = []
@@ -539,7 +539,7 @@ class Analysis:
 				space_index = -1
 		for i in range(remove_indexes.size()):
 			tokens.remove_at(remove_indexes[i] - i)
-	
+
 	#Analysis rule
 	enum AR {
 		MAYBE = 1,
@@ -570,7 +570,7 @@ class Analysis:
 		var space : int
 		var rule : int
 		var importance : bool
-	
+
 	var TEMPLATE_SYNTAX : Array = [
 		Callable(self, "desc_syntax"),
 		ASD.new(TOKEN_ID.SYNTAX),
@@ -578,7 +578,7 @@ class Analysis:
 		ASD.new(TOKEN_ID.STRING, SP.MAYBE, AR.MUST_ONE, true),
 		ASD.new(TOKEN_ID.SEMICOLON)
 	]
-	
+
 	var TEMPLATE_IMPORT : Array = [
 		Callable(self, "desc_import"),
 		ASD.new(TOKEN_ID.IMPORT, SP.MUST),
@@ -586,14 +586,14 @@ class Analysis:
 		ASD.new(TOKEN_ID.STRING, SP.MAYBE, AR.MUST_ONE, true),
 		ASD.new(TOKEN_ID.SEMICOLON)
 	]
-	
+
 	var TEMPLATE_PACKAGE : Array = [
 		Callable(self, "desc_package"),
 		ASD.new(TOKEN_ID.PACKAGE, SP.MUST),
 		ASD.new([TOKEN_ID.IDENT, TOKEN_ID.FULL_IDENT], SP.MAYBE, AR.OR, true),
 		ASD.new(TOKEN_ID.SEMICOLON)
 	]
-	
+
 	var TEMPLATE_OPTION : Array = [
 		Callable(self, "desc_option"),
 		ASD.new(TOKEN_ID.OPTION, SP.MUST),
@@ -602,7 +602,7 @@ class Analysis:
 		ASD.new([TOKEN_ID.STRING, TOKEN_ID.INT, TOKEN_ID.FLOAT, TOKEN_ID.LITERAL_BOOL], SP.MAYBE, AR.OR, true),
 		ASD.new(TOKEN_ID.SEMICOLON)
 	]
-	
+
 	var TEMPLATE_FIELD : Array = [
 		Callable(self, "desc_field"),
 		ASD.new(TOKEN_ID.FIELD_QUALIFICATION, SP.MUST, AR.MAYBE, true),
@@ -617,9 +617,9 @@ class Analysis:
 		ASD.new(TOKEN_ID.BRACKET_SQUARE_RIGHT, SP.MAYBE, AR.MAYBE_END),
 		ASD.new(TOKEN_ID.SEMICOLON)
 	]
-	
+
 	var TEMPLATE_FIELD_ONEOF : Array = TEMPLATE_FIELD
-	
+
 	var TEMPLATE_MAP_FIELD : Array = [
 		Callable(self, "desc_map_field"),
 		ASD.new(TOKEN_ID.MAP),
@@ -638,9 +638,9 @@ class Analysis:
 		ASD.new(TOKEN_ID.BRACKET_SQUARE_RIGHT, SP.MAYBE, AR.MAYBE_END),
 		ASD.new(TOKEN_ID.SEMICOLON)
 	]
-	
+
 	var TEMPLATE_MAP_FIELD_ONEOF : Array = TEMPLATE_MAP_FIELD
-	
+
 	var TEMPLATE_ENUM : Array = [
 		Callable(self, "desc_enum"),
 		ASD.new(TOKEN_ID.ENUM, SP.MUST),
@@ -657,45 +657,45 @@ class Analysis:
 		ASD.new(TOKEN_ID.SEMICOLON, SP.MAYBE, AR.ANY_END),
 		ASD.new(TOKEN_ID.BRACKET_CURLY_RIGHT)
 	]
-	
+
 	var TEMPLATE_MESSAGE_HEAD : Array = [
 		Callable(self, "desc_message_head"),
 		ASD.new(TOKEN_ID.MESSAGE, SP.MUST),
 		ASD.new(TOKEN_ID.IDENT, SP.MAYBE, AR.MUST_ONE, true),
 		ASD.new(TOKEN_ID.BRACKET_CURLY_LEFT)
 	]
-	
+
 	var TEMPLATE_MESSAGE_TAIL : Array = [
 		Callable(self, "desc_message_tail"),
 		ASD.new(TOKEN_ID.BRACKET_CURLY_RIGHT)
 	]
-	
+
 	var TEMPLATE_ONEOF_HEAD : Array = [
 		Callable(self, "desc_oneof_head"),
 		ASD.new(TOKEN_ID.ONEOF, SP.MUST),
 		ASD.new(TOKEN_ID.IDENT, SP.MAYBE, AR.MUST_ONE, true),
 		ASD.new(TOKEN_ID.BRACKET_CURLY_LEFT),
 	]
-	
+
 	var TEMPLATE_ONEOF_TAIL : Array = [
 		Callable(self, "desc_oneof_tail"),
 		ASD.new(TOKEN_ID.BRACKET_CURLY_RIGHT)
 	]
-	
+
 	var TEMPLATE_BEGIN : Array = [
 		null,
 		ASD.new(TOKEN_ID.SPACE, SP.NO, AR.MAYBE)
 	]
-	
+
 	var TEMPLATE_END : Array = [
 		null
 	]
-	
+
 	func get_token_id(tokens : Array, index : int) -> int:
 		if index < tokens.size():
 			return tokens[index].id
 		return TOKEN_ID.UNDEFINED
-	
+
 	enum COMPARE_STATE {
 		DONE = 0,
 		MISMATCH = 1,
@@ -711,7 +711,7 @@ class Analysis:
 		var state : int
 		var index : int
 		var description : String
-	
+
 	func check_space(tokens : Array, index : int, space) -> int:
 		if get_token_id(tokens, index) == TOKEN_ID.SPACE:
 			if space == SP.MAYBE:
@@ -724,30 +724,30 @@ class Analysis:
 			if space == SP.MUST:
 				return -2
 		return 0
-	
+
 	class IndexedToken:
 		func _init(t : TokenEntrance, i : int):
 			token = t
 			index = i
 		var token : TokenEntrance
 		var index : int
-	
+
 	func token_importance_checkadd(template : ASD, token : TokenEntrance, index : int, importance : Array) -> void:
 		if template.importance:
 			importance.append(IndexedToken.new(token, index))
-	
+
 	class CompareSettings:
 		func _init(ci : int, n : int, pi : int, pn : String = ""):
 			construction_index = ci
 			nesting = n
 			parent_index = pi
 			parent_name = pn
-			
+
 		var construction_index : int
 		var nesting : int
 		var parent_index : int
 		var parent_name : String
-	
+
 	func description_compare(template : Array, tokens : Array, index : int, settings : CompareSettings) -> TokenCompare:
 		var j : int = index
 		var space : int
@@ -852,7 +852,7 @@ class Analysis:
 			if !result.success:
 				return TokenCompare.new(COMPARE_STATE.ERROR_VALUE, result.error, result.description)
 		return TokenCompare.new(COMPARE_STATE.DONE, j)
-	
+
 	var DESCRIPTION : Array = [
 		TEMPLATE_BEGIN,				#0
 		TEMPLATE_SYNTAX,			#1
@@ -870,7 +870,7 @@ class Analysis:
 		TEMPLATE_ONEOF_TAIL,		#13
 		TEMPLATE_END				#14
 	]
-	
+
 	enum JUMP {
 		NOTHING = 0,				#nothing
 		SIMPLE = 1,					#simple jump
@@ -880,7 +880,7 @@ class Analysis:
 		MUST_NESTED_INCREMENT = 5,	#check: must be nested > 0, then nested increment
 		MUST_NESTED_DECREMENT = 6,	#nested decrement, then check: must be nested > 0
 	}
-	
+
 	var TRANSLATION_TABLE : Array = [
 	#   BEGIN	SYNTAX	IMPORT	PACKAGE	OPTION	FIELD	FIELD_O	MAP_F	MAP_F_O	ENUM	MES_H	MES_T	ONEOF_H	ONEOF_T	END
 	[	0, 		1, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0], #BEGIN
@@ -899,7 +899,7 @@ class Analysis:
 	[	0, 		0, 		0, 		0, 		0, 		4, 		0, 		4, 		0, 		1, 		2, 		3, 		5, 		0, 		1], #ONEOF_T
 	[	0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0, 		0]  #END
 	]
-	
+
 	class Construction:
 		func _init(b : int, e : int, d : int):
 			begin_token_index = b
@@ -908,7 +908,7 @@ class Analysis:
 		var begin_token_index : int
 		var end_token_index : int
 		var description : int
-	
+
 	class TranslationResult:
 		var constructions : Array = []
 		var done : bool = false
@@ -916,7 +916,7 @@ class Analysis:
 		var error_description_text : String = ""
 		var parse_token_index : int = 0
 		var error_token_index : int = 0
-	
+
 	func analyze_tokens(tokens : Array) -> TranslationResult:
 		var i : int = 0
 		var result : TranslationResult = TranslationResult.new()
@@ -1000,13 +1000,13 @@ class Analysis:
 				if !find:
 					break
 		return result
-	
+
 	enum CLASS_TYPE {
 		ENUM = 0,
 		MESSAGE = 1,
 		MAP = 2
 	}
-	
+
 	enum FIELD_TYPE {
 		UNDEFINED = -1,
 		INT32 = 0,
@@ -1028,19 +1028,19 @@ class Analysis:
 		MESSAGE = 16,
 		MAP = 17
 	}
-	
+
 	enum FIELD_QUALIFICATOR {
 		OPTIONAL = 0,
 		REQUIRED = 1,
 		REPEATED = 2,
 		RESERVED = 3
 	}
-	
+
 	enum FIELD_OPTION {
 		PACKED = 0,
 		NOT_PACKED = 1
 	}
-	
+
 	class ASTClass:
 		func _init(n : String, t : int, p : int, pn : String, o : String, ci : int):
 			name = n
@@ -1050,7 +1050,7 @@ class Analysis:
 			option = o
 			construction_index = ci
 			values = []
-		
+
 		var name : String
 		var type : int
 		var parent_index : int
@@ -1058,24 +1058,24 @@ class Analysis:
 		var option : String
 		var construction_index
 		var values : Array
-		
+
 		func copy() -> ASTClass:
 			var res : ASTClass = ASTClass.new(name, type, parent_index, parent_name, option, construction_index)
 			for v in values:
 				res.values.append(v.copy())
 			return res
-	
+
 	class ASTEnumValue:
 		func _init(n : String, v : String):
 			name = n
 			value = v
-		
+
 		var name : String
 		var value : String
-		
+
 		func copy() -> ASTEnumValue:
 			return ASTEnumValue.new(name, value)
-	
+
 	class ASTField:
 		func _init(t, n : String, tn : String, p : int, q : int, o : int, ci : int, mf : bool):
 			tag = t
@@ -1086,7 +1086,7 @@ class Analysis:
 			option = o
 			construction_index = ci
 			is_map_field = mf
-		
+
 		var tag
 		var name : String
 		var type_name : String
@@ -1097,54 +1097,54 @@ class Analysis:
 		var is_map_field : bool
 		var field_type : int = FIELD_TYPE.UNDEFINED
 		var type_class_id : int = -1
-		
+
 		func copy() -> ASTField:
 			var res : ASTField = ASTField.new(tag, name, type_name, parent_class_id, qualificator, option, construction_index, is_map_field)
 			res.field_type = field_type
 			res.type_class_id = type_class_id
 			return res
-	
+
 	enum AST_GROUP_RULE {
 		ONEOF = 0,
 		ALL = 1
 	}
-	
+
 	class ASTFieldGroup:
 		func _init(n : String, pi : int, r : int):
 			name = n
 			parent_class_id = pi
 			rule = r
 			opened = true
-			
+
 		var name : String
 		var parent_class_id : int
 		var rule : int
 		var field_indexes : Array = []
 		var opened : bool
-		
+
 		func copy() -> ASTFieldGroup:
 			var res : ASTFieldGroup = ASTFieldGroup.new(name, parent_class_id, rule)
 			res.opened = opened
 			for fi in field_indexes:
 				res.field_indexes.append(fi)
 			return res
-	
+
 	class ASTImport:
 		func _init(a_path : String, a_public : bool, sha : String):
 			path = a_path
 			public = a_public
 			sha256 = sha
-			
+
 		var path : String
 		var public : bool
 		var sha256 : String
-	
+
 	var class_table : Array = []
 	var field_table : Array = []
 	var group_table : Array = []
 	var import_table : Array = []
 	var proto_version : int = 0
-	
+
 	class DescriptionResult:
 		func _init(s : bool = true, e = null, d : String = ""):
 			success = s
@@ -1153,10 +1153,10 @@ class Analysis:
 		var success : bool
 		var error
 		var description : String
-	
+
 	static func get_text_from_token(string_token : TokenEntrance) -> String:
 		return string_token.text.substr(1, string_token.text.length() - 2)
-	
+
 	func desc_syntax(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		var result : DescriptionResult = DescriptionResult.new()
 		var s : String = get_text_from_token(indexed_tokens[0].token)
@@ -1169,7 +1169,7 @@ class Analysis:
 			result.error = indexed_tokens[0].index
 			result.description = "Unspecified version of the protocol. Use \"proto2\" or \"proto3\" syntax string."
 		return result
-		
+
 	func desc_import(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		var result : DescriptionResult = DescriptionResult.new()
 		var offset : int = 0
@@ -1198,23 +1198,23 @@ class Analysis:
 			result.error = indexed_tokens[offset].index
 			result.description = "Import file '" + f_name + "' not found."
 		return result
-		
+
 	func desc_package(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		printerr("UNRELEASED desc_package: ", indexed_tokens.size(), ", nesting: ", settings.nesting)
 		var result : DescriptionResult = DescriptionResult.new()
 		return result
-		
+
 	func desc_option(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		printerr("UNRELEASED desc_option: ", indexed_tokens.size(), ", nesting: ", settings.nesting)
 		var result : DescriptionResult = DescriptionResult.new()
 		return result
-	
+
 	func desc_field(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		var result : DescriptionResult = DescriptionResult.new()
 		var qualifcator : int = FIELD_QUALIFICATOR.OPTIONAL
 		var option : int
 		var offset : int = 0
-		
+
 		if proto_version == 3:
 			option = FIELD_OPTION.PACKED
 			if indexed_tokens[offset].token.id == TOKEN_ID.FIELD_QUALIFICATION:
@@ -1246,7 +1246,7 @@ class Analysis:
 		var type_name : String = indexed_tokens[offset].token.text; offset += 1
 		var field_name : String = indexed_tokens[offset].token.text; offset += 1
 		var tag : String = indexed_tokens[offset].token.text; offset += 1
-		
+
 		if indexed_tokens.size() == offset + 2:
 			if indexed_tokens[offset].token.text == "packed":
 				offset += 1
@@ -1259,7 +1259,7 @@ class Analysis:
 				result.error = indexed_tokens[offset].index
 				result.description = "Undefined field option."
 				return result
-				
+
 		if group_table.size() > 0:
 			if group_table[group_table.size() - 1].opened:
 				if indexed_tokens[0].token.id == TOKEN_ID.FIELD_QUALIFICATION:
@@ -1270,18 +1270,18 @@ class Analysis:
 				group_table[group_table.size() - 1].field_indexes.append(field_table.size())
 		field_table.append(ASTField.new(tag, field_name, type_name, settings.parent_index, qualifcator, option, settings.construction_index, false))
 		return result
-	
+
 	func desc_map_field(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		var result : DescriptionResult = DescriptionResult.new()
 		var qualifcator : int = FIELD_QUALIFICATOR.REPEATED
 		var option : int
 		var offset : int = 0
-		
+
 		if proto_version == 3:
 			option = FIELD_OPTION.PACKED
 		if proto_version == 2:
 			option = FIELD_OPTION.NOT_PACKED
-			
+
 		var key_type_name : String = indexed_tokens[offset].token.text; offset += 1
 		if key_type_name == "float" || key_type_name == "double" || key_type_name == "bytes":
 			result.success = false
@@ -1290,7 +1290,7 @@ class Analysis:
 		var type_name : String  = indexed_tokens[offset].token.text; offset += 1
 		var field_name : String  = indexed_tokens[offset].token.text; offset += 1
 		var tag : String = indexed_tokens[offset].token.text; offset += 1
-		
+
 		if indexed_tokens.size() == offset + 2:
 			if indexed_tokens[offset].token.text == "packed":
 				offset += 1
@@ -1302,19 +1302,19 @@ class Analysis:
 				result.success = false
 				result.error = indexed_tokens[offset].index
 				result.description = "Undefined field option."
-		
+
 		if group_table.size() > 0:
 			if group_table[group_table.size() - 1].opened:
 				group_table[group_table.size() - 1].field_indexes.append(field_table.size())
-				
+
 		class_table.append(ASTClass.new("map_type_" + field_name, CLASS_TYPE.MAP, settings.parent_index, settings.parent_name, "", settings.construction_index))
 		field_table.append(ASTField.new(tag, field_name, "map_type_" + field_name, settings.parent_index, qualifcator, option, settings.construction_index, false))
-		
+
 		field_table.append(ASTField.new(1, "key", key_type_name, class_table.size() - 1, FIELD_QUALIFICATOR.OPTIONAL, option, settings.construction_index, true))
 		field_table.append(ASTField.new(2, "value", type_name, class_table.size() - 1, FIELD_QUALIFICATOR.OPTIONAL, option, settings.construction_index, true))
-		
+
 		return result
-	
+
 	func desc_enum(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		var result : DescriptionResult = DescriptionResult.new()
 		var option : String = ""
@@ -1343,23 +1343,23 @@ class Analysis:
 			value = ASTEnumValue.new(indexed_tokens[offset].token.text, indexed_tokens[offset + 1].token.text)
 			enum_class.values.append(value)
 			offset += 2
-		
+
 		class_table.append(enum_class)
 		return result
-		
+
 	func desc_message_head(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		var result : DescriptionResult = DescriptionResult.new()
 		class_table.append(ASTClass.new(indexed_tokens[0].token.text, CLASS_TYPE.MESSAGE, settings.parent_index, settings.parent_name, "", settings.construction_index))
 		settings.parent_index = class_table.size() - 1
 		settings.parent_name = settings.parent_name + "." + indexed_tokens[0].token.text
 		return result
-		
+
 	func desc_message_tail(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		settings.parent_index = class_table[settings.parent_index].parent_index
 		settings.parent_name = class_table[settings.parent_index + 1].parent_name
 		var result : DescriptionResult = DescriptionResult.new()
 		return result
-	
+
 	func desc_oneof_head(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		var result : DescriptionResult = DescriptionResult.new()
 		for g in group_table:
@@ -1370,12 +1370,12 @@ class Analysis:
 				return result
 		group_table.append(ASTFieldGroup.new(indexed_tokens[0].token.text, settings.parent_index, AST_GROUP_RULE.ONEOF))
 		return result
-		
+
 	func desc_oneof_tail(indexed_tokens : Array, settings : CompareSettings) -> DescriptionResult:
 		group_table[group_table.size() - 1].opened = false
 		var result : DescriptionResult = DescriptionResult.new()
 		return result
-		
+
 	func analyze() -> AnalyzeResult:
 		var analyze_result : AnalyzeResult = AnalyzeResult.new()
 		analyze_result.doc = document
@@ -1417,14 +1417,14 @@ class Analysis:
 		return analyze_result
 
 class Semantic:
-	
+
 	var class_table : Array
 	var field_table : Array
 	var group_table : Array
 	var syntax : Analysis.TranslationResult
 	var tokens : Array
 	var document : Document
-	
+
 	func _init(analyze_result : AnalyzeResult):
 		class_table = analyze_result.classes
 		field_table = analyze_result.fields
@@ -1432,15 +1432,15 @@ class Semantic:
 		syntax = analyze_result.syntax
 		tokens = analyze_result.tokens
 		document = analyze_result.doc
-		
-	
+
+
 	enum CHECK_SUBJECT {
 		CLASS_NAME = 0,
 		FIELD_NAME = 1,
 		FIELD_TAG_NUMBER = 2,
 		FIELD_TYPE = 3
 	}
-	
+
 	var STRING_FIELD_TYPE = {
 		"int32": Analysis.FIELD_TYPE.INT32,
 		"sint32": Analysis.FIELD_TYPE.SINT32,
@@ -1459,19 +1459,19 @@ class Semantic:
 		"bytes": Analysis.FIELD_TYPE.BYTES,
 		"map": Analysis.FIELD_TYPE.MAP
 	}
-	
+
 	class CheckResult:
 		func _init(mci : int, aci : int, ti : int, s : int):
 			main_construction_index = mci
 			associated_construction_index = aci
 			table_index = ti
 			subject = s
-			
+
 		var main_construction_index: int = -1
 		var associated_construction_index: int = -1
 		var table_index: int = -1
 		var subject : int
-	
+
 	func check_class_names() -> Array:
 		var result : Array = []
 		for i in range(class_table.size()):
@@ -1483,7 +1483,7 @@ class Semantic:
 					result.append(check)
 					break
 		return result
-	
+
 	func check_field_names() -> Array:
 		var result : Array = []
 		for i in range(field_table.size()):
@@ -1500,32 +1500,32 @@ class Semantic:
 						result.append(check)
 						break
 		return result
-	
+
 	func find_full_class_name(the_class_name : String) -> int:
 		for i in range(class_table.size()):
 			if the_class_name == class_table[i].parent_name + "." + class_table[i].name:
 				return i
 		return -1
-	
+
 	func find_class_name(the_class_name : String) -> int:
 		for i in range(class_table.size()):
 			if the_class_name == class_table[i].name:
 				return i
 		return -1
-	
+
 	func get_class_childs(class_index : int) -> Array:
 		var result : Array = []
 		for i in range(class_table.size()):
 			if class_table[i].parent_index == class_index:
 				result.append(i)
 		return result
-	
+
 	func find_in_childs(the_class_name : String, child_indexes : Array) -> int:
 		for c in child_indexes:
 			if the_class_name == class_table[c].name:
 				return c
 		return -1
-	
+
 	func determine_field_types() -> Array:
 		var result : Array = []
 		for f in field_table:
@@ -1577,13 +1577,13 @@ class Semantic:
 					else:
 						result.append(CheckResult.new(field_table[i].construction_index, field_table[i].construction_index, i, CHECK_SUBJECT.FIELD_TYPE))
 		return result
-	
+
 	func check_constructions() -> Array:
 		var cl : Array = check_class_names()
 		var fl : Array = check_field_names()
 		var ft : Array = determine_field_types()
 		return cl + fl + ft
-		
+
 	func check() -> bool:
 		var check_result : Array = check_constructions()
 		if check_result.size() == 0:
@@ -1616,31 +1616,31 @@ class Semantic:
 		return false
 
 class Translator:
-	
+
 	var class_table : Array
 	var field_table : Array
 	var group_table : Array
 	var proto_version : int
-	
+
 	func _init(analyzer_result : AnalyzeResult):
 		class_table = analyzer_result.classes
 		field_table = analyzer_result.fields
 		group_table = analyzer_result.groups
 		proto_version = analyzer_result.version
-	
+
 	func tabulate(text : String, nesting : int) -> String:
 		var tab : String = ""
 		for i in range(nesting):
 			tab += "\t"
 		return tab + text
-	
+
 	func default_dict_text() -> String:
 		if proto_version == 2:
 			return "DEFAULT_VALUES_2"
 		elif proto_version == 3:
 			return "DEFAULT_VALUES_3"
 		return "TRANSLATION_ERROR"
-	
+
 	func generate_field_type(field : Analysis.ASTField) -> String:
 		var text : String = "PB_DATA_TYPE."
 		if field.field_type == Analysis.FIELD_TYPE.INT32:
@@ -1680,7 +1680,7 @@ class Translator:
 		elif field.field_type == Analysis.FIELD_TYPE.MAP:
 			return text + "MAP"
 		return text
-	
+
 	func generate_field_rule(field : Analysis.ASTField) -> String:
 		var text : String = "PB_RULE."
 		if field.qualificator == Analysis.FIELD_QUALIFICATOR.OPTIONAL:
@@ -1692,7 +1692,7 @@ class Translator:
 		elif field.qualificator == Analysis.FIELD_QUALIFICATOR.RESERVED:
 			return text + "RESERVED"
 		return text
-	
+
 	func generate_gdscript_type(field : Analysis.ASTField) -> String:
 		if field.field_type == Analysis.FIELD_TYPE.MESSAGE:
 			var type_name : String = class_table[field.type_class_id].parent_name + "." + class_table[field.type_class_id].name
@@ -1773,9 +1773,9 @@ class Translator:
 		elif f.field_type == Analysis.FIELD_TYPE.MAP:
 			text += tabulate("service.func_ref = Callable(self, \"add_empty_" + f.name + "\")\n", nesting)
 		text += tabulate("data[" + field_name + ".tag] = service\n", nesting)
-		
+
 		return text
-	
+
 	func generate_group_clear(field_index : int, nesting : int) -> String:
 		for g in group_table:
 			var text : String = ""
@@ -1791,7 +1791,7 @@ class Translator:
 			if find:
 				return text
 		return ""
-	
+
 	func generate_has_oneof(field_index : int, nesting : int) -> String:
 		for g in group_table:
 			var text : String = ""
@@ -1803,7 +1803,7 @@ class Translator:
 						text += tabulate("return data[" + field_table[i].tag + "].state == PB_SERVICE_STATE.FILLED\n", nesting)
 						return text
 		return ""
-	
+
 	func generate_field(field_index : int, nesting : int) -> String:
 		var text : String = ""
 		var f : Analysis.ASTField = field_table[field_index]
@@ -2025,9 +2025,9 @@ class Translator:
 			nesting -= 1
 			text += tabulate("}\n", nesting)
 			text += tabulate("\n", nesting)
-			
+
 		return text
-	
+
 	func generate_class_services(nesting : int) -> String:
 		var text : String = ""
 		text += tabulate("func _to_string() -> String:\n", nesting)
@@ -2066,25 +2066,25 @@ class Translator:
 		nesting -= 1
 		text += tabulate("return result\n", nesting)
 		return text
-	
+
 	func translate(file_name : String, core_file_name : String) -> bool:
 
 		var file : FileAccess = FileAccess.open(file_name, FileAccess.WRITE)
 		if file == null:
 			printerr("File: '", file_name, "' save error.")
 			return false
-		
+
 		if !FileAccess.file_exists(core_file_name):
 			printerr("File: '", core_file_name, "' not found.")
 			return false
-			
+
 		var core_file : FileAccess = FileAccess.open(core_file_name, FileAccess.READ)
 		if core_file == null:
 			printerr("File: '", core_file_name, "' read error.")
 			return false
 		var core_text : String = core_file.get_as_text()
 		core_file.close()
-		
+
 		var text : String = ""
 		var nesting : int = 0
 		core_text = core_text.replace(PROTO_VERSION_DEFAULT, PROTO_VERSION_CONST + str(proto_version))
@@ -2109,24 +2109,24 @@ class Translator:
 			printerr("File: '", file_name, "' save error.")
 			return false
 		return true
-	
+
 
 class ImportFile:
 	func _init(sha : String, a_path : String, a_parent : int):
 		sha256 = sha
 		path = a_path
 		parent_index = a_parent
-		
+
 	var sha256 : String
 	var path : String
 	var parent_index : int
 
 func parse_all(analyzes : Dictionary, imports : Array, path : String, full_name : String, parent_index : int) -> bool:
-	
+
 	if !FileAccess.file_exists(full_name):
 		printerr(full_name, ": not found.")
 		return false
-		
+
 	var file : FileAccess = FileAccess.open(full_name, FileAccess.READ)
 	if file == null:
 		printerr(full_name, ": read error.")
@@ -2134,7 +2134,7 @@ func parse_all(analyzes : Dictionary, imports : Array, path : String, full_name 
 	var doc : Document = Document.new(full_name, file.get_as_text())
 	var sha : String = file.get_sha256(full_name)
 	file.close()
-	
+
 	if !analyzes.has(sha):
 		print(full_name, ": parsing.")
 		var analysis : Analysis = Analysis.new(path, doc)
@@ -2208,7 +2208,7 @@ func semantic_all(analyzes : Dictionary, imports : Array)-> bool:
 			printerr(analyzes[k].doc.name, ": analysis error.")
 			return false
 	return true
-	
+
 func translate_all(analyzes : Dictionary, file_name : String, core_file_name : String) -> bool:
 	var first_key : String = analyzes.keys()[0]
 	var analyze : AnalyzeResult = analyzes[first_key]
@@ -2230,7 +2230,7 @@ func work(path : String, in_file : String, out_file : String, core_file : String
 	var in_full_name : String = path + in_file
 	var imports : Array = []
 	var analyzes : Dictionary = {}
-	
+
 	print("Compiling source: '", in_full_name, "', output: '", out_file, "'.")
 	print("\n1. Parsing:")
 	if parse_all(analyzes, imports, path, in_full_name, -1):

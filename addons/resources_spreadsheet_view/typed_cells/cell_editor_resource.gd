@@ -26,7 +26,7 @@ func set_value(node : Control, value):
 		node.editor_description = ""
 
 	if !value is Resource: return
-	
+
 	node.editor_description = value.resource_path
 	label_node.text = _resource_to_string(value, ProjectSettings.get_setting(TablesPluginSettingsClass.PREFIX + "resource_cell_label_mode", 0))
 
@@ -37,7 +37,7 @@ func set_value(node : Control, value):
 	else:
 		preview_node.visible = false
 		previewer.queue_resource_preview(value.resource_path, self, &"_on_preview_loaded", node)
-		
+
 	preview_node.custom_minimum_size = Vector2.ONE * ProjectSettings.get_setting(
 		TablesPluginSettingsClass.PREFIX + "resource_preview_size"
 	)

@@ -30,7 +30,7 @@ static func import_as_arrays(import_data) -> Array:
 	if line[1].begins_with(" "):
 		for i in line.size():
 			line[i] = line[i].trim_prefix(" ")
-		
+
 		text_lines[0] = line
 		space_after_delimeter = true
 		import_data.delimeter += " "

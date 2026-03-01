@@ -37,13 +37,13 @@ var _utils = load("res://addons/playgama_bridge/utils.gd").new()
 func authorize(options = null, callback = null):
 	if _authorize_callback != null:
 		return
-	
+
 	_authorize_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_player.authorize(js_options).then(_js_authorize_then).catch(_js_authorize_catch)
 
 

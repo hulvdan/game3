@@ -30,10 +30,10 @@ func is_available(storage_type):
 func get(key, callback = null, storage_type = null):
 	if _is_getting:
 		return
-	
+
 	if callback == null:
 		return
-	
+
 	var js_key
 	var key_type = typeof(key)
 	match key_type:
@@ -45,16 +45,16 @@ func get(key, callback = null, storage_type = null):
 				js_key.push(k)
 		_:
 			return
-	
+
 	_is_getting = true
 	_get_callback = callback
-	
+
 	_js_storage.get(js_key, storage_type, false).then(_js_get_then).catch(_js_get_catch)
 
 func set(key, value, callback = null, storage_type = null):
 	if _is_setting:
 		return
-	
+
 	var js_key
 	var js_value
 	var key_type = typeof(key)
@@ -71,7 +71,7 @@ func set(key, value, callback = null, storage_type = null):
 				js_value.push(v)
 		_:
 			return
-	
+
 	_is_setting = true
 	_set_callback = callback
 	_js_storage.set(js_key, js_value, storage_type).then(_js_set_then).catch(_js_set_catch)
@@ -79,7 +79,7 @@ func set(key, value, callback = null, storage_type = null):
 func delete(key, callback = null, storage_type = null):
 	if _is_deleting:
 		return
-	
+
 	var js_key
 	var key_type = typeof(key)
 	match key_type:
@@ -91,7 +91,7 @@ func delete(key, callback = null, storage_type = null):
 				js_key.push(k)
 		_:
 			return
-	
+
 	_is_deleting = true
 	_delete_callback = callback
 	_js_storage.delete(js_key, storage_type).then(_js_delete_then).catch(_js_delete_catch)
@@ -104,7 +104,7 @@ func _on_js_get_then(args):
 	_is_getting = false
 	if _get_callback == null:
 		return
-	
+
 	var data = args[0]
 	var data_type = typeof(data)
 	match data_type:

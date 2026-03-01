@@ -44,13 +44,13 @@ func _init(proto, path : String, version : String):
 
 
 class BinCheckResult:
-	
+
 	func _init(bs : String, rs : String, ra : Array, r : bool):
 			binary_string = bs
 			result_string = rs
 			reference_array = ra
 			result = r
-	
+
 	var binary_string : String
 	var result_string : String
 	var reference_array : Array
@@ -112,7 +112,7 @@ func exec(test, save_to_file, test_names) -> bool:
 				out_file.close()
 			else:
 				print("failed write out file: ", out_file_name)
-				
+
 		# compare bin dumps
 		var iteration = 0
 		var bin_result = binary_check(test_name[FUNC_NAME], godot_rv)
@@ -122,7 +122,7 @@ func exec(test, save_to_file, test_names) -> bool:
 				bin_result = binary_check(test_name[FUNC_NAME] + "_" + str(test_name[iteration + 1]), godot_rv)
 				if bin_result.result:
 					break
-		
+
 		if bin_result.result:
 			success_pack_counter += 1
 
@@ -130,7 +130,7 @@ func exec(test, save_to_file, test_names) -> bool:
 		print("[bin actual     ] ", str_raw_array(godot_rv))
 		print("[bin expected   ] ", bin_result.binary_string)
 		print("[bin compare    ] ", bin_result.result_string)
-		
+
 		var restored_object_godot = test_name[CLASS_NAME].new()
 		var error_godot = restored_object_godot.from_bytes(godot_rv)
 		if object_equal(packed_object, restored_object_godot):
@@ -141,7 +141,7 @@ func exec(test, save_to_file, test_names) -> bool:
 				print("[unpack godobuf ] FAIL: ", err_to_str(error_godot))
 		else:
 			print("[unpack godobuf ] FAIL: packed_object & restored_object not equals")
-		
+
 		if bin_result.reference_array != null:
 			var restored_object_erl = test_name[CLASS_NAME].new()
 			var error_erl = restored_object_erl.from_bytes(bin_result.reference_array)
@@ -160,7 +160,7 @@ func exec(test, save_to_file, test_names) -> bool:
 	print("godobuf & protobuf compare success done " + str(success_pack_counter) + " of " + str(tests_counter))
 	print("godobuf unpack success done " + str(godot_success_unpack_counter) + " of " + str(tests_counter))
 	print("protobuf unpack success done " + str(protobuf_success_unpack_counter) + " of " + str(tests_counter))
-	
+
 	return success_pack_counter == tests_counter \
 	 && godot_success_unpack_counter == tests_counter \
 	 && protobuf_success_unpack_counter == tests_counter
@@ -170,30 +170,30 @@ func object_equal(packed_object, restored_object):
 		# checks for existence of a key
 		if !restored_object.data.has(data_key):
 			return false
-		
+
 		var po_rule = packed_object.data[data_key].field.rule
 		var ro_rule = restored_object.data[data_key].field.rule
-		
+
 		var po_value = packed_object.data[data_key].field.value
 		var ro_value = restored_object.data[data_key].field.value
-		
+
 		if po_value == null && ro_value == null:
 			return true
-		
+
 		if (po_value == null && ro_value != null) \
 			|| (po_value != null && ro_value == null):
 			return false
-		
+
 		var po_type = packed_object.data[data_key].field.type
 		var ro_type = restored_object.data[data_key].field.type
-		
+
 		# checks for existence of a repeated
 		if po_rule != ro_rule:
 			return false
 		# checks for type matching
 		if po_type != ro_type:
 			return false
-			
+
 		# differents checks according the types
 		if po_type == P.PB_DATA_TYPE.INT32 			\
 			|| po_type == P.PB_DATA_TYPE.SINT32 	\
@@ -210,7 +210,7 @@ func object_equal(packed_object, restored_object):
 			|| po_type == P.PB_DATA_TYPE.SFIXED64	\
 			|| po_type == P.PB_DATA_TYPE.DOUBLE		\
 			|| po_type == P.PB_DATA_TYPE.STRING:
-			
+
 			# checks objects values
 			if po_rule == P.PB_RULE.REPEATED:
 				# ...for repeated fields
@@ -256,7 +256,7 @@ func object_equal(packed_object, restored_object):
 			var ro_map = P.PBPacker.construct_map(ro_value)
 			if po_map.size() != po_map.size():
 				return false
-			
+
 			for key in po_map.keys():
 				var po_found = -1
 				for i in range(po_value.size() - 1, -1, -1):
@@ -265,19 +265,19 @@ func object_equal(packed_object, restored_object):
 							return false
 						po_found = i
 						break
-				
+
 				if po_found == -1:
 					return false
-					
+
 				var ro_found = -1
 				for i in range(ro_value.size() - 1, -1, -1):
 					if key == ro_value[i].get_key():
 						ro_found = i
 						break
-				
+
 				if ro_found == -1:
 					return false
-				
+
 				if !object_equal(po_value[po_found], ro_value[ro_found]):
 					return false
 		elif po_type == P.PB_DATA_TYPE.ONEOF:
@@ -307,12 +307,12 @@ func err_to_str(err_code):
 		return "REQUIRED_FIELDS(" + str(err_code) + ")"
 	else:
 		return "UNKNOWN(" + str(err_code) + ")"
-		
-		
+
+
 static func str_raw_array(arr):
 	if arr.size() == 0:
 		return "[]"
-		
+
 	var res = "["
 	for i in range(arr.size()):
 		var hex : String = "%X" % arr[i]

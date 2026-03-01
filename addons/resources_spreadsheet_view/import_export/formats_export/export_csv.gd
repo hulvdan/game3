@@ -22,7 +22,7 @@ static func export_to_file(entries_array : Array, column_names : Array, into_pat
 			line[j] = String(column_names[j])
 			if space_after_delimiter and j != 0:
 				line[j] = " " + line[j]
-		
+
 		file.store_csv_line(line, import_data.delimeter[0])
 
 	for i in entries_array.size():

@@ -52,7 +52,7 @@ func add_menu(display_text, sig_to_emit, tooltip=''):
 
 
 func make_menu():
-	add_menu("Toggle Windowed", toggle_windowed, 
+	add_menu("Toggle Windowed", toggle_windowed,
 		'Toggle GUT in the dock or a floating window')
 	add_menu("Show/Hide GUT", show_gut, '')
 

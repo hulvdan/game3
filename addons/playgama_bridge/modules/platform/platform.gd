@@ -48,7 +48,7 @@ func _is_get_all_games_supported_getter():
 
 func _is_get_game_by_id_supported_getter():
 	return _js_platform.isGetGameByIdSupported
-	
+
 func _init(js_platform):
 	_js_platform = js_platform
 	_js_platform.on('audio_state_changed', _js_on_audio_state_changed)
@@ -60,7 +60,7 @@ func send_message(message):
 func get_server_time(callback):
 	if _get_server_time_callback != null:
 		return
-	
+
 	_get_server_time_callback = callback
 	_js_platform.getServerTime().then(_js_get_server_time_then).catch(_js_get_server_time_catch)
 
@@ -90,7 +90,7 @@ func _on_js_get_server_time_catch(args):
 func get_all_games(callback):
 	if _get_all_games_callback != null:
 		return
-		
+
 	_get_all_games_callback = callback
 	_js_platform.getAllGames().then(_js_get_all_games_then).catch(_js_get_all_games_catch)
 
@@ -116,15 +116,15 @@ func _on_get_all_games_catch(args):
 func get_game_by_id(options = null, callback = null):
 	if _get_game_by_id_callback != null:
 		return
-	
+
 	_get_game_by_id_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_platform.getGameById(js_options).then(_js_get_game_by_id_then).catch(_js_get_game_by_id_catch)
-	
+
 func _on_get_game_by_id_then(args):
 	if _get_game_by_id_callback != null:
 		var data = args[0]

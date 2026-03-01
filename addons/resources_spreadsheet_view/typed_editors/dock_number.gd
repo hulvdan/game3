@@ -46,10 +46,10 @@ func _ready():
 func try_edit_value(value, type, property_hint) -> bool:
 	if type != TYPE_FLOAT and type != TYPE_INT:
 		return false
-	
+
 	_stored_value = value
 	_value_label.text = str(value)
-	
+
 	_stored_value_is_int = type != TYPE_FLOAT
 	_button_grid.columns = 5 if _stored_value_is_int else 6
 	_button_grid.get_child(0).visible = !_stored_value_is_int
@@ -103,7 +103,7 @@ func _increment_values_custom(positive : bool, multiplier : bool):
 			cell_values[i] *= value
 			if _stored_value_is_int:
 				cell_values[i] = int(cell_values[i])
-	
+
 		sheet.set_edited_cells_values(cell_values)
 		_value_label.text = str(_stored_value)
 
@@ -119,7 +119,7 @@ func _on_NumberPanel_gui_input(event):
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			if _mouse_down:
 				Input.warp_mouse(_value_label.global_position + _value_label.size * 0.5)
-				
+
 			_increment_values(_mouse_drag_increment)
 			_mouse_down = false
 
@@ -144,10 +144,10 @@ func _fill_sequence(arr : Array, add : bool = false) -> Array:
 	var start := float(_sequence_gen_inputs.get_child(0).text)
 	var end = null
 	var step = null
-		
+
 	if _sequence_gen_inputs.get_node("Step").text.is_valid_float():
 		step = float(_sequence_gen_inputs.get_node("Step").text)
-	
+
 	if _sequence_gen_inputs.get_node("End").text.is_valid_float():
 		end = float(_sequence_gen_inputs.get_node("End").text)
 

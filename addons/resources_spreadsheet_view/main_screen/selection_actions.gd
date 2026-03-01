@@ -43,7 +43,7 @@ func open(cells : Array, pin_to_cell : bool = false, from_leftclick : bool = fal
 		hide()
 		cell = null
 		return
-	
+
 	if pin_to_cell:
 		cell = selection.get_cell_node_from_position(cells[-1])
 		set_deferred(&"global_position", Vector2(
@@ -89,7 +89,7 @@ func _input(event : InputEvent):
 			if event.keycode == KEY_D:
 				_on_Duplicate_pressed()
 				return
-			
+
 			# Rename
 			if event.keycode == KEY_R:
 				_on_Rename_pressed()
@@ -156,7 +156,7 @@ func _show_editbox(action):
 			editbox_label.text = "Really delete selected rows? (Irreversible!!!)"
 			editbox_input.text = editor_view.get_last_selected_row()\
 				.resource_path.get_file().get_basename()
-	
+
 	show()
 	editbox_input.grab_focus()
 	editbox_input.caret_column = 999999999

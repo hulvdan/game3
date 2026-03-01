@@ -17,7 +17,7 @@ func _minimum_delay_between_interstitial_getter():
 
 func _is_banner_supported_getter():
 	return true
-	
+
 func _banner_state_getter():
 	return _banner_state
 
@@ -32,7 +32,7 @@ func _is_rewarded_supported_getter():
 
 func _rewarded_state_getter():
 	return _rewarded_state
-	
+
 func _rewarded_placement_getter():
 	return _rewarded_placement
 

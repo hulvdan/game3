@@ -134,7 +134,7 @@ func select_cells_to(cell : Vector2i):
 	var column_index := get_cell_column(cell)
 	if edited_cells.size() == 0 or column_index != get_cell_column(edited_cells[-1]):
 		return
-	
+
 	var row_start := get_cell_row(edited_cells[-1])
 	var row_end := get_cell_row(cell)
 	var edge_shift := -1 if row_start > row_end else 1
@@ -246,7 +246,7 @@ func _selection_changed():
 	cells_selected.emit(edited_cells)
 
 
-func _set_visible_selected(state : bool):	
+func _set_visible_selected(state : bool):
 	for x in edited_cells:
 		var cell_node := get_cell_node_from_position(x)
 		if cell_node != null:
@@ -300,7 +300,7 @@ func _on_inspector_property_edited(property : StringName):
 	if !editor_view.is_visible_in_tree(): return
 	if inspector_resource != editor_view.editor_plugin.get_editor_interface().get_inspector().get_edited_object():
 		return
-	
+
 	if editor_view.columns[get_cell_column(edited_cells[0])] != property:
 		var columns := editor_view.columns
 		var previously_edited := edited_cells.duplicate()

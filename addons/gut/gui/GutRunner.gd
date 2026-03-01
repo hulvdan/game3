@@ -184,7 +184,7 @@ func run_tests(show_gui=true):
 			_gut_layer.add_child(gut)
 		else:
 			add_child(gut)
-	
+
 	if(!gut.end_run.is_connected(_on_tests_finished)):
 		gut.end_run.connect(_on_tests_finished)
 

@@ -21,7 +21,7 @@ func set_value(node : Control, value):
 		var new_label = Label.new()
 		children.append(new_label)
 		node.get_node("Box").add_child(new_label)
-	
+
 	var column_hints : PackedStringArray = hint_strings_array[node.get_index() % hint_strings_array.size()]
 	var values : Array = value.values()
 	var keys : Array = value.keys()

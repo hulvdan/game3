@@ -15,7 +15,7 @@ func _get_name() -> String:
 func _export_begin(features, is_debug, path, flags):
 	if features.has("web"):
 		_path = path
-		
+
 		_copy_file(JS_SDK_FILE_NAME)
 		_copy_file(JS_SDK_CONFIG_FILE_NAME)
 
@@ -23,6 +23,6 @@ func _copy_file(file_name):
 	var file_from = FileAccess.open(JS_SDK_PATH + file_name, FileAccess.READ)
 	var file_to = FileAccess.open(_path.get_base_dir() + "/" + file_name, FileAccess.WRITE)
 	file_to.store_string(file_from.get_as_text())
-	
+
 	file_from = null
 	file_to = null

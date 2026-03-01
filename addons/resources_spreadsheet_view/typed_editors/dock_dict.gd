@@ -64,7 +64,7 @@ func _remove_value(_value):
 
 	var values : Array = sheet.get_edited_cells_values()
 	var cur_value
-	var dupe_value : bool = ProjectSettings.get_setting(TablesPluginSettingsClass.PREFIX + "dupe_arrays") 
+	var dupe_value : bool = ProjectSettings.get_setting(TablesPluginSettingsClass.PREFIX + "dupe_arrays")
 	for i in values.size():
 		cur_value = values[i]
 		if dupe_value and (_stored_type == TYPE_DICTIONARY or cur_value.resource_path.rfind("::") != -1):
@@ -108,7 +108,7 @@ func _on_Replace_pressed():
 
 	var values : Array = sheet.get_edited_cells_values()
 	var cur_value
-	var dupe_value : bool = ProjectSettings.get_setting(TablesPluginSettingsClass.PREFIX + "dupe_arrays") 
+	var dupe_value : bool = ProjectSettings.get_setting(TablesPluginSettingsClass.PREFIX + "dupe_arrays")
 	for i in values.size():
 		cur_value = values[i]
 		if dupe_value and (_stored_type == TYPE_DICTIONARY or cur_value.resource_path.rfind("::") != -1):

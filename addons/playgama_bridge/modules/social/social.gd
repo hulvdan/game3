@@ -31,7 +31,7 @@ func _is_external_links_allowed_getter():
 
 func _is_rate_supported_getter():
 	return _js_social.isRateSupported
-	
+
 var _js_social = null
 var _share_callback = null
 var _js_share_then = JavaScriptBridge.create_callback(self._on_js_share_then)
@@ -60,25 +60,25 @@ var _utils = load("res://addons/playgama_bridge/utils.gd").new()
 func share(options = null, callback = null):
 	if _share_callback != null:
 		return
-	
+
 	_share_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_social.share(js_options).then(_js_share_then).catch(_js_share_catch)
 
 func join_community(options = null, callback = null):
 	if _join_community_callback != null:
 		return
-	
+
 	_join_community_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_social.joinCommunity(js_options).then(_js_join_community_then).catch(_js_join_community_catch)
 
 func invite_friends(options = null, callback = null):
@@ -86,23 +86,23 @@ func invite_friends(options = null, callback = null):
 		return
 
 	_invite_friends_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-		
+
 	_js_social.inviteFriends(js_options).then(_js_invite_friends_then).catch(_js_invite_friends_catch)
 
 func create_post(options = null, callback = null):
 	if _create_post_callback != null:
 		return
-	
+
 	_create_post_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_social.createPost(js_options).then(_js_create_post_then).catch(_js_create_post_catch)
 
 func add_to_favorites(callback = null):

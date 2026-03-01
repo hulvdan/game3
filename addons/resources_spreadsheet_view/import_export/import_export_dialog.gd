@@ -24,7 +24,7 @@ func _ready():
 	show()
 	if get_parent().get("size"):
 		get_parent().size = Vector2(600, 400)
-	
+
 	file_dialog_use_script.file_selected.connect(_on_file_dialog_file_selected)
 
 
@@ -159,7 +159,7 @@ func _on_import_to_tres_pressed():
 	for i in entries.size():
 		if import_data.remove_first_row and i == 0:
 			continue
-		
+
 		new_res = import_data.strings_to_resource(entries[i], editor_view.current_path)
 		ResourceSaver.save(new_res)
 
@@ -213,7 +213,7 @@ func _on_remove_first_row_toggled(button_pressed : bool):
 
 func _on_list_item_type_selected(type : int, index : int):
 	import_data.prop_types[index] = type
-	
+
 
 func _on_list_item_name_changed(name : String, index : int):
 	import_data.prop_names[index] = name.replace(" ", "")

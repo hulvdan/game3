@@ -15,17 +15,17 @@ var _utils = load("res://addons/playgama_bridge/utils.gd").new()
 func get(options = null, callback = null):
 	if _is_getting:
 		return
-	
+
 	if callback == null:
 		return
-	
+
 	_is_getting = true
 	_get_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_remote_config.get(js_options).then(_js_get_then).catch(_js_get_catch)
 
 
@@ -36,7 +36,7 @@ func _on_js_get_then(args):
 	_is_getting = false
 	if _get_callback == null:
 		return
-	
+
 	var data = args[0]
 	var data_type = typeof(data)
 	match data_type:

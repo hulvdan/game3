@@ -10,7 +10,7 @@ func _is_get_list_supported_getter():
 
 func _is_native_popup_supported_getter():
 	return _js_achievements.isNativePopupSupported
-	
+
 var _js_achievements = null
 var _unlock_callback = null
 var _js_unlock_then = JavaScriptBridge.create_callback(self._on_js_unlock_then)
@@ -27,13 +27,13 @@ var _utils = load("res://addons/playgama_bridge/utils.gd").new()
 func unlock(options = null, callback = null):
 	if _unlock_callback != null:
 		return
-	
+
 	_unlock_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_achievements.unlock(js_options).then(_js_unlock_then).catch(_js_unlock_catch)
 
 func get_list(options = null, callback = null):
@@ -41,11 +41,11 @@ func get_list(options = null, callback = null):
 		return
 
 	_get_list_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_achievements.getList(js_options).then(_js_get_list_then).catch(_js_get_list_catch)
 
 func show_native_popup(options = null, callback = null):
@@ -53,11 +53,11 @@ func show_native_popup(options = null, callback = null):
 		return
 
 	_show_native_popup_callback = callback
-	
+
 	var js_options = null
 	if options:
 		js_options = _utils.convert_to_js(options)
-	
+
 	_js_achievements.showNativePopup(js_options).then(_js_show_native_popup_then).catch(_js_show_native_popup_catch)
 
 

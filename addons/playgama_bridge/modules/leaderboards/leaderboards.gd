@@ -19,21 +19,21 @@ var _js_show_native_popup_catch = JavaScriptBridge.create_callback(self._on_js_s
 func set_score(id, score, callback = null):
 	if _set_score_callback != null:
 		return
-	
+
 	_set_score_callback = callback
 	_js_leaderboards.setScore(id, score).then(_js_set_score_then).catch(_js_set_score_catch)
 
 func get_entries(id, callback = null):
 	if _get_entries_callback != null:
 		return
-	
+
 	_get_entries_callback = callback
 	_js_leaderboards.getEntries(id).then(_js_get_entries_then).catch(_js_get_entries_catch)
 
 func show_native_popup(id, callback = null):
 	if _show_native_popup_callback != null:
 		return
-	
+
 	_show_native_popup_callback = callback
 	_js_leaderboards.showNativePopup(id).then(_js_show_native_popup_then).catch(_js_show_native_popup_catch)
 
