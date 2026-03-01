@@ -260,6 +260,13 @@ class UpdaterDefault extends UpdaterBase:
 					MAX_COLLISIONS_DEFAULT,
 				)
 
+			var hook: glib.GTagValue
+			for tag in data.get_tags():
+				match tag.get_tag_type():
+					glib.GTagType.HOOK:
+						if is_instance_valid(x.d.owner__mb_freed_or_null):
+							hook = tag
+
 			if mask == 2 ** glib.GMaskType.WALLS:
 				if q:
 					x.queue_free()
@@ -270,15 +277,28 @@ class UpdaterDefault extends UpdaterBase:
 					Game.v.apply_damage_interactable(interactable, data.get_damage())
 					x.queue_free()
 
+					if hook:
+						var owner := x.d.owner__mb_freed_or_null
+						assert(owner.current_attack)
+						if owner.current_attack:
+							owner.attack_elapsed = max(
+								owner.attack_elapsed,
+								owner.current_attack.get_duration() - hook.get_f4(),
+							)
+						var dd := (
+							bf.xz(interactable.transform.origin)
+							- bf.xz(x.d.owner__mb_freed_or_null.transform.origin)
+						)
+						var hook_dist: float = max(0.0, dd.length() - hook.get_f3())
+						Game.add_impulse(
+							interactable.impulses,
+							bf.vector2_direction_or_random(dd, Vector2(0, 0)),
+							hook_dist,
+							hook.get_f1(),
+							hook.get_f2(),
+						)
+
 			else:
-				var hook: glib.GTagValue
-
-				for tag in data.get_tags():
-					match tag.get_tag_type():
-						glib.GTagType.HOOK:
-							if is_instance_valid(x.d.owner__mb_freed_or_null):
-								hook = tag
-
 				for d: Dictionary in q:
 					var creature: Creature = d.collider
 					if creature in x.touched_creatures:
@@ -301,7 +321,8 @@ class UpdaterDefault extends UpdaterBase:
 								- bf.xz(x.d.owner__mb_freed_or_null.transform.origin)
 							)
 							var hook_dist: float = max(0.0, dd.length() - hook.get_f3())
-							creature.add_impulse(
+							Game.add_impulse(
+								creature.impulses,
 								bf.vector2_direction_or_random(dd, Vector2(0, 0)),
 								hook_dist,
 								hook.get_f1(),

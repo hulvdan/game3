@@ -26,13 +26,14 @@ x interactables: bomb barrel: aoe projectiles damage it
 x interactables: bomb barrel: trigger projectile spawn on death
 x interactables: bomb barrel: UpdaterArea: area projectiles can deal damage
 x interactables: bomb barrel: can damage it with melee
+x make hook work with interactable
 
 * interactables: bomb barrel: show hp
 * interactables: bomb barrel: support melee impulse (divide by mass!)
+* interactables: bomb barrel: remove it after projectile gets finished
+* interactables: bomb barrel: anchor projectile to barrel
 * interactables: bomb barrel:
-* interactables: bomb barrel:
-* interactables: bomb barrel:
-* interactables: bomb barrel: blows up (spawns projectile that does damage + PUSH TAG)
+* interactables: bomb barrel: make IMPULSE_FROM_CENTER tag work
 *
 * make it not possible to roll during hook
   (BECAUSE IT'S POSSIBLE TO END ATTACK)

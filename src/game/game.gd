@@ -71,9 +71,32 @@ var current_room_index:
 enum WhoGotDamagedType { PLAYER, MOB }
 
 
+class Impulse: ##
+	var dir: Vector2
+	var dist: float
+	var pow_: float
+	var dur: float
+	var created_at: float
+##
+
+
 class RoomData: ##
 	var directions := 0
 	var gindex := -1
+##
+
+
+static func add_impulse(arr: Array[Impulse], dir: Vector2, dist: float, dur: float, pow_: float) -> void: ##
+	assert(dist >= 0)
+	if dist <= 0:
+		return
+	var x := Game.Impulse.new()
+	x.dir = dir
+	x.dist = dist
+	x.pow_ = pow_
+	x.dur = dur
+	x.created_at = Room.v.start_elapsed
+	arr.append(x)
 ##
 
 
@@ -319,6 +342,20 @@ func get_mouse_world_point() -> Vector3: ##
 	##
 
 
+func _process_impulses(arr: Array[Impulse], body: RigidBody3D) -> void: ##
+	var impulse_index := -1
+	for impulse in arr:
+		impulse_index += 1
+		var e := Room.v.start_elapsed - impulse.created_at
+		if e < impulse.dur:
+			var speed := bf.get_roll_speed(impulse.dist, impulse.dur, e, impulse.pow_)
+			bf.move_body_with_speed(body, impulse.dir, speed / body.mass)
+		else:
+			_impulses_to_remove_indices.append(impulse_index)
+	bf.unstable_remove_indices(arr, _impulses_to_remove_indices)
+##
+
+
 func _physics_process(dt: float) -> void:
 	Collisions.init_frame()
 
@@ -365,23 +402,19 @@ func _physics_process(dt: float) -> void:
 	##
 
 	## Creatures updating + moving
-	for creature: Creature in room.container_creatures.get_children():
-		creature.explicit_process(dt)
+	for x: Creature in room.container_creatures.get_children():
+		x.explicit_process(dt)
 
-		var dir := creature.controller.move
+		var dir := x.controller.move
 		if dir != Vector2(0, 0):
-			creature.controller.last_move = dir
-		bf.move_body_with_speed(creature.node_body, dir, creature.get_speed())
-		var impulse_index := -1
-		for impulse in creature.impulses:
-			impulse_index += 1
-			var e := Room.v.start_elapsed - impulse.created_at
-			if e < impulse.dur:
-				var speed := bf.get_roll_speed(impulse.dist, impulse.dur, e, impulse.pow_)
-				bf.move_body_with_speed(creature.node_body, impulse.dir, speed)
-			else:
-				_impulses_to_remove_indices.append(impulse_index)
-		bf.unstable_remove_indices(creature.impulses, _impulses_to_remove_indices)
+			x.controller.last_move = dir
+		bf.move_body_with_speed(x.node_body, dir, x.get_speed())
+		_process_impulses(x.impulses, x.node_body)
+	##
+
+	## Interactables moving
+	for x: Interactable in room.container_interactables.get_children():
+		_process_impulses(x.impulses, x.node_body)
 	##
 
 	## Spawning projectiles (flushing `projectiles_to_make`)
@@ -675,7 +708,8 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 		if (data.evade_flags & glib.GEvadeType.PERFECT_BLOCKABLE) && room.player.blocking_perfectly:
 			player_perfectly_blocked.emit(creature.transform.origin)
 			creature.mark_attack_as_evaded(data.attack_id)
-			creature.add_impulse(
+			add_impulse(
+				creature.impulses,
 				data.impulse_dir,
 				data.impulse * glib.v.get_impulse_block_scale(),
 				impulse_dur,
@@ -687,7 +721,8 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			creature.mark_attack_as_evaded(data.attack_id)
 			creature.blocked = true
 			player_blocked.emit(creature.transform.origin)
-			creature.add_impulse(
+			add_impulse(
+				creature.impulses,
 				data.impulse_dir,
 				data.impulse * glib.v.get_impulse_block_scale(),
 				impulse_dur,
@@ -740,7 +775,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			damage,
 			WhoGotDamagedType.PLAYER if player_got_damaged else WhoGotDamagedType.MOB,
 		)
-	creature.add_impulse(data.impulse_dir, data.impulse, impulse_dur, impulse_pow)
+	add_impulse(creature.impulses, data.impulse_dir, data.impulse, impulse_dur, impulse_pow)
 
 	return true
 ##

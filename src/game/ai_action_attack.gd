@@ -78,7 +78,7 @@ static func explicit_update_attack(
 						var d := c.attack_target_pos - bf.xz(c.transform.origin)
 						var dist: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
 						var pow_ := tag.get_f5()
-						c.add_impulse(c.attack_target_dir, dist, tag.get_f2() - start, pow_)
+						Game.add_impulse(c.impulses, c.attack_target_dir, dist, tag.get_f2() - start, pow_)
 			##
 			glib.GTagType.BLINK: ##
 				if !c.attack_blinked:

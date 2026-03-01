@@ -312,7 +312,8 @@ class PlayerRoll extends PlayerBase: ##
 
 		player.creature.speed_modifiers.roll = 0
 
-		player.creature.add_impulse(
+		Game.add_impulse(
+			player.creature.impulses,
 			player.creature.controller.last_move,
 			pl.get_roll_distance(),
 			pl.get_roll_duration_seconds(),

@@ -32,16 +32,7 @@ var change_ability_to: glib.GAbility
 
 var blocked: bool
 
-
-class Impulse:
-	var dir: Vector2
-	var dist: float
-	var pow_: float
-	var dur: float
-	var created_at: float
-
-
-var impulses: Array[Impulse]
+var impulses: Array[Game.Impulse]
 
 
 class EvadedAttack:
@@ -70,20 +61,6 @@ func enqueue_attack(value: glib.GAttack) -> void: ##
 func enqueue_ability(value: glib.GAbility) -> void: ##
 	change_ability_to = value
 	change_attack_to = null
-##
-
-
-func add_impulse(dir: Vector2, dist: float, dur: float, pow_: float) -> void: ##
-	assert(dist >= 0)
-	if dist <= 0:
-		return
-	var x := Impulse.new()
-	x.dir = dir
-	x.dist = dist
-	x.pow_ = pow_
-	x.dur = dur
-	x.created_at = Room.v.start_elapsed
-	impulses.append(x)
 ##
 
 
