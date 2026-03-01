@@ -21,9 +21,13 @@ x kazuha void uses mob speed
 x interactables: bomb barrel: proto + mask
 x interactables: bomb barrel: placed in the world + mass
 x interactables: bomb barrel: sprite setting through res
+x interactables: bomb barrel: shooting kills it
 
-* interactables: bomb barrel: trigger projectile spawn on other projectile (that deals >X damage) hit
-* interactables: bomb barrel: trigger projectile spawn on attack (that deals >X damage) hit
+* interactables: bomb barrel: trigger projectile spawn on death
+* interactables: bomb barrel: melleing kills it
+* interactables: bomb barrel:
+* interactables: bomb barrel:
+* interactables: bomb barrel:
 * interactables: bomb barrel:
 * interactables: bomb barrel: blows up (spawns projectile that does damage + PUSH TAG)
 *

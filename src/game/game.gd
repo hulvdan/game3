@@ -226,6 +226,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		x.transform.origin = bf.to_xz(glib.ToV2(xd.get_pos()))
 		room.container_interactables.add_child(x)
 
+		x.hp = d.get_hp()
 		x.node_body.mass = d.get_mass()
 		x.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 		x.node_sprite.texture = x.res.texture
@@ -733,6 +734,23 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 		)
 	creature.add_impulse(data.impulse_dir, data.impulse, impulse_dur, impulse_pow)
 
+	return true
+##
+
+
+func apply_damage_interactable(interactable: Interactable, damage: int) -> bool: ##
+	interactable.hp -= damage
+	interactable.hp = max(0, interactable.hp)
+	if !interactable.spawned_projectile && (interactable.hp <= 0):
+		interactable.spawned_projectile = true
+		var id := glib.v.get_interactables()[interactable.type]
+		var d := Projectile.Data.new()
+		d.type = id.get_projectile_type() as glib.GProjectileType
+		d.pos = bf.xz(interactable.transform.origin)
+		d.target = Vector2.INF
+		d.homing__target = null
+		make_projectile(d)
+		interactable.queue_free()
 	return true
 ##
 

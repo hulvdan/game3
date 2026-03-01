@@ -15,11 +15,11 @@ static var updaters: Array[UpdaterBase] = [
 
 class Data:
 	var type: glib.GProjectileType
-	var owner_type: glib.GCreatureType
-	var owner__mb_freed_or_null: Creature
 	var pos: Vector2
-	var target: Vector2
-	var homing__target: Node3D
+	var owner_type: glib.GCreatureType = glib.GCreatureType.INVALID
+	var owner__mb_freed_or_null: Creature = null
+	var target: Vector2 = Vector2.INF
+	var homing__target: Node3D = null
 
 
 var elapsed: float
@@ -216,7 +216,9 @@ class UpdaterDefault extends UpdaterBase:
 					x.queue_free()
 
 			elif mask == 2 ** glib.GMaskType.INTERACTABLES:
-				if q:
+				for d: Dictionary in q:
+					var interactable: Interactable = d.collider
+					Game.v.apply_damage_interactable(interactable, data.get_damage())
 					x.queue_free()
 
 			else:

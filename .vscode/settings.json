@@ -4,7 +4,8 @@
     "**/*.binpb": true,
     ".godot/": true,
     ".venv/": true,
-    "**/*.uid": true
+    "**/*.uid": true,
+    "node_modules": true
   },
   "files.associations": {
     "*.ldtk": "json",

@@ -646,7 +646,8 @@ projectiles:
 
 interactables:
   - type: INVALID
-  - type: BARREL_EXPLOSIVE
+  - type: BARREL_EXPLOSIVE ##
     hp: 2
     projectile_type: AREA_EXPLOSION
     mass: 3
+    ##
