@@ -624,6 +624,7 @@ projectiles:
     arc_or_area__duration: 2
     collider_radius: 1.8
     distance: 4
+    damage: 2
     tags:
       - tag_type: IMPULSE_FROM_CENTER
         f1: 2 # dur

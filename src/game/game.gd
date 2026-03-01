@@ -747,7 +747,7 @@ func apply_damage_interactable(interactable: Interactable, damage: int) -> bool:
 		var d := Projectile.Data.new()
 		d.type = id.get_projectile_type() as glib.GProjectileType
 		d.pos = bf.xz(interactable.transform.origin)
-		d.target = Vector2.INF
+		d.target = d.pos
 		d.homing__target = null
 		make_projectile(d)
 		interactable.queue_free()
