@@ -129,7 +129,12 @@ class UpdaterBase:
 	static var _damage_data := Game.ApplyDamageData.new()
 
 
-	func explicit_process(_dt: float, x: Projectile, _is_player: bool, data: glib.GProjectile) -> void: ##
+	func explicit_process(
+			_dt: float,
+			x: Projectile,
+			_is_player: bool,
+			data: glib.GProjectile,
+	) -> void: ##
 		_damage_data.attack_id = x.attack_id
 		if x.travelled > data.get_distance():
 			x.queue_free()
@@ -156,6 +161,50 @@ class UpdaterBase:
 			t * radius,
 		)
 	##
+
+
+	func deal_damage_in_circle_area(x: Projectile, data: glib.GProjectile) -> void: ##
+		var damage := data.get_damage()
+		assert(damage >= 0)
+		if damage <= 0:
+			return
+
+		var mask: = 2 ** glib.GMaskType.INTERACTABLES
+		if x.d.owner_type == glib.GCreatureType.PLAYER:
+			mask += 2 ** glib.GMaskType.MOBS
+		elif x.d.owner_type == glib.GCreatureType.INVALID:
+			mask += 2 ** glib.GMaskType.PLAYER
+			mask += 2 ** glib.GMaskType.MOBS
+		else:
+			mask += 2 ** glib.GMaskType.PLAYER
+
+		for d: Dictionary in Collisions.query_circle(
+			bf.xz(x.transform.origin),
+			data.get_collider_radius(),
+			mask,
+			true,
+			false,
+			MAX_COLLISIONS_AOE,
+		):
+			var damaged_creature: Creature = d.collider
+			if damaged_creature in x.touched_creatures:
+				continue
+
+			if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
+				x.touched_creatures.append(damaged_creature)
+
+		for d: Dictionary in Collisions.query_circle(
+			bf.xz(x.transform.origin),
+			data.get_collider_radius(),
+			2 ** glib.GMaskType.INTERACTABLES,
+			true,
+			false,
+			MAX_COLLISIONS_AOE,
+		):
+			var interactable: Interactable = d.collider
+			Game.v.apply_damage_interactable(interactable, data.get_damage())
+			x.queue_free()
+		##
 
 
 class UpdaterDefault extends UpdaterBase:
@@ -279,34 +328,7 @@ class UpdaterArc extends UpdaterBase:
 		draw_circle_gizmos(x.d.target, data.get_collider_radius(), t)
 
 		if x.elapsed >= data.get_arc_or_area__duration():
-			if data.get_damage() > 0:
-				for d: Dictionary in Collisions.query_circle(
-					bf.xz(x.transform.origin),
-					data.get_collider_radius(),
-					2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER),
-					true,
-					false,
-					MAX_COLLISIONS_AOE,
-				):
-					var damaged_creature: Creature = d.collider
-					if damaged_creature in x.touched_creatures:
-						continue
-
-					if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
-						x.touched_creatures.append(damaged_creature)
-
-				for d: Dictionary in Collisions.query_circle(
-					bf.xz(x.transform.origin),
-					data.get_collider_radius(),
-					2 ** glib.GMaskType.INTERACTABLES,
-					true,
-					false,
-					MAX_COLLISIONS_AOE,
-				):
-					var interactable: Interactable = d.collider
-					Game.v.apply_damage_interactable(interactable, data.get_damage())
-					x.queue_free()
-
+			deal_damage_in_circle_area(x, data)
 			x.queue_free()
 			for z: Node3D in x.zones:
 				Room.v.container_zones.remove_child(z)
@@ -335,6 +357,7 @@ class UpdaterArea extends UpdaterBase:
 							(glib.v.get_creatures()[creature.type].get_speed() + tag.get_f1()) * ease(t, 0.6),
 						)
 		if x.elapsed >= data.get_arc_or_area__duration():
+			deal_damage_in_circle_area(x, data)
 			x.queue_free()
 			for z: Node3D in x.zones:
 				Room.v.container_zones.remove_child(z)
