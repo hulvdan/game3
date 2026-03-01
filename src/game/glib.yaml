@@ -66,9 +66,9 @@ player: ##
   cooldown__roll: 0.20
 
   block__activation_start: 0.0
-  block__perfect_end: 0.2
-  block__min_duration: 0.2
-  block__idle_after_block: 0.2
+  block__perfect_end: 0.25
+  block__min_duration: 0.25
+  block__idle_after_block: 0.25
   ki__rally_increase_per_second: 80
 
   stamina_regen_scale__blocking: 0.33
