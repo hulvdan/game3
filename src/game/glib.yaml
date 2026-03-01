@@ -174,10 +174,7 @@ tags:
       ##
   - type: KAZUHA ##
     projectile_requirements:
-      f1: # impulse_dur
-      f2: # impulse_pow
-      f3: # interval_seconds
-      f4: # dist_max
+      f1: # additional_speed
       ##
 ##
 
@@ -615,10 +612,7 @@ projectiles:
     distance: 4
     tags:
       - tag_type: KAZUHA
-        f1: 0.4 # impulse_dur
-        f2: 2 # impulse_pow
-        f3: 0.75 # interval_seconds
-        f4: 1.5 # dist_max
+        f1: 0.5 # additional_speed
         team_flags:
           - ENEMIES
         ##

@@ -17,11 +17,10 @@ x ref player_controller attack after roll
 x ability hook: hooking works (hitting enemy gives him reverse impulse towards player)
 x ability hook: hooking target stops player's attack state in X seconds
 x ability kazuha void 1 (periodically ticks and creates impulses towards it's center)
+x kazuha void uses mob speed
 
-* ability kazuha void 2 (applies constant force on creatures inside):
-* ability kazuha void 2 (applies constant force on creatures inside):
-* ability kazuha void 2 (applies constant force on creatures inside):
-* ability kazuha void 2 (applies constant force on creatures inside):
+* make it not possible to roll during hook
+  (BECAUSE IT'S POSSIBLE TO END ATTACK)
 *
 * tag: previously spawned ability's area gets removed upon triggering ability once again
   (make it not possible to have 2 player KAZUHA areas on screen)

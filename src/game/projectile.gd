@@ -32,7 +32,6 @@ var default__pierced: int
 var attack_id: int
 var calculated__dir: Vector2
 var homing__velocity: Vector2
-var kazuha__next_proc_at: float
 var travelled: float
 var blinked: bool
 
@@ -308,19 +307,15 @@ class UpdaterArea extends UpdaterBase:
 		for tag in data.get_tags():
 			match tag.get_tag_type():
 				glib.GTagType.KAZUHA:
-					if x.elapsed < x.kazuha__next_proc_at:
-						continue
-					x.kazuha__next_proc_at += tag.get_f3()
 					for creature in x.creatures_inside:
 						if !x.check_team(creature, tag.get_team_flags()):
 							continue
 						var dd := bf.xz(creature.transform.origin) - bf.xz(x.transform.origin)
-						var dist: float = min(tag.get_f4(), dd.length())
-						creature.add_impulse(
+						var t: float = min(1, dd.length() / data.get_collider_radius())
+						bf.move_body_with_speed(
+							creature.node_body,
 							bf.vector2_direction_or_random(dd, Vector2(0, 0)),
-							dist,
-							tag.get_f1(),
-							tag.get_f2(),
+							(glib.v.get_creatures()[creature.type].get_speed() + tag.get_f1()) * ease(t, 0.6),
 						)
 		if x.elapsed >= data.get_arc_or_area__duration():
 			x.queue_free()
