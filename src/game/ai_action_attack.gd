@@ -25,6 +25,7 @@ static func explicit_update_attack(
 
 		c.attack_id = Room.v.get_next_attack_id()
 		c.attack_damaged_creatures.clear()
+		c.attack_damaged_interactables.clear()
 
 		var dur := c.current_attack.get_duration()
 		if c.type != glib.GCreatureType.PLAYER:
@@ -118,6 +119,7 @@ static func explicit_update_attack(
 		c.attack_projectiles_spawned = 0
 		c.attack_id = 0
 		c.attack_damaged_creatures.clear()
+		c.attack_damaged_interactables.clear()
 		c.controller.move = Vector2(0, 0)
 		return true
 	##

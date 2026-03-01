@@ -24,6 +24,7 @@ var attack_dashed: bool
 
 var attack_id: int
 var attack_damaged_creatures: Array[Creature]
+var attack_damaged_interactables: Array[Interactable]
 
 var current_attack: glib.GAttack
 var change_attack_to: glib.GAttack

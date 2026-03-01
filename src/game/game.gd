@@ -465,7 +465,6 @@ func _physics_process(dt: float) -> void:
 
 		var attacker_pos := bf.xz(creature.transform.origin)
 
-		var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
 		var polygon := melee.get_polygon()
 		var circle := melee.get_circle()
 		if polygon:
@@ -474,44 +473,53 @@ func _physics_process(dt: float) -> void:
 			assert(!polygon)
 
 		Game.set_gizmos_color_according_to_evade_flags(apply_damage_melee_data.evade_flags)
+		for mask: int in [
+			2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER),
+			2 ** glib.GMaskType.INTERACTABLES,
+		]:
+			var q: Array[Dictionary]
+			if polygon:
+				var off := creature.attack_target_dir * (polygon.get_distance_max() * (polygon.get_anchor_x() - 0.5))
+				q = Collisions.query_circle_segment(
+					attacker_pos + off,
+					polygon.get_distance_min(),
+					polygon.get_distance_max(),
+					-creature.attack_target_dir.angle(),
+					polygon.get_angle(),
+					mask,
+					true,
+					false,
+					12,
+				)
+			if circle:
+				var off := creature.attack_target_dir * circle.get_radius() * circle.get_anchor_x()
+				q = Collisions.query_circle(
+					attacker_pos + off,
+					circle.get_radius(),
+					mask,
+					true,
+					false,
+					12,
+				)
 
-		var q: Array[Dictionary]
-		if polygon:
-			var off := creature.attack_target_dir * (polygon.get_distance_max() * (polygon.get_anchor_x() - 0.5))
-			q = Collisions.query_circle_segment(
-				attacker_pos + off,
-				polygon.get_distance_min(),
-				polygon.get_distance_max(),
-				-creature.attack_target_dir.angle(),
-				polygon.get_angle(),
-				mask,
-				true,
-				false,
-				12,
-			)
-		if circle:
-			var off := creature.attack_target_dir * circle.get_radius() * circle.get_anchor_x()
-			q = Collisions.query_circle(
-				attacker_pos + off,
-				circle.get_radius(),
-				mask,
-				true,
-				false,
-				12,
-			)
-
-		for d: Dictionary in q:
-			var damaged_creature: Creature = d.collider
-			if damaged_creature in creature.attack_damaged_creatures:
-				continue
-
-			apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
-				attacker_pos,
-				bf.xz(damaged_creature.transform.origin),
-			)
-
-			if apply_damage(damaged_creature, melee.get_damage(), apply_damage_melee_data):
-				creature.attack_damaged_creatures.append(damaged_creature)
+			if mask == 2 ** glib.GMaskType.INTERACTABLES:
+				for d: Dictionary in q:
+					var x: Interactable = d.collider
+					if x in creature.attack_damaged_interactables:
+						continue
+					if apply_damage_interactable(x, melee.get_damage()):
+						creature.attack_damaged_interactables.append(x)
+			else:
+				for d: Dictionary in q:
+					var x: Creature = d.collider
+					if x in creature.attack_damaged_creatures:
+						continue
+					apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
+						attacker_pos,
+						bf.xz(x.transform.origin),
+					)
+					if apply_damage(x, melee.get_damage(), apply_damage_melee_data):
+						creature.attack_damaged_creatures.append(x)
 
 	Collisions.set_gizmos_color(Color.YELLOW)
 	##
