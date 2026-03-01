@@ -625,6 +625,7 @@ projectiles:
     collider_radius: 1.8
     distance: 4
     damage: 2
+    evade_flags: *evade_flags_perfect
     tags:
       - tag_type: IMPULSE_FROM_CENTER
         f1: 2 # dur
