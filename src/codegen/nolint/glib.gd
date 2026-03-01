@@ -6630,6 +6630,7 @@ enum GProgressionType {
 
 enum GAbilityType {
 	HOOK,
+	KAZUHA,
 	COUNT,
 }
 
@@ -6690,6 +6691,7 @@ enum GProjectileType {
 	SUMMON,
 	AREA_SLOWDOWN,
 	AREA_SPEEDUP,
+	AREA_KAZUHA,
 	COUNT,
 }
 
@@ -6708,5 +6710,6 @@ enum GTagType {
 	SUMMON,
 	SCALE_MOVEMENT_SPEED,
 	HOOK,
+	KAZUHA,
 	COUNT,
 }

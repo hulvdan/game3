@@ -172,6 +172,14 @@ tags:
       f3: # distance_delta
       f4: # player_attack_will_end_in
       ##
+  - type: KAZUHA ##
+    projectile_requirements:
+      f1: # impulse_dur
+      f2: # impulse_pow
+      f3: # interval_seconds
+      f4: # dist_max
+      ##
+##
 
 teams: ##
   - type: ME
@@ -192,6 +200,16 @@ abilities:
       stamina_cost:
         flat: 0
         rally: 15
+        ##
+  - type: KAZUHA ##
+    attack:
+      duration: 0.2
+      projectile_type: AREA_KAZUHA
+      projectile_spawns:
+        - at: 0.1
+      stamina_cost:
+        flat: 25
+        rally: 5
         ##
 
 creatures:
@@ -589,4 +607,18 @@ projectiles:
         team_flags:
           - ME
           - COMRADES
+          ##
+  - type: AREA_KAZUHA ##
+    projectilefly_type: AREA
+    arc_or_area__duration: 30
+    collider_radius: 1.8
+    distance: 4
+    tags:
+      - tag_type: KAZUHA
+        f1: 0.4 # impulse_dur
+        f2: 2 # impulse_pow
+        f3: 0.75 # interval_seconds
+        f4: 1.5 # dist_max
+        team_flags:
+          - ENEMIES
         ##

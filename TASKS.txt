@@ -16,19 +16,18 @@ x ability hook: pressing E sets player to ATTACK state with GAttack of first abi
 x ref player_controller attack after roll
 x ability hook: hooking works (hitting enemy gives him reverse impulse towards player)
 x ability hook: hooking target stops player's attack state in X seconds
+x ability kazuha void 1 (periodically ticks and creates impulses towards it's center)
 
-* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
-* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
-* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
-* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
+* ability kazuha void 2 (applies constant force on creatures inside):
+* ability kazuha void 2 (applies constant force on creatures inside):
+* ability kazuha void 2 (applies constant force on creatures inside):
+* ability kazuha void 2 (applies constant force on creatures inside):
+*
+* tag: previously spawned ability's area gets removed upon triggering ability once again
+  (make it not possible to have 2 player KAZUHA areas on screen)
 *
 * hooked/stunned/cantmove/immobilized/nomove state? (hook applies it on enemy = attack stops)
 * some creatures / attack grant UNHOOKABLE tag
-*
-* ability kazuha void 2 (applies constant force on creatures inside):
-* ability kazuha void 2 (applies constant force on creatures inside):
-* ability kazuha void 2 (applies constant force on creatures inside):
-* ability kazuha void 2 (applies constant force on creatures inside):
 *
 * ability reverse kazuha void:
 * ability reverse kazuha void:

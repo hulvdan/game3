@@ -3865,8 +3865,8 @@
             {
               "__identifier": "Creature",
               "__grid": [
-                9,
-                32
+                13,
+                20
               ],
               "__pivot": [
                 0,
@@ -3880,8 +3880,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                144,
-                512
+                208,
+                320
               ],
               "fieldInstances": [
                 {
@@ -3900,8 +3900,8 @@
                   ]
                 }
               ],
-              "__worldX": 640,
-              "__worldY": 192
+              "__worldX": 704,
+              "__worldY": 0
             },
             {
               "__identifier": "Creature",

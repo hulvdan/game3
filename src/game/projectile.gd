@@ -27,10 +27,12 @@ var d: Data
 var res: ResProjectile
 var zones: Array[Node3D]
 var touched_creatures: Array[Creature]
+var creatures_inside: Array[Creature]
 var default__pierced: int
 var attack_id: int
 var calculated__dir: Vector2
 var homing__velocity: Vector2
+var kazuha__next_proc_at: float
 var travelled: float
 var blinked: bool
 
@@ -54,25 +56,30 @@ func explicit_process(dt: float, data: glib.GProjectile) -> void: ##
 ##
 
 
-func on_body_entered(creature: Creature) -> void: ##
+func check_team(creature: Creature, team_flags: int) -> bool: ##
 	var is_me := is_instance_valid(owner) && (creature == owner)
 	var is_on_my_team := !is_me && (
 		(creature.type == glib.GCreatureType.PLAYER)
 		== (d.owner_type == glib.GCreatureType.PLAYER)
 	)
 	var is_enemy := !is_me && !is_on_my_team
+	if (team_flags & glib.GTeamType.ME) && is_me:
+		return true
+	elif (team_flags & glib.GTeamType.COMRADES) && is_on_my_team:
+		return true
+	elif (team_flags & glib.GTeamType.ENEMIES) && is_enemy:
+		return true
+	return false
+##
+
+
+func on_body_entered(creature: Creature) -> void: ##
+	assert(creature not in creatures_inside)
+	creatures_inside.append(creature)
 
 	for tag in glib.v.get_projectiles()[d.type].get_tags():
-		var activate := false
-		var flags := tag.get_team_flags()
-		if (flags & glib.GTeamType.ME) && is_me:
-			activate = true
-		elif (flags & glib.GTeamType.COMRADES) && is_on_my_team:
-			activate = true
-		elif (flags & glib.GTeamType.ENEMIES) && is_enemy:
-			activate = true
-		if !activate:
-			break
+		if !check_team(creature, tag.get_team_flags()):
+			continue
 
 		match tag.get_tag_type():
 			glib.GTagType.SCALE_MOVEMENT_SPEED:
@@ -81,6 +88,9 @@ func on_body_entered(creature: Creature) -> void: ##
 
 
 func on_body_exited(creature: Creature) -> void: ##
+	assert(creature in creatures_inside)
+	bf.remove_single(creatures_inside, creature)
+
 	for tag in glib.v.get_projectiles()[d.type].get_tags():
 		match tag.get_tag_type():
 			glib.GTagType.SCALE_MOVEMENT_SPEED:
@@ -295,6 +305,23 @@ class UpdaterArea extends UpdaterBase:
 
 		draw_circle_gizmos(x.d.target, data.get_collider_radius(), x.elapsed / data.get_arc_or_area__duration())
 
+		for tag in data.get_tags():
+			match tag.get_tag_type():
+				glib.GTagType.KAZUHA:
+					if x.elapsed < x.kazuha__next_proc_at:
+						continue
+					x.kazuha__next_proc_at += tag.get_f3()
+					for creature in x.creatures_inside:
+						if !x.check_team(creature, tag.get_team_flags()):
+							continue
+						var dd := bf.xz(creature.transform.origin) - bf.xz(x.transform.origin)
+						var dist: float = min(tag.get_f4(), dd.length())
+						creature.add_impulse(
+							bf.vector2_direction_or_random(dd, Vector2(0, 0)),
+							dist,
+							tag.get_f1(),
+							tag.get_f2(),
+						)
 		if x.elapsed >= data.get_arc_or_area__duration():
 			x.queue_free()
 			for z: Node3D in x.zones:
