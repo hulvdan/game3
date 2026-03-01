@@ -12,6 +12,11 @@
   },
   "runOnSave.commands": [
     {
+      "match": ".json$",
+      "command": "prettier -w ${file}",
+      "runIn": "backend"
+    },
+    {
       "match": ".(yml|yaml|yamlfmt|yamllint)$",
       "command": "yamlfmt ${file}",
       "runIn": "backend"
