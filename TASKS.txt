@@ -12,31 +12,6 @@ BIG PLAN
 PLAN
 ============================================================
 
-x essay pdfs
-x better bf.recursive_visiter
-x better default values on stamina costs
-x make AOE projectiles blockable: glib flags
-x make AOE projectiles blockable: glib flags for spikes and rolling stamina retrieve
-x make AOE projectiles blockable: all calls to apply_damage have correct flags arg
-x make AOE projectiles blockable: flags work with apply_damage
-x ref apply_damage immediate into rollable + perfect_rollable
-x make creature impulses pow + duration controllable in creature.gd
-x refactor dash/roll impulse
-x player roll impulse refactor
-x JUMPER dash in front of player (blink-like distance limiting)
-x projectile SUMMON tag
-x merge attack & projectile tags
-x slowdown area: shown on screen
-x slowdown area: make it downscale player's speed
-x slowdown area: add flytype AREA so that projectile's position
-  is fixed and Area3D is in center of Gizmos circle
-x fix: godot debug error: when shooting: det == 0
-x slowdown area: can set collision mask (e.g. affects opt.player opt.mobs opt.owner)
-- моб, что при выстреле откидывается назад (projectile spawn impulse)
-- моб, melee stomp (blink instead of dash)
-x fix: player shouldn't be able to block spikes
-- player melee attack
-x ability hook: added in proto + glib.yml
 x ability hook: pressing E sets player to ATTACK state with GAttack of first ability
 x ref player_controller attack after roll
 
