@@ -225,10 +225,12 @@ class UpdaterDefault extends UpdaterBase:
 
 						if hook:
 							var owner := x.d.owner__mb_freed_or_null
-							owner.attack_elapsed = max(
-								owner.attack_elapsed,
-								owner.current_attack.get_duration() - hook.get_f4(),
-							)
+							assert(owner.current_attack)
+							if owner.current_attack:
+								owner.attack_elapsed = max(
+									owner.attack_elapsed,
+									owner.current_attack.get_duration() - hook.get_f4(),
+								)
 							var dd := bf.xz(creature.transform.origin) - bf.xz(x.d.owner__mb_freed_or_null.transform.origin)
 							var hook_dist: float = max(0.0, dd.length() - hook.get_f3())
 							creature.add_impulse(
