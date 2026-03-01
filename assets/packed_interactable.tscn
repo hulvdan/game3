@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://dy223wq3s8x8a"]
+
+[ext_resource type="Script" uid="uid://dj8wqdnc5h5v2" path="res://src/game/interactable.gd" id="1_arq5w"]
+[ext_resource type="Texture2D" uid="uid://djlwa2ung8p3n" path="res://assets/art/textures/removeme/_tile_31_jade_dark.png" id="2_arq5w"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_kdjkj"]
+
+[node name="_body" type="RigidBody3D" unique_id=1087047668 node_paths=PackedStringArray("node_body")]
+collision_layer = 8
+collision_mask = 15
+axis_lock_linear_y = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+linear_damp = 16.0
+script = ExtResource("1_arq5w")
+node_body = NodePath(".")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1910882549]
+shape = SubResource("SphereShape3D_kdjkj")
+
+[node name="_target_camera" type="Node3D" parent="." unique_id=11829450]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.9794381, 0.20174465, 0, -0.20174465, 0.9794381, 0, 0, 0)
+
+[node name="_sprite" type="Sprite3D" parent="_target_camera" unique_id=730114781]
+unique_name_in_owner = true
+transform = Transform3D(0.35000002, 0, 0, 0, 0.35, 0, 0, 0, 0.35000002, 0, 0.115, 0)
+texture = ExtResource("2_arq5w")

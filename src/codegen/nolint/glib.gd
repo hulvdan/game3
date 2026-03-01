@@ -4830,6 +4830,11 @@ class GInteractable:
 		service.field = __projectile_type
 		data[__projectile_type.tag] = service
 
+		__mass = PBField.new("mass", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __mass
+		data[__mass.tag] = service
+
 
 	var data = { }
 
@@ -4919,6 +4924,28 @@ class GInteractable:
 
 	func set_projectile_type(value: int) -> void:
 		__projectile_type.value = value
+
+
+	var __mass: PBField
+
+
+	func has_mass() -> bool:
+		if __mass.value != null:
+			return true
+		return false
+
+
+	func get_mass() -> float:
+		return __mass.value
+
+
+	func clear_mass() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__mass.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_mass(value: float) -> void:
+		__mass.value = value
 
 
 	func _to_string() -> String:

@@ -74,6 +74,9 @@ unique_name_in_owner = true
 [node name="_container_zones" type="Node" parent="." unique_id=918849042]
 unique_name_in_owner = true
 
+[node name="_container_interactables" type="Node" parent="." unique_id=2065981795]
+unique_name_in_owner = true
+
 [node name="_action_labels" type="Control" parent="." unique_id=1939429615]
 unique_name_in_owner = true
 layout_mode = 3

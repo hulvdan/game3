@@ -164,7 +164,7 @@ locale/translations=PackedStringArray("res://assets/localization.en.translation"
 3d_physics/layer_1="walls"
 3d_physics/layer_2="player"
 3d_physics/layer_3="mobs"
-3d_physics/layer_4="void"
+3d_physics/layer_4="interactables"
 
 [physics]
 

@@ -38,6 +38,7 @@ static var _impulses_to_remove_indices: Array[int]
 @export var packed_bow: PackedScene
 @export var packed_projectile: PackedScene
 @export var packed_spike: PackedScene
+@export var packed_interactable: PackedScene
 @export var packed_zone_circle: PackedScene
 @export var packed_ai: PackedScene
 @export var packed_ui_bar_player: PackedScene
@@ -207,11 +208,25 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	##
 
 	## Placing spikes
-	for spike in g_room.get_spikes():
+	for x in g_room.get_spikes():
 		var node: Spike = packed_spike.instantiate()
-		node.transform.origin = bf.to_xz(glib.ToV2(spike.get_pos()))
+		node.transform.origin = bf.to_xz(glib.ToV2(x.get_pos()))
 		room.container_spikes.add_child(node)
 		node.init(room)
+	##
+
+	## Placing interactables
+	for xd in g_room.get_interactables():
+		var type := xd.get_interactable_type() as glib.GInteractableType
+		var d := glib.v.get_interactables()[type]
+
+		var x: Interactable = packed_interactable.instantiate()
+		x.type = type
+		x.transform.origin = bf.to_xz(glib.ToV2(xd.get_pos()))
+		room.container_interactables.add_child(x)
+
+		x.node_body.mass = d.get_mass()
+		x.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 	##
 
 	## Placing player and other creatures

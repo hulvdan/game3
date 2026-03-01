@@ -240,6 +240,7 @@ message GInteractable {
 
   int32 hp = 3;
   int32 projectile_type = 4;
+  float mass = 5;
 }
 
 message GMask {

@@ -19,10 +19,10 @@ x ability hook: hooking target stops player's attack state in X seconds
 x ability kazuha void 1 (periodically ticks and creates impulses towards it's center)
 x kazuha void uses mob speed
 x interactables: bomb barrel: proto + mask
+x interactables: bomb barrel: placed in the world + mass
 
 * interactables: bomb barrel: trigger projectile spawn on other projectile (that deals >X damage) hit
 * interactables: bomb barrel: trigger projectile spawn on attack (that deals >X damage) hit
-* interactables: bomb barrel:
 * interactables: bomb barrel:
 * interactables: bomb barrel:
 * interactables: bomb barrel: blows up (spawns projectile that does damage + PUSH TAG)

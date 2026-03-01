@@ -649,3 +649,4 @@ interactables:
   - type: BARREL_EXPLOSIVE
     hp: 2
     projectile_type: AREA_EXPLOSION
+    mass: 3
