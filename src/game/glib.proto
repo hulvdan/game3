@@ -53,13 +53,19 @@ message GSpike {
   GV2 pos = 1;
 }
 
+message GRoomInteractable {
+  int32 interactable_type = 1;
+  GV2 pos = 2;
+}
+
 message GRoom {
   // repeated GV2 tiles = 1;
   repeated GDoor doors = 2;
   GV2i size = 3;
   repeated int32 tiles = 4;
   repeated GSpike spikes = 5;
-  repeated GCreatureToSpawn creatures = 6;
+  repeated GRoomInteractable interactables = 6;
+  repeated GCreatureToSpawn creatures = 7;
 }
 
 message GProgression {
@@ -228,6 +234,14 @@ message GProjectile {
   repeated GTagValue tags = 13;
 }
 
+message GInteractable {
+  int32 type = 1;
+  string debug_name = 2;
+
+  int32 hp = 3;
+  int32 projectile_type = 4;
+}
+
 message GMask {
   int32 type = 1;
   string debug_name = 2;
@@ -318,7 +332,8 @@ message Lib {
   repeated GCollectible collectibles = 23;
   repeated GProjectileFly projectile_fly_types = 24;
   repeated GProjectile projectiles = 25;
-  repeated GMask masks = 26;
-  repeated GTag tags = 27;
+  repeated GInteractable interactables = 26;
+  repeated GMask masks = 27;
+  repeated GTag tags = 28;
   // TABLE_GEN_END
 }

@@ -186,8 +186,9 @@ class UpdaterDefault extends UpdaterBase:
 		var q: Array[Dictionary]
 
 		for mask: int in [
-			2 ** glib.GMaskType.WALLS,
 			2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER),
+			2 ** glib.GMaskType.INTERACTABLES,
+			2 ** glib.GMaskType.WALLS,
 		]:
 			assert(data.get_collider_radius() >= 0)
 			if data.get_collider_radius() > 0:
@@ -211,6 +212,10 @@ class UpdaterDefault extends UpdaterBase:
 				)
 
 			if mask == 2 ** glib.GMaskType.WALLS:
+				if q:
+					x.queue_free()
+
+			elif mask == 2 ** glib.GMaskType.INTERACTABLES:
 				if q:
 					x.queue_free()
 

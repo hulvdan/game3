@@ -122,6 +122,7 @@ masks: ##
   - type: WALLS
   - type: PLAYER
   - type: MOBS
+  - type: INTERACTABLES
 ##
 
 tags:
@@ -176,7 +177,18 @@ tags:
     projectile_requirements:
       f1: # additional_speed
       ##
-##
+  - type: IMPULSE_FROM_CENTER ##
+    projectile_requirements:
+      f1: # dur
+      f2: # distance
+      f3: # pow
+  ##
+  - type: IMPULSE_FROM_OWNER ##
+    projectile_requirements:
+      f1: # dur
+      f2: # distance
+      f3: # pow
+      ##
 
 teams: ##
   - type: ME
@@ -185,6 +197,8 @@ teams: ##
     enum__value: 0b010
   - type: ENEMIES
     enum__value: 0b100
+  - type: ALL
+    enum__value: 0b111
 ##
 
 abilities:
@@ -605,6 +619,19 @@ projectiles:
           - ME
           - COMRADES
           ##
+  - type: AREA_EXPLOSION ##
+    projectilefly_type: AREA
+    arc_or_area__duration: 2
+    collider_radius: 1.8
+    distance: 4
+    tags:
+      - tag_type: IMPULSE_FROM_CENTER
+        f1: 2 # dur
+        f2: 3 # distance
+        f3: 1 # pow
+        team_flags:
+          - ALL
+  ##
   - type: AREA_KAZUHA ##
     projectilefly_type: AREA
     arc_or_area__duration: 30
@@ -615,4 +642,10 @@ projectiles:
         f1: 0.5 # additional_speed
         team_flags:
           - ENEMIES
-        ##
+          ##
+
+interactables:
+  - type: INVALID
+  - type: BARREL_EXPLOSIVE
+    hp: 2
+    projectile_type: AREA_EXPLOSION

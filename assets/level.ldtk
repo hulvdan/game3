@@ -11,7 +11,7 @@
   "iid": "27a80100-fa90-11f0-a600-6d791be30d7e",
   "jsonVersion": "1.5.3",
   "appBuildId": 473703,
-  "nextUid": 33,
+  "nextUid": 36,
   "identifierStyle": "Capitalize",
   "toc": [],
   "worldLayout": "Free",
@@ -641,6 +641,79 @@
             "tilesetUid": null
           }
         ]
+      },
+      {
+        "identifier": "Interactable",
+        "uid": 34,
+        "tags": [],
+        "exportToToc": false,
+        "allowOutOfBounds": false,
+        "doc": null,
+        "width": 16,
+        "height": 16,
+        "resizableX": false,
+        "resizableY": false,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "keepAspectRatio": false,
+        "tileOpacity": 1,
+        "fillOpacity": 1,
+        "lineOpacity": 1,
+        "hollow": false,
+        "color": "#FEAE34",
+        "renderMode": "Ellipse",
+        "showName": false,
+        "tilesetId": null,
+        "tileRenderMode": "FitInside",
+        "tileRect": null,
+        "uiTileRect": null,
+        "nineSliceBorders": [],
+        "maxCount": 0,
+        "limitScope": "PerLevel",
+        "limitBehavior": "MoveLastOne",
+        "pivotX": 0,
+        "pivotY": 0,
+        "fieldDefs": [
+          {
+            "identifier": "Interactable",
+            "doc": null,
+            "__type": "LocalEnum.CODEGEN_Interactables",
+            "uid": 35,
+            "type": "F_Enum(33)",
+            "isArray": false,
+            "canBeNull": false,
+            "arrayMinLength": null,
+            "arrayMaxLength": null,
+            "editorDisplayMode": "ValueOnly",
+            "editorDisplayScale": 1,
+            "editorDisplayPos": "Center",
+            "editorLinkStyle": "StraightArrow",
+            "editorDisplayColor": null,
+            "editorAlwaysShow": false,
+            "editorShowInWorld": true,
+            "editorCutLongValues": true,
+            "editorTextSuffix": null,
+            "editorTextPrefix": null,
+            "useForSmartColor": false,
+            "exportToToc": false,
+            "searchable": false,
+            "min": null,
+            "max": null,
+            "regex": null,
+            "acceptFileTypes": null,
+            "defaultOverride": null,
+            "textLanguageMode": null,
+            "symmetricalRef": false,
+            "autoChainRef": true,
+            "allowOutOfLevelRef": true,
+            "allowedRefs": "OnlySame",
+            "allowedRefsEntityUid": null,
+            "allowedRefTags": [],
+            "tilesetUid": null
+          }
+        ]
       }
     ],
     "tilesets": [
@@ -878,6 +951,21 @@
           },
           {
             "id": "MOB_SLOWDOWNER",
+            "tileRect": null,
+            "color": 0
+          }
+        ],
+        "iconTilesetUid": null,
+        "externalRelPath": null,
+        "externalFileChecksum": null,
+        "tags": []
+      },
+      {
+        "identifier": "CODEGEN_Interactables",
+        "uid": 33,
+        "values": [
+          {
+            "id": "BARREL_EXPLOSIVE",
             "tileRect": null,
             "color": 0
           }
@@ -3984,6 +4072,47 @@
               ],
               "__worldX": 688,
               "__worldY": 192
+            },
+            {
+              "__identifier": "Interactable",
+              "__grid": [
+                13,
+                18
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#FEAE34",
+              "iid": "763f6bd0-fa90-11f0-8358-f3aed14959cb",
+              "width": 16,
+              "height": 16,
+              "defUid": 34,
+              "px": [
+                208,
+                288
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Interactable",
+                  "__type": "LocalEnum.CODEGEN_Interactables",
+                  "__value": "BARREL_EXPLOSIVE",
+                  "__tile": null,
+                  "defUid": 35,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "BARREL_EXPLOSIVE"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 704,
+              "__worldY": -32
             }
           ]
         },

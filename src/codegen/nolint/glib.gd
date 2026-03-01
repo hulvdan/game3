@@ -1413,6 +1413,93 @@ class GSpike:
 		return result
 
 
+class GRoomInteractable:
+	func _init():
+		var service
+
+		__interactable_type = PBField.new("interactable_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __interactable_type
+		data[__interactable_type.tag] = service
+
+		__pos = PBField.new("pos", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		service = PBServiceField.new()
+		service.field = __pos
+		service.func_ref = Callable(self, "new_pos")
+		data[__pos.tag] = service
+
+
+	var data = { }
+
+	var __interactable_type: PBField
+
+
+	func has_interactable_type() -> bool:
+		if __interactable_type.value != null:
+			return true
+		return false
+
+
+	func get_interactable_type() -> int:
+		return __interactable_type.value
+
+
+	func clear_interactable_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__interactable_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_interactable_type(value: int) -> void:
+		__interactable_type.value = value
+
+
+	var __pos: PBField
+
+
+	func has_pos() -> bool:
+		if __pos.value != null:
+			return true
+		return false
+
+
+	func get_pos() -> GV2:
+		return __pos.value
+
+
+	func clear_pos() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__pos.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+
+
+	func new_pos() -> GV2:
+		__pos.value = GV2.new()
+		return __pos.value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GRoom:
 	func _init():
 		var service
@@ -1443,8 +1530,15 @@ class GRoom:
 		service.func_ref = Callable(self, "add_spikes")
 		data[__spikes.tag] = service
 
+		var __interactables_default: Array[GRoomInteractable] = []
+		__interactables = PBField.new("interactables", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 6, true, __interactables_default)
+		service = PBServiceField.new()
+		service.field = __interactables
+		service.func_ref = Callable(self, "add_interactables")
+		data[__interactables.tag] = service
+
 		var __creatures_default: Array[GCreatureToSpawn] = []
-		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 6, true, __creatures_default)
+		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 7, true, __creatures_default)
 		service = PBServiceField.new()
 		service.field = __creatures
 		service.func_ref = Callable(self, "add_creatures")
@@ -1528,6 +1622,24 @@ class GRoom:
 		return element
 
 
+	var __interactables: PBField
+
+
+	func get_interactables() -> Array[GRoomInteractable]:
+		return __interactables.value
+
+
+	func clear_interactables() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__interactables.value.clear()
+
+
+	func add_interactables() -> GRoomInteractable:
+		var element = GRoomInteractable.new()
+		__interactables.value.append(element)
+		return element
+
+
 	var __creatures: PBField
 
 
@@ -1536,7 +1648,7 @@ class GRoom:
 
 
 	func clear_creatures() -> void:
-		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.UNFILLED
 		__creatures.value.clear()
 
 
@@ -4694,6 +4806,145 @@ class GProjectile:
 		return result
 
 
+class GInteractable:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+		__hp = PBField.new("hp", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __hp
+		data[__hp.tag] = service
+
+		__projectile_type = PBField.new("projectile_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __projectile_type
+		data[__projectile_type.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	var __hp: PBField
+
+
+	func has_hp() -> bool:
+		if __hp.value != null:
+			return true
+		return false
+
+
+	func get_hp() -> int:
+		return __hp.value
+
+
+	func clear_hp() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__hp.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_hp(value: int) -> void:
+		__hp.value = value
+
+
+	var __projectile_type: PBField
+
+
+	func has_projectile_type() -> bool:
+		if __projectile_type.value != null:
+			return true
+		return false
+
+
+	func get_projectile_type() -> int:
+		return __projectile_type.value
+
+
+	func clear_projectile_type() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__projectile_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_projectile_type(value: int) -> void:
+		__projectile_type.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GMask:
 	func _init():
 		var service
@@ -6002,15 +6253,22 @@ class Lib:
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
 
+		var __interactables_default: Array[GInteractable] = []
+		__interactables = PBField.new("interactables", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 26, true, __interactables_default)
+		service = PBServiceField.new()
+		service.field = __interactables
+		service.func_ref = Callable(self, "add_interactables")
+		data[__interactables.tag] = service
+
 		var __masks_default: Array[GMask] = []
-		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 26, true, __masks_default)
+		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 27, true, __masks_default)
 		service = PBServiceField.new()
 		service.field = __masks
 		service.func_ref = Callable(self, "add_masks")
 		data[__masks.tag] = service
 
 		var __tags_default: Array[GTag] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 27, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 28, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
@@ -6530,6 +6788,24 @@ class Lib:
 		return element
 
 
+	var __interactables: PBField
+
+
+	func get_interactables() -> Array[GInteractable]:
+		return __interactables.value
+
+
+	func clear_interactables() -> void:
+		data[26].state = PB_SERVICE_STATE.UNFILLED
+		__interactables.value.clear()
+
+
+	func add_interactables() -> GInteractable:
+		var element = GInteractable.new()
+		__interactables.value.append(element)
+		return element
+
+
 	var __masks: PBField
 
 
@@ -6538,7 +6814,7 @@ class Lib:
 
 
 	func clear_masks() -> void:
-		data[26].state = PB_SERVICE_STATE.UNFILLED
+		data[27].state = PB_SERVICE_STATE.UNFILLED
 		__masks.value.clear()
 
 
@@ -6556,7 +6832,7 @@ class Lib:
 
 
 	func clear_tags() -> void:
-		data[27].state = PB_SERVICE_STATE.UNFILLED
+		data[28].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 
@@ -6610,6 +6886,7 @@ enum GTeamType {
 	ME = 1,
 	COMRADES = 2,
 	ENEMIES = 4,
+	ALL = 7,
 	COUNT,
 }
 
@@ -6691,7 +6968,14 @@ enum GProjectileType {
 	SUMMON,
 	AREA_SLOWDOWN,
 	AREA_SPEEDUP,
+	AREA_EXPLOSION,
 	AREA_KAZUHA,
+	COUNT,
+}
+
+enum GInteractableType {
+	INVALID,
+	BARREL_EXPLOSIVE,
 	COUNT,
 }
 
@@ -6699,6 +6983,7 @@ enum GMaskType {
 	WALLS,
 	PLAYER,
 	MOBS,
+	INTERACTABLES,
 	COUNT,
 }
 
@@ -6711,5 +6996,7 @@ enum GTagType {
 	SCALE_MOVEMENT_SPEED,
 	HOOK,
 	KAZUHA,
+	IMPULSE_FROM_CENTER,
+	IMPULSE_FROM_OWNER,
 	COUNT,
 }

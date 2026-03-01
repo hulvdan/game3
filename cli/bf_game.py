@@ -204,6 +204,7 @@ def _process_glib(genline, glib) -> None:
             doors = []
             creatures = []
             spikes = []
+            interactables = []
             entities = level.get_layer("Entities")
             for x in entities.entities("Door"):
                 doors.append(
@@ -217,6 +218,13 @@ def _process_glib(genline, glib) -> None:
                 )
             for x in entities.entities("Spike"):
                 spikes.append({"pos": bf.as_dict(transpose_pos(x.pos_center, x.size))})
+            for x in entities.entities("Interactable"):
+                interactables.append(
+                    {
+                        "interactable_type": x.field("Interactable"),
+                        "pos": bf.as_dict(transpose_pos(x.pos_center, x.size)),
+                    }
+                )
             for x in entities.entities("Creature"):
                 creatures.append(
                     {
@@ -231,6 +239,7 @@ def _process_glib(genline, glib) -> None:
                     "doors": doors,
                     "spikes": spikes,
                     "creatures": creatures,
+                    "interactables": interactables,
                 }
             )
     glib["rooms"] = rooms
@@ -239,6 +248,7 @@ def _process_glib(genline, glib) -> None:
     context = []
     not_found_tag_fields = []
 
+    ## Tags
     entity_2_tag_required_fields: dict[str, dict[str, list[str]]] = defaultdict(
         defaultdict
     )
@@ -249,7 +259,7 @@ def _process_glib(genline, glib) -> None:
             table = k.removesuffix("_requirements")
             entity_2_tag_required_fields[table][tag["type"]] = list(v.keys()) if v else []
 
-    def validate_tags(tags: list, entity: str) -> None:  ##
+    def validate_tags(tags: list, entity: str) -> None:
         assert entity in entity_2_tag_required_fields
         for tag in tags:
             assert tag["tag_type"] in entity_2_tag_required_fields[entity], (
@@ -265,7 +275,8 @@ def _process_glib(genline, glib) -> None:
                     context, tag["tag_type"], not_found_tag_fields
                 )
             )
-        ##
+
+    ##
 
     def validate_attack(x: dict, is_player: bool) -> None:  ##
         x.get("projectiles_spawns", []).sort(key=lambda x: x["at"])
