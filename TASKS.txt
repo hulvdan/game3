@@ -17,12 +17,13 @@ x ref player_controller attack after roll
 x ability hook: hooking works (hitting enemy gives him reverse impulse towards player)
 x ability hook: hooking target stops player's attack state in X seconds
 
-* ability hook: AREA HOOK ??? 0_o
+* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
+* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
+* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
+* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
 *
-* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
-* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
-* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
-* ability kazuha void 1 (periodically ticks and creates impulses towards it's center):
+* hooked/stunned/cantmove/immobilized/nomove state? (hook applies it on enemy = attack stops)
+* some creatures / attack grant UNHOOKABLE tag
 *
 * ability kazuha void 2 (applies constant force on creatures inside):
 * ability kazuha void 2 (applies constant force on creatures inside):

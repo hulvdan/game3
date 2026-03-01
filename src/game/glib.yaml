@@ -187,12 +187,11 @@ abilities:
     attack:
       duration: 0.9
       projectile_type: HOOK
-      stops_tracking_at: 0.3
       projectile_spawns:
         - at: 0.2
       stamina_cost:
-        flat: 20
-        rally: 5
+        flat: 0
+        rally: 15
         ##
 
 creatures:
@@ -570,7 +569,7 @@ projectiles:
   ##
   - type: AREA_SLOWDOWN ##
     projectilefly_type: AREA
-    arc_or_area__duration: 0.30
+    arc_or_area__duration: 12
     collider_radius: 1.8
     distance: 4
     tags:
