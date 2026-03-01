@@ -206,18 +206,13 @@ class UpdaterDefault extends UpdaterBase:
 					x.queue_free()
 
 			else:
-				var hook := false
-				var hook_dur := 0.0
-				var hook_pow := 0.0
-				var hook_distance_delta := 0.0
+				var hook: glib.GTagValue
 
 				for tag in data.get_tags():
 					match tag.get_tag_type():
 						glib.GTagType.HOOK:
-							hook = is_instance_valid(x.d.owner__mb_freed_or_null)
-							hook_dur = tag.get_f1()
-							hook_pow = tag.get_f2()
-							hook_distance_delta = tag.get_f3()
+							if is_instance_valid(x.d.owner__mb_freed_or_null):
+								hook = tag
 
 				for d: Dictionary in q:
 					var creature: Creature = d.collider
@@ -229,13 +224,18 @@ class UpdaterDefault extends UpdaterBase:
 						x.default__pierced += 1
 
 						if hook:
+							var owner := x.d.owner__mb_freed_or_null
+							owner.attack_elapsed = max(
+								owner.attack_elapsed,
+								owner.current_attack.get_duration() - hook.get_f4(),
+							)
 							var dd := bf.xz(creature.transform.origin) - bf.xz(x.d.owner__mb_freed_or_null.transform.origin)
-							var hook_dist: float = max(0.0, dd.length() - hook_distance_delta)
+							var hook_dist: float = max(0.0, dd.length() - hook.get_f3())
 							creature.add_impulse(
 								bf.vector2_direction_or_random(dd, Vector2(0, 0)),
 								hook_dist,
-								hook_dur,
-								hook_pow,
+								hook.get_f1(),
+								hook.get_f2(),
 							)
 
 						if x.default__pierced > data.get_pierce():

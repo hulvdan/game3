@@ -227,8 +227,6 @@ class PlayerBase: ##
 				_consumed_action_indices.append(i1)
 
 		bf.unstable_remove_indices(player._buffer, _consumed_action_indices)
-
-	##
 ##
 
 

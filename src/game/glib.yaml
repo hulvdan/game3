@@ -169,6 +169,8 @@ tags:
     projectile_requirements:
       f1: # dur
       f2: # pow
+      f3: # distance_delta
+      f4: # player_attack_will_end_in
       ##
 
 teams: ##
@@ -491,6 +493,7 @@ projectiles:
         f1: 0.4 # dur
         f2: 1 # pow
         f3: 0.8 # distance_delta
+        f4: 0.2 # owner_attack_will_end_in
   ##
   - type: BOMB ##
     damage: 2
@@ -567,7 +570,7 @@ projectiles:
   ##
   - type: AREA_SLOWDOWN ##
     projectilefly_type: AREA
-    arc_or_area__duration: 30
+    arc_or_area__duration: 0.30
     collider_radius: 1.8
     distance: 4
     tags:
