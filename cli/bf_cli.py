@@ -373,11 +373,12 @@ def godot_reimport_localization():  ##
 
 @command
 def gitf():  ##
+    message = bf.get_git_commit_message_from_tasks_txt_plan()
     for x in (
         "git add -A",
         "pre-commit run",
         "git add -A",
-        'git commit -m "f"',
+        ["git", "commit", "-m", message],
         "git push",
     ):
         bf.run_command(x)

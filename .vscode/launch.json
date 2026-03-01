@@ -35,6 +35,16 @@
         "debug"
       ],
       "console": "integratedTerminal"
+    },
+    {
+      "name": "temp",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "cli/bf_cli.py",
+      "args": [
+        "temp"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }

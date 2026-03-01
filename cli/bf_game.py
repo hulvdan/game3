@@ -702,5 +702,6 @@ def process_images():  ##
 
 
 @command
-def temp():
+def temp():  ##
     pass
+    ##

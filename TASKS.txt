@@ -11,7 +11,6 @@ BIG PLAN
 
 PLAN
 ============================================================
-
 x ability hook: pressing E sets player to ATTACK state with GAttack of first ability
 x ref player_controller attack after roll
 x ability hook: hooking works (hitting enemy gives him reverse impulse towards player)
@@ -27,6 +26,7 @@ x interactables: bomb barrel: trigger projectile spawn on death
 x interactables: bomb barrel: UpdaterArea: area projectiles can deal damage
 x interactables: bomb barrel: can damage it with melee
 x make hook work with interactable
+x gitf big brain
 
 * interactables: bomb barrel: show hp
 * interactables: bomb barrel: support melee impulse (divide by mass!)

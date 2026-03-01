@@ -668,6 +668,32 @@ const VERSION: String = "1.{next_version}"
     ##
 
 
+def get_git_commit_message_from_tasks_txt_plan() -> str:  ##
+    with open("TASKS.txt", encoding="utf-8") as in_file:
+        started = False
+        last_line = None
+        for line_ in in_file:
+            line = line_.strip()
+            if not started:
+                if line.strip() == "PLAN":
+                    started = True
+                    continue
+            else:
+                if not line.strip():
+                    break
+                last_line = line
+
+    commit_message = last_line
+    if commit_message is None or set(commit_message) == {"="}:
+        commit_message = "f"
+
+    for prefix in ("* ", "x ", "- ", "+ "):
+        commit_message = commit_message.removeprefix(prefix)
+    return commit_message
+
+
+##
+
 # !banner: color
 #  ██████╗ ██████╗ ██╗      ██████╗ ██████╗
 # ██╔════╝██╔═══██╗██║     ██╔═══██╗██╔══██╗
