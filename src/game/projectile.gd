@@ -279,13 +279,11 @@ class UpdaterArc extends UpdaterBase:
 		draw_circle_gizmos(x.d.target, data.get_collider_radius(), t)
 
 		if x.elapsed >= data.get_arc_or_area__duration():
-			var mask: int = 2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER)
-
 			if data.get_damage() > 0:
 				for d: Dictionary in Collisions.query_circle(
 					bf.xz(x.transform.origin),
 					data.get_collider_radius(),
-					mask,
+					2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER),
 					true,
 					false,
 					MAX_COLLISIONS_AOE,
@@ -296,6 +294,18 @@ class UpdaterArc extends UpdaterBase:
 
 					if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
 						x.touched_creatures.append(damaged_creature)
+
+				for d: Dictionary in Collisions.query_circle(
+					bf.xz(x.transform.origin),
+					data.get_collider_radius(),
+					2 ** glib.GMaskType.INTERACTABLES,
+					true,
+					false,
+					MAX_COLLISIONS_AOE,
+				):
+					var interactable: Interactable = d.collider
+					Game.v.apply_damage_interactable(interactable, data.get_damage())
+					x.queue_free()
 
 			x.queue_free()
 			for z: Node3D in x.zones:
