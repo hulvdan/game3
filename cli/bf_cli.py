@@ -375,7 +375,7 @@ def godot_reimport_localization():  ##
 def gitf():  ##
     for x in (
         "git add -A",
-        "pre-commit run --all-files",
+        "pre-commit run",
         "git add -A",
         'git commit -m "f"',
         "git push",
