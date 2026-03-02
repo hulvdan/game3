@@ -105,7 +105,6 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	var creature: Creature = packed_creature.instantiate()
 	room.container_creatures.add_child(creature)
 
-	creature.node_body.collision_layer = 2 ** data.get_mask_type()
 	creature.type = type
 	creature.res = load(data.get_res())
 	creature.speed_modifiers.base = data.get_speed()
@@ -429,7 +428,7 @@ func _physics_process(dt: float) -> void:
 			x.area_sphere.body_exited.connect(x.on_body_exited)
 			x.shape_sphere.disabled = false
 			x.area_sphere.scale = Vector3(1, 1, 1) * data.get_collider_radius()
-			x.area_sphere.collision_mask = 2 ** glib.GMaskType.PLAYER + 2 ** glib.GMaskType.MOBS
+			x.area_sphere.collision_mask = 2 ** glib.GMaskType.CREATURES
 
 		x.attack_id = room.get_next_attack_id()
 		if data.get_collider_radius():
@@ -491,7 +490,6 @@ func _physics_process(dt: float) -> void:
 		if creature.attack_elapsed > melee.get_ends_at():
 			continue
 
-		var is_player := (creature.type == glib.GCreatureType.PLAYER)
 		apply_damage_melee_data.attack_id = creature.attack_id
 		apply_damage_melee_data.impulse = 1
 		apply_damage_melee_data.evade_flags = melee.get_evade_flags()
@@ -507,7 +505,7 @@ func _physics_process(dt: float) -> void:
 
 		Game.set_gizmos_color_according_to_evade_flags(apply_damage_melee_data.evade_flags)
 		for mask: int in [
-			2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER),
+			2 ** glib.GMaskType.CREATURES,
 			2 ** glib.GMaskType.INTERACTABLES,
 		]:
 			var q: Array[Dictionary]
@@ -545,6 +543,11 @@ func _physics_process(dt: float) -> void:
 			else:
 				for d: Dictionary in q:
 					var x: Creature = d.collider
+					if (
+						(x.type == glib.GCreatureType.PLAYER)
+						== (creature.type == glib.GCreatureType.PLAYER)
+					):
+						continue
 					if x in creature.attack_damaged_creatures:
 						continue
 					apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(

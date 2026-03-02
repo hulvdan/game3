@@ -14,7 +14,9 @@ PLAN
 x clear
 x yml mask_type only creatures (instead of PLAYER / MOBS split)
 x better gitf
+x merged PLAYER/MOBS masks into CREATURES
 
+* fix: creatures can move interactables
 * fix: room to the up: interactable crash
 *
 * non perfect blocking wastes stamina

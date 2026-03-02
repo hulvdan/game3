@@ -119,10 +119,12 @@ progression: ##
 ##
 
 masks: ##
-  - type: WALLS
+  - type: WALLS_FOR_CREATURES
   - type: CREATURES
-  - type: _1
+  - type: _3
   - type: INTERACTABLES
+  - type: WALLS_FOR_PROJECTILES
+  - type: WALLS_FOR_INTERACTABLES
 ##
 
 tags:

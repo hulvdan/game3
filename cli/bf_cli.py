@@ -385,7 +385,6 @@ def gitf():  ##
                 raise
             continue
         break
-    bf.run_command("git add -A")
     for x in (
         ["git", "commit", "-m", message],
         "git push",

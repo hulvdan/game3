@@ -169,25 +169,18 @@ class UpdaterBase:
 		if damage <= 0:
 			return
 
-		var mask: = 2 ** glib.GMaskType.INTERACTABLES
-		if x.d.owner_type == glib.GCreatureType.PLAYER:
-			mask += 2 ** glib.GMaskType.MOBS
-		elif x.d.owner_type == glib.GCreatureType.INVALID:
-			mask += 2 ** glib.GMaskType.PLAYER
-			mask += 2 ** glib.GMaskType.MOBS
-		else:
-			mask += 2 ** glib.GMaskType.PLAYER
-
 		for d: Dictionary in Collisions.query_circle(
 			bf.xz(x.transform.origin),
 			data.get_collider_radius(),
-			mask,
+			2 ** glib.GMaskType.CREATURES,
 			true,
 			false,
 			MAX_COLLISIONS_AOE,
 		):
 			var damaged_creature: Creature = d.collider
 			if damaged_creature in x.touched_creatures:
+				continue
+			if !x.check_team(damaged_creature, data.get_touch_team_flags()):
 				continue
 
 			if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
@@ -235,9 +228,9 @@ class UpdaterDefault extends UpdaterBase:
 		var q: Array[Dictionary]
 
 		for mask: int in [
-			2 ** (glib.GMaskType.MOBS if is_player else glib.GMaskType.PLAYER),
+			2 ** glib.GMaskType.CREATURES,
 			2 ** glib.GMaskType.INTERACTABLES,
-			2 ** glib.GMaskType.WALLS,
+			2 ** glib.GMaskType.WALLS_FOR_PROJECTILES,
 		]:
 			assert(data.get_collider_radius() >= 0)
 			if data.get_collider_radius() > 0:
@@ -267,7 +260,7 @@ class UpdaterDefault extends UpdaterBase:
 						if is_instance_valid(x.d.owner__mb_freed_or_null):
 							hook = tag
 
-			if mask == 2 ** glib.GMaskType.WALLS:
+			if mask == 2 ** glib.GMaskType.WALLS_FOR_PROJECTILES:
 				if q:
 					x.queue_free()
 
@@ -302,6 +295,8 @@ class UpdaterDefault extends UpdaterBase:
 				for d: Dictionary in q:
 					var creature: Creature = d.collider
 					if creature in x.touched_creatures:
+						continue
+					if !x.check_team(creature, data.get_touch_team_flags()):
 						continue
 
 					if Game.v.apply_damage(creature, data.get_damage(), _damage_data):
