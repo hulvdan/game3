@@ -466,11 +466,16 @@ func _physics_process(dt: float) -> void:
 		creature.time_since_hp_rally += dt
 		creature.time_since_last_damage_taken_visual += dt
 
-		if creature.time_since_hp_rally >= glib.v.get_hp_rally_decays_after():
+		if (
+			(creature.type == glib.GCreatureType.PLAYER)
+			&& (creature.time_since_hp_rally >= glib.v.get_hp_rally_decays_after())
+		):
 			assert(creature.hp_recoverable_up_to >= creature.hp)
 			creature.hp_recoverable_up_to -= glib.v.get_hp_rally_decay_speed() * dt
 			creature.hp_recoverable_up_to = max(creature.hp_recoverable_up_to, creature.hp)
 			assert(creature.hp_recoverable_up_to >= creature.hp)
+			var max_hp: float = glib.v.get_creatures()[creature.type].get_hp()
+			creature.hp_bar.set_rally_front_progress((creature.hp_recoverable_up_to as float) / max_hp)
 
 		var sh: ShaderMaterial = creature.node_sprite.material_override
 		var t: float = max(0.0, lerp(1.0, 0.0, creature.time_since_last_damage_taken_visual))
@@ -519,7 +524,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	else:
 		var bar: Bar = packed_ui_bar_mob.instantiate()
 		creature.hp_bar = bar
-		bar.anchor_right *= creature.hp / 3.0
+		bar.anchor_right *= creature.hp / 30.0
 		room.container_mob_hp_bars.add_child(bar)
 		var tree: BeehaveTree = packed_ai.instantiate()
 		creature.setup_ai(tree)
@@ -607,21 +612,25 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 
 	if damage > 0:
 		creature.hp_recoverable_up_to = creature.hp
-	var dealt_damage = max(0, creature.hp - damage)
+	var dealt_damage = min(creature.hp, damage)
 	creature.hp -= dealt_damage
-	creature.hp_recoverable_up_to = lerp(
-		creature.hp,
-		creature.hp_recoverable_up_to,
-		glib.v.get_hp_damage_rally_percent(),
-	)
-	assert(creature.hp >= 0)
-	creature.hp_bar.set_progress((creature.hp as float) / (glib.v.get_creatures()[creature.type].get_hp() as float))
+	var creature_max_hp: float = glib.v.get_creatures()[creature.type].get_hp()
+	creature.hp_bar.set_progress((creature.hp as float) / creature_max_hp)
 	creature.time_since_last_damage_taken_visual = 0
 
-	if is_instance_valid(data.owner__mb_freed_or_null):
-		var owner_ := data.owner__mb_freed_or_null
-		owner_.hp += min(owner_.hp_recoverable_up_to - owner_.hp, data.hp_rally_recover)
-		owner_.time_since_hp_rally = 0
+	if creature.type == glib.GCreatureType.PLAYER:
+		creature.hp_recoverable_up_to = lerp(
+			creature.hp,
+			creature.hp_recoverable_up_to,
+			glib.v.get_hp_damage_rally_percent(),
+		)
+		assert(creature.hp >= 0)
+		creature.hp_bar.set_rally_front_progress((creature.hp_recoverable_up_to as float) / creature_max_hp)
+
+		if is_instance_valid(data.owner__mb_freed_or_null):
+			var owner_ := data.owner__mb_freed_or_null
+			owner_.hp += min(owner_.hp_recoverable_up_to - owner_.hp, data.hp_rally_recover)
+			owner_.time_since_hp_rally = 0
 
 	if (creature.type != glib.GCreatureType.PLAYER) && (creature.hp <= 0):
 		room.player.add_stamina(glib.v.get_player().get_stamina_regen_on_kill(), 1)

@@ -100,7 +100,7 @@ spikes: ##
     ##
 
 hp_damage_rally_percent: 0.8
-hp_rally_decays_after: 5
+hp_rally_decays_after: 3.5
 hp_rally_decay_speed: 5
 
 creatures_push_radius: 1.0
@@ -292,7 +292,7 @@ creatures:
       - HOOK
   ##
   - type: MOB_SHOOTER ##
-    hp: 3
+    hp: 30
     speed: 0.4
     attacks:
       - duration: 0.8
@@ -304,7 +304,7 @@ creatures:
         distance: 4
   ##
   - type: MOB_MAGE ##
-    hp: 2
+    hp: 20
     speed: 0.4
     attacks:
       - duration: 2
@@ -318,7 +318,7 @@ creatures:
         distance: 5
   ##
   - type: MOB_MAGE_TRIPLE ##
-    hp: 2
+    hp: 20
     speed: 0.4
     attacks:
       - duration: 1
@@ -335,7 +335,7 @@ creatures:
         distance: 5
   ##
   - type: MOB_HOMER ##
-    hp: 3
+    hp: 30
     speed: 0.8
     attacks:
       - duration: 1.3
@@ -347,7 +347,7 @@ creatures:
         distance: 7
   ##
   - type: MOB_HIVER ##
-    hp: 3
+    hp: 30
     speed: 0.8
     attacks:
       - duration: 1.3
@@ -359,7 +359,7 @@ creatures:
         distance: 7
   ##
   - type: MOB_HIVER_INSIDE ##
-    hp: 3
+    hp: 30
     speed: 0.8
     attacks:
       - duration: 1.0
@@ -371,7 +371,7 @@ creatures:
         distance: 3
   ##
   - type: MOB_BOMB_INSIDE ##
-    hp: 3
+    hp: 30
     speed: 0.8
     attacks:
       - duration: 1.0
@@ -383,7 +383,7 @@ creatures:
         distance: 3
   ##
   - type: MOB_JUMPER ##
-    hp: 5
+    hp: 50
     speed: 1
     attacks:
       - duration: 0.8
@@ -407,7 +407,7 @@ creatures:
             f5: 1 # pow
   ##
   - type: MOB_BLINKER ##
-    hp: 5
+    hp: 50
     speed: 1
     attacks:
       - duration: 1.2
@@ -419,7 +419,7 @@ creatures:
         distance: 4
   ##
   - type: MOB_BONKER ##
-    hp: 5
+    hp: 50
     speed: 1
     attacks:
       - duration: 0.8
@@ -446,7 +446,7 @@ creatures:
             f5: 1 # pow
   ##
   - type: MOB_SPEAR ##
-    hp: 5
+    hp: 50
     speed: 1
     attacks:
       - duration: 0.8
@@ -472,7 +472,7 @@ creatures:
             f5: 1 # pow
             ##
   - type: MOB_SUMMONER ##
-    hp: 2
+    hp: 20
     speed: 0.4
     attacks:
       - duration: 3
@@ -484,7 +484,7 @@ creatures:
         distance: 7
         ##
   - type: MOB_SLOWDOWNER ##
-    hp: 3
+    hp: 30
     speed: 0.4
     attacks:
       - duration: 0.8
@@ -723,7 +723,7 @@ projectiles:
 interactables:
   - type: INVALID
   - type: BARREL_EXPLOSIVE ##
-    hp: 2
+    hp: 20
     projectile_type: AREA_EXPLOSION
     mass: 3
     ##

@@ -27,9 +27,9 @@ x long ki wait loses ki
 x gdscript-formatter reorder code
 x rally hp: shown hp rally bar
 x fmt tabs
+x rally hp: updating rally bar
 
-* rally hp:
-* rally hp:
+* rally hp: player recovers rally
 * rally hp:
 * rally hp:
 *
