@@ -372,6 +372,7 @@ creatures:
           circle:
             radius: 1.5
           evade_flags: *evade_flags_default
+          damage_stamina: 20
         stops_tracking_at: 0.2
         tags:
           - tag_type: DASH
@@ -410,6 +411,7 @@ creatures:
             angle_degrees: 90
             anchor_x: 0.5
           evade_flags: *evade_flags_default
+          damage_stamina: 20
         stops_tracking_at: 0.2
         tags:
           - tag_type: DASH
@@ -435,6 +437,7 @@ creatures:
             angle_degrees: 20
             anchor_x: 0.5
           evade_flags: *evade_flags_default
+          damage_stamina: 20
         stops_tracking_at: 0.3
         tags:
           - tag_type: DASH
@@ -501,6 +504,7 @@ projectiles:
   ##
   - type: ARROW ##
     damage: 1
+    damage_stamina: 20
     default__speed: 14
     distance: 6
     evade_flags: *evade_flags_default
@@ -509,6 +513,7 @@ projectiles:
   ##
   - type: BALL ##
     damage: 1
+    damage_stamina: 25
     default__speed: 3
     collider_radius: 0.3
     distance: 8
@@ -518,6 +523,7 @@ projectiles:
   ##
   - type: HOOK ##
     damage: 0
+    damage_stamina: 15
     default__speed: 9
     collider_radius: 0.3
     distance: 5
@@ -572,6 +578,7 @@ projectiles:
   ##
   - type: STAR_BIT ##
     damage: 1
+    damage_stamina: 10
     default__speed: 3
     collider_radius: 0.2
     distance: 3
@@ -581,6 +588,7 @@ projectiles:
   ##
   - type: HOMING ##
     damage: 1
+    damage_stamina: 20
     default__speed: 3
     collider_radius: 0.3
     distance: 8

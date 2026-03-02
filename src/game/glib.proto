@@ -120,13 +120,14 @@ message GTagValue {
 
 message GAttackMelee {
   int32 damage = 1;
-  int32 evade_flags = 2;
-  int32 collider_type = 3;
-  float starts_at = 4;
-  float ends_at = 5;
-  GAttackPolygon polygon = 6;
-  GAttackCircle circle = 7;
-  float block_stamina_cost = 8;
+  float damage_stamina = 2;
+
+  int32 evade_flags = 3;
+  int32 collider_type = 4;
+  float starts_at = 5;
+  float ends_at = 6;
+  GAttackPolygon polygon = 7;
+  GAttackCircle circle = 8;
 }
 
 message GStaminaCost {
@@ -218,22 +219,22 @@ message GProjectile {
   string res = 3;
 
   int32 damage = 4;
-  int32 evade_flags = 5;
+  float damage_stamina = 5;
 
-  int32 pierce = 6;
-  float collider_radius = 7;
-  float distance = 8;
+  int32 evade_flags = 6;
 
-  int32 projectilefly_type = 9;
+  int32 pierce = 7;
+  float collider_radius = 8;
+  float distance = 9;
 
-  float arc__height = 10;
-  float arc_or_area__duration = 11;
+  int32 projectilefly_type = 10;
 
-  float default__speed = 12;
+  float arc__height = 11;
+  float arc_or_area__duration = 12;
 
-  int32 touch_team_flags = 13;
+  float default__speed = 13;
 
-  float block_stamina_cost = 14;
+  int32 touch_team_flags = 14;
 
   repeated GTagValue tags = 15;
 }

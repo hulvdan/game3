@@ -18,6 +18,7 @@ x merged PLAYER/MOBS masks into CREATURES
 x fix: creatures can move interactables
 x fix: room to the up: interactable crash
 x ref
+x damage_stamina validation
 
 * non perfect blocking wastes stamina
 *

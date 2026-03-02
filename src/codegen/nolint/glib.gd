@@ -2689,42 +2689,42 @@ class GAttackMelee:
 		service.field = __damage
 		data[__damage.tag] = service
 
-		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__damage_stamina = PBField.new("damage_stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __damage_stamina
+		data[__damage_stamina.tag] = service
+
+		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __evade_flags
 		data[__evade_flags.tag] = service
 
-		__collider_type = PBField.new("collider_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__collider_type = PBField.new("collider_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __collider_type
 		data[__collider_type.tag] = service
 
-		__starts_at = PBField.new("starts_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__starts_at = PBField.new("starts_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __starts_at
 		data[__starts_at.tag] = service
 
-		__ends_at = PBField.new("ends_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__ends_at = PBField.new("ends_at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __ends_at
 		data[__ends_at.tag] = service
 
-		__polygon = PBField.new("polygon", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__polygon = PBField.new("polygon", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __polygon
 		service.func_ref = Callable(self, "new_polygon")
 		data[__polygon.tag] = service
 
-		__circle = PBField.new("circle", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__circle = PBField.new("circle", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __circle
 		service.func_ref = Callable(self, "new_circle")
 		data[__circle.tag] = service
-
-		__block_stamina_cost = PBField.new("block_stamina_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __block_stamina_cost
-		data[__block_stamina_cost.tag] = service
 
 
 	var data = { }
@@ -2751,6 +2751,28 @@ class GAttackMelee:
 		__damage.value = value
 
 
+	var __damage_stamina: PBField
+
+
+	func has_damage_stamina() -> bool:
+		if __damage_stamina.value != null:
+			return true
+		return false
+
+
+	func get_damage_stamina() -> float:
+		return __damage_stamina.value
+
+
+	func clear_damage_stamina() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__damage_stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_damage_stamina(value: float) -> void:
+		__damage_stamina.value = value
+
+
 	var __evade_flags: PBField
 
 
@@ -2765,7 +2787,7 @@ class GAttackMelee:
 
 
 	func clear_evade_flags() -> void:
-		data[2].state = PB_SERVICE_STATE.UNFILLED
+		data[3].state = PB_SERVICE_STATE.UNFILLED
 		__evade_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -2787,7 +2809,7 @@ class GAttackMelee:
 
 
 	func clear_collider_type() -> void:
-		data[3].state = PB_SERVICE_STATE.UNFILLED
+		data[4].state = PB_SERVICE_STATE.UNFILLED
 		__collider_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -2809,7 +2831,7 @@ class GAttackMelee:
 
 
 	func clear_starts_at() -> void:
-		data[4].state = PB_SERVICE_STATE.UNFILLED
+		data[5].state = PB_SERVICE_STATE.UNFILLED
 		__starts_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -2831,7 +2853,7 @@ class GAttackMelee:
 
 
 	func clear_ends_at() -> void:
-		data[5].state = PB_SERVICE_STATE.UNFILLED
+		data[6].state = PB_SERVICE_STATE.UNFILLED
 		__ends_at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -2853,7 +2875,7 @@ class GAttackMelee:
 
 
 	func clear_polygon() -> void:
-		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.UNFILLED
 		__polygon.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -2876,35 +2898,13 @@ class GAttackMelee:
 
 
 	func clear_circle() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__circle.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
 	func new_circle() -> GAttackCircle:
 		__circle.value = GAttackCircle.new()
 		return __circle.value
-
-
-	var __block_stamina_cost: PBField
-
-
-	func has_block_stamina_cost() -> bool:
-		if __block_stamina_cost.value != null:
-			return true
-		return false
-
-
-	func get_block_stamina_cost() -> float:
-		return __block_stamina_cost.value
-
-
-	func clear_block_stamina_cost() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
-		__block_stamina_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_block_stamina_cost(value: float) -> void:
-		__block_stamina_cost.value = value
 
 
 	func _to_string() -> String:
@@ -4450,55 +4450,55 @@ class GProjectile:
 		service.field = __damage
 		data[__damage.tag] = service
 
-		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__damage_stamina = PBField.new("damage_stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __damage_stamina
+		data[__damage_stamina.tag] = service
+
+		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __evade_flags
 		data[__evade_flags.tag] = service
 
-		__pierce = PBField.new("pierce", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__pierce = PBField.new("pierce", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __pierce
 		data[__pierce.tag] = service
 
-		__collider_radius = PBField.new("collider_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__collider_radius = PBField.new("collider_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __collider_radius
 		data[__collider_radius.tag] = service
 
-		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __distance
 		data[__distance.tag] = service
 
-		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __projectilefly_type
 		data[__projectilefly_type.tag] = service
 
-		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc__height
 		data[__arc__height.tag] = service
 
-		__arc_or_area__duration = PBField.new("arc_or_area__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc_or_area__duration = PBField.new("arc_or_area__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc_or_area__duration
 		data[__arc_or_area__duration.tag] = service
 
-		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __default__speed
 		data[__default__speed.tag] = service
 
-		__touch_team_flags = PBField.new("touch_team_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__touch_team_flags = PBField.new("touch_team_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __touch_team_flags
 		data[__touch_team_flags.tag] = service
-
-		__block_stamina_cost = PBField.new("block_stamina_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
-		service = PBServiceField.new()
-		service.field = __block_stamina_cost
-		data[__block_stamina_cost.tag] = service
 
 		var __tags_default: Array[GTagValue] = []
 		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 15, true, __tags_default)
@@ -4598,6 +4598,28 @@ class GProjectile:
 		__damage.value = value
 
 
+	var __damage_stamina: PBField
+
+
+	func has_damage_stamina() -> bool:
+		if __damage_stamina.value != null:
+			return true
+		return false
+
+
+	func get_damage_stamina() -> float:
+		return __damage_stamina.value
+
+
+	func clear_damage_stamina() -> void:
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		__damage_stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_damage_stamina(value: float) -> void:
+		__damage_stamina.value = value
+
+
 	var __evade_flags: PBField
 
 
@@ -4612,7 +4634,7 @@ class GProjectile:
 
 
 	func clear_evade_flags() -> void:
-		data[5].state = PB_SERVICE_STATE.UNFILLED
+		data[6].state = PB_SERVICE_STATE.UNFILLED
 		__evade_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4634,7 +4656,7 @@ class GProjectile:
 
 
 	func clear_pierce() -> void:
-		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.UNFILLED
 		__pierce.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4656,7 +4678,7 @@ class GProjectile:
 
 
 	func clear_collider_radius() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__collider_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4678,7 +4700,7 @@ class GProjectile:
 
 
 	func clear_distance() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4700,7 +4722,7 @@ class GProjectile:
 
 
 	func clear_projectilefly_type() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__projectilefly_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4722,7 +4744,7 @@ class GProjectile:
 
 
 	func clear_arc__height() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__arc__height.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4744,7 +4766,7 @@ class GProjectile:
 
 
 	func clear_arc_or_area__duration() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
+		data[12].state = PB_SERVICE_STATE.UNFILLED
 		__arc_or_area__duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4766,7 +4788,7 @@ class GProjectile:
 
 
 	func clear_default__speed() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
+		data[13].state = PB_SERVICE_STATE.UNFILLED
 		__default__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4788,34 +4810,12 @@ class GProjectile:
 
 
 	func clear_touch_team_flags() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[14].state = PB_SERVICE_STATE.UNFILLED
 		__touch_team_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
 	func set_touch_team_flags(value: int) -> void:
 		__touch_team_flags.value = value
-
-
-	var __block_stamina_cost: PBField
-
-
-	func has_block_stamina_cost() -> bool:
-		if __block_stamina_cost.value != null:
-			return true
-		return false
-
-
-	func get_block_stamina_cost() -> float:
-		return __block_stamina_cost.value
-
-
-	func clear_block_stamina_cost() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
-		__block_stamina_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
-
-
-	func set_block_stamina_cost(value: float) -> void:
-		__block_stamina_cost.value = value
 
 
 	var __tags: PBField

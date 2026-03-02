@@ -135,13 +135,6 @@ def _process_glib(genline, glib) -> None:
         setter(flags)
         ##
 
-    bf.recursive_visiter(
-        glib, "evade_flags", None, transform_evade_flags_list_of_strings_to_number
-    )
-    bf.recursive_visiter(
-        glib, "team_flags", None, transform_team_flags_list_of_strings_to_number
-    )
-
     ## LDTK. Enums
     ldtk_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
     for enum in ldtk_data["defs"]["enums"]:
@@ -283,10 +276,13 @@ def _process_glib(genline, glib) -> None:
         if "stops_tracking_at" not in x:
             x["stops_tracking_at"] = x["duration"]
         if is_player:
-            assert "stamina_cost" in x
+            assert "stamina_cost" in x, context
         validate_tags(x.get("tags", []), "attack")
         if melee := x.get("melee"):
-            assert melee["angle_degrees"] < 180
+            if polygon := melee.get("polygon"):
+                assert polygon["angle_degrees"] < 180, context
+            if not is_player:
+                assert "damage_stamina" in melee, context
         ##
 
     ## Creatures
@@ -326,12 +322,24 @@ def _process_glib(genline, glib) -> None:
     ##
 
     ## Projectiles
+    need_to_have_damage_stamina = []
     context.append("projectiles")
     for x in glib["projectiles"][1:]:
         context.append(x["type"])
         x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
+        evade_flags = x.get("evade_flags", [])
+        stamina_blockable = ("JUST_BLOCKABLE" in evade_flags) or (
+            "BLOCKABLE_IN_ANY_WAY" in evade_flags
+        )
+        if ("damage" in x) and ("damage_stamina" not in x) and stamina_blockable:
+            need_to_have_damage_stamina.append(x["type"])
         validate_tags(x.get("tags", []), "projectile")
         context.pop()
+    assert not need_to_have_damage_stamina, (
+        context,
+        "projectiles need to have damage_stamina",
+        need_to_have_damage_stamina,
+    )
     context.pop()
     ##
 
@@ -347,13 +355,13 @@ def _process_glib(genline, glib) -> None:
     for entity in level_progression.get_layer("Progression").entities("Progression"):
         progression_type = entity.field("progression_type")
         assert progression_type in required_to_specify_progression_types, (
-            f"Progression {progression_type} must be specified in ldtk ONCE"
+            f"Progression {progression_type} must be specified in ldtk ONCE",
         )
         required_to_specify_progression_types.remove(progression_type)
         p = prog_type_2_prog[progression_type]
         p["pos"] = bf.as_dict(entity.pos)
     assert not required_to_specify_progression_types, (
-        f"The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
+        f"{context} The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
     )
     glib["progression_size"] = bf.as_dict(level_progression.size)
     ##
@@ -363,6 +371,13 @@ def _process_glib(genline, glib) -> None:
         for k in [k for k in tag if k.endswith("_requirements")]:
             tag.pop(k)
     ##
+
+    bf.recursive_visiter(
+        glib, "evade_flags", None, transform_evade_flags_list_of_strings_to_number
+    )
+    bf.recursive_visiter(
+        glib, "team_flags", None, transform_team_flags_list_of_strings_to_number
+    )
 
     ## Tables
     with open(bf.SRC_DIR / "game" / "glib.proto", encoding="utf-8") as in_file:
