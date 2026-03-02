@@ -372,6 +372,27 @@ def _process_glib(genline, glib) -> None:
             tag.pop(k)
     ##
 
+    def transform_damage_stamina(x: float, setter) -> None:  ##
+        setter(
+            {
+                "flat": x,
+                "rally": x * glib["player"]["block_damage_stamina_rally_perfent_of_flat"],
+                "rally_discard_mult_pre": glib["player"][
+                    "block_damage_stamina_rally_discard_mult_pre"
+                ],
+                "rally_discard_mult_post": glib["player"][
+                    "block_damage_stamina_rally_discard_mult_post"
+                ],
+            }
+        )
+        ##
+
+    bf.recursive_visiter(glib, "damage_stamina", None, transform_damage_stamina)
+
+    glib["player"].pop("block_damage_stamina_rally_discard_mult_pre")
+    glib["player"].pop("block_damage_stamina_rally_perfent_of_flat")
+    glib["player"].pop("block_damage_stamina_rally_discard_mult_post")
+
     bf.recursive_visiter(
         glib, "evade_flags", None, transform_evade_flags_list_of_strings_to_number
     )

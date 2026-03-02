@@ -120,7 +120,7 @@ message GTagValue {
 
 message GAttackMelee {
   int32 damage = 1;
-  float damage_stamina = 2;
+  GStaminaCost damage_stamina = 2;
 
   int32 evade_flags = 3;
   int32 collider_type = 4;
@@ -219,7 +219,7 @@ message GProjectile {
   string res = 3;
 
   int32 damage = 4;
-  float damage_stamina = 5;
+  GStaminaCost damage_stamina = 5;
 
   int32 evade_flags = 6;
 

@@ -554,6 +554,7 @@ func _physics_process(dt: float) -> void:
 						attacker_pos,
 						bf.xz(x.transform.origin),
 					)
+					apply_damage_melee_data.damage_stamina = melee.get_damage_stamina()
 					if apply_damage(x, melee.get_damage(), apply_damage_melee_data):
 						creature.attack_damaged_creatures.append(x)
 
@@ -693,6 +694,7 @@ class ApplyDamageData: ##
 	var attack_id := 0
 	var impulse := 0.0
 	var impulse_dir := Vector2(0, 0)
+	var damage_stamina: glib.GStaminaCost = null
 ##
 
 
@@ -724,6 +726,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			creature.mark_attack_as_evaded(data.attack_id)
 			creature.blocked = true
 			player_blocked.emit(creature.transform.origin)
+			room.player.consume_stamina(data.damage_stamina)
 			add_impulse(
 				creature.impulses,
 				data.impulse_dir,

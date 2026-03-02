@@ -2689,9 +2689,10 @@ class GAttackMelee:
 		service.field = __damage
 		data[__damage.tag] = service
 
-		__damage_stamina = PBField.new("damage_stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__damage_stamina = PBField.new("damage_stamina", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __damage_stamina
+		service.func_ref = Callable(self, "new_damage_stamina")
 		data[__damage_stamina.tag] = service
 
 		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
@@ -2760,17 +2761,18 @@ class GAttackMelee:
 		return false
 
 
-	func get_damage_stamina() -> float:
+	func get_damage_stamina() -> GStaminaCost:
 		return __damage_stamina.value
 
 
 	func clear_damage_stamina() -> void:
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		__damage_stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__damage_stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func set_damage_stamina(value: float) -> void:
-		__damage_stamina.value = value
+	func new_damage_stamina() -> GStaminaCost:
+		__damage_stamina.value = GStaminaCost.new()
+		return __damage_stamina.value
 
 
 	var __evade_flags: PBField
@@ -4450,9 +4452,10 @@ class GProjectile:
 		service.field = __damage
 		data[__damage.tag] = service
 
-		__damage_stamina = PBField.new("damage_stamina", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__damage_stamina = PBField.new("damage_stamina", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __damage_stamina
+		service.func_ref = Callable(self, "new_damage_stamina")
 		data[__damage_stamina.tag] = service
 
 		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
@@ -4607,17 +4610,18 @@ class GProjectile:
 		return false
 
 
-	func get_damage_stamina() -> float:
+	func get_damage_stamina() -> GStaminaCost:
 		return __damage_stamina.value
 
 
 	func clear_damage_stamina() -> void:
 		data[5].state = PB_SERVICE_STATE.UNFILLED
-		__damage_stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+		__damage_stamina.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
-	func set_damage_stamina(value: float) -> void:
-		__damage_stamina.value = value
+	func new_damage_stamina() -> GStaminaCost:
+		__damage_stamina.value = GStaminaCost.new()
+		return __damage_stamina.value
 
 
 	var __evade_flags: PBField
@@ -7067,6 +7071,7 @@ enum GProjectileType {
 	ARROW,
 	BALL,
 	HOOK,
+	BOMB_BLOCKABLE,
 	BOMB,
 	STAR_HIVE_INSIDE,
 	STAR_HIVE,

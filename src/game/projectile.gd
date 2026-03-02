@@ -140,6 +140,7 @@ class UpdaterBase:
 			x.queue_free()
 
 		_damage_data.evade_flags = data.get_evade_flags()
+		_damage_data.damage_stamina = data.get_damage_stamina()
 		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
 	##
 
