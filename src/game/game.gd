@@ -138,7 +138,7 @@ func room_index(pos: Vector2i) -> int: ##
 ##
 
 
-func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
+func _on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 	if player_is_entering_door:
 		return
 	if body != room.player.creature:
@@ -149,7 +149,7 @@ func on_player_entered_door(body: Node3D, direction_index: int) -> void: ##
 	player_is_entering_door = true
 	Room.v.player._buffer.clear()
 	tween.tween_property(r, "modulate:a", 1, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_callback(remake_room.bind(current_room_pos + bf.DIRECTION_OFFSETS[direction_index], direction_index))
+	tween.tween_callback(_remake_room.bind(current_room_pos + bf.DIRECTION_OFFSETS[direction_index], direction_index))
 	tween.tween_property(r, "modulate:a", 0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	##
 
@@ -161,7 +161,7 @@ static func set_gizmos_color_according_to_evade_flags(flags: int) -> void: ##
 ##
 
 
-func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
+func _remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	var player_hp := glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_hp()
 
 	## Updating flash of ui minimap
@@ -223,7 +223,7 @@ func remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 		bf.set_pos_2d(node, glib.ToV2(door.get_center_pos()))
 		room.container_doors.add_child(node)
 
-		node.body_entered.connect(on_player_entered_door.bind(door.get_direction()))
+		node.body_entered.connect(_on_player_entered_door.bind(door.get_direction()))
 
 		if (door.get_direction() + 2) % 4 == player_direction_index:
 			player_pos = glib.ToV2(door.get_center_pos()) + Vector2(bf.DIRECTION_OFFSETS[player_direction_index]) * 2
@@ -327,10 +327,10 @@ func _ready() -> void:
 		node.transform.origin = (Vector2(pos.x, pos.y) - Vector2(progression_size) / 2.0) * 40.0
 	##
 
-	remake_room(Vector2i(Vector2(ws) / 2.0), -1)
+	_remake_room(Vector2i(Vector2(ws) / 2.0), -1)
 
 
-func get_mouse_world_point() -> Vector3: ##
+func _get_mouse_world_point() -> Vector3: ##
 	var mouse_pos := get_viewport().get_mouse_position()
 	var ray_origin := camera.project_ray_origin(mouse_pos)
 	var ray_dir := camera.project_ray_normal(mouse_pos)
@@ -394,7 +394,7 @@ func _physics_process(dt: float) -> void:
 	room.player.explicit_process(dt)
 
 	## Updating player's bow direction
-	var end_point := get_mouse_world_point()
+	var end_point := _get_mouse_world_point()
 	room.player.aim_pos = bf.xz(end_point)
 	if end_point != Vector3.INF:
 		room.player.bow.transform.basis = room.player.creature.transform.looking_at(end_point).basis

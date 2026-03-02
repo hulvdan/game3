@@ -2721,6 +2721,11 @@ class GAttackMelee:
 		service.func_ref = Callable(self, "new_circle")
 		data[__circle.tag] = service
 
+		__block_stamina_cost = PBField.new("block_stamina_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __block_stamina_cost
+		data[__block_stamina_cost.tag] = service
+
 
 	var data = { }
 
@@ -2878,6 +2883,28 @@ class GAttackMelee:
 	func new_circle() -> GAttackCircle:
 		__circle.value = GAttackCircle.new()
 		return __circle.value
+
+
+	var __block_stamina_cost: PBField
+
+
+	func has_block_stamina_cost() -> bool:
+		if __block_stamina_cost.value != null:
+			return true
+		return false
+
+
+	func get_block_stamina_cost() -> float:
+		return __block_stamina_cost.value
+
+
+	func clear_block_stamina_cost() -> void:
+		data[8].state = PB_SERVICE_STATE.UNFILLED
+		__block_stamina_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_block_stamina_cost(value: float) -> void:
+		__block_stamina_cost.value = value
 
 
 	func _to_string() -> String:
@@ -4468,8 +4495,13 @@ class GProjectile:
 		service.field = __touch_team_flags
 		data[__touch_team_flags.tag] = service
 
+		__block_stamina_cost = PBField.new("block_stamina_cost", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __block_stamina_cost
+		data[__block_stamina_cost.tag] = service
+
 		var __tags_default: Array[GTagValue] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 14, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 15, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
@@ -4764,6 +4796,28 @@ class GProjectile:
 		__touch_team_flags.value = value
 
 
+	var __block_stamina_cost: PBField
+
+
+	func has_block_stamina_cost() -> bool:
+		if __block_stamina_cost.value != null:
+			return true
+		return false
+
+
+	func get_block_stamina_cost() -> float:
+		return __block_stamina_cost.value
+
+
+	func clear_block_stamina_cost() -> void:
+		data[14].state = PB_SERVICE_STATE.UNFILLED
+		__block_stamina_cost.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_block_stamina_cost(value: float) -> void:
+		__block_stamina_cost.value = value
+
+
 	var __tags: PBField
 
 
@@ -4772,7 +4826,7 @@ class GProjectile:
 
 
 	func clear_tags() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
+		data[15].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 

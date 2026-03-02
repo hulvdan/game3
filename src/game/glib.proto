@@ -126,6 +126,7 @@ message GAttackMelee {
   float ends_at = 5;
   GAttackPolygon polygon = 6;
   GAttackCircle circle = 7;
+  float block_stamina_cost = 8;
 }
 
 message GStaminaCost {
@@ -232,7 +233,9 @@ message GProjectile {
 
   int32 touch_team_flags = 13;
 
-  repeated GTagValue tags = 14;
+  float block_stamina_cost = 14;
+
+  repeated GTagValue tags = 15;
 }
 
 message GInteractable {

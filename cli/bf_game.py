@@ -285,6 +285,8 @@ def _process_glib(genline, glib) -> None:
         if is_player:
             assert "stamina_cost" in x
         validate_tags(x.get("tags", []), "attack")
+        if melee := x.get("melee"):
+            assert melee["angle_degrees"] < 180
         ##
 
     ## Creatures
@@ -293,8 +295,6 @@ def _process_glib(genline, glib) -> None:
         context.append(x["type"])
         is_player = x["type"] == "PLAYER"
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
-        if "melee__attack_polygon" in x:
-            assert x["melee__attack_polygon"]["angle_degrees"] < 180
         context.append("attacks")
         for i, attack in enumerate(x.get("attacks", [])):
             context.append(i)
