@@ -20,6 +20,8 @@ var ki := false
 var aim_pos: Vector2
 
 var next_attack_index := 0
+var finished_attack_recently := 0
+
 var _stamina_depleted_at := 0.0
 var _next_block_at: float = 0.0
 var _next_roll_at: float = 0.0
@@ -140,6 +142,8 @@ func explicit_process(dt: float) -> void: ##
 		stamina_ki = stamina_rally
 	assert(stamina >= 0)
 	assert(stamina_rally <= glib.v.get_player().get_stamina())
+
+	finished_attack_recently = max(0, finished_attack_recently - 1)
 ##
 
 
@@ -236,16 +240,6 @@ class PlayerDefault extends PlayerBase: ##
 		match a.type:
 			ActionType.ATTACK, ActionType.ABILITY_1, ActionType.ABILITY_2:
 				if player._can_start_attack():
-					match a.type:
-						ActionType.ATTACK:
-							var attacks := glib.v.get_creatures()[player.creature.type].get_attacks()
-							player.creature.enqueue_attack(attacks[player.next_attack_index])
-						ActionType.ABILITY_1:
-							player.creature.enqueue_ability(glib.v.get_abilities()[0])
-						ActionType.ABILITY_2:
-							player.creature.enqueue_ability(glib.v.get_abilities()[1])
-						_:
-							bf.invalid_path()
 					player._change_state(StateType.ATTACK, a)
 					return true
 			ActionType.ROLL:
@@ -267,9 +261,24 @@ class PlayerDefault extends PlayerBase: ##
 class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		player.next_attack_index += 1
-		if player.next_attack_index >= 3:
+
+		if player.finished_attack_recently:
+			player.next_attack_index += 1
+			if player.next_attack_index >= 3:
+				player.next_attack_index = 0
+		else:
 			player.next_attack_index = 0
+
+		match a.type:
+			ActionType.ATTACK:
+				var attacks := glib.v.get_creatures()[player.creature.type].get_attacks()
+				player.creature.enqueue_attack(attacks[player.next_attack_index])
+			ActionType.ABILITY_1:
+				player.creature.enqueue_ability(glib.v.get_abilities()[0])
+			ActionType.ABILITY_2:
+				player.creature.enqueue_ability(glib.v.get_abilities()[1])
+			_:
+				bf.invalid_path()
 
 		player.creature.speed_modifiers.attacking = glib.v.get_player().get_speed_scale__shooting()
 		player._stamina_regen_modifiers.attacking = glib.v.get_player().get_stamina_regen_scale__shooting()
@@ -279,10 +288,12 @@ class PlayerAttack extends PlayerBase: ##
 		super.on_exit()
 		player.creature.speed_modifiers.attacking = 1
 		player._stamina_regen_modifiers.attacking = 1
+		player.finished_attack_recently = 2
 
 
 	func explicit_process(dt: float) -> void:
 		super.explicit_process(dt)
+
 		if ActionAttack.explicit_update_attack(
 			dt,
 			player.creature,
@@ -299,9 +310,6 @@ class PlayerAttack extends PlayerBase: ##
 					player._change_state(StateType.ROLL, a)
 					return true
 			ActionType.SET_MOVE_DIR:
-				player.creature.controller.move = a.shoot_or_move_or_roll__dir
-				return true
-			ActionType.ATTACK:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
 				return true
 		return false

@@ -273,16 +273,16 @@ creatures:
         projectile_spawns:
           - at: 0.1
         stamina_cost:
-          flat: 20
-          rally: 12
+          flat: 15
+          rally: 8
       - duration: 0.4
         projectile_type: ARROW
         projectile_spawns:
           - at: 0.1
           - at: 0.2
         stamina_cost:
-          flat: 15
-          rally: 8
+          flat: 8
+          rally: 4
     ability_types:
       - HOOK
   ##

@@ -22,8 +22,9 @@ x damage_stamina validation
 x non perfect blocking wastes stamina
 x better vscode files.exclude
 x player attacks combo
+x correct player attacks combo advancing
 
-* correct player attacks combo
+* player 1st attack deals less damage
 * tileset with corners?
 *
 * interactables: bomb barrel: show hp
