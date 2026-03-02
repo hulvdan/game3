@@ -20,6 +20,7 @@ x fix: room to the up: interactable crash
 x ref
 x damage_stamina validation
 x non perfect blocking wastes stamina
+x better vscode files.exclude
 
 * player melee attacks combo
   1st -stamina -damage
