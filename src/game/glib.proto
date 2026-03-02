@@ -173,11 +173,10 @@ message GCreature {
   int32 hp = 5;
   float speed = 6;
 
-  int32 mask_type = 7;
-  repeated GCreatureDrop drops = 8;
+  repeated GCreatureDrop drops = 7;
 
-  repeated GAttack attacks = 9;
-  repeated int32 ability_types = 10;
+  repeated GAttack attacks = 8;
+  repeated int32 ability_types = 9;
 }
 
 message GDamage {
@@ -231,7 +230,9 @@ message GProjectile {
 
   float default__speed = 12;
 
-  repeated GTagValue tags = 13;
+  int32 touch_team_flags = 13;
+
+  repeated GTagValue tags = 14;
 }
 
 message GInteractable {

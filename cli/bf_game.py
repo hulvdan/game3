@@ -293,7 +293,6 @@ def _process_glib(genline, glib) -> None:
         context.append(x["type"])
         is_player = x["type"] == "PLAYER"
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
-        x["mask_type"] = x.get("mask_type", "MOBS")
         if "melee__attack_polygon" in x:
             assert x["melee__attack_polygon"]["angle_degrees"] < 180
         context.append("attacks")

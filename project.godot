@@ -161,10 +161,12 @@ locale/translations=PackedStringArray("res://assets/localization.en.translation"
 
 [layer_names]
 
-3d_physics/layer_1="walls"
-3d_physics/layer_2="player"
-3d_physics/layer_3="mobs"
+3d_physics/layer_1="walls_for_creatures"
+3d_physics/layer_2="creatures"
+3d_physics/layer_3="Layer 3"
 3d_physics/layer_4="interactables"
+3d_physics/layer_5="walls_for_projectiles"
+3d_physics/layer_6="walls_for_interactables"
 
 [physics]
 

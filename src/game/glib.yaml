@@ -120,8 +120,8 @@ progression: ##
 
 masks: ##
   - type: WALLS
-  - type: PLAYER
-  - type: MOBS
+  - type: CREATURES
+  - type: _1
   - type: INTERACTABLES
 ##
 
@@ -229,7 +229,6 @@ creatures:
   - type: PLAYER ##
     hp: 10
     speed: 4
-    mask_type: PLAYER
     attacks:
       # - duration: 0.3
       #   stamina_cost:
@@ -503,6 +502,8 @@ projectiles:
     default__speed: 14
     distance: 6
     evade_flags: *evade_flags_default
+    touch_team_flags:
+      - ENEMIES
   ##
   - type: BALL ##
     damage: 1
@@ -510,12 +511,16 @@ projectiles:
     collider_radius: 0.3
     distance: 8
     evade_flags: *evade_flags_default
+    touch_team_flags:
+      - ENEMIES
   ##
   - type: HOOK ##
     damage: 0
     default__speed: 9
     collider_radius: 0.3
     distance: 5
+    touch_team_flags:
+      - ENEMIES
     tags:
       - tag_type: HOOK
         f1: 0.4 # dur
@@ -531,31 +536,37 @@ projectiles:
     collider_radius: 1
     distance: 5
     evade_flags: *evade_flags_perfect
+    touch_team_flags:
+      - ENEMIES
   ##
   - type: STAR_HIVE_INSIDE ##
     projectilefly_type: AREA
-    tags:
-      - tag_type: HIVE
-        f1: 1.0
-        i1: 5
-        projectile_type: STAR_BIT
     arc__height: 1
     arc_or_area__duration: 0.3
     collider_radius: 1
     evade_flags: *evade_flags_default
-  ##
-  - type: STAR_HIVE ##
-    projectilefly_type: ARC
+    touch_team_flags:
+      - ENEMIES
     tags:
       - tag_type: HIVE
         f1: 1.0
         i1: 5
         projectile_type: STAR_BIT
+  ##
+  - type: STAR_HIVE ##
+    projectilefly_type: ARC
     arc__height: 1
     arc_or_area__duration: 1
     collider_radius: 1
     distance: 5
     evade_flags: *evade_flags_default
+    touch_team_flags:
+      - ENEMIES
+    tags:
+      - tag_type: HIVE
+        f1: 1.0
+        i1: 5
+        projectile_type: STAR_BIT
   ##
   - type: STAR_BIT ##
     damage: 1
@@ -563,16 +574,20 @@ projectiles:
     collider_radius: 0.2
     distance: 3
     evade_flags: *evade_flags_default
+    touch_team_flags:
+      - ENEMIES
   ##
   - type: HOMING ##
     damage: 1
     default__speed: 3
     collider_radius: 0.3
     distance: 8
+    evade_flags: *evade_flags_default
+    touch_team_flags:
+      - ENEMIES
     tags:
       - tag_type: HOMING
         f1: 1.0
-    evade_flags: *evade_flags_default
   ##
   - type: BLINK ##
     damage: 2
@@ -582,6 +597,8 @@ projectiles:
     distance: 4
     # evade_flags: *evade_flags_default
     evade_flags: *evade_flags_perfect
+    touch_team_flags:
+      - ENEMIES
     tags:
       - tag_type: BLINK
         f1: 1.0 # blink_time
@@ -592,6 +609,7 @@ projectiles:
     collider_radius: 0.6
     distance: 1
     evade_flags: *evade_flags_default
+    touch_team_flags:
     tags:
       - tag_type: SUMMON
         creature_type: MOB_SHOOTER
@@ -601,6 +619,8 @@ projectiles:
     arc_or_area__duration: 12
     collider_radius: 1.8
     distance: 4
+    touch_team_flags:
+      - ENEMIES
     tags:
       - tag_type: SCALE_MOVEMENT_SPEED
         f1: 0.3 # scale
@@ -612,6 +632,9 @@ projectiles:
     arc_or_area__duration: 30
     collider_radius: 1.8
     distance: 4
+    touch_team_flags:
+      - ME
+      - COMRADES
     tags:
       - tag_type: SCALE_MOVEMENT_SPEED
         f1: 2.0 # scale
@@ -626,6 +649,8 @@ projectiles:
     distance: 4
     damage: 2
     evade_flags: *evade_flags_perfect
+    touch_team_flags:
+      - ALL
     tags:
       - tag_type: IMPULSE_FROM_CENTER
         f1: 2 # dur
@@ -639,6 +664,8 @@ projectiles:
     arc_or_area__duration: 30
     collider_radius: 1.8
     distance: 4
+    touch_team_flags:
+      - ENEMIES
     tags:
       - tag_type: KAZUHA
         f1: 0.5 # additional_speed

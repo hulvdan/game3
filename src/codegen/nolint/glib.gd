@@ -3631,27 +3631,22 @@ class GCreature:
 		service.field = __speed
 		data[__speed.tag] = service
 
-		__mask_type = PBField.new("mask_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
-		service = PBServiceField.new()
-		service.field = __mask_type
-		data[__mask_type.tag] = service
-
 		var __drops_default: Array[GCreatureDrop] = []
-		__drops = PBField.new("drops", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 8, true, __drops_default)
+		__drops = PBField.new("drops", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 7, true, __drops_default)
 		service = PBServiceField.new()
 		service.field = __drops
 		service.func_ref = Callable(self, "add_drops")
 		data[__drops.tag] = service
 
 		var __attacks_default: Array[GAttack] = []
-		__attacks = PBField.new("attacks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 9, true, __attacks_default)
+		__attacks = PBField.new("attacks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 8, true, __attacks_default)
 		service = PBServiceField.new()
 		service.field = __attacks
 		service.func_ref = Callable(self, "add_attacks")
 		data[__attacks.tag] = service
 
 		var __ability_types_default: Array[int] = []
-		__ability_types = PBField.new("ability_types", PB_DATA_TYPE.INT32, PB_RULE.REPEATED, 10, true, __ability_types_default)
+		__ability_types = PBField.new("ability_types", PB_DATA_TYPE.INT32, PB_RULE.REPEATED, 9, true, __ability_types_default)
 		service = PBServiceField.new()
 		service.field = __ability_types
 		data[__ability_types.tag] = service
@@ -3791,28 +3786,6 @@ class GCreature:
 		__speed.value = value
 
 
-	var __mask_type: PBField
-
-
-	func has_mask_type() -> bool:
-		if __mask_type.value != null:
-			return true
-		return false
-
-
-	func get_mask_type() -> int:
-		return __mask_type.value
-
-
-	func clear_mask_type() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
-		__mask_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
-
-
-	func set_mask_type(value: int) -> void:
-		__mask_type.value = value
-
-
 	var __drops: PBField
 
 
@@ -3821,7 +3794,7 @@ class GCreature:
 
 
 	func clear_drops() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.UNFILLED
 		__drops.value.clear()
 
 
@@ -3839,7 +3812,7 @@ class GCreature:
 
 
 	func clear_attacks() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__attacks.value.clear()
 
 
@@ -3857,7 +3830,7 @@ class GCreature:
 
 
 	func clear_ability_types() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__ability_types.value.clear()
 
 
@@ -4490,8 +4463,13 @@ class GProjectile:
 		service.field = __default__speed
 		data[__default__speed.tag] = service
 
+		__touch_team_flags = PBField.new("touch_team_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __touch_team_flags
+		data[__touch_team_flags.tag] = service
+
 		var __tags_default: Array[GTagValue] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 13, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 14, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
@@ -4764,6 +4742,28 @@ class GProjectile:
 		__default__speed.value = value
 
 
+	var __touch_team_flags: PBField
+
+
+	func has_touch_team_flags() -> bool:
+		if __touch_team_flags.value != null:
+			return true
+		return false
+
+
+	func get_touch_team_flags() -> int:
+		return __touch_team_flags.value
+
+
+	func clear_touch_team_flags() -> void:
+		data[13].state = PB_SERVICE_STATE.UNFILLED
+		__touch_team_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_touch_team_flags(value: int) -> void:
+		__touch_team_flags.value = value
+
+
 	var __tags: PBField
 
 
@@ -4772,7 +4772,7 @@ class GProjectile:
 
 
 	func clear_tags() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[14].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 
@@ -7035,8 +7035,8 @@ enum GInteractableType {
 
 enum GMaskType {
 	WALLS,
-	PLAYER,
-	MOBS,
+	CREATURES,
+	_1,
 	INTERACTABLES,
 	COUNT,
 }

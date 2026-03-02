@@ -12,8 +12,16 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x yml mask_type only creatures (instead of PLAYER / MOBS split)
 
+* fix: room to the up: interactable crash
+*
 * non perfect blocking wastes stamina
+*
+* player melee attacks combo
+  1st -stamina -damage
+  2nd -stamina +damage
+  3rd +stamina +damage
 *
 * interactables: bomb barrel: show hp
 * interactables: bomb barrel: support melee impulse (divide by mass!)
