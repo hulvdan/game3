@@ -13,6 +13,7 @@ PLAN
 ============================================================
 x clear
 x yml mask_type only creatures (instead of PLAYER / MOBS split)
+x better gitf
 
 * fix: room to the up: interactable crash
 *
