@@ -30,8 +30,8 @@ x fmt tabs
 x rally hp: updating rally bar
 x rally hp: don't reset rally upon changing rooms
 x damaging interactables show damage numbers
+x rally hp: player recovers rally upon damaging
 
-* rally hp: player recovers rally upon damaging
 * rally hp: also recovers from interactables
 *
 * projectile inherits damage from attack?

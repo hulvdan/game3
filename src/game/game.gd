@@ -543,7 +543,7 @@ func room_index(pos: Vector2i) -> int: ##
 	##
 
 
-func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> bool: ##
+func apply_damage(creature: Creature, damage: float, data: ApplyDamageData) -> bool: ##
 	assert(data.impulse >= 0)
 
 	assert(data.attack_id)
@@ -612,7 +612,7 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 
 	if damage > 0:
 		creature.hp_recoverable_up_to = creature.hp
-	var dealt_damage = min(creature.hp, damage)
+	var dealt_damage: float = min(creature.hp, damage)
 	creature.hp -= dealt_damage
 	var creature_max_hp: float = glib.v.get_creatures()[creature.type].get_hp()
 	creature.hp_bar.set_progress((creature.hp as float) / creature_max_hp)
@@ -625,12 +625,11 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 			glib.v.get_hp_damage_rally_percent(),
 		)
 		assert(creature.hp >= 0)
-		creature.hp_bar.set_rally_front_progress((creature.hp_recoverable_up_to as float) / creature_max_hp)
-
-		if is_instance_valid(data.owner__mb_freed_or_null):
-			var owner_ := data.owner__mb_freed_or_null
-			owner_.hp += min(owner_.hp_recoverable_up_to - owner_.hp, data.hp_rally_recover)
-			owner_.time_since_hp_rally = 0
+		creature.hp_bar.set_rally_front_progress(
+			(creature.hp_recoverable_up_to as float) / creature_max_hp,
+		)
+	if is_instance_valid(data.owner__mb_freed_or_null):
+		data.owner__mb_freed_or_null.recover_hp_rally(data.hp_rally_recover)
 
 	if (creature.type != glib.GCreatureType.PLAYER) && (creature.hp <= 0):
 		room.player.add_stamina(glib.v.get_player().get_stamina_regen_on_kill(), 1)

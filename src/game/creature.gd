@@ -37,6 +37,14 @@ var _attack_ids_marked_as_evaded: Array[EvadedAttack]
 @onready var node_shape: CollisionShape3D = %_shape ##
 
 
+func recover_hp_rally(value: float) -> void: ##
+	assert(value >= 0)
+	var max_to_recover := hp_recoverable_up_to - hp
+	hp += min(max_to_recover, value)
+	time_since_hp_rally = 0
+	##
+
+
 func enqueue_attack(value: glib.GAttack) -> void: ##
 	change_attack_to = value
 	change_ability_to = null
