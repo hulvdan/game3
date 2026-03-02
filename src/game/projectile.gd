@@ -137,6 +137,10 @@ class UpdaterBase:
 
 		_damage_data.evade_flags = data.get_evade_flags()
 		_damage_data.damage_stamina = data.get_damage_stamina()
+		_damage_data.hp_rally_recover = data.get_hp_rally_recover()
+		_damage_data.owner__mb_freed_or_null = null
+		if is_instance_valid(x.d.owner__mb_freed_or_null):
+			_damage_data.owner__mb_freed_or_null = x.d.owner__mb_freed_or_null
 		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
 	##
 
