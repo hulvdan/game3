@@ -51,10 +51,9 @@ var _states: Array[PlayerBase] = [
     PlayerAttack.new(),
     PlayerRoll.new(),
     PlayerBlock.new(),
-]
+] ##
 
 
-##
 func init(creature_: Creature, bow_: Node3D) -> void: ##
     _states[StateType.ROLL].inside_enemies_t_affects_speed = false
 

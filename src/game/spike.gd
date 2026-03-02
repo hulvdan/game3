@@ -14,10 +14,9 @@ var creatures_to_damage: Array[Creature]
 
 @onready var container_spikes: Node3D = %_container_spikes
 @onready var area_trigger: Area3D = %_area_trigger
-@onready var area_damage: Area3D = %_area_damage
+@onready var area_damage: Area3D = %_area_damage ##
 
 
-##
 func _process(dt: float) -> void: ##
     if is_active:
         activation_elapsed_visual += dt

@@ -12,10 +12,9 @@ extends Control
 @export var _damage_number_mob_color: Color = Color(1, 1, 0, 1)
 @export var _packed_label: PackedScene
 
-var _damage_opts: UIActionLabelOpts = UIActionLabelOpts.new()
+var _damage_opts: UIActionLabelOpts = UIActionLabelOpts.new() ##
 
 
-##
 func _ready() -> void: ##
     Game.v.player_perfectly_evaded.connect(_make_action_label.bind(_options["player_perfectly_evaded"]))
     Game.v.enemy_started_attack.connect(_make_action_label.bind(_options["enemy_started_attack"]))

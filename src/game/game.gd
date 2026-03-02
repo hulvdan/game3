@@ -61,10 +61,9 @@ var current_room_index:
 @onready var container_ui_minimap: Control = %_container_ui_minimap
 @onready var container_ui_progression: Node2D = %_container_ui_progression
 # @onready var container_stamina_bars: Control = %_container_stamina_bars
-@onready var container_general: Node = %_container_general
+@onready var container_general: Node = %_container_general ##
 
 
-##
 static func add_impulse(
         arr: Array[Impulse],
         dir: Vector2,
