@@ -13,6 +13,7 @@ var stamina_rally := 0.0
 var stamina_ki := 0.0
 var attack_queued: bool
 var elapsed_since_stamina_consumed := 0.0
+var elapsed_since_ki_maxed := 0.0
 var dodging := false
 var blocking := false
 var blocking_perfectly := false
@@ -99,11 +100,13 @@ func push_action(type: ActionType, dir: Vector2) -> void: ##
 func explicit_process(dt: float) -> void: ##
 	assert(glib.v.get_controls().get_action_consumption_duration() >= 0)
 
+	var pl := glib.v.get_player()
+
 	creature.speed_modifiers.inside_enemies_t = 1.0
 	if _states[_current_state].inside_enemies_t_affects_speed:
 		creature.speed_modifiers.inside_enemies_t = lerp(
 			1.0,
-			glib.v.get_player().get_speed_scale__inside_enemies(),
+			pl.get_speed_scale__inside_enemies(),
 			inside_enemy_t,
 		)
 
@@ -124,24 +127,34 @@ func explicit_process(dt: float) -> void: ##
 		regen_dt *= v
 	if (
 		_stamina_depleted_at
-		&& (Room.v.start_elapsed - _stamina_depleted_at < glib.v.get_player().get_stamina_depletion_regen_delay())
+		&& (Room.v.start_elapsed - _stamina_depleted_at < pl.get_stamina_depletion_regen_delay())
 	):
 		regen_dt = 0
-	stamina += regen_dt * glib.v.get_player().get_stamina_regen_per_second()
+	stamina += regen_dt * pl.get_stamina_regen_per_second()
 
-	if stamina > glib.v.get_player().get_stamina():
-		stamina = glib.v.get_player().get_stamina()
+	if stamina > pl.get_stamina():
+		stamina = pl.get_stamina()
 	if stamina_rally < stamina:
 		stamina_rally = stamina
 
 	elapsed_since_stamina_consumed += dt
 	stamina_ki = max(stamina_ki, stamina)
-	if elapsed_since_stamina_consumed >= glib.v.get_player().get_block__activation_start():
-		stamina_ki += glib.v.get_player().get_ki__rally_increase_per_second() * dt
+	if elapsed_since_stamina_consumed >= pl.get_block__activation_start():
+		stamina_ki += pl.get_ki__rally_increase_per_second() * dt
 	if stamina_ki > stamina_rally:
 		stamina_ki = stamina_rally
 	assert(stamina >= 0)
-	assert(stamina_rally <= glib.v.get_player().get_stamina())
+	assert(stamina_rally <= pl.get_stamina())
+
+	if stamina_ki >= stamina_rally:
+		elapsed_since_ki_maxed += dt
+	else:
+		elapsed_since_ki_maxed = 0
+
+	var lose_after := pl.get_ki_stamina_gets_lost_after()
+	if (elapsed_since_stamina_consumed > lose_after) && (elapsed_since_ki_maxed > lose_after):
+		stamina_rally = stamina
+		stamina_ki = stamina
 
 	finished_attack_recently = max(0, finished_attack_recently - 1)
 ##
@@ -169,6 +182,8 @@ func consume_stamina(cost: glib.GStaminaCost) -> void: ##
 	stamina_rally -= (stamina_rally - stamina) * cost.get_rally_discard_mult_post()
 	if stamina <= 0:
 		_stamina_depleted_at = Room.v.start_elapsed
+	if stamina_ki > stamina:
+		elapsed_since_ki_maxed = 0
 	stamina_ki = stamina
 	assert(stamina_rally >= 0)
 	assert(stamina >= 0)

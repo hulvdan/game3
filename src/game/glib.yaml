@@ -61,6 +61,7 @@ player: ##
   stamina_rally_decay_per_second: 20
   stamina_depletion_regen_delay: 1.3
   stamina_regen_on_kill: 25
+  ki_stamina_gets_lost_after: 0.3
 
   block_damage_stamina_rally_discard_mult_pre: 0
   block_damage_stamina_rally_perfent_of_flat: 0.5
