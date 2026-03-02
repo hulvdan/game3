@@ -19,6 +19,7 @@ var blocking_perfectly := false
 var ki := false
 var aim_pos: Vector2
 
+var next_attack_index := 0
 var _stamina_depleted_at := 0.0
 var _next_block_at: float = 0.0
 var _next_roll_at: float = 0.0
@@ -237,7 +238,8 @@ class PlayerDefault extends PlayerBase: ##
 				if player._can_start_attack():
 					match a.type:
 						ActionType.ATTACK:
-							player.creature.enqueue_attack(glib.v.get_creatures()[player.creature.type].get_attacks()[0])
+							var attacks := glib.v.get_creatures()[player.creature.type].get_attacks()
+							player.creature.enqueue_attack(attacks[player.next_attack_index])
 						ActionType.ABILITY_1:
 							player.creature.enqueue_ability(glib.v.get_abilities()[0])
 						ActionType.ABILITY_2:
@@ -265,6 +267,10 @@ class PlayerDefault extends PlayerBase: ##
 class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
+		player.next_attack_index += 1
+		if player.next_attack_index >= 3:
+			player.next_attack_index = 0
+
 		player.creature.speed_modifiers.attacking = glib.v.get_player().get_speed_scale__shooting()
 		player._stamina_regen_modifiers.attacking = glib.v.get_player().get_stamina_regen_scale__shooting()
 
@@ -293,6 +299,9 @@ class PlayerAttack extends PlayerBase: ##
 					player._change_state(StateType.ROLL, a)
 					return true
 			ActionType.SET_MOVE_DIR:
+				player.creature.controller.move = a.shoot_or_move_or_roll__dir
+				return true
+			ActionType.ATTACK:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
 				return true
 		return false

@@ -21,11 +21,10 @@ x ref
 x damage_stamina validation
 x non perfect blocking wastes stamina
 x better vscode files.exclude
+x player attacks combo
 
-* player melee attacks combo
-  1st -stamina -damage
-  2nd -stamina +damage
-  3rd +stamina +damage
+* correct player attacks combo
+* tileset with corners?
 *
 * interactables: bomb barrel: show hp
 * interactables: bomb barrel: support melee impulse (divide by mass!)
