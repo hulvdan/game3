@@ -688,7 +688,7 @@ def get_git_commit_message_from_tasks_txt_plan() -> str:  ##
         commit_message = "f"
     for prefix in ("* ", "x ", "- ", "+ "):
         commit_message = commit_message.removeprefix(prefix)
-    return commit_message
+    return commit_message.strip()
     ##
 
 
