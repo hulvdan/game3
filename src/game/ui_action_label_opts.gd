@@ -1,6 +1,5 @@
-extends Resource
-
 class_name UIActionLabelOpts
+extends Resource
 
 @export var text: String
 @export var texture: Texture

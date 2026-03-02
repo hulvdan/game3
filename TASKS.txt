@@ -24,6 +24,7 @@ x better vscode files.exclude
 x player attacks combo
 x correct player attacks combo advancing
 x long ki wait loses ki
+x gdscript-formatter reorder code
 
 * player 1st attack deals less damage
 * tileset with corners?

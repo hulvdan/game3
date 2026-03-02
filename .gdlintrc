@@ -1,9 +1,10 @@
 class-definitions-order:
   - tools
-  - extends
   - classnames
+  - extends
   - docstrings
   - signals
+  - enums
   - consts
   - staticvars
   - exports
@@ -11,7 +12,6 @@ class-definitions-order:
   - prvvars
   - onreadypubvars
   - onreadyprvvars
-  - enums
   - others
 class-load-variable-name: (([A-Z][a-z0-9]*)+|_?_?[a-z][a-z0-9]*(_[a-z0-9]+)*)
 class-name: ([A-Z][a-z0-9]*)+

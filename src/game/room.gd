@@ -1,6 +1,5 @@
-extends Node
-
 class_name Room
+extends Node
 
 static var v: Room
 
@@ -20,6 +19,6 @@ var _next_attack_id := 0
 
 
 func get_next_attack_id() -> int: ##
-	_next_attack_id += 1
-	return _next_attack_id
-##
+    _next_attack_id += 1
+    return _next_attack_id
+    ##

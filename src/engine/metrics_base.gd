@@ -1,7 +1,7 @@
 @abstract
+class_name MetricsBase
 extends Node
 
-class_name MetricsBase
 
 @abstract func metric(_id: String) -> void
 

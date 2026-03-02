@@ -1,6 +1,5 @@
-extends Control
-
 class_name UIActionLabel
+extends Control
 
 var pos: Vector3
 var elapsed: float

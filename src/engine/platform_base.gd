@@ -1,7 +1,7 @@
 @abstract
+class_name PlatformBase
 extends Node
 
-class_name PlatformBase
 
 @abstract func show_ad_inter() -> void
 
