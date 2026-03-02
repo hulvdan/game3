@@ -23,8 +23,8 @@ func _ready() -> void: ##
 	Game.v.player_ki.connect(_make_action_label.bind(_options["player_ki"]))
 	Game.v.player_perfectly_ki.connect(_make_action_label.bind(_options["player_perfectly_ki"]))
 	Game.v.damaged.connect(
-		func(world_pos: Vector3, value: int, type: Game.WhoGotDamagedType) -> void:
-			_damage_opts.text = str(value)
+		func(world_pos: Vector3, value: float, type: Game.WhoGotDamagedType) -> void:
+			_damage_opts.text = "%.0f" % max(1.0, value)
 			if type == Game.WhoGotDamagedType.PLAYER:
 				_damage_opts.color = _damage_number_player_color
 			else:

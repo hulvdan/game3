@@ -8,7 +8,7 @@ signal player_blocked(world_pos: Vector3)
 signal player_perfectly_blocked(world_pos: Vector3)
 signal player_ki(world_pos: Vector3)
 signal player_perfectly_ki(world_pos: Vector3)
-signal damaged(world_pos: Vector3, value: int, type: WhoGotDamagedType)
+signal damaged(world_pos: Vector3, value: float, type: WhoGotDamagedType)
 
 enum WhoGotDamagedType { PLAYER, MOB }
 
@@ -639,10 +639,10 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 		if creature.type != glib.GCreatureType.PLAYER:
 			room.container_mob_hp_bars.remove_child(creature.hp_bar)
 
-	if damage > 0:
+	if dealt_damage > 0:
 		damaged.emit(
 			creature.transform.origin,
-			damage,
+			dealt_damage,
 			WhoGotDamagedType.PLAYER if player_got_damaged else WhoGotDamagedType.MOB,
 		)
 	add_impulse(creature.impulses, data.impulse_dir, data.impulse, impulse_dur, impulse_pow)
@@ -651,9 +651,16 @@ func apply_damage(creature: Creature, damage: int, data: ApplyDamageData) -> boo
 	##
 
 
-func apply_damage_interactable(interactable: Interactable, damage: int) -> bool: ##
-	interactable.hp -= damage
-	interactable.hp = max(0, interactable.hp)
+func apply_damage_interactable(interactable: Interactable, damage: float) -> bool: ##
+	var dealt_damage: float = min(damage, interactable.hp)
+	interactable.hp -= dealt_damage
+	assert(interactable.hp >= 0)
+	if dealt_damage > 0:
+		damaged.emit(
+			interactable.transform.origin,
+			dealt_damage,
+			WhoGotDamagedType.MOB,
+		)
 	if !interactable.spawned_projectile && (interactable.hp <= 0):
 		interactable.spawned_projectile = true
 		var id := glib.v.get_interactables()[interactable.type]

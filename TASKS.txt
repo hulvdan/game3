@@ -29,9 +29,10 @@ x rally hp: shown hp rally bar
 x fmt tabs
 x rally hp: updating rally bar
 x rally hp: don't reset rally upon changing rooms
+x damaging interactables show damage numbers
 
-* rally hp: player recovers rally
-* rally hp:
+* rally hp: player recovers rally upon damaging
+* rally hp: also recovers from interactables
 *
 * projectile inherits damage from attack?
   mb projectile has base damage that gets scaled by attack?

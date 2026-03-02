@@ -6,7 +6,7 @@ extends Node3D
 
 var type: glib.GInteractableType
 var res: ResInteractable
-var hp: int
+var hp: float
 var spawned_projectile := false
 var impulses: Array[Game.Impulse]
 
