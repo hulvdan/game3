@@ -387,7 +387,11 @@ func _physics_process(dt: float) -> void:
 					var x: Interactable = d.collider
 					if x in creature.attack_damaged_interactables:
 						continue
-					if apply_damage_interactable(x, melee.get_damage()):
+					apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
+						attacker_pos,
+						bf.xz(x.transform.origin),
+					)
+					if apply_damage_interactable(x, melee.get_damage(), apply_damage_melee_data):
 						creature.attack_damaged_interactables.append(x)
 			else:
 				for d: Dictionary in q:
@@ -650,9 +654,17 @@ func apply_damage(creature: Creature, damage: float, data: ApplyDamageData) -> b
 	##
 
 
-func apply_damage_interactable(interactable: Interactable, damage: float) -> bool: ##
+func apply_damage_interactable(interactable: Interactable, damage: float, data: ApplyDamageData) -> bool: ##
 	var dealt_damage: float = min(damage, interactable.hp)
 	interactable.hp -= dealt_damage
+
+	if is_instance_valid(data.owner__mb_freed_or_null):
+		data.owner__mb_freed_or_null.recover_hp_rally(data.hp_rally_recover)
+
+	var impulse_dur := glib.v.get_default_impulse_duration_seconds()
+	var impulse_pow := glib.v.get_default_impulse_pow()
+	add_impulse(interactable.impulses, data.impulse_dir, data.impulse, impulse_dur, impulse_pow)
+
 	assert(interactable.hp >= 0)
 	if dealt_damage > 0:
 		damaged.emit(

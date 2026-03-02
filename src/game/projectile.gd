@@ -196,7 +196,7 @@ class UpdaterBase:
 			MAX_COLLISIONS_AOE,
 		):
 			var interactable: Interactable = d.collider
-			Game.v.apply_damage_interactable(interactable, data.get_damage())
+			Game.v.apply_damage_interactable(interactable, data.get_damage(), _damage_data)
 			x.queue_free()
 		##
 
@@ -268,7 +268,7 @@ class UpdaterDefault extends UpdaterBase:
 			elif mask == 2 ** glib.GMaskType.INTERACTABLES:
 				for d: Dictionary in q:
 					var interactable: Interactable = d.collider
-					Game.v.apply_damage_interactable(interactable, data.get_damage())
+					Game.v.apply_damage_interactable(interactable, data.get_damage(), _damage_data)
 					x.queue_free()
 
 					if hook:
