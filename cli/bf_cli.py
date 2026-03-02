@@ -374,18 +374,18 @@ def godot_reimport_localization():  ##
 @command
 def gitf():  ##
     message = bf.get_git_commit_message_from_tasks_txt_plan()
-    bf.run_command("git add -A")
     pre_commit_runs = 3
     for i in range(pre_commit_runs):
         try:
-            bf.run_command("pre-commit run")
-        except Exception:
             bf.run_command("git add -A")
+            bf.run_command("pre-commit run")
+            break
+        except Exception:
             if i == pre_commit_runs - 1:
                 raise
             continue
-        break
     for x in (
+        "git add -A",
         ["git", "commit", "-m", message],
         "git push",
     ):
