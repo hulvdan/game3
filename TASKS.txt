@@ -25,7 +25,16 @@ x player attacks combo
 x correct player attacks combo advancing
 x long ki wait loses ki
 x gdscript-formatter reorder code
+x rally hp: shown hp rally bar
 
+* rally hp
+* rally hp
+* rally hp
+* rally hp
+*
+* projectile inherits damage from attack?
+  mb projectile has base damage that gets scaled by attack?
+*
 * player 1st attack deals less damage
 * tileset with corners?
 *

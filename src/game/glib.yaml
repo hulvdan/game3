@@ -90,14 +90,18 @@ controls: ##
 spikes: ##
   duration_seconds: 2
   damage_starts_at: 0.5
-  damage: 1
+  damage: 10
   initial_evade_flags:
     - PERFECT_BLOCKABLE
     - ROLLABLE
     - STAMINA_RECOVERING_ROLLABLE
   continuous_evade_flags:
     - ROLLABLE
-##
+    ##
+
+hp_damage_rally_percent: 0.8
+hp_rally_decays_after: 5
+hp_rally_decay_speed: 5
 
 creatures_push_radius: 1.0
 creatures_push_force: 4
@@ -234,7 +238,7 @@ creatures:
   - type: INVALID ##
   ##
   - type: PLAYER ##
-    hp: 10
+    hp: 100
     speed: 4
     attacks:
       # - duration: 0.3
@@ -243,7 +247,7 @@ creatures:
       #     rally: 0
       #   stops_tracking_at: 0.1
       #   melee:
-      #     damage: 1
+      #     damage: 10
       #     starts_at: 0.1
       #     ends_at: 0.2
       #     polygon:
@@ -386,7 +390,7 @@ creatures:
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
-          damage: 1
+          damage: 10
           starts_at: 0.5
           ends_at: 0.6
           circle:
@@ -422,7 +426,7 @@ creatures:
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
-          damage: 1
+          damage: 10
           starts_at: 0.5
           ends_at: 0.6
           polygon:
@@ -449,7 +453,7 @@ creatures:
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
-          damage: 1
+          damage: 10
           starts_at: 0.5
           ends_at: 1.1
           polygon:
@@ -523,8 +527,9 @@ projectiles:
   - type: INVALID ##
   ##
   - type: ARROW ##
-    damage: 1
+    damage: 10
     damage_stamina: 20
+    hp_rally_recover: 5
     default__speed: 14
     distance: 6
     evade_flags: *evade_flags_default
@@ -532,7 +537,7 @@ projectiles:
       - ENEMIES
   ##
   - type: BALL ##
-    damage: 1
+    damage: 10
     damage_stamina: 25
     default__speed: 3
     collider_radius: 0.3
@@ -557,7 +562,7 @@ projectiles:
         f4: 0.2 # owner_attack_will_end_in
   ##
   - type: BOMB_BLOCKABLE ##
-    damage: 2
+    damage: 20
     damage_stamina: 30
     projectilefly_type: ARC
     arc__height: 1
@@ -569,7 +574,7 @@ projectiles:
       - ENEMIES
   ##
   - type: BOMB ##
-    damage: 2
+    damage: 20
     projectilefly_type: ARC
     arc__height: 1
     arc_or_area__duration: 1
@@ -609,7 +614,7 @@ projectiles:
         projectile_type: STAR_BIT
   ##
   - type: STAR_BIT ##
-    damage: 1
+    damage: 10
     damage_stamina: 10
     default__speed: 3
     collider_radius: 0.2
@@ -619,7 +624,7 @@ projectiles:
       - ENEMIES
   ##
   - type: HOMING ##
-    damage: 1
+    damage: 10
     damage_stamina: 20
     default__speed: 3
     collider_radius: 0.3
@@ -632,7 +637,7 @@ projectiles:
         f1: 1.0
   ##
   - type: BLINK ##
-    damage: 2
+    damage: 20
     projectilefly_type: ARC
     arc_or_area__duration: 1
     collider_radius: 1
@@ -689,7 +694,7 @@ projectiles:
     arc_or_area__duration: 2
     collider_radius: 1.8
     distance: 4
-    damage: 2
+    damage: 20
     evade_flags: *evade_flags_perfect
     touch_team_flags:
       - ALL

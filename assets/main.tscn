@@ -34,6 +34,7 @@ script = ExtResource("1_ig7tw")
 camera_distance = 5.0
 camera_angle = 1.065
 color_ui_hp = Color(0.9098039, 0.23137255, 0.23137255, 1)
+color_ui_hp_rally = Color(0.9882353, 0.654902, 0.5647059, 1)
 color_ui_stamina = Color(0.5686275, 0.85882354, 0.4117647, 1)
 color_ui_stamina_rally = Color(0.9843137, 0.7254902, 0.32941177, 1)
 color_ui_stamina_ki = Color(0.9843137, 1, 0.5254902, 1)

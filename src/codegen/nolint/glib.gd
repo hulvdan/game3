@@ -1,49 +1,184 @@
 extends Node
 
-static var v: Lib = Lib.new()
-
-
-func ToV2(value: GV2) -> Vector2:
-	return Vector2(value.get_x(), value.get_y())
-
-
-func ToV2i(value: GV2i) -> Vector2i:
-	return Vector2i(value.get_x(), value.get_y())
-
-
-func ToV3(value: GV3) -> Vector3:
-	return Vector3(value.get_x(), value.get_y(), value.get_z())
-
-
-func ToV3i(value: GV3i) -> Vector3i:
-	return Vector3i(value.get_x(), value.get_y(), value.get_z())
-
-
-static var _glib_mtime: int = -1
+enum PB_ERR {
+	NO_ERRORS = 0,
+	VARINT_NOT_FOUND = -1,
+	REPEATED_COUNT_NOT_FOUND = -2,
+	REPEATED_COUNT_MISMATCH = -3,
+	LENGTHDEL_SIZE_NOT_FOUND = -4,
+	LENGTHDEL_SIZE_MISMATCH = -5,
+	PACKAGE_SIZE_MISMATCH = -6,
+	UNDEFINED_STATE = -7,
+	PARSE_INCOMPLETE = -8,
+	REQUIRED_FIELDS = -9,
+}
+enum PB_DATA_TYPE {
+	INT32 = 0,
+	SINT32 = 1,
+	UINT32 = 2,
+	INT64 = 3,
+	SINT64 = 4,
+	UINT64 = 5,
+	BOOL = 6,
+	ENUM = 7,
+	FIXED32 = 8,
+	SFIXED32 = 9,
+	FLOAT = 10,
+	FIXED64 = 11,
+	SFIXED64 = 12,
+	DOUBLE = 13,
+	STRING = 14,
+	BYTES = 15,
+	MESSAGE = 16,
+	MAP = 17,
+}
+enum PB_TYPE {
+	VARINT = 0,
+	FIX64 = 1,
+	LENGTHDEL = 2,
+	STARTGROUP = 3,
+	ENDGROUP = 4,
+	FIX32 = 5,
+	UNDEFINED = 8,
+}
+enum PB_RULE {
+	OPTIONAL = 0,
+	REQUIRED = 1,
+	REPEATED = 2,
+	RESERVED = 3,
+}
+enum PB_SERVICE_STATE {
+	FILLED = 0,
+	UNFILLED = 1,
+}
+################ USER DATA END #################
+enum GDamageType {
+	DEFAULT,
+	SPIKE,
+	AOE,
+	COUNT,
+}
+enum GEvadeType {
+	BLOCKABLE_IN_ANY_WAY = 3,
+	PERFECT_BLOCKABLE = 2,
+	JUST_BLOCKABLE = 1,
+	ROLLABLE = 4,
+	STAMINA_RECOVERING_ROLLABLE = 8,
+	COUNT,
+}
+enum GTeamType {
+	ME = 1,
+	COMRADES = 2,
+	ENEMIES = 4,
+	ALL = 7,
+	COUNT,
+}
+enum GProgressionType {
+	INVALID,
+	SKILL_HP,
+	SKILL_MANA,
+	SKILL_ATTACK,
+	SKILL_ARMOR,
+	SKILL_MAGIC_ATTACK,
+	CRAFT_BLACKSMITH,
+	CRAFT_WITCH,
+	CRAFT_ENGINEER,
+	CLASS_HEAVY_KNIGHT,
+	CLASS_BARBARIAN,
+	COUNT,
+}
+enum GAbilityType {
+	HOOK,
+	KAZUHA,
+	COUNT,
+}
+enum GCreatureType {
+	INVALID,
+	PLAYER,
+	MOB_SHOOTER,
+	MOB_MAGE,
+	MOB_MAGE_TRIPLE,
+	MOB_HOMER,
+	MOB_HIVER,
+	MOB_HIVER_INSIDE,
+	MOB_BOMB_INSIDE,
+	MOB_JUMPER,
+	MOB_BLINKER,
+	MOB_BONKER,
+	MOB_SPEAR,
+	MOB_SUMMONER,
+	MOB_SLOWDOWNER,
+	COUNT,
+}
+enum GItemType {
+	INVALID,
+	GOLD,
+	ORE,
+	PLANT,
+	BONE,
+	COUNT,
+}
+enum GCollectibleType {
+	INVALID,
+	ORE,
+	PLANT,
+	BONE,
+	COUNT,
+}
+enum GProjectileFlyType {
+	DEFAULT,
+	ARC,
+	AREA,
+	COUNT,
+}
+enum GProjectileType {
+	INVALID,
+	ARROW,
+	BALL,
+	HOOK,
+	BOMB_BLOCKABLE,
+	BOMB,
+	STAR_HIVE_INSIDE,
+	STAR_HIVE,
+	STAR_BIT,
+	HOMING,
+	BLINK,
+	SUMMON,
+	AREA_SLOWDOWN,
+	AREA_SPEEDUP,
+	AREA_EXPLOSION,
+	AREA_KAZUHA,
+	COUNT,
+}
+enum GInteractableType {
+	INVALID,
+	BARREL_EXPLOSIVE,
+	COUNT,
+}
+enum GMaskType {
+	WALLS_FOR_CREATURES,
+	CREATURES,
+	_3,
+	INTERACTABLES,
+	WALLS_FOR_PROJECTILES,
+	WALLS_FOR_INTERACTABLES,
+	COUNT,
+}
+enum GTagType {
+	DASH,
+	BLINK,
+	HOMING,
+	HIVE,
+	SUMMON,
+	SCALE_MOVEMENT_SPEED,
+	HOOK,
+	KAZUHA,
+	IMPULSE_FROM_CENTER,
+	IMPULSE_FROM_OWNER,
+	COUNT,
+}
 
 const glib_binary_path: String = "res://assets/glib.binpb"
-
-
-func _reload_gamelib() -> void:
-	_glib_mtime = FileAccess.get_modified_time(glib_binary_path)
-	var glib_file = FileAccess.open(glib_binary_path, FileAccess.READ)
-	assert(glib_file)
-	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
-	glib_file.close()
-	var err = v.from_bytes(glib_bytes)
-	assert(not err)
-
-
-func _ready() -> void:
-	_reload_gamelib()
-	# get_tree().debug_collisions_hint = glib.v.get_debug_collisions() != 0
-
-
-func _physics_process(_dt: float) -> void:
-	if _glib_mtime != FileAccess.get_modified_time(glib_binary_path):
-		v = Lib.new()
-		_reload_gamelib()
-
 #
 # BSD 3-Clause License
 #
@@ -74,47 +209,9 @@ func _physics_process(_dt: float) -> void:
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 # DEBUG_TAB redefine this "  " if you need, example: const DEBUG_TAB = "\t"
-
 const PROTO_VERSION = 3
-
 const DEBUG_TAB: String = "  "
-
-enum PB_ERR {
-	NO_ERRORS = 0,
-	VARINT_NOT_FOUND = -1,
-	REPEATED_COUNT_NOT_FOUND = -2,
-	REPEATED_COUNT_MISMATCH = -3,
-	LENGTHDEL_SIZE_NOT_FOUND = -4,
-	LENGTHDEL_SIZE_MISMATCH = -5,
-	PACKAGE_SIZE_MISMATCH = -6,
-	UNDEFINED_STATE = -7,
-	PARSE_INCOMPLETE = -8,
-	REQUIRED_FIELDS = -9,
-}
-
-enum PB_DATA_TYPE {
-	INT32 = 0,
-	SINT32 = 1,
-	UINT32 = 2,
-	INT64 = 3,
-	SINT64 = 4,
-	UINT64 = 5,
-	BOOL = 6,
-	ENUM = 7,
-	FIXED32 = 8,
-	SFIXED32 = 9,
-	FLOAT = 10,
-	FIXED64 = 11,
-	SFIXED64 = 12,
-	DOUBLE = 13,
-	STRING = 14,
-	BYTES = 15,
-	MESSAGE = 16,
-	MAP = 17,
-}
-
 const DEFAULT_VALUES_2 = {
 	PB_DATA_TYPE.INT32: null,
 	PB_DATA_TYPE.SINT32: null,
@@ -135,7 +232,6 @@ const DEFAULT_VALUES_2 = {
 	PB_DATA_TYPE.MESSAGE: null,
 	PB_DATA_TYPE.MAP: null,
 }
-
 const DEFAULT_VALUES_3 = {
 	PB_DATA_TYPE.INT32: 0,
 	PB_DATA_TYPE.SINT32: 0,
@@ -157,27 +253,45 @@ const DEFAULT_VALUES_3 = {
 	PB_DATA_TYPE.MAP: [],
 }
 
-enum PB_TYPE {
-	VARINT = 0,
-	FIX64 = 1,
-	LENGTHDEL = 2,
-	STARTGROUP = 3,
-	ENDGROUP = 4,
-	FIX32 = 5,
-	UNDEFINED = 8,
-}
+static var v: Lib = Lib.new()
+static var _glib_mtime: int = -1
 
-enum PB_RULE {
-	OPTIONAL = 0,
-	REQUIRED = 1,
-	REPEATED = 2,
-	RESERVED = 3,
-}
 
-enum PB_SERVICE_STATE {
-	FILLED = 0,
-	UNFILLED = 1,
-}
+func _ready() -> void:
+	_reload_gamelib()
+	# get_tree().debug_collisions_hint = glib.v.get_debug_collisions() != 0
+
+
+func _physics_process(_dt: float) -> void:
+	if _glib_mtime != FileAccess.get_modified_time(glib_binary_path):
+		v = Lib.new()
+		_reload_gamelib()
+
+
+func ToV2(value: GV2) -> Vector2:
+	return Vector2(value.get_x(), value.get_y())
+
+
+func ToV2i(value: GV2i) -> Vector2i:
+	return Vector2i(value.get_x(), value.get_y())
+
+
+func ToV3(value: GV3) -> Vector3:
+	return Vector3(value.get_x(), value.get_y(), value.get_z())
+
+
+func ToV3i(value: GV3i) -> Vector3i:
+	return Vector3i(value.get_x(), value.get_y(), value.get_z())
+
+
+func _reload_gamelib() -> void:
+	_glib_mtime = FileAccess.get_modified_time(glib_binary_path)
+	var glib_file = FileAccess.open(glib_binary_path, FileAccess.READ)
+	assert(glib_file)
+	var glib_bytes: PackedByteArray = glib_file.get_buffer(glib_file.get_length())
+	glib_file.close()
+	var err = v.from_bytes(glib_bytes)
+	assert(not err)
 
 
 class PBField:
@@ -753,9 +867,8 @@ class PBPacker:
 				result += data[i].field.name + ": " + "error"
 		return result
 
+
 ############### USER DATA BEGIN ################
-
-
 class GV2i:
 	func _init():
 		var service
@@ -2727,6 +2840,11 @@ class GAttackMelee:
 		service.func_ref = Callable(self, "new_circle")
 		data[__circle.tag] = service
 
+		__hp_rally_recover = PBField.new("hp_rally_recover", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __hp_rally_recover
+		data[__hp_rally_recover.tag] = service
+
 
 	var data = { }
 
@@ -2907,6 +3025,28 @@ class GAttackMelee:
 	func new_circle() -> GAttackCircle:
 		__circle.value = GAttackCircle.new()
 		return __circle.value
+
+
+	var __hp_rally_recover: PBField
+
+
+	func has_hp_rally_recover() -> bool:
+		if __hp_rally_recover.value != null:
+			return true
+		return false
+
+
+	func get_hp_rally_recover() -> int:
+		return __hp_rally_recover.value
+
+
+	func clear_hp_rally_recover() -> void:
+		data[9].state = PB_SERVICE_STATE.UNFILLED
+		__hp_rally_recover.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_hp_rally_recover(value: int) -> void:
+		__hp_rally_recover.value = value
 
 
 	func _to_string() -> String:
@@ -4458,53 +4598,58 @@ class GProjectile:
 		service.func_ref = Callable(self, "new_damage_stamina")
 		data[__damage_stamina.tag] = service
 
-		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__hp_rally_recover = PBField.new("hp_rally_recover", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __hp_rally_recover
+		data[__hp_rally_recover.tag] = service
+
+		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __evade_flags
 		data[__evade_flags.tag] = service
 
-		__pierce = PBField.new("pierce", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__pierce = PBField.new("pierce", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __pierce
 		data[__pierce.tag] = service
 
-		__collider_radius = PBField.new("collider_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__collider_radius = PBField.new("collider_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __collider_radius
 		data[__collider_radius.tag] = service
 
-		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __distance
 		data[__distance.tag] = service
 
-		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __projectilefly_type
 		data[__projectilefly_type.tag] = service
 
-		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc__height
 		data[__arc__height.tag] = service
 
-		__arc_or_area__duration = PBField.new("arc_or_area__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc_or_area__duration = PBField.new("arc_or_area__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc_or_area__duration
 		data[__arc_or_area__duration.tag] = service
 
-		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __default__speed
 		data[__default__speed.tag] = service
 
-		__touch_team_flags = PBField.new("touch_team_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__touch_team_flags = PBField.new("touch_team_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __touch_team_flags
 		data[__touch_team_flags.tag] = service
 
 		var __tags_default: Array[GTagValue] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 15, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 16, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
@@ -4624,6 +4769,28 @@ class GProjectile:
 		return __damage_stamina.value
 
 
+	var __hp_rally_recover: PBField
+
+
+	func has_hp_rally_recover() -> bool:
+		if __hp_rally_recover.value != null:
+			return true
+		return false
+
+
+	func get_hp_rally_recover() -> int:
+		return __hp_rally_recover.value
+
+
+	func clear_hp_rally_recover() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__hp_rally_recover.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_hp_rally_recover(value: int) -> void:
+		__hp_rally_recover.value = value
+
+
 	var __evade_flags: PBField
 
 
@@ -4638,7 +4805,7 @@ class GProjectile:
 
 
 	func clear_evade_flags() -> void:
-		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.UNFILLED
 		__evade_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4660,7 +4827,7 @@ class GProjectile:
 
 
 	func clear_pierce() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__pierce.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4682,7 +4849,7 @@ class GProjectile:
 
 
 	func clear_collider_radius() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__collider_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4704,7 +4871,7 @@ class GProjectile:
 
 
 	func clear_distance() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4726,7 +4893,7 @@ class GProjectile:
 
 
 	func clear_projectilefly_type() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__projectilefly_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4748,7 +4915,7 @@ class GProjectile:
 
 
 	func clear_arc__height() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
+		data[12].state = PB_SERVICE_STATE.UNFILLED
 		__arc__height.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4770,7 +4937,7 @@ class GProjectile:
 
 
 	func clear_arc_or_area__duration() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
+		data[13].state = PB_SERVICE_STATE.UNFILLED
 		__arc_or_area__duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4792,7 +4959,7 @@ class GProjectile:
 
 
 	func clear_default__speed() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[14].state = PB_SERVICE_STATE.UNFILLED
 		__default__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4814,7 +4981,7 @@ class GProjectile:
 
 
 	func clear_touch_team_flags() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
+		data[15].state = PB_SERVICE_STATE.UNFILLED
 		__touch_team_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4830,7 +4997,7 @@ class GProjectile:
 
 
 	func clear_tags() -> void:
-		data[15].state = PB_SERVICE_STATE.UNFILLED
+		data[16].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 
@@ -6268,146 +6435,161 @@ class Lib:
 		service.field = __debug_collisions__chase
 		data[__debug_collisions__chase.tag] = service
 
+		__hp_damage_rally_percent = PBField.new("hp_damage_rally_percent", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __hp_damage_rally_percent
+		data[__hp_damage_rally_percent.tag] = service
+
+		__hp_rally_decays_after = PBField.new("hp_rally_decays_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __hp_rally_decays_after
+		data[__hp_rally_decays_after.tag] = service
+
+		__hp_rally_decay_speed = PBField.new("hp_rally_decay_speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __hp_rally_decay_speed
+		data[__hp_rally_decay_speed.tag] = service
+
 		var __rooms_default: Array[GRoom] = []
-		__rooms = PBField.new("rooms", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 6, true, __rooms_default)
+		__rooms = PBField.new("rooms", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 9, true, __rooms_default)
 		service = PBServiceField.new()
 		service.field = __rooms
 		service.func_ref = Callable(self, "add_rooms")
 		data[__rooms.tag] = service
 
-		__mob_invincibility_spikes_seconds = PBField.new("mob_invincibility_spikes_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__mob_invincibility_spikes_seconds = PBField.new("mob_invincibility_spikes_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __mob_invincibility_spikes_seconds
 		data[__mob_invincibility_spikes_seconds.tag] = service
 
-		__blocked_attack_damages_again_after = PBField.new("blocked_attack_damages_again_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__blocked_attack_damages_again_after = PBField.new("blocked_attack_damages_again_after", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __blocked_attack_damages_again_after
 		data[__blocked_attack_damages_again_after.tag] = service
 
-		__creatures_push_radius = PBField.new("creatures_push_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__creatures_push_radius = PBField.new("creatures_push_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __creatures_push_radius
 		data[__creatures_push_radius.tag] = service
 
-		__creatures_push_force = PBField.new("creatures_push_force", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__creatures_push_force = PBField.new("creatures_push_force", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __creatures_push_force
 		data[__creatures_push_force.tag] = service
 
-		__default_impulse_duration_seconds = PBField.new("default_impulse_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default_impulse_duration_seconds = PBField.new("default_impulse_duration_seconds", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __default_impulse_duration_seconds
 		data[__default_impulse_duration_seconds.tag] = service
 
-		__default_impulse_pow = PBField.new("default_impulse_pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default_impulse_pow = PBField.new("default_impulse_pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __default_impulse_pow
 		data[__default_impulse_pow.tag] = service
 
-		__impulse_block_scale = PBField.new("impulse_block_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__impulse_block_scale = PBField.new("impulse_block_scale", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __impulse_block_scale
 		data[__impulse_block_scale.tag] = service
 
-		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__world_size = PBField.new("world_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __world_size
 		service.func_ref = Callable(self, "new_world_size")
 		data[__world_size.tag] = service
 
-		__progression_size = PBField.new("progression_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		__progression_size = PBField.new("progression_size", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 18, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = __progression_size
 		service.func_ref = Callable(self, "new_progression_size")
 		data[__progression_size.tag] = service
 
 		var __damages_default: Array[GDamage] = []
-		__damages = PBField.new("damages", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 16, true, __damages_default)
+		__damages = PBField.new("damages", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __damages_default)
 		service = PBServiceField.new()
 		service.field = __damages
 		service.func_ref = Callable(self, "add_damages")
 		data[__damages.tag] = service
 
 		var __evades_default: Array[GEvade] = []
-		__evades = PBField.new("evades", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 17, true, __evades_default)
+		__evades = PBField.new("evades", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __evades_default)
 		service = PBServiceField.new()
 		service.field = __evades
 		service.func_ref = Callable(self, "add_evades")
 		data[__evades.tag] = service
 
 		var __teams_default: Array[GTeam] = []
-		__teams = PBField.new("teams", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __teams_default)
+		__teams = PBField.new("teams", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 21, true, __teams_default)
 		service = PBServiceField.new()
 		service.field = __teams
 		service.func_ref = Callable(self, "add_teams")
 		data[__teams.tag] = service
 
 		var __progression_default: Array[GProgression] = []
-		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 19, true, __progression_default)
+		__progression = PBField.new("progression", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __progression_default)
 		service = PBServiceField.new()
 		service.field = __progression
 		service.func_ref = Callable(self, "add_progression")
 		data[__progression.tag] = service
 
 		var __abilities_default: Array[GAbility] = []
-		__abilities = PBField.new("abilities", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 20, true, __abilities_default)
+		__abilities = PBField.new("abilities", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __abilities_default)
 		service = PBServiceField.new()
 		service.field = __abilities
 		service.func_ref = Callable(self, "add_abilities")
 		data[__abilities.tag] = service
 
 		var __creatures_default: Array[GCreature] = []
-		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 21, true, __creatures_default)
+		__creatures = PBField.new("creatures", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __creatures_default)
 		service = PBServiceField.new()
 		service.field = __creatures
 		service.func_ref = Callable(self, "add_creatures")
 		data[__creatures.tag] = service
 
 		var __items_default: Array[GItem] = []
-		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 22, true, __items_default)
+		__items = PBField.new("items", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 25, true, __items_default)
 		service = PBServiceField.new()
 		service.field = __items
 		service.func_ref = Callable(self, "add_items")
 		data[__items.tag] = service
 
 		var __collectibles_default: Array[GCollectible] = []
-		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 23, true, __collectibles_default)
+		__collectibles = PBField.new("collectibles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 26, true, __collectibles_default)
 		service = PBServiceField.new()
 		service.field = __collectibles
 		service.func_ref = Callable(self, "add_collectibles")
 		data[__collectibles.tag] = service
 
 		var __projectile_fly_types_default: Array[GProjectileFly] = []
-		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 24, true, __projectile_fly_types_default)
+		__projectile_fly_types = PBField.new("projectile_fly_types", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 27, true, __projectile_fly_types_default)
 		service = PBServiceField.new()
 		service.field = __projectile_fly_types
 		service.func_ref = Callable(self, "add_projectile_fly_types")
 		data[__projectile_fly_types.tag] = service
 
 		var __projectiles_default: Array[GProjectile] = []
-		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 25, true, __projectiles_default)
+		__projectiles = PBField.new("projectiles", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 28, true, __projectiles_default)
 		service = PBServiceField.new()
 		service.field = __projectiles
 		service.func_ref = Callable(self, "add_projectiles")
 		data[__projectiles.tag] = service
 
 		var __interactables_default: Array[GInteractable] = []
-		__interactables = PBField.new("interactables", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 26, true, __interactables_default)
+		__interactables = PBField.new("interactables", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 29, true, __interactables_default)
 		service = PBServiceField.new()
 		service.field = __interactables
 		service.func_ref = Callable(self, "add_interactables")
 		data[__interactables.tag] = service
 
 		var __masks_default: Array[GMask] = []
-		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 27, true, __masks_default)
+		__masks = PBField.new("masks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 30, true, __masks_default)
 		service = PBServiceField.new()
 		service.field = __masks
 		service.func_ref = Callable(self, "add_masks")
 		data[__masks.tag] = service
 
 		var __tags_default: Array[GTag] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 28, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 31, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
@@ -6529,6 +6711,72 @@ class Lib:
 		__debug_collisions__chase.value = value
 
 
+	var __hp_damage_rally_percent: PBField
+
+
+	func has_hp_damage_rally_percent() -> bool:
+		if __hp_damage_rally_percent.value != null:
+			return true
+		return false
+
+
+	func get_hp_damage_rally_percent() -> float:
+		return __hp_damage_rally_percent.value
+
+
+	func clear_hp_damage_rally_percent() -> void:
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		__hp_damage_rally_percent.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_hp_damage_rally_percent(value: float) -> void:
+		__hp_damage_rally_percent.value = value
+
+
+	var __hp_rally_decays_after: PBField
+
+
+	func has_hp_rally_decays_after() -> bool:
+		if __hp_rally_decays_after.value != null:
+			return true
+		return false
+
+
+	func get_hp_rally_decays_after() -> float:
+		return __hp_rally_decays_after.value
+
+
+	func clear_hp_rally_decays_after() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__hp_rally_decays_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_hp_rally_decays_after(value: float) -> void:
+		__hp_rally_decays_after.value = value
+
+
+	var __hp_rally_decay_speed: PBField
+
+
+	func has_hp_rally_decay_speed() -> bool:
+		if __hp_rally_decay_speed.value != null:
+			return true
+		return false
+
+
+	func get_hp_rally_decay_speed() -> float:
+		return __hp_rally_decay_speed.value
+
+
+	func clear_hp_rally_decay_speed() -> void:
+		data[8].state = PB_SERVICE_STATE.UNFILLED
+		__hp_rally_decay_speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_hp_rally_decay_speed(value: float) -> void:
+		__hp_rally_decay_speed.value = value
+
+
 	var __rooms: PBField
 
 
@@ -6537,7 +6785,7 @@ class Lib:
 
 
 	func clear_rooms() -> void:
-		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__rooms.value.clear()
 
 
@@ -6561,7 +6809,7 @@ class Lib:
 
 
 	func clear_mob_invincibility_spikes_seconds() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__mob_invincibility_spikes_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -6583,7 +6831,7 @@ class Lib:
 
 
 	func clear_blocked_attack_damages_again_after() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__blocked_attack_damages_again_after.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -6605,7 +6853,7 @@ class Lib:
 
 
 	func clear_creatures_push_radius() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[12].state = PB_SERVICE_STATE.UNFILLED
 		__creatures_push_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -6627,7 +6875,7 @@ class Lib:
 
 
 	func clear_creatures_push_force() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
+		data[13].state = PB_SERVICE_STATE.UNFILLED
 		__creatures_push_force.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -6649,7 +6897,7 @@ class Lib:
 
 
 	func clear_default_impulse_duration_seconds() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
+		data[14].state = PB_SERVICE_STATE.UNFILLED
 		__default_impulse_duration_seconds.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -6671,7 +6919,7 @@ class Lib:
 
 
 	func clear_default_impulse_pow() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
+		data[15].state = PB_SERVICE_STATE.UNFILLED
 		__default_impulse_pow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -6693,7 +6941,7 @@ class Lib:
 
 
 	func clear_impulse_block_scale() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[16].state = PB_SERVICE_STATE.UNFILLED
 		__impulse_block_scale.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -6715,7 +6963,7 @@ class Lib:
 
 
 	func clear_world_size() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
+		data[17].state = PB_SERVICE_STATE.UNFILLED
 		__world_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -6738,7 +6986,7 @@ class Lib:
 
 
 	func clear_progression_size() -> void:
-		data[15].state = PB_SERVICE_STATE.UNFILLED
+		data[18].state = PB_SERVICE_STATE.UNFILLED
 		__progression_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 
 
@@ -6755,7 +7003,7 @@ class Lib:
 
 
 	func clear_damages() -> void:
-		data[16].state = PB_SERVICE_STATE.UNFILLED
+		data[19].state = PB_SERVICE_STATE.UNFILLED
 		__damages.value.clear()
 
 
@@ -6773,7 +7021,7 @@ class Lib:
 
 
 	func clear_evades() -> void:
-		data[17].state = PB_SERVICE_STATE.UNFILLED
+		data[20].state = PB_SERVICE_STATE.UNFILLED
 		__evades.value.clear()
 
 
@@ -6791,7 +7039,7 @@ class Lib:
 
 
 	func clear_teams() -> void:
-		data[18].state = PB_SERVICE_STATE.UNFILLED
+		data[21].state = PB_SERVICE_STATE.UNFILLED
 		__teams.value.clear()
 
 
@@ -6809,7 +7057,7 @@ class Lib:
 
 
 	func clear_progression() -> void:
-		data[19].state = PB_SERVICE_STATE.UNFILLED
+		data[22].state = PB_SERVICE_STATE.UNFILLED
 		__progression.value.clear()
 
 
@@ -6827,7 +7075,7 @@ class Lib:
 
 
 	func clear_abilities() -> void:
-		data[20].state = PB_SERVICE_STATE.UNFILLED
+		data[23].state = PB_SERVICE_STATE.UNFILLED
 		__abilities.value.clear()
 
 
@@ -6845,7 +7093,7 @@ class Lib:
 
 
 	func clear_creatures() -> void:
-		data[21].state = PB_SERVICE_STATE.UNFILLED
+		data[24].state = PB_SERVICE_STATE.UNFILLED
 		__creatures.value.clear()
 
 
@@ -6863,7 +7111,7 @@ class Lib:
 
 
 	func clear_items() -> void:
-		data[22].state = PB_SERVICE_STATE.UNFILLED
+		data[25].state = PB_SERVICE_STATE.UNFILLED
 		__items.value.clear()
 
 
@@ -6881,7 +7129,7 @@ class Lib:
 
 
 	func clear_collectibles() -> void:
-		data[23].state = PB_SERVICE_STATE.UNFILLED
+		data[26].state = PB_SERVICE_STATE.UNFILLED
 		__collectibles.value.clear()
 
 
@@ -6899,7 +7147,7 @@ class Lib:
 
 
 	func clear_projectile_fly_types() -> void:
-		data[24].state = PB_SERVICE_STATE.UNFILLED
+		data[27].state = PB_SERVICE_STATE.UNFILLED
 		__projectile_fly_types.value.clear()
 
 
@@ -6917,7 +7165,7 @@ class Lib:
 
 
 	func clear_projectiles() -> void:
-		data[25].state = PB_SERVICE_STATE.UNFILLED
+		data[28].state = PB_SERVICE_STATE.UNFILLED
 		__projectiles.value.clear()
 
 
@@ -6935,7 +7183,7 @@ class Lib:
 
 
 	func clear_interactables() -> void:
-		data[26].state = PB_SERVICE_STATE.UNFILLED
+		data[29].state = PB_SERVICE_STATE.UNFILLED
 		__interactables.value.clear()
 
 
@@ -6953,7 +7201,7 @@ class Lib:
 
 
 	func clear_masks() -> void:
-		data[27].state = PB_SERVICE_STATE.UNFILLED
+		data[30].state = PB_SERVICE_STATE.UNFILLED
 		__masks.value.clear()
 
 
@@ -6971,7 +7219,7 @@ class Lib:
 
 
 	func clear_tags() -> void:
-		data[28].state = PB_SERVICE_STATE.UNFILLED
+		data[31].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 
@@ -7003,142 +7251,3 @@ class Lib:
 		elif limit == -1 && result > 0:
 			return PB_ERR.PARSE_INCOMPLETE
 		return result
-
-################ USER DATA END #################
-enum GDamageType {
-	DEFAULT,
-	SPIKE,
-	AOE,
-	COUNT,
-}
-
-enum GEvadeType {
-	BLOCKABLE_IN_ANY_WAY = 3,
-	PERFECT_BLOCKABLE = 2,
-	JUST_BLOCKABLE = 1,
-	ROLLABLE = 4,
-	STAMINA_RECOVERING_ROLLABLE = 8,
-	COUNT,
-}
-
-enum GTeamType {
-	ME = 1,
-	COMRADES = 2,
-	ENEMIES = 4,
-	ALL = 7,
-	COUNT,
-}
-
-enum GProgressionType {
-	INVALID,
-	SKILL_HP,
-	SKILL_MANA,
-	SKILL_ATTACK,
-	SKILL_ARMOR,
-	SKILL_MAGIC_ATTACK,
-	CRAFT_BLACKSMITH,
-	CRAFT_WITCH,
-	CRAFT_ENGINEER,
-	CLASS_HEAVY_KNIGHT,
-	CLASS_BARBARIAN,
-	COUNT,
-}
-
-enum GAbilityType {
-	HOOK,
-	KAZUHA,
-	COUNT,
-}
-
-enum GCreatureType {
-	INVALID,
-	PLAYER,
-	MOB_SHOOTER,
-	MOB_MAGE,
-	MOB_MAGE_TRIPLE,
-	MOB_HOMER,
-	MOB_HIVER,
-	MOB_HIVER_INSIDE,
-	MOB_BOMB_INSIDE,
-	MOB_JUMPER,
-	MOB_BLINKER,
-	MOB_BONKER,
-	MOB_SPEAR,
-	MOB_SUMMONER,
-	MOB_SLOWDOWNER,
-	COUNT,
-}
-
-enum GItemType {
-	INVALID,
-	GOLD,
-	ORE,
-	PLANT,
-	BONE,
-	COUNT,
-}
-
-enum GCollectibleType {
-	INVALID,
-	ORE,
-	PLANT,
-	BONE,
-	COUNT,
-}
-
-enum GProjectileFlyType {
-	DEFAULT,
-	ARC,
-	AREA,
-	COUNT,
-}
-
-enum GProjectileType {
-	INVALID,
-	ARROW,
-	BALL,
-	HOOK,
-	BOMB_BLOCKABLE,
-	BOMB,
-	STAR_HIVE_INSIDE,
-	STAR_HIVE,
-	STAR_BIT,
-	HOMING,
-	BLINK,
-	SUMMON,
-	AREA_SLOWDOWN,
-	AREA_SPEEDUP,
-	AREA_EXPLOSION,
-	AREA_KAZUHA,
-	COUNT,
-}
-
-enum GInteractableType {
-	INVALID,
-	BARREL_EXPLOSIVE,
-	COUNT,
-}
-
-enum GMaskType {
-	WALLS_FOR_CREATURES,
-	CREATURES,
-	_3,
-	INTERACTABLES,
-	WALLS_FOR_PROJECTILES,
-	WALLS_FOR_INTERACTABLES,
-	COUNT,
-}
-
-enum GTagType {
-	DASH,
-	BLINK,
-	HOMING,
-	HIVE,
-	SUMMON,
-	SCALE_MOVEMENT_SPEED,
-	HOOK,
-	KAZUHA,
-	IMPULSE_FROM_CENTER,
-	IMPULSE_FROM_OWNER,
-	COUNT,
-}

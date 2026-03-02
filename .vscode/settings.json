@@ -50,7 +50,7 @@
     },
     {
       "match": ".gd$",
-      "command": "uv run gdscript-formatter --use-spaces --reorder-code ${file}",
+      "command": "uv run gdscript-formatter --reorder-code ${file}",
       "runIn": "backend"
     },
     {

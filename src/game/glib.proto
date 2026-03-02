@@ -128,6 +128,8 @@ message GAttackMelee {
   float ends_at = 6;
   GAttackPolygon polygon = 7;
   GAttackCircle circle = 8;
+
+  int32 hp_rally_recover = 9;
 }
 
 message GStaminaCost {
@@ -220,23 +222,24 @@ message GProjectile {
 
   int32 damage = 4;
   GStaminaCost damage_stamina = 5;
+  int32 hp_rally_recover = 6;
 
-  int32 evade_flags = 6;
+  int32 evade_flags = 7;
 
-  int32 pierce = 7;
-  float collider_radius = 8;
-  float distance = 9;
+  int32 pierce = 8;
+  float collider_radius = 9;
+  float distance = 10;
 
-  int32 projectilefly_type = 10;
+  int32 projectilefly_type = 11;
 
-  float arc__height = 11;
-  float arc_or_area__duration = 12;
+  float arc__height = 12;
+  float arc_or_area__duration = 13;
 
-  float default__speed = 13;
+  float default__speed = 14;
 
-  int32 touch_team_flags = 14;
+  int32 touch_team_flags = 15;
 
-  repeated GTagValue tags = 15;
+  repeated GTagValue tags = 16;
 }
 
 message GInteractable {
@@ -316,32 +319,36 @@ message Lib {
   int32 debug_collisions = 4;
   int32 debug_collisions__chase = 5;
 
-  repeated GRoom rooms = 6;
-  float mob_invincibility_spikes_seconds = 7;
-  float blocked_attack_damages_again_after = 8;
-  float creatures_push_radius = 9;
-  float creatures_push_force = 10;
+  float hp_damage_rally_percent = 6;
+  float hp_rally_decays_after = 7;
+  float hp_rally_decay_speed = 8;
 
-  float default_impulse_duration_seconds = 11;
-  float default_impulse_pow = 12;
-  float impulse_block_scale = 13;
+  repeated GRoom rooms = 9;
+  float mob_invincibility_spikes_seconds = 10;
+  float blocked_attack_damages_again_after = 11;
+  float creatures_push_radius = 12;
+  float creatures_push_force = 13;
 
-  GV2i world_size = 14;
-  GV2i progression_size = 15;
+  float default_impulse_duration_seconds = 14;
+  float default_impulse_pow = 15;
+  float impulse_block_scale = 16;
+
+  GV2i world_size = 17;
+  GV2i progression_size = 18;
 
   // TABLE_GEN_START
-  repeated GDamage damages = 16;
-  repeated GEvade evades = 17;
-  repeated GTeam teams = 18;
-  repeated GProgression progression = 19;
-  repeated GAbility abilities = 20;
-  repeated GCreature creatures = 21;
-  repeated GItem items = 22;
-  repeated GCollectible collectibles = 23;
-  repeated GProjectileFly projectile_fly_types = 24;
-  repeated GProjectile projectiles = 25;
-  repeated GInteractable interactables = 26;
-  repeated GMask masks = 27;
-  repeated GTag tags = 28;
+  repeated GDamage damages = 19;
+  repeated GEvade evades = 20;
+  repeated GTeam teams = 21;
+  repeated GProgression progression = 22;
+  repeated GAbility abilities = 23;
+  repeated GCreature creatures = 24;
+  repeated GItem items = 25;
+  repeated GCollectible collectibles = 26;
+  repeated GProjectileFly projectile_fly_types = 27;
+  repeated GProjectile projectiles = 28;
+  repeated GInteractable interactables = 29;
+  repeated GMask masks = 30;
+  repeated GTag tags = 31;
   // TABLE_GEN_END
 }

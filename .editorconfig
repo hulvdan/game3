@@ -9,6 +9,7 @@ indent_style = space
 indent_size = 2
 
 [*.{gd,gdbuild}]
+indent_style = tab
 indent_size = 4
 
 [*.{yml,yaml}]
