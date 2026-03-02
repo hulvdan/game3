@@ -1,7 +1,6 @@
 extends Node
 
 @export var music_default: Array[AudioStream] = []
-
 @export var audio: AudioStreamPlayer
 
 

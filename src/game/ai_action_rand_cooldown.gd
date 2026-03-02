@@ -9,6 +9,6 @@ var cooldown_max: float
 
 
 func tick(_actor: Node, _blackboard: Blackboard) -> int:
-    assert(cooldown_decorator)
-    cooldown_decorator.wait_time = randf_range(cooldown_min, cooldown_max)
-    return SUCCESS
+	assert(cooldown_decorator)
+	cooldown_decorator.wait_time = randf_range(cooldown_min, cooldown_max)
+	return SUCCESS

@@ -1,5 +1,6 @@
 extends GutTest
 
+
 func test_remove_all() -> void:
 	var arr := [1, 3, 2, 1]
 	bf.remove_all(arr, 1)
