@@ -130,11 +130,15 @@ func tick(actor: Node, _blackboard: Blackboard) -> int: ##
 	var creature: Creature = actor
 	var attack: = glib.v.get_creatures()[creature.type].get_attacks()[0]
 	creature.change_attack_to = attack
+
+	var player_pos := bf.xz(Room.v.player.creature.transform.origin)
+	var pos := bf.xz(creature.transform.origin)
+	var l: float = max(0.0, (player_pos - pos).length() - glib.v.get_mob_arc_throw_distance_delta())
 	if explicit_update_attack(
 		get_physics_process_delta_time(),
 		creature,
 		cooldown,
-		bf.xz(Room.v.player.creature.transform.origin),
+		pos + bf.vector2_direction_or_random(pos, player_pos) * l,
 	):
 		return SUCCESS
 	return RUNNING

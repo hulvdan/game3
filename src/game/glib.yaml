@@ -106,6 +106,7 @@ hp_rally_decay_speed: 5
 
 creatures_push_radius: 1.0
 creatures_push_force: 4
+mob_arc_throw_distance_delta: 0.2
 
 default_impulse_duration_seconds: 0.25
 default_impulse_pow: 0.2
@@ -530,7 +531,7 @@ projectiles:
   - type: ARROW ##
     damage: 10
     damage_stamina: 20
-    impulse: 0.5
+    impulse: 0.2
     impulse_type: PROJECTILE_MOVE_DIR
     evade_flags: *evade_flags_default
     hp_rally_recover: 5
