@@ -15,6 +15,7 @@ x clear
 x rally stamina: decays (doesn't just turn 0)
 x projectile impulses
 x projectile impulses: mob ARC goes in front of player. not exactly at player's pos
+x attacks apply impulses on attacker
 
 * projectile area that starts duration after activation (mhw trap)
 *

@@ -72,8 +72,7 @@ static func add_impulse(
 		dur: float,
 		pow_: float,
 ) -> void: ##
-	assert(dist >= 0)
-	if dist <= 0:
+	if dist == 0:
 		return
 	var x := Game.Impulse.new()
 	x.dir = dir

@@ -275,6 +275,11 @@ creatures:
         stamina_cost:
           flat: 25
           rally: 5
+        impulses:
+          - at: 0.0
+            distance: -0.2
+            dur: 0.4
+            pow: 1
       - duration: 0.25
         projectile_type: ARROW
         projectile_spawns:
@@ -282,6 +287,11 @@ creatures:
         stamina_cost:
           flat: 15
           rally: 8
+        impulses:
+          - at: 0.0
+            distance: -0.1
+            dur: 0.4
+            pow: 1
       - duration: 0.4
         projectile_type: ARROW
         projectile_spawns:
@@ -290,6 +300,11 @@ creatures:
         stamina_cost:
           flat: 8
           rally: 4
+        impulses:
+          - at: 0.0
+            distance: -0.5
+            dur: 0.4
+            pow: 1
     ability_types:
       - HOOK
   ##

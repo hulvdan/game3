@@ -3304,6 +3304,145 @@ class GProjectileSpawn:
 		return result
 
 
+class GImpulseData:
+	func _init():
+		var service
+
+		__at = PBField.new("at", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __at
+		data[__at.tag] = service
+
+		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __distance
+		data[__distance.tag] = service
+
+		__dur = PBField.new("dur", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __dur
+		data[__dur.tag] = service
+
+		__pow = PBField.new("pow", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __pow
+		data[__pow.tag] = service
+
+
+	var data = { }
+
+	var __at: PBField
+
+
+	func has_at() -> bool:
+		if __at.value != null:
+			return true
+		return false
+
+
+	func get_at() -> float:
+		return __at.value
+
+
+	func clear_at() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__at.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_at(value: float) -> void:
+		__at.value = value
+
+
+	var __distance: PBField
+
+
+	func has_distance() -> bool:
+		if __distance.value != null:
+			return true
+		return false
+
+
+	func get_distance() -> float:
+		return __distance.value
+
+
+	func clear_distance() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_distance(value: float) -> void:
+		__distance.value = value
+
+
+	var __dur: PBField
+
+
+	func has_dur() -> bool:
+		if __dur.value != null:
+			return true
+		return false
+
+
+	func get_dur() -> float:
+		return __dur.value
+
+
+	func clear_dur() -> void:
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		__dur.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_dur(value: float) -> void:
+		__dur.value = value
+
+
+	var __pow: PBField
+
+
+	func has_pow() -> bool:
+		if __pow.value != null:
+			return true
+		return false
+
+
+	func get_pow() -> float:
+		return __pow.value
+
+
+	func clear_pow() -> void:
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		__pow.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_pow(value: float) -> void:
+		__pow.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GAttack:
 	func _init():
 		var service
@@ -3368,6 +3507,13 @@ class GAttack:
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
 		data[__tags.tag] = service
+
+		var __impulses_default: Array[GImpulseData] = []
+		__impulses = PBField.new("impulses", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 12, true, __impulses_default)
+		service = PBServiceField.new()
+		service.field = __impulses
+		service.func_ref = Callable(self, "add_impulses")
+		data[__impulses.tag] = service
 
 
 	var data = { }
@@ -3605,6 +3751,24 @@ class GAttack:
 	func add_tags() -> GTagValue:
 		var element = GTagValue.new()
 		__tags.value.append(element)
+		return element
+
+
+	var __impulses: PBField
+
+
+	func get_impulses() -> Array[GImpulseData]:
+		return __impulses.value
+
+
+	func clear_impulses() -> void:
+		data[12].state = PB_SERVICE_STATE.UNFILLED
+		__impulses.value.clear()
+
+
+	func add_impulses() -> GImpulseData:
+		var element = GImpulseData.new()
+		__impulses.value.append(element)
 		return element
 
 

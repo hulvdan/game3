@@ -108,6 +108,21 @@ static func explicit_update_attack(
 				Game.v.make_projectile(d)
 	##
 
+	## Applying impulses
+	var impulse_index: int = 0
+	for impulse in attack.get_impulses():
+		impulse_index += 1
+		if (c.attack_impulses_applied < impulse_index) && (impulse.get_at() < c.attack_elapsed):
+			c.attack_impulses_applied += 1
+			Game.add_impulse(
+				c.impulses,
+				c.attack_target_dir,
+				impulse.get_distance(),
+				impulse.get_dur(),
+				impulse.get_pow(),
+			)
+	##
+
 	## Attack finish
 	if c.attack_elapsed >= c.current_attack.get_duration():
 		if is_player:
@@ -116,6 +131,7 @@ static func explicit_update_attack(
 		c.attack_dashed = false
 		c.attack_elapsed = 0.0
 		c.attack_projectiles_spawned = 0
+		c.attack_impulses_applied = 0
 		c.attack_id = 0
 		c.attack_damaged_creatures.clear()
 		c.attack_damaged_interactables.clear()

@@ -144,6 +144,13 @@ message GProjectileSpawn {
   float angle = 2;
 }
 
+message GImpulseData {
+  float at = 1;
+  float distance = 2;
+  float dur = 3;
+  float pow = 4;
+}
+
 message GAttack {
   float duration = 1;
   float cooldown_min = 2;
@@ -160,6 +167,7 @@ message GAttack {
 
   GAttackMelee melee = 10;
   repeated GTagValue tags = 11;
+  repeated GImpulseData impulses = 12;
 }
 
 message GAbility {
