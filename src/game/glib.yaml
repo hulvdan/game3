@@ -530,20 +530,24 @@ projectiles:
   - type: ARROW ##
     damage: 10
     damage_stamina: 20
+    impulse: 0.5
+    impulse_type: PROJECTILE_MOVE_DIR
+    evade_flags: *evade_flags_default
     hp_rally_recover: 5
     default__speed: 14
     distance: 6
-    evade_flags: *evade_flags_default
     touch_team_flags:
       - ENEMIES
   ##
   - type: BALL ##
     damage: 10
     damage_stamina: 25
+    impulse: 0.5
+    impulse_type: PROJECTILE_MOVE_DIR
+    evade_flags: *evade_flags_default
     default__speed: 3
     collider_radius: 0.3
     distance: 8
-    evade_flags: *evade_flags_default
     touch_team_flags:
       - ENEMIES
   ##
@@ -551,6 +555,7 @@ projectiles:
     damage: 0
     damage_stamina: 15
     default__speed: 9
+    evade_flags: *evade_flags_default
     collider_radius: 0.3
     distance: 5
     touch_team_flags:
@@ -565,32 +570,36 @@ projectiles:
   - type: BOMB_BLOCKABLE ##
     damage: 20
     damage_stamina: 30
+    impulse: 2
+    impulse_type: PROJECTILE_CENTER
+    evade_flags: *evade_flags_default
     projectilefly_type: ARC
     arc__height: 1
     arc_or_area__duration: 1
     collider_radius: 1
     distance: 5
-    evade_flags: *evade_flags_default
     touch_team_flags:
       - ENEMIES
   ##
   - type: BOMB ##
     damage: 20
+    impulse: 2
+    impulse_type: PROJECTILE_CENTER
+    evade_flags: *evade_flags_perfect
     projectilefly_type: ARC
     arc__height: 1
     arc_or_area__duration: 1
     collider_radius: 1
     distance: 5
-    evade_flags: *evade_flags_perfect
     touch_team_flags:
       - ENEMIES
   ##
   - type: STAR_HIVE_INSIDE ##
     projectilefly_type: AREA
+    evade_flags: *evade_flags_default
     arc__height: 1
     arc_or_area__duration: 0.3
     collider_radius: 1
-    evade_flags: *evade_flags_default
     touch_team_flags:
       - ENEMIES
     tags:
@@ -601,11 +610,11 @@ projectiles:
   ##
   - type: STAR_HIVE ##
     projectilefly_type: ARC
+    evade_flags: *evade_flags_default
     arc__height: 1
     arc_or_area__duration: 1
     collider_radius: 1
     distance: 5
-    evade_flags: *evade_flags_default
     touch_team_flags:
       - ENEMIES
     tags:
@@ -617,20 +626,24 @@ projectiles:
   - type: STAR_BIT ##
     damage: 10
     damage_stamina: 10
+    impulse: 0.4
+    impulse_type: PROJECTILE_MOVE_DIR
+    evade_flags: *evade_flags_default
     default__speed: 3
     collider_radius: 0.2
     distance: 3
-    evade_flags: *evade_flags_default
     touch_team_flags:
       - ENEMIES
   ##
   - type: HOMING ##
     damage: 10
     damage_stamina: 20
+    impulse: 2
+    impulse_type: PROJECTILE_MOVE_DIR
+    evade_flags: *evade_flags_default
     default__speed: 3
     collider_radius: 0.3
     distance: 8
-    evade_flags: *evade_flags_default
     touch_team_flags:
       - ENEMIES
     tags:
@@ -639,12 +652,14 @@ projectiles:
   ##
   - type: BLINK ##
     damage: 20
+    impulse: 2
+    impulse_type: PROJECTILE_CENTER
+    # evade_flags: *evade_flags_default
+    evade_flags: *evade_flags_perfect
     projectilefly_type: ARC
     arc_or_area__duration: 1
     collider_radius: 1
     distance: 4
-    # evade_flags: *evade_flags_default
-    evade_flags: *evade_flags_perfect
     touch_team_flags:
       - ENEMIES
     tags:
@@ -653,10 +668,10 @@ projectiles:
   ##
   - type: SUMMON ##
     projectilefly_type: AREA
+    evade_flags: *evade_flags_default
     arc_or_area__duration: 1
     collider_radius: 0.6
     distance: 1
-    evade_flags: *evade_flags_default
     touch_team_flags:
     tags:
       - tag_type: SUMMON
@@ -691,12 +706,14 @@ projectiles:
           - COMRADES
           ##
   - type: AREA_EXPLOSION ##
+    damage: 20
+    impulse: 3
+    impulse_type: PROJECTILE_CENTER
+    evade_flags: *evade_flags_perfect
     projectilefly_type: AREA
     arc_or_area__duration: 2
     collider_radius: 1.8
     distance: 4
-    damage: 20
-    evade_flags: *evade_flags_perfect
     touch_team_flags:
       - ALL
     tags:
@@ -727,4 +744,11 @@ interactables:
     hp: 20
     projectile_type: AREA_EXPLOSION
     mass: 3
+    ##
+
+impulses: ##
+  - type: NONE
+  - type: PROJECTILE_CENTER
+  - type: PROJECTILE_MOVE_DIR
+  - type: OWNER_CENTER
     ##

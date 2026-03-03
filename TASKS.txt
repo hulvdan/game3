@@ -13,8 +13,11 @@ PLAN
 ============================================================
 x clear
 x rally stamina: decays (doesn't just turn 0)
+x projectile impulses
 
-* projectile impulses
+* projectile impulses: mob ARC goes in front of player. not exactly at player's pos
+*
+* projectile area that starts duration after activation (mhw trap)
 *
 * player 1st attack deals less damage
 * tileset with corners?

@@ -138,9 +138,19 @@ class UpdaterBase:
 		_damage_data.evade_flags = data.get_evade_flags()
 		_damage_data.damage_stamina = data.get_damage_stamina()
 		_damage_data.hp_rally_recover = data.get_hp_rally_recover()
+		_damage_data.impulse = data.get_impulse()
+		_damage_data.impulse_dir = Vector2(0, 0)
+
 		_damage_data.owner__mb_freed_or_null = null
 		if is_instance_valid(x.d.owner__mb_freed_or_null):
 			_damage_data.owner__mb_freed_or_null = x.d.owner__mb_freed_or_null
+
+			if data.get_impulse_type() == glib.GImpulseType.OWNER_CENTER:
+				_damage_data.impulse_dir = bf.vector2_direction_or_random(
+					bf.xz(_damage_data.owner__mb_freed_or_null.transform.origin),
+					bf.xz(x.transform.origin),
+				)
+
 		Game.set_gizmos_color_according_to_evade_flags(_damage_data.evade_flags)
 	##
 
@@ -184,6 +194,15 @@ class UpdaterBase:
 			if !x.check_team(damaged_creature, data.get_touch_team_flags()):
 				continue
 
+			match data.get_impulse_type():
+				glib.GImpulseType.PROJECTILE_MOVE_DIR:
+					_damage_data.impulse_dir = x.calculated__dir
+				glib.GImpulseType.PROJECTILE_CENTER:
+					_damage_data.impulse_dir = bf.vector2_xz_direction_or_random(
+						x.transform.origin,
+						damaged_creature.transform.origin,
+					)
+
 			if Game.v.apply_damage(damaged_creature, data.get_damage(), _damage_data):
 				x.touched_creatures.append(damaged_creature)
 
@@ -196,6 +215,14 @@ class UpdaterBase:
 			MAX_COLLISIONS_AOE,
 		):
 			var interactable: Interactable = d.collider
+			match data.get_impulse_type():
+				glib.GImpulseType.PROJECTILE_MOVE_DIR:
+					_damage_data.impulse_dir = x.calculated__dir
+				glib.GImpulseType.PROJECTILE_CENTER:
+					_damage_data.impulse_dir = bf.vector2_xz_direction_or_random(
+						x.transform.origin,
+						interactable.transform.origin,
+					)
 			Game.v.apply_damage_interactable(interactable, data.get_damage(), _damage_data)
 			x.queue_free()
 		##
@@ -268,6 +295,14 @@ class UpdaterDefault extends UpdaterBase:
 			elif mask == 2 ** glib.GMaskType.INTERACTABLES:
 				for d: Dictionary in q:
 					var interactable: Interactable = d.collider
+					match data.get_impulse_type():
+						glib.GImpulseType.PROJECTILE_MOVE_DIR:
+							_damage_data.impulse_dir = x.calculated__dir
+						glib.GImpulseType.PROJECTILE_CENTER:
+							_damage_data.impulse_dir = bf.vector2_xz_direction_or_random(
+								x.transform.origin,
+								interactable.transform.origin,
+							)
 					Game.v.apply_damage_interactable(interactable, data.get_damage(), _damage_data)
 					x.queue_free()
 
@@ -300,6 +335,14 @@ class UpdaterDefault extends UpdaterBase:
 					if !x.check_team(creature, data.get_touch_team_flags()):
 						continue
 
+					match data.get_impulse_type():
+						glib.GImpulseType.PROJECTILE_MOVE_DIR:
+							_damage_data.impulse_dir = x.calculated__dir
+						glib.GImpulseType.PROJECTILE_CENTER:
+							_damage_data.impulse_dir = bf.vector2_xz_direction_or_random(
+								x.transform.origin,
+								creature.transform.origin,
+							)
 					if Game.v.apply_damage(creature, data.get_damage(), _damage_data):
 						x.touched_creatures.append(creature)
 						x.default__pierced += 1

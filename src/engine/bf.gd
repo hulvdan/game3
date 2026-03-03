@@ -27,6 +27,13 @@ func vector2_direction_or_random(from: Vector2, to: Vector2) -> Vector2: ##
 	##
 
 
+func vector2_xz_direction_or_random(from: Vector3, to: Vector3) -> Vector2: ##
+	if xz(from) == xz(to):
+		return Vector2(1, 0).rotated(randf() * 2.0 * PI)
+	return xz(from).direction_to(xz(to))
+	##
+
+
 func clear_children(node: Node) -> void: ##
 	for c in node.get_children():
 		c.queue_free()

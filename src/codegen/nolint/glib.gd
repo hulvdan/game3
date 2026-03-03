@@ -177,6 +177,13 @@ enum GTagType {
 	IMPULSE_FROM_OWNER,
 	COUNT,
 }
+enum GImpulseType {
+	NONE,
+	PROJECTILE_CENTER,
+	PROJECTILE_MOVE_DIR,
+	OWNER_CENTER,
+	COUNT,
+}
 
 const glib_binary_path: String = "res://assets/glib.binpb"
 #
@@ -4568,6 +4575,91 @@ class GProjectileFly:
 		return result
 
 
+class GImpulse:
+	func _init():
+		var service
+
+		__type = PBField.new("type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __type
+		data[__type.tag] = service
+
+		__debug_name = PBField.new("debug_name", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+		service = PBServiceField.new()
+		service.field = __debug_name
+		data[__debug_name.tag] = service
+
+
+	var data = { }
+
+	var __type: PBField
+
+
+	func has_type() -> bool:
+		if __type.value != null:
+			return true
+		return false
+
+
+	func get_type() -> int:
+		return __type.value
+
+
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		__type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_type(value: int) -> void:
+		__type.value = value
+
+
+	var __debug_name: PBField
+
+
+	func has_debug_name() -> bool:
+		if __debug_name.value != null:
+			return true
+		return false
+
+
+	func get_debug_name() -> String:
+		return __debug_name.value
+
+
+	func clear_debug_name() -> void:
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		__debug_name.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+
+
+	func set_debug_name(value: String) -> void:
+		__debug_name.value = value
+
+
+	func _to_string() -> String:
+		return PBPacker.message_to_string(data)
+
+
+	func to_bytes() -> PackedByteArray:
+		return PBPacker.pack_message(data)
+
+
+	func from_bytes(bytes: PackedByteArray, offset: int = 0, limit: int = -1) -> int:
+		var cur_limit = bytes.size()
+		if limit != -1:
+			cur_limit = limit
+		var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+		if result == cur_limit:
+			if PBPacker.check_required(data):
+				if limit == -1:
+					return PB_ERR.NO_ERRORS
+			else:
+				return PB_ERR.REQUIRED_FIELDS
+		elif limit == -1 && result > 0:
+			return PB_ERR.PARSE_INCOMPLETE
+		return result
+
+
 class GProjectile:
 	func _init():
 		var service
@@ -4603,53 +4695,63 @@ class GProjectile:
 		service.field = __hp_rally_recover
 		data[__hp_rally_recover.tag] = service
 
-		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__impulse = PBField.new("impulse", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __impulse
+		data[__impulse.tag] = service
+
+		__impulse_type = PBField.new("impulse_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		service = PBServiceField.new()
+		service.field = __impulse_type
+		data[__impulse_type.tag] = service
+
+		__evade_flags = PBField.new("evade_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __evade_flags
 		data[__evade_flags.tag] = service
 
-		__pierce = PBField.new("pierce", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__pierce = PBField.new("pierce", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __pierce
 		data[__pierce.tag] = service
 
-		__collider_radius = PBField.new("collider_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 9, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__collider_radius = PBField.new("collider_radius", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __collider_radius
 		data[__collider_radius.tag] = service
 
-		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 10, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__distance = PBField.new("distance", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __distance
 		data[__distance.tag] = service
 
-		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 11, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__projectilefly_type = PBField.new("projectilefly_type", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __projectilefly_type
 		data[__projectilefly_type.tag] = service
 
-		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 12, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc__height = PBField.new("arc__height", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc__height
 		data[__arc__height.tag] = service
 
-		__arc_or_area__duration = PBField.new("arc_or_area__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 13, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__arc_or_area__duration = PBField.new("arc_or_area__duration", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __arc_or_area__duration
 		data[__arc_or_area__duration.tag] = service
 
-		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 14, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		__default__speed = PBField.new("default__speed", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 16, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
 		service = PBServiceField.new()
 		service.field = __default__speed
 		data[__default__speed.tag] = service
 
-		__touch_team_flags = PBField.new("touch_team_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 15, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
+		__touch_team_flags = PBField.new("touch_team_flags", PB_DATA_TYPE.INT32, PB_RULE.OPTIONAL, 17, true, DEFAULT_VALUES_3[PB_DATA_TYPE.INT32])
 		service = PBServiceField.new()
 		service.field = __touch_team_flags
 		data[__touch_team_flags.tag] = service
 
 		var __tags_default: Array[GTagValue] = []
-		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 16, true, __tags_default)
+		__tags = PBField.new("tags", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 18, true, __tags_default)
 		service = PBServiceField.new()
 		service.field = __tags
 		service.func_ref = Callable(self, "add_tags")
@@ -4791,6 +4893,50 @@ class GProjectile:
 		__hp_rally_recover.value = value
 
 
+	var __impulse: PBField
+
+
+	func has_impulse() -> bool:
+		if __impulse.value != null:
+			return true
+		return false
+
+
+	func get_impulse() -> float:
+		return __impulse.value
+
+
+	func clear_impulse() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__impulse.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_impulse(value: float) -> void:
+		__impulse.value = value
+
+
+	var __impulse_type: PBField
+
+
+	func has_impulse_type() -> bool:
+		if __impulse_type.value != null:
+			return true
+		return false
+
+
+	func get_impulse_type() -> int:
+		return __impulse_type.value
+
+
+	func clear_impulse_type() -> void:
+		data[8].state = PB_SERVICE_STATE.UNFILLED
+		__impulse_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
+
+
+	func set_impulse_type(value: int) -> void:
+		__impulse_type.value = value
+
+
 	var __evade_flags: PBField
 
 
@@ -4805,7 +4951,7 @@ class GProjectile:
 
 
 	func clear_evade_flags() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__evade_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4827,7 +4973,7 @@ class GProjectile:
 
 
 	func clear_pierce() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__pierce.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4849,7 +4995,7 @@ class GProjectile:
 
 
 	func clear_collider_radius() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[11].state = PB_SERVICE_STATE.UNFILLED
 		__collider_radius.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4871,7 +5017,7 @@ class GProjectile:
 
 
 	func clear_distance() -> void:
-		data[10].state = PB_SERVICE_STATE.UNFILLED
+		data[12].state = PB_SERVICE_STATE.UNFILLED
 		__distance.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4893,7 +5039,7 @@ class GProjectile:
 
 
 	func clear_projectilefly_type() -> void:
-		data[11].state = PB_SERVICE_STATE.UNFILLED
+		data[13].state = PB_SERVICE_STATE.UNFILLED
 		__projectilefly_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4915,7 +5061,7 @@ class GProjectile:
 
 
 	func clear_arc__height() -> void:
-		data[12].state = PB_SERVICE_STATE.UNFILLED
+		data[14].state = PB_SERVICE_STATE.UNFILLED
 		__arc__height.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4937,7 +5083,7 @@ class GProjectile:
 
 
 	func clear_arc_or_area__duration() -> void:
-		data[13].state = PB_SERVICE_STATE.UNFILLED
+		data[15].state = PB_SERVICE_STATE.UNFILLED
 		__arc_or_area__duration.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4959,7 +5105,7 @@ class GProjectile:
 
 
 	func clear_default__speed() -> void:
-		data[14].state = PB_SERVICE_STATE.UNFILLED
+		data[16].state = PB_SERVICE_STATE.UNFILLED
 		__default__speed.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
 
 
@@ -4981,7 +5127,7 @@ class GProjectile:
 
 
 	func clear_touch_team_flags() -> void:
-		data[15].state = PB_SERVICE_STATE.UNFILLED
+		data[17].state = PB_SERVICE_STATE.UNFILLED
 		__touch_team_flags.value = DEFAULT_VALUES_3[PB_DATA_TYPE.INT32]
 
 
@@ -4997,7 +5143,7 @@ class GProjectile:
 
 
 	func clear_tags() -> void:
-		data[16].state = PB_SERVICE_STATE.UNFILLED
+		data[18].state = PB_SERVICE_STATE.UNFILLED
 		__tags.value.clear()
 
 
@@ -6622,6 +6768,13 @@ class Lib:
 		service.func_ref = Callable(self, "add_tags")
 		data[__tags.tag] = service
 
+		var __impulses_default: Array[GImpulse] = []
+		__impulses = PBField.new("impulses", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 32, true, __impulses_default)
+		service = PBServiceField.new()
+		service.field = __impulses
+		service.func_ref = Callable(self, "add_impulses")
+		data[__impulses.tag] = service
+
 
 	var data = { }
 
@@ -7253,6 +7406,24 @@ class Lib:
 	func add_tags() -> GTag:
 		var element = GTag.new()
 		__tags.value.append(element)
+		return element
+
+
+	var __impulses: PBField
+
+
+	func get_impulses() -> Array[GImpulse]:
+		return __impulses.value
+
+
+	func clear_impulses() -> void:
+		data[32].state = PB_SERVICE_STATE.UNFILLED
+		__impulses.value.clear()
+
+
+	func add_impulses() -> GImpulse:
+		var element = GImpulse.new()
+		__impulses.value.append(element)
 		return element
 
 
