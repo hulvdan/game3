@@ -44,9 +44,9 @@ player: ##
   speed_scale__blocking: 0.2
   speed_scale__inside_enemies: 0.3
 
-  roll_distance: 3
+  roll_distance: 2.1
   roll_pow: 0.3
-  roll_duration_seconds: 0.5
+  roll_duration_seconds: 0.4
   roll_control_return_starts_at: 0.25
   roll_invincibility_start: 0.00
   roll_invincibility_end: 0.25
@@ -502,6 +502,18 @@ creatures:
         ##
   - type: MOB_SLOWDOWNER ##
     hp: 30
+    speed: 0.4
+    attacks:
+      - duration: 0.8
+        projectile_type: AREA_SLOWDOWN
+        projectile_spawns:
+          - at: 0.5
+        cooldown_min: 30.0
+        cooldown_max: 30.0
+        distance: 4
+        ##
+  - type: BOSS_JAGRAS ##
+    hp: 300
     speed: 0.4
     attacks:
       - duration: 0.8

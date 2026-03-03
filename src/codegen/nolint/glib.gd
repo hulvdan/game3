@@ -108,6 +108,7 @@ enum GCreatureType {
 	MOB_SPEAR,
 	MOB_SUMMONER,
 	MOB_SLOWDOWNER,
+	BOSS_JAGRAS,
 	COUNT,
 }
 enum GItemType {

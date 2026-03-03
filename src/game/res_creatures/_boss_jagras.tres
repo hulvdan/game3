@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ResCreature" format=3 uid="uid://iki4iwkallpc"]
+
+[ext_resource type="Script" uid="uid://dql1ibeyvp13e" path="res://src/game/res_creature.gd" id="1_3nvsr"]
+[ext_resource type="Texture2D" uid="uid://cmhf7g5sln4tp" path="res://assets/art/textures/removeme/_tile_28_teal.png" id="2_i4oo0"]
+
+[resource]
+script = ExtResource("1_3nvsr")
+texture = ExtResource("2_i4oo0")
+metadata/_custom_type_script = "uid://dql1ibeyvp13e"

@@ -1,13 +1,13 @@
 WORKING SINCE 2026-02-03
 https://www.timeanddate.com/date/durationresult.html?d1=3&m1=2&y1=2026
 
+PILLARS
+============================================================
+* MONSTER HUNTER 2.5D
+
 BIG PLAN
 ============================================================
-* несколько обязательных челленджовых механик
-  x roll
-  x блок
-  * charge / perfect charge атака
-  * абилка крюк
+* can go on a hunt
 
 PLAN
 ============================================================
@@ -16,7 +16,32 @@ x rally stamina: decays (doesn't just turn 0)
 x projectile impulses
 x projectile impulses: mob ARC goes in front of player. not exactly at player's pos
 x attacks apply impulses on attacker
+- vscode keywords another color
+x jagras: more hp
 
+* items: tranquil bomb
+* items: lightning trap
+* using 2 tranquil bombs with lightning trap when big mob is <=20% HP traps it
+*
+* jagras: different attacks
+* jagras: bigger hitbox
+* jagras: better looking hp or just hide it?
+* jagras:
+* jagras:
+* jagras:
+* jagras:
+* jagras:
+* jagras:
+* jagras:
+* jagras:
+*
+* query circle segment segments?
+*
+* research monster hunter 2.5D.
+  - what's crucial?
+  - what's good about MHW?
+  - what can i excel at?
+*
 * projectile area that starts duration after activation (mhw trap)
 *
 * player 1st attack deals less damage

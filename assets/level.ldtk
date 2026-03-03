@@ -953,6 +953,11 @@
             "id": "MOB_SLOWDOWNER",
             "tileRect": null,
             "color": 0
+          },
+          {
+            "id": "BOSS_JAGRAS",
+            "tileRect": null,
+            "color": 0
           }
         ],
         "iconTilesetUid": null,
@@ -3912,8 +3917,8 @@
             {
               "__identifier": "Creature",
               "__grid": [
-                11,
-                15
+                14,
+                31
               ],
               "__pivot": [
                 0,
@@ -3927,8 +3932,8 @@
               "height": 16,
               "defUid": 30,
               "px": [
-                176,
-                240
+                224,
+                496
               ],
               "fieldInstances": [
                 {
@@ -3947,8 +3952,8 @@
                   ]
                 }
               ],
-              "__worldX": 672,
-              "__worldY": -80
+              "__worldX": 720,
+              "__worldY": 176
             },
             {
               "__identifier": "Creature",
@@ -4113,6 +4118,47 @@
               ],
               "__worldX": 704,
               "__worldY": -32
+            },
+            {
+              "__identifier": "Creature",
+              "__grid": [
+                14,
+                20
+              ],
+              "__pivot": [
+                0,
+                0
+              ],
+              "__tags": [],
+              "__tile": null,
+              "__smartColor": "#EAD4AA",
+              "iid": "a265b5c0-fa90-11f0-b0f9-0b8e7e218f45",
+              "width": 16,
+              "height": 16,
+              "defUid": 30,
+              "px": [
+                224,
+                320
+              ],
+              "fieldInstances": [
+                {
+                  "__identifier": "Type",
+                  "__type": "LocalEnum.CODEGEN_Creatures",
+                  "__value": "BOSS_JAGRAS",
+                  "__tile": null,
+                  "defUid": 31,
+                  "realEditorValues": [
+                    {
+                      "id": "V_String",
+                      "params": [
+                        "BOSS_JAGRAS"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "__worldX": 720,
+              "__worldY": 0
             }
           ]
         },
