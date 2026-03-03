@@ -12,8 +12,8 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x rally stamina: decays (doesn't just turn 0)
 
-* rally stamina: decays (doesn't just turn 0)
 * projectile impulses
 *
 * player 1st attack deals less damage

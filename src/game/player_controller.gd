@@ -141,10 +141,11 @@ func explicit_process(dt: float) -> void: ##
 	else:
 		elapsed_since_ki_maxed = 0
 
-	var lose_after := pl.get_ki_stamina_gets_lost_after()
-	if (elapsed_since_stamina_consumed > lose_after) && (elapsed_since_ki_maxed > lose_after):
-		stamina_rally = stamina
-		stamina_ki = stamina
+	var decay_after := pl.get_stamina_ki_decay_after()
+	if (elapsed_since_stamina_consumed > decay_after) && (elapsed_since_ki_maxed > decay_after):
+		var delta := pl.get_stamina_ki_decay_speed() * dt
+		stamina_rally = max(stamina, stamina_rally - delta)
+		stamina_ki = max(stamina, stamina_ki - delta)
 
 	finished_attack_recently = max(0, finished_attack_recently - 1)
 	##

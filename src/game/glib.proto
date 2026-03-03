@@ -291,21 +291,22 @@ message GConfigPlayer {
   float stamina_attack_rally_scale = 17;
   float stamina_roll_rally_scale = 18;
   float stamina_regen_on_kill = 19;
-  float ki_stamina_gets_lost_after = 20;
+  float stamina_ki_decay_after = 20;
+  float stamina_ki_decay_speed = 21;
 
-  float stamina_regen_scale__blocking = 21;
-  float stamina_regen_scale__shooting = 22;
+  float stamina_regen_scale__blocking = 22;
+  float stamina_regen_scale__shooting = 23;
 
-  float block__activation_start = 23;
-  float ki__rally_increase_per_second = 24;
-  float block__min_duration = 25;
-  float block__idle_after_block = 26;
-  float cooldown__block = 27;
-  float cooldown__roll = 28;
-  float block__perfect_end = 29;
+  float block__activation_start = 24;
+  float ki__rally_increase_per_second = 25;
+  float block__min_duration = 26;
+  float block__idle_after_block = 27;
+  float cooldown__block = 28;
+  float cooldown__roll = 29;
+  float block__perfect_end = 30;
 
-  float stamina_depletion_regen_delay = 30;
-  float invincibility_after_hit_seconds = 31;
+  float stamina_depletion_regen_delay = 31;
+  float invincibility_after_hit_seconds = 32;
 }
 
 message Lib {
