@@ -518,6 +518,10 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	assert(creature.res)
 	bf.set_pos_2d(creature, pos)
 
+	creature.scale = Vector3(1, 1, 1) * data.get_collider_size()
+	assert(creature.scale.x > 0)
+	assert(creature.scale.y > 0)
+	assert(creature.scale.z > 0)
 	creature.hp = data.get_hp()
 	creature.hp_recoverable_up_to = creature.hp
 	creature.node_sprite.texture = creature.res.texture
@@ -531,7 +535,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 		room.container_mob_hp_bars.add_child(bar)
 		var tree: BeehaveTree = packed_ai.instantiate()
 		creature.setup_ai(tree)
-	creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
+	# creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 
 	var sh: ShaderMaterial = creature.node_sprite.material_override
 	sh.set_shader_parameter("flash", Color(1, 1, 1, 0))

@@ -3972,22 +3972,27 @@ class GCreature:
 		service.field = __speed
 		data[__speed.tag] = service
 
+		__collider_size = PBField.new("collider_size", PB_DATA_TYPE.FLOAT, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT])
+		service = PBServiceField.new()
+		service.field = __collider_size
+		data[__collider_size.tag] = service
+
 		var __drops_default: Array[GCreatureDrop] = []
-		__drops = PBField.new("drops", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 7, true, __drops_default)
+		__drops = PBField.new("drops", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 8, true, __drops_default)
 		service = PBServiceField.new()
 		service.field = __drops
 		service.func_ref = Callable(self, "add_drops")
 		data[__drops.tag] = service
 
 		var __attacks_default: Array[GAttack] = []
-		__attacks = PBField.new("attacks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 8, true, __attacks_default)
+		__attacks = PBField.new("attacks", PB_DATA_TYPE.MESSAGE, PB_RULE.REPEATED, 9, true, __attacks_default)
 		service = PBServiceField.new()
 		service.field = __attacks
 		service.func_ref = Callable(self, "add_attacks")
 		data[__attacks.tag] = service
 
 		var __ability_types_default: Array[int] = []
-		__ability_types = PBField.new("ability_types", PB_DATA_TYPE.INT32, PB_RULE.REPEATED, 9, true, __ability_types_default)
+		__ability_types = PBField.new("ability_types", PB_DATA_TYPE.INT32, PB_RULE.REPEATED, 10, true, __ability_types_default)
 		service = PBServiceField.new()
 		service.field = __ability_types
 		data[__ability_types.tag] = service
@@ -4127,6 +4132,28 @@ class GCreature:
 		__speed.value = value
 
 
+	var __collider_size: PBField
+
+
+	func has_collider_size() -> bool:
+		if __collider_size.value != null:
+			return true
+		return false
+
+
+	func get_collider_size() -> float:
+		return __collider_size.value
+
+
+	func clear_collider_size() -> void:
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		__collider_size.value = DEFAULT_VALUES_3[PB_DATA_TYPE.FLOAT]
+
+
+	func set_collider_size(value: float) -> void:
+		__collider_size.value = value
+
+
 	var __drops: PBField
 
 
@@ -4135,7 +4162,7 @@ class GCreature:
 
 
 	func clear_drops() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		__drops.value.clear()
 
 
@@ -4153,7 +4180,7 @@ class GCreature:
 
 
 	func clear_attacks() -> void:
-		data[8].state = PB_SERVICE_STATE.UNFILLED
+		data[9].state = PB_SERVICE_STATE.UNFILLED
 		__attacks.value.clear()
 
 
@@ -4171,7 +4198,7 @@ class GCreature:
 
 
 	func clear_ability_types() -> void:
-		data[9].state = PB_SERVICE_STATE.UNFILLED
+		data[10].state = PB_SERVICE_STATE.UNFILLED
 		__ability_types.value.clear()
 
 

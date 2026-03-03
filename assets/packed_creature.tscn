@@ -25,7 +25,6 @@ node_body = NodePath(".")
 
 [node name="_shape" type="CollisionShape3D" parent="." unique_id=904343699]
 unique_name_in_owner = true
-transform = Transform3D(0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 0, 0, 0)
 shape = SubResource("CylinderShape3D_sw327")
 
 [node name="_rotate" type="Node3D" parent="." unique_id=1444358610]
@@ -34,7 +33,7 @@ transform = Transform3D(1, 0, 0, 0, 0.9645574, 0.26387304, 0, -0.26387304, 0.964
 
 [node name="_sprite" type="Sprite3D" parent="_rotate" unique_id=1416927643]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.321, 0)
+transform = Transform3D(1.563, 0, 0, 0, 1.5629998, 5.9604645e-08, 0, -5.9604645e-08, 1.5629998, 0, 0.516, 0)
 material_override = SubResource("ShaderMaterial_vbw5m")
 cast_shadow = 0
 texture = ExtResource("2_qkfe7")

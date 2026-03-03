@@ -185,10 +185,12 @@ message GCreature {
   int32 hp = 5;
   float speed = 6;
 
-  repeated GCreatureDrop drops = 7;
+  float collider_size = 7;
 
-  repeated GAttack attacks = 8;
-  repeated int32 ability_types = 9;
+  repeated GCreatureDrop drops = 8;
+
+  repeated GAttack attacks = 9;
+  repeated int32 ability_types = 10;
 }
 
 message GDamage {

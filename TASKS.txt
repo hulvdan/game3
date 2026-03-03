@@ -18,13 +18,15 @@ x projectile impulses: mob ARC goes in front of player. not exactly at player's 
 x attacks apply impulses on attacker
 - vscode keywords another color
 x jagras: more hp
+x working on jagras hitbox
 
-* items: tranquil bomb
-* items: lightning trap
-* using 2 tranquil bombs with lightning trap when big mob is <=20% HP traps it
-*
-* jagras: different attacks
 * jagras: bigger hitbox
+* jagras: different attacks: jump with dash
+* jagras: different attacks: swing with segments
+* jagras: different attacks: spit
+* jagras: different attacks: combo 3 hits
+* jagras: different attacks: combo 2 hits
+* jagras: different attacks:
 * jagras: better looking hp or just hide it?
 * jagras:
 * jagras:
@@ -34,6 +36,21 @@ x jagras: more hp
 * jagras:
 * jagras:
 * jagras:
+*
+* items: tranquil bomb
+* items: lightning trap
+* using 2 tranquil bombs with lightning trap when big mob is <=20% HP traps it
+*
+* THINK: WHAT ARE THE DRAWBACKS OF MONSTER HUNTER WORLD?
+  * BEGINNING: SHARPNESS
+  * BEGINNING:
+  * BEGINNING:
+  *
+  *
+  *
+  *
+  *
+  *
 *
 * query circle segment segments?
 *
