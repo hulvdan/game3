@@ -12,31 +12,9 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x yml mask_type only creatures (instead of PLAYER / MOBS split)
-x better gitf
-x merged PLAYER/MOBS masks into CREATURES
-x fix: creatures can move interactables
-x fix: room to the up: interactable crash
-x ref
-x damage_stamina validation
-x non perfect blocking wastes stamina
-x better vscode files.exclude
-x player attacks combo
-x correct player attacks combo advancing
-x long ki wait loses ki
-x gdscript-formatter reorder code
-x rally hp: shown hp rally bar
-x fmt tabs
-x rally hp: updating rally bar
-x rally hp: don't reset rally upon changing rooms
-x damaging interactables show damage numbers
-x rally hp: player recovers rally upon damaging
-x rally hp: also recovers from interactables
 
 * rally stamina: decays (doesn't just turn 0)
-*
-* projectile inherits damage from attack?
-  mb projectile has base damage that gets scaled by attack?
+* projectile impulses
 *
 * player 1st attack deals less damage
 * tileset with corners?
