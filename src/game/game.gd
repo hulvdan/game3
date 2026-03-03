@@ -54,7 +54,7 @@ var player_is_entering_door := false
 var projectiles_to_make: Array[Projectile.Data]
 var current_room_index:
 	get:
-		return room_index(current_room_pos)
+		return _room_index(current_room_pos)
 
 @onready var camera: Camera3D = %_camera
 @onready var hp_bar: Bar = %_hp_bar
@@ -542,11 +542,6 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	##
 
 
-func room_index(pos: Vector2i) -> int: ##
-	return pos.y * glib.v.get_world_size().get_x() + pos.x
-	##
-
-
 func apply_damage(creature: Creature, damage: float, data: ApplyDamageData) -> bool: ##
 	assert(data.impulse >= 0)
 
@@ -694,6 +689,11 @@ func make_projectile(d: Projectile.Data) -> void: ##
 	d.target = d.pos + target_dir * min(data.get_distance(), (d.target - d.pos).length())
 
 	projectiles_to_make.append(d)
+	##
+
+
+func _room_index(pos: Vector2i) -> int: ##
+	return pos.y * glib.v.get_world_size().get_x() + pos.x
 	##
 
 
