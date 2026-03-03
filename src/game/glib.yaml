@@ -295,14 +295,14 @@ creatures:
       - duration: 0.4
         projectile_type: ARROW
         projectile_spawns:
-          - at: 0.1
-          - at: 0.2
+          - at: 0.15
+          - at: 0.25
         stamina_cost:
           flat: 8
           rally: 4
         impulses:
           - at: 0.0
-            distance: -0.5
+            distance: -0.7
             dur: 0.4
             pow: 1
     ability_types:
@@ -546,7 +546,7 @@ projectiles:
   - type: ARROW ##
     damage: 10
     damage_stamina: 20
-    impulse: 0.2
+    impulse: 0.1
     impulse_type: PROJECTILE_MOVE_DIR
     evade_flags: *evade_flags_default
     hp_rally_recover: 5
