@@ -600,13 +600,11 @@ creatures:
         cooldown_min: 3.0
         cooldown_max: 5.0
         stops_tracking_at: 0.4
-        tags:
-          - tag_type: DASH
-            f1: 0.4 # starts_at
-            f2: 2.4 # ends_at
-            f3: 4 # distance
-            f4: 1 # pow
-            f5_degrees: 90 # rotation
+        impulses:
+          - at: 0.4
+            dur: 2
+            distance: 4
+            pow: 1
         condition:
           attackcondition_type: CAPSULE_CONTAINED
           distance_max: 4
@@ -615,35 +613,32 @@ creatures:
         cooldown_min: 3.0
         cooldown_max: 5.0
         stops_tracking_at: 0.0
-        tags:
-          - tag_type: DASH
-            f1: 0.4 # starts_at
-            f2: 2.4 # ends_at
-            f3: 4 # distance
-            f4: 1 # pow
-            f5_degrees: 90 # rotation
-        condition:
-          attackcondition_type: CAPSULE_CONTAINED
-          distance_max: 2.5
-          capsule__radius: 0.4
-          rotation_degrees: 90
-          ##
-      - duration: 2.8
-        cooldown_min: 3.0
-        cooldown_max: 5.0
-        stops_tracking_at: 0.0
-        tags:
-          - tag_type: DASH
-            f1: 0.4 # starts_at
-            f2: 2.4 # ends_at
-            f3: 4 # distance
-            f4: 1 # pow
-            f5_degrees: -90 # rotation
+        impulses:
+          - at: 0.4
+            distance: 4
+            dur: 2
+            pow: 1
+            rotation_degrees: -90
         condition:
           attackcondition_type: CAPSULE_CONTAINED
           distance_max: 2.5
           capsule__radius: 0.4
           rotation_degrees: -90
+      - duration: 2.8
+        cooldown_min: 3.0
+        cooldown_max: 5.0
+        stops_tracking_at: 0.0
+        impulses:
+          - at: 0.4
+            distance: 4
+            dur: 2
+            pow: 1
+            rotation_degrees: 90
+        condition:
+          attackcondition_type: CAPSULE_CONTAINED
+          distance_max: 2.5
+          capsule__radius: 0.4
+          rotation_degrees: 90
           ##
 
 items: ##

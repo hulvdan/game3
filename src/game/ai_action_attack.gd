@@ -76,11 +76,11 @@ static func explicit_update_attack(
 				if start > c.attack_elapsed:
 					continue
 				c.attack_dashed = true
-				var d := c.attack_target_pos - bf.xz(c.transform.origin)
+				var d := c.looking_dir - bf.xz(c.transform.origin)
 				var dist: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
 				var pow_ := tag.get_f5()
 				var end := tag.get_f2()
-				var dir := c.attack_target_dir
+				var dir := c.looking_dir
 				var dir_rotation := tag.get_f5()
 				if dir_rotation:
 					dir = dir.rotated(dir_rotation)
@@ -96,7 +96,7 @@ static func explicit_update_attack(
 				var dist := tag.get_f3()
 				var pow_ := tag.get_f4()
 				var end := tag.get_f2()
-				var dir := c.attack_target_dir
+				var dir := c.looking_dir
 				var dir_rotation := tag.get_f5()
 				if dir_rotation:
 					dir = dir.rotated(dir_rotation)
@@ -139,9 +139,12 @@ static func explicit_update_attack(
 		impulse_index += 1
 		if (c.attack_impulses_applied < impulse_index) && (impulse.get_at() < c.attack_elapsed):
 			c.attack_impulses_applied += 1
+			var impulse_dir := c.looking_dir
+			if impulse.get_rotation():
+				impulse_dir = impulse_dir.rotated(impulse.get_rotation())
 			Game.add_impulse(
 				c.impulses,
-				c.attack_target_dir,
+				impulse_dir,
 				impulse.get_distance(),
 				impulse.get_dur(),
 				impulse.get_pow(),
@@ -160,7 +163,6 @@ static func explicit_update_attack(
 		c.attack_id = 0
 		c.attack_damaged_creatures.clear()
 		c.attack_damaged_interactables.clear()
-		c.controller.move = Vector2(0, 0)
 		c.attack_target_pos = Vector2(0, 0)
 		c.attack_target_dir = Vector2(0, 0)
 		return true

@@ -41,9 +41,9 @@ x don't escape file path pprint
 x good attack activation conditions
 x ref
 x jagras: side attack: prepare proto + yaml
+x jagras: side attack: impl rotated dash
+x jagras: side attack: works
 
-* jagras: side attack: impl rotated dash
-* jagras: side attack: works
 * jagras: side attack: _mirrorable suffix (change sign)
 * jagras: side attack:
 *

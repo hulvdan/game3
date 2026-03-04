@@ -16,8 +16,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
 			c.controller.move = Vector2(0, 0)
 			return SUCCESS
 
-	var dir: Vector2 = dpos.normalized()
-	c.controller.move = dir
+	c.controller.move = dpos.normalized()
 	return RUNNING
 	##
 

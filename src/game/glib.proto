@@ -149,6 +149,7 @@ message GImpulseData {
   float distance = 2;
   float dur = 3;
   float pow = 4;
+  float rotation = 5;
 }
 
 message GAttackCondition {
