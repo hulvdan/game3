@@ -94,7 +94,7 @@ def do_build(
         exe_name = "index.html"
         bf.run_command(
             rf"godot --quit --headless --export-pack web_async_data {out_folder}/async_data.pck",
-            timeout_seconds=30,
+            timeout_seconds=90,
         )
     elif platform == bf.BuildPlatform.Win:
         exe_name = "game.exe"
