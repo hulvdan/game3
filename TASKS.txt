@@ -29,15 +29,20 @@ x fixed itch build
 x itch emberveil2
 x hulvdan.itch.io add secret itch links
 x f
+x jagras: bigger hitbox
+x jagras: attacks: long rolling into player
 
-* jagras: bigger hitbox
-* jagras: different attacks: jump with dash
-* jagras: different attacks: swing with segments
-* jagras: different attacks: spit
-* jagras: different attacks: combo 3 hits
-* jagras: different attacks: combo 2 hits
-* jagras: different attacks:
+* jagras: attacks: side rolling
+* jagras: attacks: swing with segments
+* jagras: attacks: spit
+* jagras: attacks: combo 3 hits
+* jagras: attacks: combo 2 hits
+* jagras: attacks:
 * jagras: better looking hp or just hide it?
+*
+* mobs angular rotation speed
+* mobs attack conditions (jagras angle to player ~+-PI/2)
+*
 * jagras:
 * jagras:
 * jagras:
