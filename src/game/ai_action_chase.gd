@@ -27,14 +27,23 @@ func _is_condition_satisfied(
 	if !condition:
 		return true
 
-	assert(!condition.get_distance_min())
-	match condition.get_attackcondition_type():
-		glib.GAttackConditionType.TUNNEL:
+	var dir = creature.looking_dir.rotated(condition.get_rotation())
+	var capsule_center_pos: Vector2 = (
+		bf.xz(creature.transform.origin)
+		+ dir * ((condition.get_distance_min() + condition.get_distance_max()) / 2.0)
+	)
+
+	var cond := condition.get_attackcondition_type()
+	match cond:
+		glib.GAttackConditionType.CAPSULE_CONTAINED, glib.GAttackConditionType.CAPSULE_RADIUS_EXTENDED:
+			var dist := condition.get_distance_max() - condition.get_distance_min()
+			if cond == glib.GAttackConditionType.CAPSULE_RADIUS_EXTENDED:
+				dist += condition.get_capsule__radius() * 2.0
 			for d: Dictionary in Collisions.query_capsule(
-				bf.xz(creature.transform.origin) + creature.looking_dir * (condition.get_distance_max() / 2.0),
-				creature.looking_angle,
-				condition.get_distance_max(),
-				condition.get_tunnel__capsule_radius(),
+				capsule_center_pos,
+				creature.looking_angle + condition.get_rotation(),
+				dist,
+				condition.get_capsule__radius(),
 				2 ** glib.GMaskType.CREATURES,
 				true,
 				false,

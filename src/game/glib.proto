@@ -160,29 +160,28 @@ message GAttackConditionValue {
   int32 attackcondition_type = 1;
   float distance_min = 2;
   float distance_max = 3;
-  float tunnel__angle = 4;
-  float tunnel__capsule_radius = 5;
+  float rotation = 4;
+  float capsule__radius = 5;
 }
 
 message GAttack {
   float duration = 1;
   float cooldown_min = 2;
   float cooldown_max = 3;
-  float distance = 4;
 
-  float movement_scale = 5;
-  GStaminaCost stamina_cost = 6;
+  float movement_scale = 4;
+  GStaminaCost stamina_cost = 5;
 
-  float stops_tracking_at = 7;
+  float stops_tracking_at = 6;
 
-  int32 projectile_type = 8;
-  repeated GProjectileSpawn projectile_spawns = 9;
+  int32 projectile_type = 7;
+  repeated GProjectileSpawn projectile_spawns = 8;
 
-  GAttackMelee melee = 10;
-  repeated GTagValue tags = 11;
-  repeated GImpulseData impulses = 12;
+  GAttackMelee melee = 9;
+  repeated GTagValue tags = 10;
+  repeated GImpulseData impulses = 11;
 
-  GAttackConditionValue condition = 13;
+  GAttackConditionValue condition = 12;
 }
 
 message GAbility {

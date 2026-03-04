@@ -70,11 +70,14 @@ context = []
 context_errors = []
 
 
-def print_context():  ##
-    print("DEBUG INFO")
-    print("context", context)
-    print("context_errors:")
-    pprint(context_errors)
+def format_context() -> str:  ##
+    value = ""
+    for i, err in enumerate(context_errors):
+        value += "{} {}".format(i, err["context"])
+        if args := err.get("args"):
+            value += " {}".format(args)
+        value += "\n  {}\n".format(err["source"])
+    return value
     ##
 
 
@@ -83,7 +86,11 @@ def process_glib(*args, **kwargs) -> None:  ##
     try:
         _process_glib(*args, **kwargs)
     except Exception:
-        print_context()
+        value = "DEBUG INFO\n"
+        value += "context " + str(context) + "\n"
+        value += "context_errors:\n"
+        value += format_context()
+        print(value)
         raise
     ##
 
@@ -256,7 +263,7 @@ def _process_glib(genline, glib) -> None:
         frame = inspect.currentframe().f_back
         frame_: inspect.Traceback = inspect.getframeinfo(frame)
         err = {
-            "source": "{}:{}: {}:{}".format(
+            "source": "{}:{}: {}: {}".format(
                 frame_.filename, frame.f_lineno, frame_.code_context[0].strip(), expr
             ),
             "context": context[:],
@@ -280,18 +287,21 @@ def _process_glib(genline, glib) -> None:
     def validate_tags(tags: list, entity: str) -> None:
         assert entity in entity_2_tag_required_fields
         for tag in tags:
-            assert tag["tag_type"] in entity_2_tag_required_fields[entity], (
-                "{}: Tag {} can't be used on {} because it doesn't have `{}`".format(
-                    context, tag["tag_type"], entity, f"{entity}_requirements"
-                )
+            asserte(
+                tag["tag_type"] in entity_2_tag_required_fields[entity],
+                "{} can't be used on {} because it doesn't have `{}`".format(
+                    tag["tag_type"], entity, f"{entity}_requirements"
+                ),
             )
+
             for field in entity_2_tag_required_fields[entity][tag["tag_type"]]:
                 if field not in tag:
                     not_found_tag_fields.append(field)
-            assert not not_found_tag_fields, (
-                "{}: Tag {} doesn't have required fields: {}".format(
-                    context, tag["tag_type"], not_found_tag_fields
-                )
+            asserte(
+                not not_found_tag_fields,
+                "Tag {} doesn't have required fields: {}".format(
+                    tag["tag_type"], not_found_tag_fields
+                ),
             )
 
     ##
@@ -522,8 +532,7 @@ def _process_glib(genline, glib) -> None:
 
     ## Context errors
     if context_errors:
-        print_context()
-        assert 0, pformat(context_errors)
+        assert 0, format_context()
     ##
 
 

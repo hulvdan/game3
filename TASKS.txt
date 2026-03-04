@@ -36,9 +36,10 @@ x jagras: `stops_tracking_at` stop rotation
 x jagras: front attack: proto condition
 x jagras: front attack: only when he'd damage player w his collider
 x better bf_game.py asserts
+x circle condition
+x don't escape file path pprint
+x good attack activation conditions
 
-* _is_condition_satisfied handle condition.get_tunnel__collider_size()
-*
 * jagras: side attack:
 * jagras: side attack:
 * jagras: side attack:

@@ -70,8 +70,6 @@ func get_speed() -> float: ##
 
 
 func setup_ai(tree: BeehaveTree) -> void: ##
-	var data: glib.GCreature = glib.v.get_creatures()[type]
-
 	add_child(tree)
 
 	var gn = func(x: String) -> Node:
@@ -79,40 +77,9 @@ func setup_ai(tree: BeehaveTree) -> void: ##
 		return tree.get_node(p)
 
 	var action_cooldown: ActionRandCooldown = gn.call("cooldown")
-	var action_chase: ActionChase = gn.call("chase")
+	# var action_chase: ActionChase = gn.call("chase")
 	var action_attack: ActionAttack = gn.call("attack")
 	action_attack.cooldown = action_cooldown
-
-	# FIXME: Only 1st attack gets used
-	for attack in data.get_attacks():
-		var attack_dist: = attack.get_distance()
-
-		var melee := attack.get_melee()
-		var melee_hitbox_dist := 0.0
-		if melee:
-			var polygon := melee.get_polygon()
-			var circle := melee.get_circle()
-
-			if polygon:
-				assert(!circle)
-			if circle:
-				assert(!polygon)
-
-			if polygon:
-				melee_hitbox_dist = polygon.get_distance_max() * (polygon.get_anchor_x() + 0.5)
-			if circle:
-				melee_hitbox_dist = circle.get_radius() * (circle.get_anchor_x() + 0.5)
-
-			attack_dist += melee_hitbox_dist
-
-		for tag in attack.get_tags():
-			match tag.get_tag_type():
-				glib.GTagType.DASH, glib.GTagType.BLINK:
-					attack_dist += tag.get_f3()
-					attack_dist -= melee_hitbox_dist / 2
-
-		action_chase.set_attack_distance(attack_dist)
-		break
 	##
 
 
