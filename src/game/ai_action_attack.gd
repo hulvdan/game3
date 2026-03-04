@@ -70,43 +70,49 @@ static func explicit_update_attack(
 	for tag in attack.get_tags():
 		match tag.get_tag_type():
 			glib.GTagType.DASH_LIMITED: ##
-				if !c.attack_dashed:
-					var start := tag.get_f1()
-					if start <= c.attack_elapsed:
-						c.attack_dashed = true
-						var d := c.attack_target_pos - bf.xz(c.transform.origin)
-						var dist: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
-						var pow_ := tag.get_f5()
-						var end := tag.get_f2()
-						var dir := c.attack_target_dir
-						var dir_rotation := tag.get_f5()
-						if dir_rotation:
-							dir = dir.rotated(dir_rotation)
-						Game.add_impulse(c.impulses, dir, dist, end - start, pow_)
+				if c.attack_dashed:
+					continue
+				var start := tag.get_f1()
+				if start > c.attack_elapsed:
+					continue
+				c.attack_dashed = true
+				var d := c.attack_target_pos - bf.xz(c.transform.origin)
+				var dist: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
+				var pow_ := tag.get_f5()
+				var end := tag.get_f2()
+				var dir := c.attack_target_dir
+				var dir_rotation := tag.get_f5()
+				if dir_rotation:
+					dir = dir.rotated(dir_rotation)
+				Game.add_impulse(c.impulses, dir, dist, end - start, pow_)
 			##
 			glib.GTagType.DASH: ##
-				if !c.attack_dashed:
-					var start := tag.get_f1()
-					if start <= c.attack_elapsed:
-						c.attack_dashed = true
-						var dist := tag.get_f3()
-						var pow_ := tag.get_f4()
-						var end := tag.get_f2()
-						var dir := c.attack_target_dir
-						var dir_rotation := tag.get_f5()
-						if dir_rotation:
-							dir = dir.rotated(dir_rotation)
-						Game.add_impulse(c.impulses, dir, dist, end - start, pow_)
+				if c.attack_dashed:
+					continue
+				var start := tag.get_f1()
+				if start > c.attack_elapsed:
+					continue
+				c.attack_dashed = true
+				var dist := tag.get_f3()
+				var pow_ := tag.get_f4()
+				var end := tag.get_f2()
+				var dir := c.attack_target_dir
+				var dir_rotation := tag.get_f5()
+				if dir_rotation:
+					dir = dir.rotated(dir_rotation)
+				Game.add_impulse(c.impulses, dir, dist, end - start, pow_)
 			##
 			glib.GTagType.BLINK: ##
-				if !c.attack_blinked:
-					var dur := tag.get_f2() - tag.get_f1()
-					if c.attack_elapsed >= dur / 2:
-						c.attack_blinked = true
-						var d := c.attack_target_pos - bf.xz(c.transform.origin)
-						var l: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
-						c.transform.origin += bf.to_xz(c.attack_target_dir * l)
-						c.reset_physics_interpolation()
+				if c.attack_blinked:
+					continue
+				var dur := tag.get_f2() - tag.get_f1()
+				if c.attack_elapsed < dur / 2:
+					continue
+				c.attack_blinked = true
+				var d := c.attack_target_pos - bf.xz(c.transform.origin)
+				var l: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
+				c.transform.origin += bf.to_xz(c.attack_target_dir * l)
+				c.reset_physics_interpolation()
 			##
 
 	## Spawning projectiles
