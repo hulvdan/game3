@@ -19,6 +19,10 @@ x clear
 x fixing web build
 x fixed itch build
 
+* itch emberveil2
+* itch cookier
+* hulvdan.itch.io add secret itch links
+*
 * jagras: bigger hitbox
 * jagras: different attacks: jump with dash
 * jagras: different attacks: swing with segments
