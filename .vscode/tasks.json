@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "test",
+      "label": "2_test",
       "type": "shell",
       "command": "uv run python cli/bf_cli.py test",
       "icon": {
@@ -10,7 +10,7 @@
       }
     },
     {
-      "label": "gitf",
+      "label": "1_gitf",
       "type": "shell",
       "command": "uv run python cli/bf_cli.py gitf",
       "icon": {
@@ -18,6 +18,19 @@
       },
       "presentation": {
         "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      }
+    },
+    {
+      "label": "3_itch",
+      "type": "shell",
+      "command": "uv run python cli/bf_cli.py deploy_itch",
+      "icon": {
+        "id": "run"
+      },
+      "presentation": {
+        "reveal": "always",
         "panel": "shared",
         "clear": true
       }

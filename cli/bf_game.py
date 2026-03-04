@@ -25,9 +25,8 @@ from PIL import Image
 
 ##
 
-bf.game_settings.itch_target = "hulvdan/emberveil2"
+bf.game_settings.itch_target = "hulvdan/game3"
 bf.game_settings.languages = ["russian", "english"]
-bf.game_settings.yandex_metrica_counter_id = 106388631
 bf.game_settings.colors = [  ##
     "#ffffff",
     "#fb6b1d",

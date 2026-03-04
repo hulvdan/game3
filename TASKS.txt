@@ -17,6 +17,8 @@ PLAN
 ============================================================
 x clear
 
+* deploy itch
+*
 * jagras: bigger hitbox
 * jagras: different attacks: jump with dash
 * jagras: different attacks: swing with segments

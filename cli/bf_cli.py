@@ -80,8 +80,7 @@ def do_godot_check_errors() -> None:  ##
 @timing
 def do_build(
     target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType
-) -> None:
-    ##
+) -> None:  ##
     build_id = (target, platform, build_type)
     assert build_id in bf.ALLOWED_BUILDS, "{} is not allowed!".format(build_id)
 
@@ -263,22 +262,19 @@ def test():  ##
     ##
 
 
-# @command
-# def deploy_itch():
-#     ##
-#     bf.git_check_no_unstashed()
-#
-#     bf.git_bump_tag()
-#
-#     with bf.git_stash():
-#         build(bf.BuildTarget.game, bf.BuildPlatform.WebItch, bf.BuildType.Release)
-#
-#     zip_path = bf.TEMP_DIR / "itch.zip"
-#     make_web_build_archive(zip_path, Path(".export/web_release"))
-#
-#     target = "{}:html".format(bf.game_settings.itch_target)
-#     bf.run_command([bf.BUTLER_PATH, "push", zip_path, target])
-#     ##
+@command
+def deploy_itch():  ##
+    bf.git_bump_tag()
+
+    with bf.git_stash():
+        build(bf.BuildTarget.game, bf.BuildPlatform.WebPlaygama, bf.BuildType.Release)
+
+    zip_path = bf.TEMP_DIR / "itch.zip"
+    make_web_build_archive(zip_path, Path(".export/web_playgama_release"))
+
+    target = "{}:html".format(bf.game_settings.itch_target)
+    bf.run_command([bf.BUTLER_PATH, "push", zip_path, target])
+    ##
 
 
 @command

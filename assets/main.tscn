@@ -152,8 +152,8 @@ platform = NodePath("_platform_playgama")
 
 [node name="_metrics_ga" type="Node" parent="_meta" unique_id=927896474]
 script = ExtResource("2_j2eim")
-game_id = "6cd0800abea682e27c7c5e25e5767957"
-game_secret = "1cccb4f791628c4a3d3bf49e30d9a139e81aa563"
+game_id = "afc1d9dffad68a33016481b16fe2682e"
+game_secret = "cdf2bb3c056c905f38896f8a88a515a5a3591540"
 
 [node name="_platform_playgama" type="Node" parent="_meta" unique_id=680294843]
 script = ExtResource("2_ujfqy")
