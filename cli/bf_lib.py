@@ -1746,6 +1746,9 @@ def show_imgui(
   im.create_context()
   io = im.get_io()
   io.config_flags |= im.ConfigFlags.NAV_ENABLE_KEYBOARD
+  with open(PROJECT_DIR / "cli" / "ComicCode-Semibold.ttf", "rb") as f:
+    font_data = f.read()
+  font = io.fonts.add_font_from_memory_ttf(font_data, 32)
   renderer = GlfwRenderer(glfw_window, prev_key_callback=key_callback)
 
   while not (glfw.window_should_close(glfw_window) or should_exit()):
@@ -1753,7 +1756,9 @@ def show_imgui(
     gl.glClear(int(gl.GL_COLOR_BUFFER_BIT) | int(gl.GL_DEPTH_BUFFER_BIT))
     renderer.new_frame()
     im.new_frame()
+    im.push_font(font, 0)
     frame()
+    im.pop_font()
     im.render()
     renderer.render(im.get_draw_data())
     glfw.swap_buffers(glfw_window)
