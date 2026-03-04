@@ -47,6 +47,41 @@
         "panel": "shared",
         "clear": true
       }
+    },
+    {
+      "label": "5_mypy",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "mypy",
+        "--incremental",
+        "cli"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "icon": {
+        "id": "run"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "python",
+        "pattern": [
+          {
+            "regexp": "^(.*\\.py):([0-9]+): error: (.*)$",
+            "file": 1,
+            "line": 2,
+            "message": 3
+          }
+        ]
+      }
     }
   ]
 }

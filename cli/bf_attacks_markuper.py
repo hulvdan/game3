@@ -1,4 +1,5 @@
-import dataclasses
+import typing as t
+from dataclasses import dataclass
 
 import bf_lib as bf
 import glfw
@@ -6,22 +7,64 @@ from bf_typer import command
 from slimgui import imgui as im
 
 
-@dataclasses.dataclass
+@dataclass
+class V2:
+  x: float
+  y: float
+
+
+@dataclass
+class Keyframe:
+  index: int
+  scale: float
+  offset: V2
+
+
+@dataclass
 class State:
+  timeline: list[Keyframe]
   exiting: bool = False
   count: int = 0
 
 
-g = State()
+g = State(
+  timeline=[
+    Keyframe(0, 1, V2(0, 0)),
+    Keyframe(2, 2, V2(0, 5)),
+    Keyframe(3, 4, V2(10, 2)),
+  ],
+)
 
 
-def _frame():  ##
-  im.set_next_window_size((400, 400), im.Cond.FIRST_USE_EVER)
-  im.begin("Application Window")
-  if im.button("Click me!"):
-    g.count += 1
-  im.same_line()
-  im.text(f"Clicked {g.count} times")
+def v2add(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.Any]:
+  return (v1[0] + v2[0], v1[1] + v2[1])
+
+
+def v2sub(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.Any]:
+  return (v1[0] - v2[0], v1[1] - v2[1])
+
+
+def _frame() -> None:  ##
+  im.begin("Timeline")
+
+  # # Simple horizontal timeline
+
+  # # Draw timeline background
+  # im.invisible_button("timeline_area", (timeline_width, timeline_height))
+  draw_list = im.get_window_draw_list()
+
+  pos = im.get_cursor_screen_pos()
+  size = v2sub(im.get_window_size(), v2sub(pos, im.get_window_pos()))
+
+  draw_list.add_line(pos, v2add(pos, size), im.color_convert_float4_to_u32((1, 0, 0, 1)))
+  # pos = im.get_item_rect_min()
+
+  # # Draw keyframes as small circles
+  # for kf in g.timeline:
+  #   x = pos[0] + (kf.index / 5.0) * timeline_width
+  #   y = pos[1] + timeline_height / 2
+  #   draw_list.add_circle_filled((x, y), 5, im.color_convert_float4_to_u32((1, 0, 0, 1)))
+
   im.end()
   ##
 
@@ -33,6 +76,6 @@ def _key_callback(_window, key, _scan, action, _mods) -> None:  ##
 
 
 @command
-def tool_attacks_markuper():  ##
+def tool_attacks_markuper() -> None:  ##
   bf.show_imgui(_frame, _key_callback, lambda: g.exiting)
   ##

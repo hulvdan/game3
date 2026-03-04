@@ -20,6 +20,7 @@ import json
 from collections import defaultdict
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Generator
 
 import bf_lib as bf
 import numpy as np
@@ -68,8 +69,8 @@ bf.game_settings.colors = [  ##
 ]  ##
 
 
-context = []
-context_errors = []
+context: list = []
+context_errors: list = []
 
 
 def format_context() -> str:  ##
@@ -98,8 +99,10 @@ def process_glib(*args, **kwargs) -> None:  ##
 
 
 def outer_transpose_pos(
-  object_pos: tuple[int, int], object_size: tuple[int, int], level_size: tuple[int, int]
-) -> tuple[int, int]:  ##
+  object_pos: tuple[int, int] | tuple[float, float],
+  object_size: tuple[int, int],
+  level_size: tuple[int, int],
+) -> tuple[int, int] | tuple[float, float]:  ##
   x, y = object_pos
   _w, h = object_size
   _level_w, level_h = level_size
@@ -256,8 +259,12 @@ def _process_glib(genline, glib) -> None:
   def asserte(expr, *args) -> None:  ##
     if expr:
       return
-    frame = inspect.currentframe().f_back
+    f = inspect.currentframe()
+    assert f is not None
+    frame = f.f_back
+    assert frame is not None
     frame_: inspect.Traceback = inspect.getframeinfo(frame)
+    assert frame_.code_context is not None
     err = {
       "source": "{}:{}: {}: {}".format(
         frame_.filename, frame.f_lineno, frame_.code_context[0].strip(), expr
@@ -270,7 +277,7 @@ def _process_glib(genline, glib) -> None:
     ##
 
   @contextmanager
-  def push(value: str) -> None:  ##
+  def push(value: str | int) -> Generator[None, None, None]:  ##
     context.append(value)
     yield
     context.pop()
@@ -511,7 +518,7 @@ def _process_glib(genline, glib) -> None:
     x.as_posix() for x in Path("src").rglob("**/_*.tres")
   ]
 
-  tres_errors = []
+  tres_errors: list = []
 
   def tres_callback(value: str, _) -> None:
     if not value.startswith("res://src/game/res_"):

@@ -7,9 +7,9 @@ _anchors: ##
     - ROLLABLE
     - STAMINA_RECOVERING_ROLLABLE
 
-  evade_flags_default_no_stamina_recovering: &evade_flags_default_no_stamina_recovering
-    - BLOCKABLE_IN_ANY_WAY
-    - ROLLABLE
+  # evade_flags_default_no_stamina_recovering: &evade_flags_default_no_stamina_recovering
+  #   - BLOCKABLE_IN_ANY_WAY
+  #   - ROLLABLE
 
   evade_flags_perfect: &evade_flags_perfect
     - PERFECT_BLOCKABLE

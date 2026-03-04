@@ -47,8 +47,8 @@ x jagras: side attack: mirroring
 x jagras: mass
 x markuper: shown window
 x markuper: font
+x markuper: maximized
 
-* markuper:
 * markuper:
 * markuper:
 * markuper:

@@ -350,6 +350,9 @@ def _recursive_visiter_setter_dict(value, d, k) -> None:
   d[k] = value
 
 
+_recursive_visiter_patterns: tuple[Any, Any] | None = None
+
+
 def recursive_visiter(
   glib_recursed,
   key_suffix_single: str | None,
@@ -373,6 +376,7 @@ def recursive_visiter(
       p2 = re.compile(f"(.*_)?{key_suffix_list}(_\\d+)?$")
     _recursive_visiter_patterns = (p1, p2)
 
+  assert _recursive_visiter_patterns is not None
   p1, p2 = _recursive_visiter_patterns
 
   for key, value in glib_recursed.items():
@@ -1394,7 +1398,7 @@ def im_draw_on_top(
 # ╚══════╝╚═════╝    ╚═╝   ╚═╝  ╚═╝
 
 
-def as_dict(pos: tuple[int, int] | float) -> dict[str, int | float]:
+def as_dict(pos: tuple[int, int] | tuple[float, float]) -> dict[str, int | float]:
   return {"x": pos[0], "y": pos[1]}
 
 
@@ -1616,7 +1620,7 @@ class LdtkLayerInstance(BaseModel):  ##
   def size(self) -> list[int]:
     return [self.cWid_, self.cHei_]
 
-  def entities(self, identifier: str) -> Iterator[LdtkEntityInstance, None, None]:
+  def entities(self, identifier: str) -> Iterator[LdtkEntityInstance]:
     return (x for x in self.entityInstances if x.identifier_ == identifier)
 
   ##
@@ -1739,19 +1743,20 @@ def show_imgui(
   glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, glfw.TRUE)
   glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
   glfw.window_hint(glfw.VISIBLE, True)
-  glfw_window = glfw.create_window(
+  window = glfw.create_window(
     width=1600, height=900, title="Attacks Markuper", monitor=None, share=None
   )
-  glfw.make_context_current(glfw_window)
+  glfw.maximize_window(window)
+  glfw.make_context_current(window)
   im.create_context()
   io = im.get_io()
   io.config_flags |= im.ConfigFlags.NAV_ENABLE_KEYBOARD
   with open(PROJECT_DIR / "cli" / "ComicCode-Semibold.ttf", "rb") as f:
     font_data = f.read()
   font = io.fonts.add_font_from_memory_ttf(font_data, 32)
-  renderer = GlfwRenderer(glfw_window, prev_key_callback=key_callback)
+  renderer = GlfwRenderer(window, prev_key_callback=key_callback)
 
-  while not (glfw.window_should_close(glfw_window) or should_exit()):
+  while not (glfw.window_should_close(window) or should_exit()):
     glfw.poll_events()
     gl.glClear(int(gl.GL_COLOR_BUFFER_BIT) | int(gl.GL_DEPTH_BUFFER_BIT))
     renderer.new_frame()
@@ -1761,7 +1766,7 @@ def show_imgui(
     im.pop_font()
     im.render()
     renderer.render(im.get_draw_data())
-    glfw.swap_buffers(glfw_window)
+    glfw.swap_buffers(window)
 
   renderer.shutdown()
   im.destroy_context(None)

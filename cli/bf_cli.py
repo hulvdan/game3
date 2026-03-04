@@ -117,7 +117,7 @@ def do_build(
   if platform.startswith("web"):
     shutil.copy("assets/GameAnalytics.min.js", out_folder)
 
-  shutil.make_archive(base_name=out_folder, format="zip", root_dir=out_folder)
+  shutil.make_archive(base_name=str(out_folder), format="zip", root_dir=out_folder)
   ##
 
 
