@@ -17,6 +17,7 @@ USAGE:
 import inspect
 import json
 from collections import defaultdict
+from contextlib import contextmanager
 from pathlib import Path
 from pprint import pformat, pprint
 
@@ -73,7 +74,7 @@ context_errors = []
 def format_context() -> str:  ##
     value = ""
     for i, err in enumerate(context_errors):
-        value += "{} {}".format(i, err["context"])
+        value += "Error {}. {}".format(i + 1, " / ".join(str(x) for x in err["context"]))
         if args := err.get("args"):
             value += " {}".format(args)
         value += "\n  {}\n".format(err["source"])
@@ -255,8 +256,6 @@ def _process_glib(genline, glib) -> None:
     glib["rooms"] = rooms
     ##
 
-    not_found_tag_fields = []
-
     def asserte(expr, *args) -> None:  ##
         if expr:
             return
@@ -273,6 +272,14 @@ def _process_glib(genline, glib) -> None:
         context_errors.append(err)
         ##
 
+    @contextmanager
+    def push(value: str) -> None:  ##
+        context.append(value)
+        yield
+        context.pop()
+
+    ##
+
     ## Tags
     entity_2_tag_required_fields: dict[str, dict[str, list[str]]] = defaultdict(
         defaultdict
@@ -282,27 +289,25 @@ def _process_glib(genline, glib) -> None:
             if not k.endswith("_requirements"):
                 continue
             table = k.removesuffix("_requirements")
-            entity_2_tag_required_fields[table][tag["type"]] = list(v.keys()) if v else []
+            entity_2_tag_required_fields[table][tag["type"]] = (
+                [x.removesuffix("_degrees") for x in v] if v else []
+            )
 
     def validate_tags(tags: list, entity: str) -> None:
         assert entity in entity_2_tag_required_fields
         for tag in tags:
-            asserte(
-                tag["tag_type"] in entity_2_tag_required_fields[entity],
-                "{} can't be used on {} because it doesn't have `{}`".format(
-                    tag["tag_type"], entity, f"{entity}_requirements"
-                ),
-            )
+            tag_keys = [x.removesuffix("_degrees") for x in tag]
+            with push(tag["tag_type"]):
+                asserte(
+                    tag["tag_type"] in entity_2_tag_required_fields[entity],
+                    "{} can't be used on {} because it doesn't have `{}`".format(
+                        tag["tag_type"], entity, f"{entity}_requirements"
+                    ),
+                )
 
             for field in entity_2_tag_required_fields[entity][tag["tag_type"]]:
-                if field not in tag:
-                    not_found_tag_fields.append(field)
-            asserte(
-                not not_found_tag_fields,
-                "Tag {} doesn't have required fields: {}".format(
-                    tag["tag_type"], not_found_tag_fields
-                ),
-            )
+                with push(field):
+                    asserte(field.removesuffix("_degrees") in tag_keys)
 
     ##
 
@@ -312,7 +317,8 @@ def _process_glib(genline, glib) -> None:
             x["stops_tracking_at"] = x["duration"]
         if is_player:
             assert "stamina_cost" in x, context
-        validate_tags(x.get("tags", []), "attack")
+        with push("tags"):
+            validate_tags(x.get("tags", []), "attack")
         if melee := x.get("melee"):
             if polygon := melee.get("polygon"):
                 assert polygon["angle_degrees"] < 180, context
@@ -321,63 +327,54 @@ def _process_glib(genline, glib) -> None:
         ##
 
     ## Creatures
-    context.append("creatures")
-    for x in glib["creatures"][1:]:
-        context.append(x["type"])
-        is_player = x["type"] == "PLAYER"
-        x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
-        context.append("attacks")
-        for i, attack in enumerate(x.get("attacks", [])):
-            context.append(i)
-            validate_attack(attack, is_player)
-            if not is_player:
-                asserte("condition" in attack)
-            context.pop()
-        context.pop()
-        context.append("abilities")
-        for i, ability in enumerate(x.get("abilities", [])):
-            context.append(i)
-            if "attack" in ability:
-                context.append("attack")
-                validate_tags(attack.get("tags", []), "attack")
-                context.pop()
-            context.pop()
-        context.pop()
-        context.pop()
-    context.pop()
+    with push("creatures"):
+        for x in glib["creatures"][1:]:
+            with push(x["type"]):
+                is_player = x["type"] == "PLAYER"
+                x["res"] = "res://src/game/res_creatures/_{}.tres".format(
+                    x["type"].lower()
+                )
+                with push("attacks"):
+                    for i, attack in enumerate(x.get("attacks", [])):
+                        with push(i):
+                            validate_attack(attack, is_player)
+                            if not is_player:
+                                asserte("condition" in attack)
+                with push("abilities"):
+                    for i, ability in enumerate(x.get("abilities", [])):
+                        with push(i):
+                            if "attack" in ability:
+                                with push("attack"):
+                                    validate_tags(attack.get("tags", []), "attack")
     ##
 
     ## Abilities
-    context.append("abilities")
-    for i, x in enumerate(glib["abilities"]):
-        context.append(i)
-        context.append("attack")
-        validate_attack(x["attack"], True)
-        context.pop()
-        context.pop()
-    context.pop()
+    with push("abilities"):
+        for i, x in enumerate(glib["abilities"]):
+            with push(i), push("attack"):
+                validate_attack(x["attack"], True)
     ##
 
     ## Projectiles
     need_to_have_damage_stamina = []
-    context.append("projectiles")
-    for x in glib["projectiles"][1:]:
-        context.append(x["type"])
-        x["res"] = "res://src/game/res_projectiles/_{}.tres".format(x["type"].lower())
-        evade_flags = x.get("evade_flags", [])
-        stamina_blockable = ("JUST_BLOCKABLE" in evade_flags) or (
-            "BLOCKABLE_IN_ANY_WAY" in evade_flags
-        )
-        if ("damage" in x) and ("damage_stamina" not in x) and stamina_blockable:
-            need_to_have_damage_stamina.append(x["type"])
-        validate_tags(x.get("tags", []), "projectile")
-        context.pop()
+    with push("projectiles"):
+        for x in glib["projectiles"][1:]:
+            with push(x["type"]):
+                x["res"] = "res://src/game/res_projectiles/_{}.tres".format(
+                    x["type"].lower()
+                )
+                evade_flags = x.get("evade_flags", [])
+                stamina_blockable = ("JUST_BLOCKABLE" in evade_flags) or (
+                    "BLOCKABLE_IN_ANY_WAY" in evade_flags
+                )
+                if ("damage" in x) and ("damage_stamina" not in x) and stamina_blockable:
+                    need_to_have_damage_stamina.append(x["type"])
+                validate_tags(x.get("tags", []), "projectile")
     assert not need_to_have_damage_stamina, (
         context,
         "projectiles need to have damage_stamina",
         need_to_have_damage_stamina,
     )
-    context.pop()
     ##
 
     ## Interactables

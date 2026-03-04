@@ -157,7 +157,6 @@ static func explicit_update_attack(
 
 func tick(actor: Node, _blackboard: Blackboard) -> int: ##
 	var c: Creature = actor
-	c.change_attack_to = glib.v.get_creatures()[c.type].get_attacks()[0]
 
 	var player_pos := bf.xz(Room.v.player.creature.transform.origin)
 	var pos := bf.xz(c.transform.origin)

@@ -12,6 +12,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
 
 	for attack: glib.GAttack in data.get_attacks():
 		if _is_condition_satisfied(c, attack.get_condition()):
+			c.change_attack_to = attack
 			c.controller.move = Vector2(0, 0)
 			return SUCCESS
 

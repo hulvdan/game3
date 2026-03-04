@@ -198,8 +198,10 @@ def degrees_to_radians_recursive_transform(gamelib_recursed) -> None:  ##
     for key in keys_to_replace:
         new_key = key.removesuffix("_degrees")
         value = gamelib_recursed.pop(key)
-        assert isinstance(value, (int, float))
-        gamelib_recursed[new_key] = radians(value)
+        if isinstance(value, (int, float)):
+            gamelib_recursed[new_key] = radians(value)
+        else:
+            assert value is None
 
     del keys_to_replace
 

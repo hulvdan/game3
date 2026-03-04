@@ -40,9 +40,9 @@ x circle condition
 x don't escape file path pprint
 x good attack activation conditions
 x ref
+x jagras: side attack: prepare proto + yaml
 
-* jagras: side attack:
-* jagras: side attack:
+* jagras: side attack: impl rotated dash
 * jagras: side attack:
 * jagras: side attack:
 * jagras: side attack:
