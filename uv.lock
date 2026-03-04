@@ -196,6 +196,7 @@ dependencies = [
     { name = "rich" },
     { name = "rpp" },
     { name = "ruff" },
+    { name = "scons" },
     { name = "spacy" },
     { name = "typer" },
     { name = "types-pyyaml" },
@@ -229,6 +230,7 @@ requires-dist = [
     { name = "rich", specifier = ">=14.2.0" },
     { name = "rpp", specifier = ">=0.5" },
     { name = "ruff", specifier = ">=0.14.6" },
+    { name = "scons", specifier = ">=4.10.1" },
     { name = "spacy", specifier = ">=3.8.11" },
     { name = "typer", specifier = ">=0.20.0" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20250915" },
@@ -1635,6 +1637,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/67/0b/8e4e0639e4cc12547f41cb771b0b44ec8225b6b6a93393176d75fe6f7d40/ruff-0.14.6-py3-none-win32.whl", hash = "sha256:00169c0c8b85396516fdd9ce3446c7ca20c2a8f90a77aa945ba6b8f2bfe99e85", size = 13013361, upload-time = "2025-11-21T14:26:08.152Z" },
     { url = "https://files.pythonhosted.org/packages/fb/02/82240553b77fd1341f80ebb3eaae43ba011c7a91b4224a9f317d8e6591af/ruff-0.14.6-py3-none-win_amd64.whl", hash = "sha256:390e6480c5e3659f8a4c8d6a0373027820419ac14fa0d2713bd8e6c3e125b8b9", size = 14432087, upload-time = "2025-11-21T14:26:10.891Z" },
     { url = "https://files.pythonhosted.org/packages/a5/1f/93f9b0fad9470e4c829a5bb678da4012f0c710d09331b860ee555216f4ea/ruff-0.14.6-py3-none-win_arm64.whl", hash = "sha256:d43c81fbeae52cfa8728d8766bbf46ee4298c888072105815b392da70ca836b2", size = 13520930, upload-time = "2025-11-21T14:26:13.951Z" },
+]
+
+[[package]]
+name = "scons"
+version = "4.10.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/c9/2f430bb39e4eccba32ce8008df4a3206df651276422204e177a09e12b30b/scons-4.10.1.tar.gz", hash = "sha256:99c0e94a42a2c1182fa6859b0be697953db07ba936ecc9817ae0d218ced20b15", size = 3258403, upload-time = "2025-11-16T22:43:39.258Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ce/bf/931fb9fbb87234c32b8b1b1c15fba23472a10777c12043336675633809a7/scons-4.10.1-py3-none-any.whl", hash = "sha256:bd9d1c52f908d874eba92a8c0c0a8dcf2ed9f3b88ab956d0fce1da479c4e7126", size = 4136069, upload-time = "2025-11-16T22:43:35.933Z" },
 ]
 
 [[package]]

@@ -34,6 +34,19 @@
         "panel": "shared",
         "clear": true
       }
+    },
+    {
+      "label": "4_profiles",
+      "type": "shell",
+      "command": "uv run python cli/bf_cli.py profiles",
+      "icon": {
+        "id": "run"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      }
     }
   ]
 }

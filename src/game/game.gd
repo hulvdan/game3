@@ -535,7 +535,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 		room.container_mob_hp_bars.add_child(bar)
 		var tree: BeehaveTree = packed_ai.instantiate()
 		creature.setup_ai(tree)
-	# creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
+	creature.node_target_camera.add_to_group(GROUP_TARGET_CAMERA)
 
 	var sh: ShaderMaterial = creature.node_sprite.material_override
 	sh.set_shader_parameter("flash", Color(1, 1, 1, 0))

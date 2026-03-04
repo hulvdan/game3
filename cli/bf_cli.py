@@ -41,8 +41,7 @@ def enrich_game_settings_colors() -> None:  ##
 
 
 @timing
-def make_web_build_archive(zip_path: Path, where_godot_exported_folder: Path) -> None:
-    ##
+def make_web_build_archive(zip_path: Path, where_godot_exported_folder: Path) -> None:  ##
     with zipfile.ZipFile(zip_path, "w") as archive:
         for filepath in where_godot_exported_folder.glob("*"):
             archive.write(filepath, filepath.name)
@@ -50,17 +49,18 @@ def make_web_build_archive(zip_path: Path, where_godot_exported_folder: Path) ->
 
 
 @timing
-def do_profile(godot_platform: str) -> None:
-    ##
+def do_profile(godot_platform: str) -> None:  ##
     bf.run_command(
         [
+            "uv",
+            "run",
             "scons",
             "target=template_release",
             f"platform={godot_platform}",
-            f"profile=../{bf.PROJECT_DIR.name}/src/engine/profile_{godot_platform}.py",
-            f"build_profile=../{bf.PROJECT_DIR.name}/src/engine/profile.gdbuild",
+            f"profile={bf.PROJECT_DIR}/src/engine/profile_{godot_platform}.py",
+            f"build_profile={bf.PROJECT_DIR}/src/engine/profile.gdbuild",
         ],
-        cwd="../godot-4.6-stable",
+        cwd=bf.PROJECT_DIR / "../godot-4.6-stable",
     )
     ##
 
@@ -92,19 +92,27 @@ def do_build(
     exe_name: str | None = None
     if platform.is_web():
         exe_name = "index.html"
-        bf.run_command(
-            rf"godot --quit --headless --export-pack web_async_data {out_folder}/async_data.pck",
-            timeout_seconds=90,
-        )
+        async_data_pck_path = out_folder / "async_data.pck"
+        try:
+            bf.run_command(
+                rf"godot --quit --headless --export-pack web_async_data {out_folder}/async_data.pck",
+                timeout_seconds=30,
+            )
+        except Exception:
+            assert async_data_pck_path.exists()
     elif platform == bf.BuildPlatform.Win:
         exe_name = "game.exe"
     else:
         assert False
 
-    bf.run_command(
-        rf"godot --quit --headless --export-{build_type} {platform} {out_folder}/{exe_name}",
-        timeout_seconds=30,
-    )
+    try:
+        bf.run_command(
+            rf"godot --quit --headless --export-{build_type} {platform} {out_folder}/{exe_name}",
+            timeout_seconds=30,
+        )
+    except Exception:
+        for f in ("index.pck", "index.html", "index.wasm"):
+            assert (out_folder / f).exists()
 
     if platform.startswith("web"):
         shutil.copy("assets/GameAnalytics.min.js", out_folder)
@@ -138,8 +146,7 @@ def do_run_in_godot_ahk() -> None:  ##
 
 
 # @command
-# def cog():
-#     ##
+# def cog():  ##
 #     files_to_cog_and_format = [
 #         *SRC_DIR.rglob("*.cpp"),
 #         *SRC_DIR.rglob("*.h"),
@@ -227,8 +234,7 @@ def build(
 
 
 # @command
-# def build_all_and_test():
-#     ##
+# def build_all_and_test():  ##
 #
 #     test()
 #     for target, platform, build_type in bf.ALLOWED_BUILDS:
@@ -266,8 +272,8 @@ def test():  ##
 def deploy_itch():  ##
     bf.git_bump_tag()
 
-    with bf.git_stash():
-        build(bf.BuildTarget.game, bf.BuildPlatform.WebPlaygama, bf.BuildType.Release)
+    # with bf.git_stash():
+    build(bf.BuildTarget.game, bf.BuildPlatform.WebPlaygama, bf.BuildType.Release)
 
     zip_path = bf.TEMP_DIR / "itch.zip"
     make_web_build_archive(zip_path, Path(".export/web_playgama_release"))
@@ -389,8 +395,7 @@ def gitf():  ##
     ##
 
 
-def main() -> None:
-    ##
+def main() -> None:  ##
     test_value = bf.hash32("test")
     assert test_value == 0xAFD071E5, test_value
     test_value = bf.hash32("test")  # Checking that it's stable.

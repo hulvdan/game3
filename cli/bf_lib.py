@@ -67,11 +67,11 @@ class BuildType(StrEnum):
 
 
 class BuildPlatform(StrEnum):
+    WebPlaygama = "web_playgama"
     Win = "windows"
     # Web = "web"
     # WebYandex = "web_yandex"
     # WebItch = "web_itch"
-    WebPlaygama = "web_playgama"
 
     def is_web(self) -> bool:
         return self.lower().startswith("web")

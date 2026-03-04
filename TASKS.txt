@@ -16,6 +16,7 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x fixing web build
 
 * deploy itch
 *
