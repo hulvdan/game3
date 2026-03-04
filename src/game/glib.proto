@@ -151,6 +151,19 @@ message GImpulseData {
   float pow = 4;
 }
 
+message GAttackCondition {
+  int32 type = 1;
+  string debug_name = 2;
+}
+
+message GAttackConditionValue {
+  int32 attackcondition_type = 1;
+  float distance_min = 2;
+  float distance_max = 3;
+  float tunnel__angle = 4;
+  float tunnel__collider_size = 5;
+}
+
 message GAttack {
   float duration = 1;
   float cooldown_min = 2;
@@ -168,6 +181,8 @@ message GAttack {
   GAttackMelee melee = 10;
   repeated GTagValue tags = 11;
   repeated GImpulseData impulses = 12;
+
+  GAttackConditionValue condition = 13;
 }
 
 message GAbility {
@@ -370,5 +385,6 @@ message Lib {
   repeated GMask masks = 31;
   repeated GTag tags = 32;
   repeated GImpulse impulses = 33;
+  repeated GAttackCondition attack_conditions = 34;
   // TABLE_GEN_END
 }

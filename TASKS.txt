@@ -33,8 +33,9 @@ x jagras: bigger hitbox
 x jagras: attacks: long rolling into player
 x jagras: rotation speed
 x jagras: `stops_tracking_at` stop rotation
+x jagras: front attack: proto condition
 
-* jagras: does front attack only when he'd damage player w his collider
+* jagras: front attack: only when he'd damage player w his collider
 *
 * jagras: side attack:
 * jagras: side attack:

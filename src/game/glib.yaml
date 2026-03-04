@@ -221,6 +221,10 @@ teams: ##
     enum__value: 0b111
 ##
 
+attack_conditions: ##
+  - type: TUNNEL
+##
+
 abilities:
   - type: HOOK ##
     attack:
@@ -550,7 +554,11 @@ creatures:
             f2: 2.4 # ends_at
             f3: 4 # distance
             f4: 1 # pow
-            ##
+        condition:
+          attackcondition_type: TUNNEL
+          distance_max: 4
+          tunnel__collider_size: 1
+          ##
 
 items: ##
   - type: INVALID
