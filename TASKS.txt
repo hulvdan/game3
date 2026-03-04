@@ -5,24 +5,31 @@ PILLARS
 ============================================================
 * MONSTER HUNTER 2.5D
 * АКАДЕМИЧНЫЙ ГЕЙМПЛЕЙ
+* ОЩУЩАЕТСЯ ЛУЧШЕ:
+  * НАЧАЛО: ЗАТОЧКА
+  * ЗАТОЧКА БЕЗ WHETFISH GRIND
+  * ФАРМ КАКЕХ
+  *
+  *
+  *
+* БЕЗ РАЗДРАЖИТЕЛЯ В ВИДЕ ЗАТОЧКИ
+* ПОЧЕМУ МОЯ ИГРА «КРУТАЯ»?
 *
 *
 *
 
 BIG PLAN
 ============================================================
-* can go on a hunt
 
 PLAN
 ============================================================
 x clear
 x fixing web build
 x fixed itch build
+x itch emberveil2
+x hulvdan.itch.io add secret itch links
+x f
 
-* itch emberveil2
-* itch cookier
-* hulvdan.itch.io add secret itch links
-*
 * jagras: bigger hitbox
 * jagras: different attacks: jump with dash
 * jagras: different attacks: swing with segments
@@ -47,18 +54,7 @@ x fixed itch build
 * items: lightning trap
 * using 2 tranquil bombs with lightning trap when big mob is <=20% HP traps it
 *
-* THINK: WHAT ARE THE DRAWBACKS OF MONSTER HUNTER WORLD?
-  * НАЧАЛО: ЗАТОЧКА
-  * НАЧАЛО:
-  * НАЧАЛО:
-  * ЗАТОЧКА: WHETFISH GRIND
-  * ФАРМ КАКЕХ
-  * НУЖНО РАССКАЗАТЬ, ПОЧЕМУ МОЯ ИГРА КРУТАЯ
-  *
-  *
-  *
-  *
-  *
+* itch cookier
 *
 * query circle segment segments?
 *
