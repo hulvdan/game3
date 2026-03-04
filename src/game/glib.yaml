@@ -543,6 +543,7 @@ creatures:
         cooldown_min: 3.0
         cooldown_max: 5.0
         distance: 4
+        stops_tracking_at: 0.4
         tags:
           - tag_type: DASH_NO_DELTA
             f1: 0.4 # starts_at

@@ -256,20 +256,23 @@ func _physics_process(dt: float) -> void:
 		if x.type != glib.GCreatureType.PLAYER:
 			x.target_pos = player_xz_pos
 
+		var target_angle := INF
 		var from := bf.xz(x.transform.origin)
-		if x.target_pos != from:
-			var dd := x.target_pos - from
-			var angle := dd.angle()
+		if x.attack_target_dir != Vector2(0, 0):
+			target_angle = x.attack_target_dir.angle()
+		elif x.target_pos != from:
+			target_angle = (x.target_pos - from).angle()
+
+		if target_angle != INF:
 			if data.get_rotation_speed():
 				x.looking_angle = bf.angle_rotate_with_speed(
 					x.looking_angle,
-					angle,
+					target_angle,
 					data.get_rotation_speed() * dt,
 				)
-				x.looking_dir = Vector2(1, 0).rotated(x.looking_angle)
 			else:
-				x.looking_angle = angle
-				x.looking_dir = dd.normalized()
+				x.looking_angle = target_angle
+			x.looking_dir = Vector2(1, 0).rotated(x.looking_angle)
 
 		if glib.v.get_debug_collisions():
 			ImmediateGizmos3D.set_transform(x.transform)

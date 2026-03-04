@@ -147,6 +147,8 @@ static func explicit_update_attack(
 		c.attack_damaged_creatures.clear()
 		c.attack_damaged_interactables.clear()
 		c.controller.move = Vector2(0, 0)
+		c.attack_target_pos = Vector2(0, 0)
+		c.attack_target_dir = Vector2(0, 0)
 		return true
 	##
 

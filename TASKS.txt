@@ -32,10 +32,19 @@ x f
 x jagras: bigger hitbox
 x jagras: attacks: long rolling into player
 x jagras: rotation speed
+x jagras: `stops_tracking_at` stop rotation
 
-* jagras: attacks: side rolling
+* jagras: does front attack only when he'd damage player w his collider
+*
+* jagras: side attack:
+* jagras: side attack:
+* jagras: side attack:
+* jagras: side attack:
+* jagras: side attack:
+*
 * jagras: attacks: swing with segments
 * jagras: attacks: spit
+* jagras: attacks: triple spit
 * jagras: attacks: combo 3 hits
 * jagras: attacks: combo 2 hits
 * jagras: attacks:
