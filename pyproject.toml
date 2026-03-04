@@ -149,7 +149,7 @@ python_functions = ["test_*"]
 python_classes = ["Test*"]
 
 [tool.mypy]
-ignore_missing_imports = true
+ignore_missing_imports = false
 
 [tool.pyright]
 include = ["cli"]
@@ -163,8 +163,9 @@ exclude = [
 # ignore = ["src/oldstuff"]
 # defineConstant = { DEBUG = true }
 # stubPath = "src/stubs"
-# reportMissingImports = "error"
+reportMissingImports = "none"
 # reportMissingTypeStubs = false
+reportMissingModuleSource = "none"
 pythonVersion = "3.11"
 # pythonPlatform = "Linux"
 # executionEnvironments = [

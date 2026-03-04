@@ -1071,7 +1071,7 @@ def imc_replace_color(color: tuple[int, int, int]) -> ConveyorCallable:  ##
 
 
 def im_multiply(
-  image: Image.Image, color: tuple[int, int, int] | tuple[int, int, int, int]
+  image: Image.Image, color: tuple[int, int, int] | tuple[int, int, int, int] | str
 ) -> Image.Image:  ##
   return ImageChops.multiply(image, Image.new("RGBA", image.size, color))
   ##
@@ -1460,8 +1460,8 @@ class LdtkTileset(BaseModel):  ##
   uid: int
 
   @property
-  def size(self) -> list[int]:
-    return [self.cWid_, self.cHei_]
+  def size(self) -> tuple[int, int]:
+    return (self.cWid_, self.cHei_)
 
   ##
 
@@ -1617,8 +1617,8 @@ class LdtkLayerInstance(BaseModel):  ##
   entityInstances: list[LdtkEntityInstance]
 
   @property
-  def size(self) -> list[int]:
-    return [self.cWid_, self.cHei_]
+  def size(self) -> tuple[int, int]:
+    return (self.cWid_, self.cHei_)
 
   def entities(self, identifier: str) -> Iterator[LdtkEntityInstance]:
     return (x for x in self.entityInstances if x.identifier_ == identifier)
@@ -1659,8 +1659,8 @@ class LdtkLevel(BaseModel):  ##
     assert False, f"Layer {name} not found"
 
   @property
-  def size(self) -> list[int]:
-    return [self.pxWid // 16, self.pxHei // 16]
+  def size(self) -> tuple[int, int]:
+    return (self.pxWid // 16, self.pxHei // 16)
 
   ##
 

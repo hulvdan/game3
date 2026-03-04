@@ -357,7 +357,7 @@ def _process_glib(genline, glib) -> None:
         with push("abilities"):
           for i, ability in enumerate(x.get("abilities", [])):
             with push(i):
-              if "attack" in ability:
+              if attack := ability.get("attack"):
                 with push("attack"):
                   validate_tags(attack.get("tags", []), "attack")
   ##

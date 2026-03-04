@@ -176,7 +176,7 @@ func _physics_process(_dt: float) -> void:
   ## Validating no invalid fields specified in glib.
   import glib_pb2  # noqa: PLC0415
 
-  lib = glib_pb2.Lib()
+  lib = glib_pb2.Lib()  # type: ignore
   json_format.Parse(json.dumps(glib), lib)
   ##
 
