@@ -70,6 +70,13 @@ repos:
         always_run: true
         pass_filenames: false
         stages: [pre-commit, pre-merge-commit, pre-push, manual]
+      - id: ruff-format
+        name: ruff format
+        entry: ruff format
+        language: system
+        require_serial: true
+        files: \.py$
+        stages: [pre-commit, pre-merge-commit, pre-push, manual]
       - id: banner
         name: banner
         entry: uv run python cli/bf_cli.py banner
