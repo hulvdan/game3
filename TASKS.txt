@@ -34,8 +34,10 @@ x jagras: attacks: long rolling into player
 x jagras: rotation speed
 x jagras: `stops_tracking_at` stop rotation
 x jagras: front attack: proto condition
+x jagras: front attack: only when he'd damage player w his collider
+x better bf_game.py asserts
 
-* jagras: front attack: only when he'd damage player w his collider
+* _is_condition_satisfied handle condition.get_tunnel__collider_size()
 *
 * jagras: side attack:
 * jagras: side attack:

@@ -2,30 +2,48 @@
 class_name ActionChase
 extends ActionLeaf
 
-var _attack_distance: float
-
-
-func set_attack_distance(value: float) -> void: ##
-	_attack_distance = value
-	##
-
 
 func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
 	var actor: Creature = actor_
+	var data := glib.v.get_creatures()[actor.type]
 	var target_pos: Vector2 = bf.xz(Room.v.player.creature.transform.origin)
 	var pos = bf.xz((actor as Node3D).transform.origin)
 	var dpos: Vector2 = target_pos - pos
 
-	if glib.v.get_debug_collisions() && glib.v.get_debug_collisions__chase():
-		ImmediateGizmos3D.set_transform(actor.transform)
-		ImmediateGizmos3D.line_circle(Vector3(0, 0, 0), Vector3(0, 1, 0), _attack_distance)
-
-	if dpos.length_squared() <= _attack_distance * _attack_distance:
-		# Target is in attack range.
+	if _is_condition_satisfied(actor, data.get_attacks()[0].get_condition()):
 		actor.controller.move = Vector2(0, 0)
 		return SUCCESS
 
 	var dir: Vector2 = dpos.normalized()
 	actor.controller.move = dir
 	return RUNNING
+	##
+
+
+func _is_condition_satisfied(
+		creature: Creature,
+		condition: glib.GAttackConditionValue,
+) -> bool: ##
+	if !condition:
+		return true
+
+	assert(!condition.get_distance_min())
+	match condition.get_attackcondition_type():
+		glib.GAttackConditionType.TUNNEL:
+			for d: Dictionary in Collisions.query_capsule(
+				bf.xz(creature.transform.origin) + creature.looking_dir * (condition.get_distance_max() / 2.0),
+				creature.looking_angle,
+				condition.get_distance_max(),
+				condition.get_tunnel__capsule_radius(),
+				2 ** glib.GMaskType.CREATURES,
+				true,
+				false,
+				12,
+			):
+				var v: Creature = d.collider
+				if v.type == glib.GCreatureType.PLAYER:
+					return true
+		_:
+			bf.invalid_path()
+	return false
 	##

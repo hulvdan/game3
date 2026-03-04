@@ -5,8 +5,10 @@ static var _sphere_basis := Basis.from_euler(Vector3(0.0, PI / 2, PI / 2))
 static var _param: = PhysicsShapeQueryParameters3D.new()
 static var _shape_sphere := PhysicsServer3D.sphere_shape_create()
 static var _shape_cylinder := PhysicsServer3D.cylinder_shape_create()
+static var _shape_capsule := PhysicsServer3D.capsule_shape_create()
 static var _shape_polygon := PhysicsServer3D.convex_polygon_shape_create()
 static var _cylinder_shape_dict := { "height": 0.0, "radius": 0.01 }
+static var _capsule_shape_dict := { "height": 0.0, "radius": 0.01 }
 static var _polygon_points: PackedVector3Array
 static var _debug_collisions: bool
 static var _space: PhysicsDirectSpaceState3D
@@ -141,7 +143,47 @@ static func query_ray(
 		ImmediateGizmos3D.line_capsule(
 			Vector3(0, 0, 0),
 			_cylinder_shape_dict.radius as float,
-			_cylinder_shape_dict.height as float,
+			distance,
+			_color,
+		)
+
+	return _space.intersect_shape(_param, max_returned_objects)
+	##
+
+
+static func query_capsule(
+		pos: Vector2,
+		angle: float,
+		distance: float,
+		radius: float,
+		mask: int,
+		collide_with_bodies: bool,
+		collide_with_areas: bool,
+		max_returned_objects: int,
+) -> Array[Dictionary]: ##
+	assert(distance > 0)
+	assert(radius > 0)
+
+	_capsule_shape_dict.height = distance
+	_capsule_shape_dict.radius = radius
+	PhysicsServer3D.shape_set_data(_shape_capsule, _capsule_shape_dict)
+
+	var basis := Basis.from_euler(Vector3(0, -angle + PI / 2, 0)) * _sphere_basis
+	_set_param_common_data(
+		_shape_capsule,
+		pos,
+		basis,
+		collide_with_bodies,
+		collide_with_areas,
+		mask,
+	)
+
+	if _debug_collisions:
+		ImmediateGizmos3D.set_transform(_param.transform)
+		ImmediateGizmos3D.line_capsule(
+			Vector3(0, 0, 0),
+			radius,
+			distance,
 			_color,
 		)
 

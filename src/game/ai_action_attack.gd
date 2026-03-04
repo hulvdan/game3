@@ -69,7 +69,7 @@ static func explicit_update_attack(
 	# Processing tags
 	for tag in attack.get_tags():
 		match tag.get_tag_type():
-			glib.GTagType.DASH: ##
+			glib.GTagType.DASH_LIMITED: ##
 				if !c.attack_dashed:
 					var start := tag.get_f1()
 					if start <= c.attack_elapsed:
@@ -80,7 +80,7 @@ static func explicit_update_attack(
 						var end := tag.get_f2()
 						Game.add_impulse(c.impulses, c.attack_target_dir, dist, end - start, pow_)
 			##
-			glib.GTagType.DASH_NO_DELTA: ##
+			glib.GTagType.DASH: ##
 				if !c.attack_dashed:
 					var start := tag.get_f1()
 					if start <= c.attack_elapsed:
@@ -157,8 +157,7 @@ static func explicit_update_attack(
 
 func tick(actor: Node, _blackboard: Blackboard) -> int: ##
 	var creature: Creature = actor
-	var attack: = glib.v.get_creatures()[creature.type].get_attacks()[0]
-	creature.change_attack_to = attack
+	creature.change_attack_to = glib.v.get_creatures()[creature.type].get_attacks()[0]
 
 	var player_pos := bf.xz(Room.v.player.creature.transform.origin)
 	var pos := bf.xz(creature.transform.origin)

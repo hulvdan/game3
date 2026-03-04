@@ -14,9 +14,11 @@ USAGE:
 """
 
 ## Imports
+import inspect
 import json
 from collections import defaultdict
 from pathlib import Path
+from pprint import pformat, pprint
 
 import bf_lib as bf
 import numpy as np
@@ -64,7 +66,16 @@ bf.game_settings.colors = [  ##
 ]  ##
 
 
-scoped_processing_args = ["None", "None"]
+context = []
+context_errors = []
+
+
+def print_context():  ##
+    print("DEBUG INFO")
+    print("context", context)
+    print("context_errors:")
+    pprint(context_errors)
+    ##
 
 
 @bf.glib_processor
@@ -72,7 +83,7 @@ def process_glib(*args, **kwargs) -> None:  ##
     try:
         _process_glib(*args, **kwargs)
     except Exception:
-        print("ERROR HAPPENED DURING PROCESSING:", ", ".join(scoped_processing_args))
+        print_context()
         raise
     ##
 
@@ -237,8 +248,23 @@ def _process_glib(genline, glib) -> None:
     glib["rooms"] = rooms
     ##
 
-    context = []
     not_found_tag_fields = []
+
+    def asserte(expr, *args) -> None:  ##
+        if expr:
+            return
+        frame = inspect.currentframe().f_back
+        frame_: inspect.Traceback = inspect.getframeinfo(frame)
+        err = {
+            "source": "{}:{}: {}:{}".format(
+                frame_.filename, frame.f_lineno, frame_.code_context[0].strip(), expr
+            ),
+            "context": context[:],
+        }
+        if args:
+            err["args"] = list(args)
+        context_errors.append(err)
+        ##
 
     ## Tags
     entity_2_tag_required_fields: dict[str, dict[str, list[str]]] = defaultdict(
@@ -294,6 +320,8 @@ def _process_glib(genline, glib) -> None:
         for i, attack in enumerate(x.get("attacks", [])):
             context.append(i)
             validate_attack(attack, is_player)
+            if not is_player:
+                asserte("condition" in attack)
             context.pop()
         context.pop()
         context.append("abilities")
@@ -490,6 +518,12 @@ def _process_glib(genline, glib) -> None:
             "\n".join(f"- {x}" for x in required_to_be_bound_tres_filepaths)
         )
     )
+    ##
+
+    ## Context errors
+    if context_errors:
+        print_context()
+        assert 0, pformat(context_errors)
     ##
 
 

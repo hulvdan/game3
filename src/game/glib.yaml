@@ -140,7 +140,7 @@ masks: ##
 
 tags:
   # TODO: Optional fields? Would enable better validation
-  - type: DASH ##
+  - type: DASH_LIMITED ##
     attack_requirements:
       f1: # starts_at
       f2: # ends_at
@@ -148,7 +148,7 @@ tags:
       f4: # distance_delta
       f5: # pow
   ##
-  - type: DASH_NO_DELTA ##
+  - type: DASH ##
     attack_requirements:
       f1: # starts_at
       f2: # ends_at
@@ -436,7 +436,7 @@ creatures:
           damage_stamina: 20
         stops_tracking_at: 0.2
         tags:
-          - tag_type: DASH
+          - tag_type: DASH_LIMITED
             f1: 0.2 # starts_at
             f2: 0.63 # ends_at
             f3: 3 # distance
@@ -477,7 +477,7 @@ creatures:
           damage_stamina: 20
         stops_tracking_at: 0.2
         tags:
-          - tag_type: DASH
+          - tag_type: DASH_LIMITED
             f1: 0.2 # starts_at
             f2: 0.5 # ends_at
             f3: 1 # distance
@@ -504,7 +504,7 @@ creatures:
           damage_stamina: 20
         stops_tracking_at: 0.3
         tags:
-          - tag_type: DASH
+          - tag_type: DASH_LIMITED
             f1: 0.4 # starts_at
             f2: 1.1 # ends_at
             f3: 4 # distance
@@ -549,7 +549,7 @@ creatures:
         distance: 4
         stops_tracking_at: 0.4
         tags:
-          - tag_type: DASH_NO_DELTA
+          - tag_type: DASH
             f1: 0.4 # starts_at
             f2: 2.4 # ends_at
             f3: 4 # distance
@@ -557,7 +557,7 @@ creatures:
         condition:
           attackcondition_type: TUNNEL
           distance_max: 4
-          tunnel__collider_size: 1
+          tunnel__capsule_radius: 0.4
           ##
 
 items: ##

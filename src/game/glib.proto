@@ -161,7 +161,7 @@ message GAttackConditionValue {
   float distance_min = 2;
   float distance_max = 3;
   float tunnel__angle = 4;
-  float tunnel__collider_size = 5;
+  float tunnel__capsule_radius = 5;
 }
 
 message GAttack {
