@@ -39,6 +39,7 @@ x better bf_game.py asserts
 x circle condition
 x don't escape file path pprint
 x good attack activation conditions
+x ref
 
 * jagras: side attack:
 * jagras: side attack:

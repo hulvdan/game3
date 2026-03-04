@@ -156,15 +156,15 @@ static func explicit_update_attack(
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int: ##
-	var creature: Creature = actor
-	creature.change_attack_to = glib.v.get_creatures()[creature.type].get_attacks()[0]
+	var c: Creature = actor
+	c.change_attack_to = glib.v.get_creatures()[c.type].get_attacks()[0]
 
 	var player_pos := bf.xz(Room.v.player.creature.transform.origin)
-	var pos := bf.xz(creature.transform.origin)
+	var pos := bf.xz(c.transform.origin)
 	var l: float = max(0.0, (player_pos - pos).length() - glib.v.get_mob_arc_throw_distance_delta())
 	if explicit_update_attack(
 		get_physics_process_delta_time(),
-		creature,
+		c,
 		cooldown,
 		pos + bf.vector2_direction_or_random(pos, player_pos) * l,
 	):

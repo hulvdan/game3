@@ -4,18 +4,19 @@ extends ActionLeaf
 
 
 func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
-	var actor: Creature = actor_
-	var data := glib.v.get_creatures()[actor.type]
+	var c: Creature = actor_
+	var data := glib.v.get_creatures()[c.type]
 	var target_pos: Vector2 = bf.xz(Room.v.player.creature.transform.origin)
-	var pos = bf.xz((actor as Node3D).transform.origin)
+	var pos = bf.xz((c as Node3D).transform.origin)
 	var dpos: Vector2 = target_pos - pos
 
-	if _is_condition_satisfied(actor, data.get_attacks()[0].get_condition()):
-		actor.controller.move = Vector2(0, 0)
-		return SUCCESS
+	for attack: glib.GAttack in data.get_attacks():
+		if _is_condition_satisfied(c, attack.get_condition()):
+			c.controller.move = Vector2(0, 0)
+			return SUCCESS
 
 	var dir: Vector2 = dpos.normalized()
-	actor.controller.move = dir
+	c.controller.move = dir
 	return RUNNING
 	##
 
