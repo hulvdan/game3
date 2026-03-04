@@ -147,6 +147,7 @@ tags:
       f3: # distance
       f4: # distance_delta
       f5: # pow
+      f6_degrees: # rotation
   ##
   - type: DASH ##
     attack_requirements:
@@ -466,6 +467,7 @@ creatures:
             f3: 3 # distance
             f4: 0.2 # distance_delta
             f5: 1 # pow
+            f6_degrees: 0 # rotation
         condition:
           attackcondition_type: CAPSULE_RADIUS_EXTENDED
           distance_max: 0
@@ -514,6 +516,7 @@ creatures:
             f3: 1 # distance
             f4: 0.2 # distance_delta
             f5: 1 # pow
+            f6_degrees: 0 # rotation
         condition:
           attackcondition_type: CAPSULE_RADIUS_EXTENDED
           distance_min: 0
@@ -546,6 +549,7 @@ creatures:
             f3: 4 # distance
             f4: 0.2 # distance_delta
             f5: 1 # pow
+            f6_degrees: 0 # rotation
         condition:
           attackcondition_type: CAPSULE_CONTAINED
           distance_min: 0
@@ -590,7 +594,7 @@ creatures:
     hp: 300
     speed: 0.4
     collider_size: 1
-    rotation_speed: 1.0
+    rotation_speed: 0.5
     attacks:
       - duration: 2.8
         cooldown_min: 3.0
@@ -602,7 +606,7 @@ creatures:
             f2: 2.4 # ends_at
             f3: 4 # distance
             f4: 1 # pow
-            f5:
+            f5_degrees: 90 # rotation
         condition:
           attackcondition_type: CAPSULE_CONTAINED
           distance_max: 4

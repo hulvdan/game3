@@ -76,6 +76,7 @@ pydub = "^0.25.1"
 
 [tool.ruff]
 line-length = 90
+indent-width = 2
 
 [tool.ruff.lint]
 select = ["ALL"]

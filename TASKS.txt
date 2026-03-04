@@ -43,8 +43,8 @@ x ref
 x jagras: side attack: prepare proto + yaml
 
 * jagras: side attack: impl rotated dash
-* jagras: side attack:
-* jagras: side attack:
+* jagras: side attack: works
+* jagras: side attack: _mirrorable suffix (change sign)
 * jagras: side attack:
 *
 * jagras: attacks: swing with segments

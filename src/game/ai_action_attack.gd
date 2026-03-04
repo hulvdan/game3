@@ -78,7 +78,11 @@ static func explicit_update_attack(
 						var dist: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
 						var pow_ := tag.get_f5()
 						var end := tag.get_f2()
-						Game.add_impulse(c.impulses, c.attack_target_dir, dist, end - start, pow_)
+						var dir := c.attack_target_dir
+						var dir_rotation := tag.get_f5()
+						if dir_rotation:
+							dir = dir.rotated(dir_rotation)
+						Game.add_impulse(c.impulses, dir, dist, end - start, pow_)
 			##
 			glib.GTagType.DASH: ##
 				if !c.attack_dashed:
@@ -88,7 +92,11 @@ static func explicit_update_attack(
 						var dist := tag.get_f3()
 						var pow_ := tag.get_f4()
 						var end := tag.get_f2()
-						Game.add_impulse(c.impulses, c.attack_target_dir, dist, end - start, pow_)
+						var dir := c.attack_target_dir
+						var dir_rotation := tag.get_f5()
+						if dir_rotation:
+							dir = dir.rotated(dir_rotation)
+						Game.add_impulse(c.impulses, dir, dist, end - start, pow_)
 			##
 			glib.GTagType.BLINK: ##
 				if !c.attack_blinked:

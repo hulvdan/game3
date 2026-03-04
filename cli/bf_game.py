@@ -296,16 +296,16 @@ def _process_glib(genline, glib) -> None:
     def validate_tags(tags: list, entity: str) -> None:
         assert entity in entity_2_tag_required_fields
         for tag in tags:
+            tag_type = tag["tag_type"]
             tag_keys = [x.removesuffix("_degrees") for x in tag]
-            with push(tag["tag_type"]):
+            with push(tag_type):
                 asserte(
-                    tag["tag_type"] in entity_2_tag_required_fields[entity],
-                    "{} can't be used on {} because it doesn't have `{}`".format(
-                        tag["tag_type"], entity, f"{entity}_requirements"
+                    tag_type in entity_2_tag_required_fields[entity],
+                    "Can't be used on {} because it doesn't have `{}`".format(
+                        entity, f"{entity}_requirements"
                     ),
                 )
-
-            for field in entity_2_tag_required_fields[entity][tag["tag_type"]]:
+            for field in entity_2_tag_required_fields[entity][tag_type]:
                 with push(field):
                     asserte(field.removesuffix("_degrees") in tag_keys)
 
