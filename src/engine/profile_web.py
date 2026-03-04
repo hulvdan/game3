@@ -13,11 +13,11 @@ threads = "no"
 _DEBUG = 0
 
 if _DEBUG:
-    optimize = "none"
-    lto = "none"
+  optimize = "none"
+  lto = "none"
 else:
-    optimize = "size_extra"
-    lto = "full"
+  optimize = "size_extra"
+  lto = "full"
 
 # disable_3d = "yes"
 disable_advanced_gui = "yes"

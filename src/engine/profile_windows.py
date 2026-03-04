@@ -4,8 +4,8 @@ threads = "yes"
 _DEBUG = 0
 
 if _DEBUG:
-    optimize = "none"
-    lto = "none"
+  optimize = "none"
+  lto = "none"
 else:
-    optimize = "speed"
-    lto = "full"
+  optimize = "speed"
+  lto = "full"
