@@ -34,6 +34,14 @@ func vector2_xz_direction_or_random(from: Vector3, to: Vector3) -> Vector2: ##
 	##
 
 
+func angle_rotate_with_speed(current: float, target: float, speed: float) -> float: ##
+	var diff := wrapf(target - current, -PI, PI)
+	if absf(diff) <= speed:
+		return target
+	return current + signf(diff) * speed
+	##
+
+
 func clear_children(node: Node) -> void: ##
 	for c in node.get_children():
 		c.queue_free()

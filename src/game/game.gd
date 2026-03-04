@@ -244,12 +244,37 @@ func _physics_process(dt: float) -> void:
 	## Updating player's bow direction
 	var end_point := _get_mouse_world_point()
 	room.player.aim_pos = bf.xz(end_point)
+	room.player.creature.target_pos = room.player.aim_pos
 	if end_point != Vector3.INF:
 		room.player.bow.transform.basis = room.player.creature.transform.looking_at(end_point).basis
 	##
 
 	## Creatures updating + moving
+	var player_xz_pos := bf.xz(room.player.creature.transform.origin)
 	for x: Creature in room.container_creatures.get_children():
+		var data := g_creatures[x.type]
+		if x.type != glib.GCreatureType.PLAYER:
+			x.target_pos = player_xz_pos
+
+		var from := bf.xz(x.transform.origin)
+		if x.target_pos != from:
+			var dd := x.target_pos - from
+			var angle := dd.angle()
+			if data.get_rotation_speed():
+				x.looking_angle = bf.angle_rotate_with_speed(
+					x.looking_angle,
+					angle,
+					data.get_rotation_speed() * dt,
+				)
+				x.looking_dir = Vector2(1, 0).rotated(x.looking_angle)
+			else:
+				x.looking_angle = angle
+				x.looking_dir = dd.normalized()
+
+		if glib.v.get_debug_collisions():
+			ImmediateGizmos3D.set_transform(x.transform)
+			ImmediateGizmos3D.line(Vector3(0, 0, 0), bf.to_xz(x.looking_dir))
+
 		x.explicit_process(dt)
 
 		var dir := x.controller.move

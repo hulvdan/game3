@@ -31,6 +31,7 @@ x hulvdan.itch.io add secret itch links
 x f
 x jagras: bigger hitbox
 x jagras: attacks: long rolling into player
+x jagras: rotation speed
 
 * jagras: attacks: side rolling
 * jagras: attacks: swing with segments

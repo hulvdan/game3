@@ -537,6 +537,7 @@ creatures:
     hp: 300
     speed: 0.4
     collider_size: 1
+    rotation_speed: 1.0
     attacks:
       - duration: 2.8
         cooldown_min: 3.0

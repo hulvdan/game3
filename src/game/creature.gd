@@ -28,9 +28,12 @@ var change_attack_to: glib.GAttack
 var change_ability_to: glib.GAbility
 var blocked: bool
 var impulses: Array[Game.Impulse]
+var target_pos: Vector2
 var attack_target_pos: Vector2
 var attack_target_dir: Vector2
 var speed_modifiers: Dictionary[String, float] = { "base": 0 }
+var looking_angle: float
+var looking_dir: Vector2
 var _attack_ids_marked_as_evaded: Array[EvadedAttack]
 
 @onready var node_target_camera: Node3D = %_rotate
