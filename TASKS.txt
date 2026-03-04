@@ -4,6 +4,10 @@ https://www.timeanddate.com/date/durationresult.html?d1=3&m1=2&y1=2026
 PILLARS
 ============================================================
 * MONSTER HUNTER 2.5D
+* АКАДЕМИЧНЫЙ ГЕЙМПЛЕЙ
+*
+*
+*
 
 BIG PLAN
 ============================================================
@@ -12,13 +16,6 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x rally stamina: decays (doesn't just turn 0)
-x projectile impulses
-x projectile impulses: mob ARC goes in front of player. not exactly at player's pos
-x attacks apply impulses on attacker
-- vscode keywords another color
-x jagras: more hp
-x working on jagras hitbox
 
 * jagras: bigger hitbox
 * jagras: different attacks: jump with dash
@@ -37,15 +34,20 @@ x working on jagras hitbox
 * jagras:
 * jagras:
 *
+* movesets: UGS SUPER CHARGED ATTACK
+* movesets: insect glaive
+*
 * items: tranquil bomb
 * items: lightning trap
 * using 2 tranquil bombs with lightning trap when big mob is <=20% HP traps it
 *
 * THINK: WHAT ARE THE DRAWBACKS OF MONSTER HUNTER WORLD?
-  * BEGINNING: SHARPNESS
-  * BEGINNING:
-  * BEGINNING:
-  *
+  * НАЧАЛО: ЗАТОЧКА
+  * НАЧАЛО:
+  * НАЧАЛО:
+  * ЗАТОЧКА: WHETFISH GRIND
+  * ФАРМ КАКЕХ
+  * НУЖНО РАССКАЗАТЬ, ПОЧЕМУ МОЯ ИГРА КРУТАЯ
   *
   *
   *
