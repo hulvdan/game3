@@ -543,6 +543,7 @@ func make_creature(type: glib.GCreatureType, pos: Vector2) -> Creature: ##
 	creature.type = type
 	creature.res = load(data.get_res())
 	creature.speed_modifiers.base = data.get_speed()
+	creature.node_body.mass = data.get_mass()
 	assert(creature.res)
 	bf.set_pos_2d(creature, pos)
 
@@ -591,7 +592,7 @@ func apply_damage(creature: Creature, damage: float, data: ApplyDamageData) -> b
 			add_impulse(
 				creature.impulses,
 				data.impulse_dir,
-				data.impulse * glib.v.get_impulse_block_scale(),
+				data.impulse * glib.v.get_impulse_block_scale() / creature.node_body.mass,
 				impulse_dur,
 				impulse_pow,
 			)
@@ -605,7 +606,7 @@ func apply_damage(creature: Creature, damage: float, data: ApplyDamageData) -> b
 			add_impulse(
 				creature.impulses,
 				data.impulse_dir,
-				data.impulse * glib.v.get_impulse_block_scale(),
+				data.impulse * glib.v.get_impulse_block_scale() / creature.node_body.mass,
 				impulse_dur,
 				impulse_pow,
 			)
@@ -674,7 +675,7 @@ func apply_damage(creature: Creature, damage: float, data: ApplyDamageData) -> b
 			dealt_damage,
 			WhoGotDamagedType.PLAYER if player_got_damaged else WhoGotDamagedType.MOB,
 		)
-	add_impulse(creature.impulses, data.impulse_dir, data.impulse, impulse_dur, impulse_pow)
+	add_impulse(creature.impulses, data.impulse_dir, data.impulse / creature.node_body.mass, impulse_dur, impulse_pow)
 
 	return true
 	##
@@ -868,7 +869,7 @@ func _process_impulses(arr: Array[Impulse], body: RigidBody3D) -> void: ##
 		var e := Room.v.start_elapsed - impulse.created_at
 		if e < impulse.dur:
 			var speed := bf.get_roll_speed(impulse.dist, impulse.dur, e, impulse.pow_)
-			bf.move_body_with_speed(body, impulse.dir, speed / body.mass)
+			bf.move_body_with_speed(body, impulse.dir, speed)
 		else:
 			_impulses_to_remove_indices.append(impulse_index)
 	bf.unstable_remove_indices(arr, _impulses_to_remove_indices)

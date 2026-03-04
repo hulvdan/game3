@@ -330,6 +330,7 @@ def _process_glib(genline, glib) -> None:
   with push("creatures"):
     for x in glib["creatures"][1:]:
       with push(x["type"]):
+        x["mass"] = x.get("mass", 1)
         is_player = x["type"] == "PLAYER"
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
         with push("attacks"):
@@ -342,6 +343,7 @@ def _process_glib(genline, glib) -> None:
               if attack.pop("mirrorable", False):
                 copied_attack = copy.deepcopy(attack)
                 bf.recursive_visiter(copied_attack, "degrees", None, mirror_sign)
+                bf.recursive_visiter(copied_attack, "radians", None, mirror_sign)
                 mirrored_attacks.append(copied_attack)
           if mirrored_attacks:
             x["attacks"].extend(mirrored_attacks)

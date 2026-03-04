@@ -595,6 +595,7 @@ creatures:
     speed: 0.4
     collider_size: 1
     rotation_speed: 0.5
+    mass: 4
     attacks:
       - duration: 2.8
         cooldown_min: 3.0
