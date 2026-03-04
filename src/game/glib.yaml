@@ -613,21 +613,7 @@ creatures:
         cooldown_min: 3.0
         cooldown_max: 5.0
         stops_tracking_at: 0.0
-        impulses:
-          - at: 0.4
-            distance: 4
-            dur: 2
-            pow: 1
-            rotation_degrees: -90
-        condition:
-          attackcondition_type: CAPSULE_CONTAINED
-          distance_max: 2.5
-          capsule__radius: 0.4
-          rotation_degrees: -90
-      - duration: 2.8
-        cooldown_min: 3.0
-        cooldown_max: 5.0
-        stops_tracking_at: 0.0
+        mirrorable: true
         impulses:
           - at: 0.4
             distance: 4

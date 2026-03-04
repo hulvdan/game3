@@ -14,6 +14,7 @@ USAGE:
 """
 
 ## Imports
+import copy
 import inspect
 import json
 from collections import defaultdict
@@ -320,6 +321,11 @@ def _process_glib(genline, glib) -> None:
         assert "damage_stamina" in melee, context
     ##
 
+  def mirror_sign(value, setter) -> None:  ##
+    if value:
+      setter(-value)
+    ##
+
   ## Creatures
   with push("creatures"):
     for x in glib["creatures"][1:]:
@@ -327,11 +333,18 @@ def _process_glib(genline, glib) -> None:
         is_player = x["type"] == "PLAYER"
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
         with push("attacks"):
+          mirrored_attacks = []
           for i, attack in enumerate(x.get("attacks", [])):
             with push(i):
               validate_attack(attack, is_player)
               if not is_player:
                 asserte("condition" in attack)
+              if attack.pop("mirrorable", False):
+                copied_attack = copy.deepcopy(attack)
+                bf.recursive_visiter(copied_attack, "degrees", None, mirror_sign)
+                mirrored_attacks.append(copied_attack)
+          if mirrored_attacks:
+            x["attacks"].extend(mirrored_attacks)
         with push("abilities"):
           for i, ability in enumerate(x.get("abilities", [])):
             with push(i):
