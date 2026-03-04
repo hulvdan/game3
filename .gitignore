@@ -14,6 +14,7 @@
 /assets/art/src/main*.png
 /assets/art/src/screenshots_processed/
 /assets/level*/backups/
+/imgui.ini
 /src/codegen/nolint/glib.gd
 __pycache__/
 node_modules/

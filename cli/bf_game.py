@@ -20,10 +20,10 @@ import json
 from collections import defaultdict
 from contextlib import contextmanager
 from pathlib import Path
-from pprint import pformat, pprint
 
 import bf_lib as bf
 import numpy as np
+from bf_attacks_markuper import *  # noqa: F403
 from bf_typer import command, timing
 from PIL import Image
 

@@ -45,12 +45,29 @@ x jagras: side attack: impl rotated dash
 x jagras: side attack: works
 x jagras: side attack: mirroring
 x jagras: mass
+x markuper: shown window
 
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+*
 * jagras: attacks: swing with segments
 * jagras: attacks: spit
 * jagras: attacks: triple spit
 * jagras: attacks: combo 3 hits
 * jagras: attacks: combo 2 hits
+* jagras: attacks:
+* jagras: attacks: ramdomly chooses allowed attack but not the last one
+* jagras: attacks:
+* jagras: attacks:
 * jagras: attacks:
 * jagras: better looking hp or just hide it?
 *

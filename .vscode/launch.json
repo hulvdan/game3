@@ -45,6 +45,16 @@
         "temp"
       ],
       "console": "integratedTerminal"
+    },
+    {
+      "name": "tool_attacks_markuper",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "cli/bf_cli.py",
+      "args": [
+        "tool_attacks_markuper"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }
