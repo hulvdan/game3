@@ -49,8 +49,8 @@ x markuper: shown window
 x markuper: font
 x markuper: maximized
 x pyright
+x markuper: drew fields
 
-* markuper:
 * markuper:
 * markuper:
 * markuper:

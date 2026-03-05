@@ -26,6 +26,8 @@ class State:
   exiting: bool = False
   count: int = 0
 
+  timeline_hovered_line: int = -1
+
 
 g = State(
   timeline=[
@@ -47,7 +49,7 @@ def v2sub(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.An
 def _frame() -> None:  ##
   im.begin("Timeline")
 
-  # # Simple horizontal timeline
+  hovered_line = -1
 
   # # Draw timeline background
   # im.invisible_button("timeline_area", (timeline_width, timeline_height))
@@ -57,6 +59,27 @@ def _frame() -> None:  ##
   size = v2sub(im.get_window_size(), v2sub(pos, im.get_window_pos()))
 
   draw_list.add_line(pos, v2add(pos, size), im.color_convert_float4_to_u32((1, 0, 0, 1)))
+
+  for field_index, field in enumerate(("scale", "offset", "rotation")):
+    if field_index == g.timeline_hovered_line:
+      color = (1, 1, 0, 1)
+    else:
+      color = (1, 1, 1, 1)
+    im.text_colored(color, field)
+    if im.is_item_hovered():
+      hovered_line = field_index
+
+  # Change the color of the text after hover
+  # Alternative: you can draw a rectangle behind instead
+  # im.text_colored((1,1,0,1), "scale")
+
+  # im.same_line()
+  # draw_list.add_line(
+  #   im.get_cursor_screen_pos(),
+  #   v2add(pos, size),
+  #   im.color_convert_float4_to_u32((1, 0, 0, 1)),
+  # )
+
   # pos = im.get_item_rect_min()
 
   # # Draw keyframes as small circles
@@ -66,6 +89,8 @@ def _frame() -> None:  ##
   #   draw_list.add_circle_filled((x, y), 5, im.color_convert_float4_to_u32((1, 0, 0, 1)))
 
   im.end()
+
+  g.timeline_hovered_line = hovered_line
   ##
 
 
