@@ -6,6 +6,7 @@ import typing as t
 from abc import ABC
 from contextlib import contextmanager
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import IntEnum, unique
 from functools import partial
 from pathlib import Path
@@ -30,10 +31,14 @@ T = TypeVar("T")
 _APP_STATE_FILE_PATH = bf.PROJECT_DIR / "tool_attack_markuper_app_save_state.toml"
 
 
-LOGD = partial(hello_imgui.log, hello_imgui.LogLevel.debug)
-LOGI = partial(hello_imgui.log, hello_imgui.LogLevel.info)
-LOGW = partial(hello_imgui.log, hello_imgui.LogLevel.warning)
-LOGE = partial(hello_imgui.log, hello_imgui.LogLevel.error)
+def _log(level, *args):
+  hello_imgui.log(level, "".join((datetime.now().strftime("%H:%M:%S "), *args)))
+
+
+LOGD = partial(_log, hello_imgui.LogLevel.debug)
+LOGI = partial(_log, hello_imgui.LogLevel.info)
+LOGW = partial(_log, hello_imgui.LogLevel.warning)
+LOGE = partial(_log, hello_imgui.LogLevel.error)
 
 # @dataclass
 # class Keyframe:

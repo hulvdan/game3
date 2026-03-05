@@ -43,8 +43,8 @@ x markuper: drew circle
 x markuper: pyglm
 x markuper: drew grid
 x markuper: draw circle inside Visualizer viewport
+x markuper: log time
 
-* markuper:
 * markuper:
 * markuper:
 * markuper:
