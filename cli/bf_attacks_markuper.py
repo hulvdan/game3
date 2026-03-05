@@ -51,8 +51,6 @@ def _frame() -> None:  ##
 
   hovered_line = -1
 
-  # # Draw timeline background
-  # im.invisible_button("timeline_area", (timeline_width, timeline_height))
   draw_list = im.get_window_draw_list()
 
   pos = im.get_cursor_screen_pos()
@@ -61,26 +59,10 @@ def _frame() -> None:  ##
   draw_list.add_line(pos, v2add(pos, size), im.color_convert_float4_to_u32((1, 0, 0, 1)))
 
   for field_index, field in enumerate(("scale", "offset", "rotation")):
-    if field_index == g.timeline_hovered_line:
-      color = (1, 1, 0, 1)
-    else:
-      color = (1, 1, 1, 1)
+    color = (1, 1, 0, 1) if (field_index == g.timeline_hovered_line) else (1, 1, 1, 1)
     im.text_colored(color, field)
     if im.is_item_hovered():
       hovered_line = field_index
-
-  # Change the color of the text after hover
-  # Alternative: you can draw a rectangle behind instead
-  # im.text_colored((1,1,0,1), "scale")
-
-  # im.same_line()
-  # draw_list.add_line(
-  #   im.get_cursor_screen_pos(),
-  #   v2add(pos, size),
-  #   im.color_convert_float4_to_u32((1, 0, 0, 1)),
-  # )
-
-  # pos = im.get_item_rect_min()
 
   # # Draw keyframes as small circles
   # for kf in g.timeline:

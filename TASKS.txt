@@ -50,7 +50,15 @@ x markuper: font
 x markuper: maximized
 x pyright
 x markuper: drew fields
+x f
 
+* markuper: lines have different background colors
+* markuper: frame columns
+* markuper: column width zoom
+* markuper: show keyframe as circle
+* markuper: can select scale keyframe
+* markuper: can change scale value on specific keyframe
+* markuper:
 * markuper:
 * markuper:
 * markuper:
