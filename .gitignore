@@ -5,10 +5,12 @@
 *.tmp
 *_pb2.py
 .godot/
+/*.node_editor.json
 /.export/
 /.mypy_cache/
 /.ruff_cache/
 /.temp/
+/Attacks_Markuper.ini
 /__MACOSX
 /android/
 /assets/art/src/main*.png
@@ -18,4 +20,3 @@
 /src/codegen/nolint/glib.gd
 __pycache__/
 node_modules/
-/Attacks_Markuper.ini

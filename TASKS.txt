@@ -27,8 +27,12 @@ x clear
 x markuper: docking setup
 x markuper: added imgui-bundle
 x markuper: maximized
+x markuper: my own tabs
 
-* markuper: my own tab
+* markuper: remember windows size / maximized state
+* markuper: remember docks
+* markuper:
+* markuper:
 * markuper:
 * markuper:
 * markuper: LEFT COLUMN with hierarchy list (or just 2 listboxes)
