@@ -39,10 +39,10 @@ x markuper: attack inspector: dataclasses
 x markuper: attack inspector: button create collider circle
 x markuper: attack inspector: button create collider capsule
 x markuper: remember font scale
+x markuper: drew circle
 
-* markuper:
-* markuper:
-* markuper:
+* markuper: draw circle inside Visualizer viewport
+* markuper: get bounds. draw circle in the center of Visualizer
 * markuper:
 * markuper:
 * markuper:

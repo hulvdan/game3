@@ -211,6 +211,9 @@ def _panel_visualizer() -> None:  ##
     assert g.ref_selected_attack_creature is not None
     im.text("Creature " + g.ref_selected_attack_creature.name)
     im.text("Attack " + g.ref_selected_attack.name)
+    im.get_foreground_draw_list().add_circle(
+      (800, 900), 5, im.color_convert_float4_to_u32((1, 1, 0, 1))
+    )
   else:
     assert g.ref_selected_attack_creature is None
   ##
@@ -223,16 +226,6 @@ def _panel_timeline() -> None:  ##
     im.text_colored(color, field)
     if im.is_item_hovered():
       hovered_line = field_index
-
-  # draw_list = im.get_window_draw_list()
-  # pos = im.get_cursor_screen_pos()
-  # size = v2sub(im.get_window_size(), v2sub(pos, im.get_window_pos()))
-  # draw_list.add_line(pos, v2add(pos, size), im.color_convert_float4_to_u32((1, 0, 0, 1)))
-  # # # Draw keyframes as small circles
-  # # for kf in g.timeline:
-  # #   x = pos[0] + (kf.index / 5.0) * timeline_width
-  # #   y = pos[1] + timeline_height / 2
-  # #   draw_list.add_circle_filled((x, y), 5, im.color_convert_float4_to_u32((1, 0, 0, 1)))
 
   g.timeline_hovered_line = hovered_line
   ##
