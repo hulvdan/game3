@@ -107,7 +107,24 @@ def panel_timeline() -> None:  ##
 
 
 @command
-def tool_attacks_markuper() -> None:  ##
+def tool_attacks_markuper() -> None:
+  show_imgui(
+    [
+      ImGuiPanel("Explorer", panel_explorer),
+      ImGuiPanel("Visualizer", panel_visualizer),
+      ImGuiPanel("Timeline", panel_timeline),
+    ]
+  )
+
+
+@dataclass
+class ImGuiPanel:  ##
+  label: str
+  gui_function: Callable[[], None]
+  ##
+
+
+def show_imgui(panels: list[ImGuiPanel]) -> None:  ##
   print(
     f"For information, demos sources are available in {demo_utils.demos_assets_folder()}"
   )
@@ -140,9 +157,9 @@ def tool_attacks_markuper() -> None:  ##
 
   # --- Standalone tabs (no grouping) ---
   standalone_demos = [
-    DemoDetails("Intro", demo_imgui_bundle_intro),
-    DemoDetails("Dear ImGui", demo_imgui_show_demo_window),
-    DemoDetails("Demo Apps", demo_immapp_launcher),
+    _DemoDetails("Intro", demo_imgui_bundle_intro),
+    _DemoDetails("Dear ImGui", demo_imgui_show_demo_window),
+    _DemoDetails("Demo Apps", demo_immapp_launcher),
   ]
 
   for demo in standalone_demos:
@@ -153,7 +170,7 @@ def tool_attacks_markuper() -> None:  ##
 
     def make_win_fn(mod_name: str, mod: ModuleType, sc: bool) -> Callable[[], None]:
       def win_fn() -> None:
-        show_module_demo(mod_name, mod.demo_gui, sc)
+        _show_module_demo(mod_name, mod.demo_gui, sc)
 
       return win_fn
 
@@ -162,31 +179,31 @@ def tool_attacks_markuper() -> None:  ##
 
   # --- Grouped tabs (sub-demos shown as collapsing headers) ---
   groups = [
-    DemoGroup(
+    _DemoGroup(
       "Visualization",
       [
-        DemoDetails("Plots with ImPlot and ImPlot3D", demo_implot),
-        DemoDetails("ImmVision - Image analyzer", demo_immvision_launcher),
-        DemoDetails("ImGuizmo - Immediate Mode 3D Gizmo", demo_imguizmo_launcher),
-        DemoDetails("NanoVG - 2D Vector Drawing", demo_nanovg_launcher),
+        _DemoDetails("Plots with ImPlot and ImPlot3D", demo_implot),
+        _DemoDetails("ImmVision - Image analyzer", demo_immvision_launcher),
+        _DemoDetails("ImGuizmo - Immediate Mode 3D Gizmo", demo_imguizmo_launcher),
+        _DemoDetails("NanoVG - 2D Vector Drawing", demo_nanovg_launcher),
       ],
     ),
-    DemoGroup(
+    _DemoGroup(
       "Widgets",
       [
-        DemoDetails("Markdown - Rich Text Rendering", demo_imgui_md, show_code=True),
-        DemoDetails("Text Editor - Code Editing Widget", demo_text_edit, show_code=True),
-        DemoDetails("Misc Widgets - Knobs, Toggles, ...", demo_widgets, show_code=True),
-        DemoDetails("Logger - Log Window Widget", demo_logger, show_code=True),
-        DemoDetails("Tex Inspect - Texture Inspector", demo_tex_inspect_launcher),
+        _DemoDetails("Markdown - Rich Text Rendering", demo_imgui_md, show_code=True),
+        _DemoDetails("Text Editor - Code Editing Widget", demo_text_edit, show_code=True),
+        _DemoDetails("Misc Widgets - Knobs, Toggles, ...", demo_widgets, show_code=True),
+        _DemoDetails("Logger - Log Window Widget", demo_logger, show_code=True),
+        _DemoDetails("Tex Inspect - Texture Inspector", demo_tex_inspect_launcher),
       ],
     ),
-    DemoGroup(
+    _DemoGroup(
       "Tools",
       [
-        DemoDetails("Node Editor - Visual Node Graphs", demo_node_editor_launcher),
-        DemoDetails("Themes - Style & Color Customization", demo_themes, show_code=True),
-        DemoDetails("ImAnim - Animation Library", demo_im_anim),
+        _DemoDetails("Node Editor - Visual Node Graphs", demo_node_editor_launcher),
+        _DemoDetails("Themes - Style & Color Customization", demo_themes, show_code=True),
+        _DemoDetails("ImAnim - Animation Library", demo_im_anim),
       ],
     ),
   ]
@@ -196,7 +213,7 @@ def tool_attacks_markuper() -> None:  ##
     window.label = group.label
     window.dock_space_name = "MainDockSpace"
 
-    def make_group_fn(g: DemoGroup) -> Callable[[], None]:
+    def make_group_fn(g: _DemoGroup) -> Callable[[], None]:
       def win_fn() -> None:
         _show_group_gui(g)
 
@@ -205,15 +222,11 @@ def tool_attacks_markuper() -> None:  ##
     window.gui_function = make_group_fn(group)
     dockable_windows.append(window)
 
-  for panel_label, panel_function in (
-    ("Explorer", panel_explorer),
-    ("Visualizer", panel_visualizer),
-    ("Timeline", panel_timeline),
-  ):
+  for panel in panels:
     window = hello_imgui.DockableWindow()
-    window.label = panel_label
+    window.label = panel.label
     window.dock_space_name = "MainDockSpace"
-    window.gui_function = panel_function
+    window.gui_function = panel.gui_function
     dockable_windows.append(window)
 
   runner_params.docking_params.dockable_windows = dockable_windows
@@ -255,19 +268,19 @@ def tool_attacks_markuper() -> None:  ##
 _show_code_states: dict[str, bool] = {}
 
 
-def idify(value: str, id: str) -> str:  ##
+def im_id(value: str, id: str) -> str:  ##
   return str(value) + "#" + "#" + str(id)
   ##
 
 
-def show_module_demo(
+def _show_module_demo(
   demo_filename: str, demo_function: Callable[[], None], show_code: bool = False
 ) -> None:  ##
   if imgui.get_frame_count() < 2:  # cf https://github.com/pthom/imgui_bundle/issues/293
     return
   if show_code:
     current = _show_code_states.get(demo_filename, False)
-    _, current = imgui.checkbox(idify("Show code", demo_filename), current)
+    _, current = imgui.checkbox(im_id("Show code", demo_filename), current)
     _show_code_states[demo_filename] = current
     if current:
       demo_utils.show_python_vs_cpp_file(demo_filename, 40)
@@ -276,7 +289,7 @@ def show_module_demo(
 
 
 @dataclass
-class DemoDetails:  ##
+class _DemoDetails:  ##
   label: str
   demo_module: ModuleType
   show_code: bool = False
@@ -284,15 +297,15 @@ class DemoDetails:  ##
 
 
 @dataclass
-class DemoGroup:  ##
+class _DemoGroup:  ##
   """A group of demos shown as collapsing headers inside a single tab."""
 
   label: str
-  demos: List[DemoDetails] = field(default_factory=list)
+  demos: List[_DemoDetails] = field(default_factory=list)
   ##
 
 
-def _show_group_gui(group: DemoGroup) -> None:  ##
+def _show_group_gui(group: _DemoGroup) -> None:  ##
   """Gui function for a grouped tab: each sub-demo is a collapsing header."""
   if imgui.get_frame_count() < 2:
     return
@@ -300,6 +313,6 @@ def _show_group_gui(group: DemoGroup) -> None:  ##
     demo_module_name = demo.demo_module.__name__.split(".")[-1]
     if imgui.collapsing_header(demo.label):
       imgui.indent()
-      show_module_demo(demo_module_name, demo.demo_module.demo_gui, demo.show_code)
+      _show_module_demo(demo_module_name, demo.demo_module.demo_gui, demo.show_code)
       imgui.unindent()
   ##
