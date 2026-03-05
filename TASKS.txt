@@ -45,8 +45,8 @@ x markuper: drew grid
 x markuper: draw circle inside Visualizer viewport
 x markuper: log time
 x markuper: ref
+x markuper: restrict drawing to viewport (SCISSOR)
 
-* markuper:
 * markuper:
 * markuper:
 * markuper: attack inspector: GAttackConditionValue

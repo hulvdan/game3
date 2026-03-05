@@ -214,9 +214,6 @@ def _panel_visualizer() -> None:  ##
     assert g.ref_selected_attack_creature is None
     return
 
-  def to_vec2(v: ImVec2_Pydantic) -> vec2:
-    return vec2(v.x, v.y)
-
   draw = im.get_foreground_draw_list()
 
   def draw_line(p1: vec2, p2: vec2, color: int = YELLOW_DIMMED):
@@ -227,14 +224,18 @@ def _panel_visualizer() -> None:  ##
 
   cells = 10
 
-  size = to_vec2(im.get_content_region_avail())
-  pos = to_vec2(im.get_cursor_screen_pos())
+  size_ = im.get_content_region_avail()
+  pos_ = im.get_cursor_screen_pos()
+  size = _to_vec2(size_)
+  pos = _to_vec2(pos_)
   model = mat3()
   model = bf.mat_translate(model, pos + size / 2.0)
   model = bf.mat_scale(model, bf.scale_to_fit(vec2(1, 1), size))
   model = bf.mat_translate(model, -vec2(0.5, 0.5))
   model = bf.mat_scale(model, vec2(1, 1) / cells)
   assert isinstance(model, mat3)
+
+  draw.push_clip_rect(pos_, pos_ + size_)
 
   # draw.add_circle(panel_center, 5, YELLOW)  # type: ignore
 
@@ -247,20 +248,7 @@ def _panel_visualizer() -> None:  ##
   for y in range(cells + 1):
     draw_line(vec2(0, y), vec2(cells, y))
 
-  draw_circle(vec2(0.5, 0.5) * cells, 1, YELLOW)
-
-  # assert g.ref_selected_attack_creature is not None
-  # im.text("Creature " + g.ref_selected_attack_creature.name)
-  # im.text("Attack " + g.ref_selected_attack.name)
-
-  # im.begin("3D Gizmo Panel", True)
-
-  # Reserve space for panel (so other widgets don't overlap)
-  # im.invisible_button("canvas", *size)
-
-  # You can now draw in this rectangle with OpenGL
-
-  # im.end()
+  draw_circle(vec2(), 1, YELLOW)
   ##
 
 
@@ -346,3 +334,7 @@ def tool_attacks_markuper() -> None:  ##
 
   asyncio.run(wrapper())
   ##
+
+
+def _to_vec2(v: ImVec2_Pydantic) -> vec2:
+  return vec2(v.x, v.y)
