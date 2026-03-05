@@ -6,7 +6,7 @@
     "**/*.uid": true,
     "**/*_pb2.py": true,
     ".godot/": true,
-    ".venv/": true,
+    // ".venv/": true,
     "node_modules": true,
     "uv.lock": true
   },
@@ -81,5 +81,6 @@
     //     "command": "python.runLinting",
     //     "runIn": "vscode"
     // }
-  ]
+  ],
+  "python.linting.enabled": false
 }

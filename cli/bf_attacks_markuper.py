@@ -4,9 +4,11 @@ from dataclasses import dataclass
 import bf_lib as bf
 import glfw
 import OpenGL.GL as gl  # noqa: N811
+import slimgui
 from bf_typer import command
 from slimgui import imgui as im
 from slimgui.integrations.glfw import GlfwRenderer
+from slimgui.slimgui_ext.imgui import ConfigFlags
 
 
 @dataclass
@@ -49,6 +51,12 @@ def v2sub(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.An
 
 
 def _frame() -> None:  ##
+  im.begin("Visualization")
+  im.end()
+
+  im.begin("Explorer")
+  im.end()
+
   im.begin("Timeline")
 
   hovered_line = -1
@@ -106,7 +114,10 @@ def show_imgui(
   glfw.make_context_current(window)
   im.create_context()
   io = im.get_io()
-  io.config_flags |= im.ConfigFlags.NAV_ENABLE_KEYBOARD
+  io.config_flags |= ConfigFlags.NAV_ENABLE_KEYBOARD
+  io.config_flags |= ConfigFlags.DOCKING_ENABLE
+  io.config_flags |= ConfigFlags.VIEWPORTS_ENABLE
+
   with open(bf.PROJECT_DIR / "cli" / "ComicCode-Semibold.ttf", "rb") as f:
     font_data = f.read()
   font = io.fonts.add_font_from_memory_ttf(font_data, 32)
@@ -118,7 +129,25 @@ def show_imgui(
     renderer.new_frame()
     im.new_frame()
     im.push_font(font, 0)
+
+    viewport = im.get_main_viewport()
+    im.set_next_window_pos(viewport.pos)
+    im.set_next_window_size(viewport.size)
+    im.begin(
+      "Root",
+      flags=(
+        im.WindowFlags.NO_TITLE_BAR
+        | im.WindowFlags.NO_RESIZE
+        | im.WindowFlags.NO_MOVE
+        | im.WindowFlags.NO_COLLAPSE
+        | im.WindowFlags.NO_BRING_TO_FRONT_ON_FOCUS
+        | im.WindowFlags.NO_NAV_FOCUS
+      ),
+    )
+    im.end()
+
     frame()
+
     im.pop_font()
     im.render()
     renderer.render(im.get_draw_data())
