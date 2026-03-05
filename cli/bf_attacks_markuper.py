@@ -21,6 +21,7 @@ from pyglm import glm
 from pyglm.glm import make_mat3, make_mat4, mat3, mat4, vec2, vec3, vec4
 
 HUE_GREEN = 2 / 7
+YELLOW = im.color_convert_float4_to_u32((1, 1, 0, 1))
 
 T = TypeVar("T")
 
@@ -207,27 +208,50 @@ def _panel_visualizer() -> None:  ##
     assert g.ref_selected_attack_creature is None
     return
 
+  def to_vec2(v: ImVec2_Pydantic) -> vec2:
+    return vec2(v.x, v.y)
+
+  def m_scale(m: mat3, v: float | vec2) -> mat3:
+    return glm.scale(m, vec2(1, 1) * v)  # type: ignore
+
+  def m_translate(m: mat3, offset: vec2) -> mat3:
+    return glm.translate(m, offset)  # type: ignore
+
+  def draw_line(
+    p1: vec2, p2: vec2, color: int = im.color_convert_float4_to_u32((1, 1, 0, 0.1))
+  ) -> None:
+    draw.add_line(
+      tuplify((model * vec3(p1, 1)).xy),  # type: ignore
+      tuplify((model * vec3(p2, 1)).xy),  # type: ignore
+      color,
+    )
+
+  size = to_vec2(im.get_content_region_avail())
+  pos = to_vec2(im.get_cursor_screen_pos())
+  model = mat3()
+  model = m_translate(model, pos + size / 2.0)
+  model = m_scale(model, bf.scale_to_fit(vec2(1, 1), size))
+  model = m_translate(model, -vec2(0.5, 0.5))
+  assert isinstance(model, mat3)
+
   cells = 10
 
-  # Drawing grid.
-  for y in range(cells + 1):
-    for x in range(2):
-      pass
+  draw = im.get_foreground_draw_list()
 
-  pos = im.get_cursor_screen_pos()
-  size = im.get_content_region_avail()
-  panel_center = im.get_cursor_screen_pos() + size / 2
+  # draw.add_circle(panel_center, 5, YELLOW)  # type: ignore
+
+  def tuplify(v: vec2) -> tuple[float, float]:
+    return (v.x, v.y)
+
+  # Drawing grid.
+  for x in range(cells + 1):
+    draw_line(vec2(x / cells, 0), vec2(x / cells, 1))
+  for y in range(cells + 1):
+    draw_line(vec2(0, y / cells), vec2(1, y / cells))
 
   # assert g.ref_selected_attack_creature is not None
   # im.text("Creature " + g.ref_selected_attack_creature.name)
   # im.text("Attack " + g.ref_selected_attack.name)
-
-  draw = im.get_foreground_draw_list()
-  draw.add_circle(
-    panel_center,
-    5,
-    im.color_convert_float4_to_u32((1, 1, 0, 1)),
-  )
 
   # im.begin("3D Gizmo Panel", True)
 

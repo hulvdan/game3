@@ -16,7 +16,6 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, Callable, Iterator, List, Sequence, TypeAlias, TypeVar
 
-import bf_lib as bf
 import cv2
 import fnvhash
 import numpy as np
@@ -44,6 +43,7 @@ from imgui_bundle.demos_python import (
 )
 from PIL import Image, ImageChops, ImageDraw, ImageEnhance
 from pydantic import BaseModel
+from pyglm import glm
 
 ##
 
@@ -1969,6 +1969,29 @@ def _show_group_gui(group: _DemoGroup) -> None:  ##
       imgui.indent()
       _show_module_demo(demo_module_name, demo.demo_module.demo_gui, demo.show_code)
       imgui.unindent()
+  ##
+
+
+@t.overload
+def scale_to_fit(inner: tuple[int, int], outer: tuple[int, int]) -> float: ...
+
+
+@t.overload
+def scale_to_fit(inner: tuple[float, float], outer: tuple[float, float]) -> float: ...
+
+
+@t.overload
+def scale_to_fit(inner: glm.vec2, outer: glm.vec2) -> float: ...
+
+
+def scale_to_fit(inner, outer):  ##
+  if hasattr(inner, "x"):
+    scale_x = outer.x / inner.x
+    scale_y = outer.y / inner.y
+  else:
+    scale_x = outer[0] / inner[0]
+    scale_y = outer[1] / inner[1]
+  return min(scale_x, scale_y)
   ##
 
 

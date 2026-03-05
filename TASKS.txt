@@ -41,9 +41,9 @@ x markuper: attack inspector: button create collider capsule
 x markuper: remember font scale
 x markuper: drew circle
 x markuper: pyglm
+x markuper: drew grid
 
 * markuper: draw circle inside Visualizer viewport
-* markuper: get bounds. draw circle in the center of Visualizer
 * markuper:
 * markuper:
 * markuper:
