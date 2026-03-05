@@ -18,3 +18,4 @@
 /src/codegen/nolint/glib.gd
 __pycache__/
 node_modules/
+/Attacks_Markuper.ini

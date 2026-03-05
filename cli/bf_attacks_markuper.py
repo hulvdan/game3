@@ -110,11 +110,11 @@ def tool_attacks_markuper() -> None:  ##
 
   # Part 1: Define the runner params
 
-  # Hello ImGui params (they hold the settings as well as the Gui callbacks)
   runner_params = hello_imgui.RunnerParams()
-  # Window size and title
-  runner_params.app_window_params.window_title = "Dear ImGui Bundle Explorer"
-  runner_params.app_window_params.window_geometry.size = (1400, 950)
+  runner_params.app_window_params.window_title = "Attacks Markuper"
+  runner_params.app_window_params.window_geometry.window_size_state = (
+    hello_imgui.WindowSizeState.maximized
+  )
 
   # Menu bar
   runner_params.imgui_window_params.show_menu_bar = True
