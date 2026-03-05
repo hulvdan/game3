@@ -17,17 +17,13 @@ from bf_typer import command
 from imgui_bundle import ImVec2_Pydantic, hello_imgui
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
+from pyglm import glm
+from pyglm.glm import make_mat3, make_mat4, mat3, mat4, vec2, vec3, vec4
 
 HUE_GREEN = 2 / 7
 
 T = TypeVar("T")
 
-# def v2add(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.Any]:
-#   return (v1[0] + v2[0], v1[1] + v2[1])
-#
-#
-# def v2sub(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.Any]:
-#   return (v1[0] - v2[0], v1[1] - v2[1])
 
 _APP_STATE_FILE_PATH = bf.PROJECT_DIR / "tool_attack_markuper_app_save_state.toml"
 
@@ -207,15 +203,40 @@ def _panel_attack_inspector() -> None:  ##
 
 
 def _panel_visualizer() -> None:  ##
-  if g.ref_selected_attack is not None:
-    assert g.ref_selected_attack_creature is not None
-    im.text("Creature " + g.ref_selected_attack_creature.name)
-    im.text("Attack " + g.ref_selected_attack.name)
-    im.get_foreground_draw_list().add_circle(
-      (800, 900), 5, im.color_convert_float4_to_u32((1, 1, 0, 1))
-    )
-  else:
+  if g.ref_selected_attack is None:
     assert g.ref_selected_attack_creature is None
+    return
+
+  cells = 10
+
+  # Drawing grid.
+  for y in range(cells + 1):
+    for x in range(2):
+      pass
+
+  pos = im.get_cursor_screen_pos()
+  size = im.get_content_region_avail()
+  panel_center = im.get_cursor_screen_pos() + size / 2
+
+  # assert g.ref_selected_attack_creature is not None
+  # im.text("Creature " + g.ref_selected_attack_creature.name)
+  # im.text("Attack " + g.ref_selected_attack.name)
+
+  draw = im.get_foreground_draw_list()
+  draw.add_circle(
+    panel_center,
+    5,
+    im.color_convert_float4_to_u32((1, 1, 0, 1)),
+  )
+
+  # im.begin("3D Gizmo Panel", True)
+
+  # Reserve space for panel (so other widgets don't overlap)
+  # im.invisible_button("canvas", *size)
+
+  # You can now draw in this rectangle with OpenGL
+
+  # im.end()
   ##
 
 
