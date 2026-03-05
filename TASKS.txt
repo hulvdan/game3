@@ -46,8 +46,8 @@ x markuper: draw circle inside Visualizer viewport
 x markuper: log time
 x markuper: ref
 x markuper: restrict drawing to viewport (SCISSOR)
+x markuper: circle is in (0, 0)
 
-* markuper:
 * markuper:
 * markuper: attack inspector: GAttackConditionValue
 * markuper: attack inspector: colliders with keyframe animations

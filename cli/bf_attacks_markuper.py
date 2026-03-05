@@ -215,6 +215,9 @@ def _panel_visualizer() -> None:  ##
     return
 
   draw = im.get_foreground_draw_list()
+  size_ = im.get_content_region_avail()
+  pos_ = im.get_cursor_screen_pos()
+  draw.push_clip_rect(pos_, pos_ + size_)
 
   def draw_line(p1: vec2, p2: vec2, color: int = YELLOW_DIMMED):
     draw.add_line(_tuplify(bf.m_pos(model, p1)), _tuplify(bf.m_pos(model, p2)), color)
@@ -224,29 +227,25 @@ def _panel_visualizer() -> None:  ##
 
   cells = 10
 
-  size_ = im.get_content_region_avail()
-  pos_ = im.get_cursor_screen_pos()
   size = _to_vec2(size_)
   pos = _to_vec2(pos_)
   model = mat3()
   model = bf.mat_translate(model, pos + size / 2.0)
-  model = bf.mat_scale(model, bf.scale_to_fit(vec2(1, 1), size))
-  model = bf.mat_translate(model, -vec2(0.5, 0.5))
+  model = bf.mat_scale(model, bf.scale_to_fit(vec2(1, 1), size) * 0.98)
   model = bf.mat_scale(model, vec2(1, 1) / cells)
   assert isinstance(model, mat3)
-
-  draw.push_clip_rect(pos_, pos_ + size_)
-
-  # draw.add_circle(panel_center, 5, YELLOW)  # type: ignore
 
   def _tuplify(v: vec2) -> tuple[float, float]:
     return (v.x, v.y)
 
   # Drawing grid.
+  model_ = model
+  model = bf.mat_translate(model, -vec2(1, 1) * cells / 2)
   for x in range(cells + 1):
     draw_line(vec2(x, 0), vec2(x, cells))
   for y in range(cells + 1):
     draw_line(vec2(0, y), vec2(cells, y))
+  model = model_
 
   draw_circle(vec2(), 1, YELLOW)
   ##
