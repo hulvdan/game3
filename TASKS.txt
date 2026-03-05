@@ -33,8 +33,8 @@ x markuper: ref
 x markuper: selecting attack+creature
 x markuper: logs
 x markuper: saving state
+x markuper: explorer nodes are opened by default
 
-* markuper:
 * markuper:
 * markuper:
 * markuper:

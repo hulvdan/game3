@@ -47,10 +47,9 @@ class DataCreature:
   attacks: list[DataAttack]
 
 
-class StateDump(BaseModel):  ##
+class StateDump(BaseModel):
   creature: str | None = None
   attack: str | None = None
-  ##
 
 
 @dataclass
@@ -99,12 +98,16 @@ g = State()
 
 def _panel_explorer() -> None:  ##
   for creature in g.creatures:
-    creature_flags = im.TreeNodeFlags_.span_avail_width
+    creature_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
     if creature == g.ref_selected_attack_creature:
       creature_flags |= im.TreeNodeFlags_.selected
     if im.tree_node_ex(creature.name, creature_flags):
       for attack in creature.attacks:
-        flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
+        flags = (
+          im.TreeNodeFlags_.leaf
+          | im.TreeNodeFlags_.span_avail_width
+          | im.TreeNodeFlags_.default_open
+        )
         if attack == g.ref_selected_attack:
           flags |= im.TreeNodeFlags_.selected
         if im.tree_node_ex(attack.name, flags):
@@ -159,7 +162,6 @@ async def _dump_run_data():  ##
       out_path = Path(out.name)
       toml.dump(g.dump().model_dump(), out)
     shutil.move(out_path, _LAST_RUN_STATE_FILE_PATH)
-    LOGD("Saving... Success!")
   ##
 
 
