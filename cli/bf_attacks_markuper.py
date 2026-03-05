@@ -22,6 +22,7 @@ from pyglm.glm import make_mat3, make_mat4, mat3, mat4, vec2, vec3, vec4
 
 HUE_GREEN = 2 / 7
 YELLOW = im.color_convert_float4_to_u32((1, 1, 0, 1))
+YELLOW_DIMMED = im.color_convert_float4_to_u32((1, 1, 0, 0.1))
 
 T = TypeVar("T")
 
@@ -217,14 +218,34 @@ def _panel_visualizer() -> None:  ##
   def m_translate(m: mat3, offset: vec2) -> mat3:
     return glm.translate(m, offset)  # type: ignore
 
-  def draw_line(
-    p1: vec2, p2: vec2, color: int = im.color_convert_float4_to_u32((1, 1, 0, 0.1))
-  ) -> None:
+  def m_pos(m: mat3, p: vec2) -> vec2:
+    return (m * vec3(p, 1)).xy  # type: ignore
+
+  @t.overload
+  def m_size(m: mat3, v: int | float) -> float | int: ...
+
+  @t.overload
+  def m_size(m: mat3, v: vec2) -> vec2: ...
+
+  def m_size(m: mat3, v: vec2 | float | int) -> vec2 | float | int:
+    result = (m * vec3(vec2(1, 1) * v, 0)).xy  # type: ignore
+    if isinstance(v, (int, float)):
+      return result.x
+    return result
+
+  draw = im.get_foreground_draw_list()
+
+  def draw_line(p1: vec2, p2: vec2, color: int = YELLOW_DIMMED):
     draw.add_line(
-      tuplify((model * vec3(p1, 1)).xy),  # type: ignore
-      tuplify((model * vec3(p2, 1)).xy),  # type: ignore
+      tuplify(m_pos(model, p1)),
+      tuplify(m_pos(model, p2)),
       color,
     )
+
+  def draw_circle(p: vec2, radius: float, color: int = YELLOW_DIMMED):
+    draw.add_circle(tuplify(m_pos(model, p)), m_size(model, radius), color)
+
+  cells = 10
 
   size = to_vec2(im.get_content_region_avail())
   pos = to_vec2(im.get_cursor_screen_pos())
@@ -232,11 +253,8 @@ def _panel_visualizer() -> None:  ##
   model = m_translate(model, pos + size / 2.0)
   model = m_scale(model, bf.scale_to_fit(vec2(1, 1), size))
   model = m_translate(model, -vec2(0.5, 0.5))
+  model = m_scale(model, vec2(1, 1) / cells)
   assert isinstance(model, mat3)
-
-  cells = 10
-
-  draw = im.get_foreground_draw_list()
 
   # draw.add_circle(panel_center, 5, YELLOW)  # type: ignore
 
@@ -245,9 +263,11 @@ def _panel_visualizer() -> None:  ##
 
   # Drawing grid.
   for x in range(cells + 1):
-    draw_line(vec2(x / cells, 0), vec2(x / cells, 1))
+    draw_line(vec2(x, 0), vec2(x, cells))
   for y in range(cells + 1):
-    draw_line(vec2(0, y / cells), vec2(1, y / cells))
+    draw_line(vec2(0, y), vec2(cells, y))
+
+  draw_circle(vec2(0.5, 0.5) * cells, 1, YELLOW)
 
   # assert g.ref_selected_attack_creature is not None
   # im.text("Creature " + g.ref_selected_attack_creature.name)

@@ -42,8 +42,8 @@ x markuper: remember font scale
 x markuper: drew circle
 x markuper: pyglm
 x markuper: drew grid
+x markuper: draw circle inside Visualizer viewport
 
-* markuper: draw circle inside Visualizer viewport
 * markuper:
 * markuper:
 * markuper:
