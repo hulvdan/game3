@@ -152,6 +152,12 @@ def _panel_timeline() -> None:  ##
   ##
 
 
+def _panel_attack_inspector() -> None:  ##
+  if not g.ref_selected_attack:
+    return
+  ##
+
+
 async def _dump_run_data():  ##
   while True:
     await g.scheduled_dump.acquire()
@@ -197,6 +203,7 @@ def tool_attacks_markuper() -> None:  ##
         bf.ImGuiPanel("Explorer", _panel_explorer),
         bf.ImGuiPanel("Visualizer", _panel_visualizer),
         bf.ImGuiPanel("Timeline", _panel_timeline),
+        bf.ImGuiPanel("Attack Inspector", _panel_attack_inspector),
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
       ]
     )

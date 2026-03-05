@@ -34,14 +34,23 @@ x markuper: selecting attack+creature
 x markuper: logs
 x markuper: saving state
 x markuper: explorer nodes are opened by default
+x docs
 
+* markuper: attack inspector: button create collider circle
+* markuper: attack inspector: GAttackConditionValue
+* markuper: attack inspector: colliders with keyframe animations
+* markuper: attack inspector:
+* markuper: LEFT COLUMN with hierarchy list (or just 2 listboxes).
+  1st one has mob select + add + rename + delete (WITH SHIT TON A LOT OF CONFIRM) buttons.
+* markuper: attack inspector:
+* markuper: attack inspector:
+* markuper: attack inspector:
+* markuper:
+* markuper:
 * markuper:
 * markuper:
 * markuper:
 * markuper: remember font scale
-* markuper: add logger (ref https://traineq.org/imgui_bundle_explorer/ widgets demo)
-* markuper: LEFT COLUMN with hierarchy list (or just 2 listboxes).
-  1st one has mob select + add + rename + delete (WITH SHIT TON A LOT OF CONFIRM) buttons.
 * markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
 * markuper:
 * markuper:
