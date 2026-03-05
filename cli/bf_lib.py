@@ -44,6 +44,7 @@ from imgui_bundle.demos_python import (
 from PIL import Image, ImageChops, ImageDraw, ImageEnhance
 from pydantic import BaseModel
 from pyglm import glm
+from pyglm.glm import mat3, vec2, vec3
 
 ##
 
@@ -1752,7 +1753,7 @@ def ldtk_load(filepath: Path | str) -> Ldtk:  ##
   ##
 
 
-# !banner: IMGUI
+# !banner: imgui
 # ██╗███╗   ███╗ ██████╗ ██╗   ██╗██╗
 # ██║████╗ ████║██╔════╝ ██║   ██║██║
 # ██║██╔████╔██║██║  ███╗██║   ██║██║
@@ -1972,6 +1973,15 @@ def _show_group_gui(group: _DemoGroup) -> None:  ##
   ##
 
 
+# !banner: math
+# ███╗   ███╗ █████╗ ████████╗██╗  ██╗
+# ████╗ ████║██╔══██╗╚══██╔══╝██║  ██║
+# ██╔████╔██║███████║   ██║   ███████║
+# ██║╚██╔╝██║██╔══██║   ██║   ██╔══██║
+# ██║ ╚═╝ ██║██║  ██║   ██║   ██║  ██║
+# ╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
+
+
 @t.overload
 def scale_to_fit(inner: tuple[int, int], outer: tuple[int, int]) -> float: ...
 
@@ -1993,6 +2003,33 @@ def scale_to_fit(inner, outer):  ##
     scale_y = outer[1] / inner[1]
   return min(scale_x, scale_y)
   ##
+
+
+def mat_scale(m: mat3, v: float | vec2) -> mat3:
+  return glm.scale(m, vec2(1, 1) * v)  # type: ignore
+
+
+def mat_translate(m: mat3, offset: vec2) -> mat3:
+  return glm.translate(m, offset)  # type: ignore
+
+
+def m_pos(m: mat3, p: vec2) -> vec2:
+  return (m * vec3(p, 1)).xy  # type: ignore
+
+
+@t.overload
+def m_size(m: mat3, v: int | float) -> float | int: ...
+
+
+@t.overload
+def m_size(m: mat3, v: vec2) -> vec2: ...
+
+
+def m_size(m: mat3, v: vec2 | float | int) -> vec2 | float | int:
+  result = (m * vec3(vec2(1, 1) * v, 0)).xy  # type: ignore
+  if isinstance(v, (int, float)):
+    return result.x
+  return result
 
 
 from bf_game import *  # noqa

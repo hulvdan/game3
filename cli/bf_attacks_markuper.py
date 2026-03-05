@@ -217,44 +217,23 @@ def _panel_visualizer() -> None:  ##
   def to_vec2(v: ImVec2_Pydantic) -> vec2:
     return vec2(v.x, v.y)
 
-  def m_scale(m: mat3, v: float | vec2) -> mat3:
-    return glm.scale(m, vec2(1, 1) * v)  # type: ignore
-
-  def m_translate(m: mat3, offset: vec2) -> mat3:
-    return glm.translate(m, offset)  # type: ignore
-
-  def m_pos(m: mat3, p: vec2) -> vec2:
-    return (m * vec3(p, 1)).xy  # type: ignore
-
-  @t.overload
-  def m_size(m: mat3, v: int | float) -> float | int: ...
-
-  @t.overload
-  def m_size(m: mat3, v: vec2) -> vec2: ...
-
-  def m_size(m: mat3, v: vec2 | float | int) -> vec2 | float | int:
-    result = (m * vec3(vec2(1, 1) * v, 0)).xy  # type: ignore
-    if isinstance(v, (int, float)):
-      return result.x
-    return result
-
   draw = im.get_foreground_draw_list()
 
   def draw_line(p1: vec2, p2: vec2, color: int = YELLOW_DIMMED):
-    draw.add_line(_tuplify(m_pos(model, p1)), _tuplify(m_pos(model, p2)), color)
+    draw.add_line(_tuplify(bf.m_pos(model, p1)), _tuplify(bf.m_pos(model, p2)), color)
 
   def draw_circle(p: vec2, radius: float, color: int = YELLOW_DIMMED):
-    draw.add_circle(_tuplify(m_pos(model, p)), m_size(model, radius), color)
+    draw.add_circle(_tuplify(bf.m_pos(model, p)), bf.m_size(model, radius), color)
 
   cells = 10
 
   size = to_vec2(im.get_content_region_avail())
   pos = to_vec2(im.get_cursor_screen_pos())
   model = mat3()
-  model = m_translate(model, pos + size / 2.0)
-  model = m_scale(model, bf.scale_to_fit(vec2(1, 1), size))
-  model = m_translate(model, -vec2(0.5, 0.5))
-  model = m_scale(model, vec2(1, 1) / cells)
+  model = bf.mat_translate(model, pos + size / 2.0)
+  model = bf.mat_scale(model, bf.scale_to_fit(vec2(1, 1), size))
+  model = bf.mat_translate(model, -vec2(0.5, 0.5))
+  model = bf.mat_scale(model, vec2(1, 1) / cells)
   assert isinstance(model, mat3)
 
   # draw.add_circle(panel_center, 5, YELLOW)  # type: ignore
