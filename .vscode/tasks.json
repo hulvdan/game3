@@ -49,7 +49,7 @@
       }
     },
     {
-      "label": "5_mypy",
+      "label": "5_types",
       "type": "shell",
       "command": "pyright",
       "args": [

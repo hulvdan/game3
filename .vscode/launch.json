@@ -13,7 +13,7 @@
         "run"
       ],
       "console": "integratedTerminal",
-      "preLaunchTask": "5_mypy"
+      "preLaunchTask": "5_types"
     },
     {
       "name": "process_images",
@@ -24,7 +24,7 @@
         "process_images"
       ],
       "console": "integratedTerminal",
-      "preLaunchTask": "5_mypy"
+      "preLaunchTask": "5_types"
     },
     {
       "name": "codegen",
@@ -37,7 +37,7 @@
         "debug"
       ],
       "console": "integratedTerminal",
-      "preLaunchTask": "5_mypy"
+      "preLaunchTask": "5_types"
     },
     {
       "name": "temp",
@@ -48,7 +48,7 @@
         "temp"
       ],
       "console": "integratedTerminal",
-      "preLaunchTask": "5_mypy"
+      "preLaunchTask": "5_types"
     },
     {
       "name": "tool_attacks_markuper",
@@ -59,7 +59,7 @@
         "tool_attacks_markuper"
       ],
       "console": "integratedTerminal",
-      "preLaunchTask": "5_mypy"
+      "preLaunchTask": "5_types"
     }
   ]
 }

@@ -52,9 +52,11 @@ x pyright
 x markuper: drew fields
 x f
 x slimgui docking branch
+x f
 
-* markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
+* markuper: docking setup
 * markuper: LEFT COLUMN with hierarchy list
+* markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
 * markuper:
 * markuper:
 * markuper:
