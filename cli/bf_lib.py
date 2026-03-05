@@ -1887,7 +1887,7 @@ def show_imgui(panels: list[ImGuiPanel]) -> None:  ##
   def show_edit_font_scale_in_status_bar():
     imgui.set_next_item_width(imgui.get_content_region_avail().x / 10)
     _, imgui.get_style().font_scale_main = imgui.slider_float(
-      "Font scale", imgui.get_style().font_scale_main, 0.5, 5
+      "Font scale", imgui.get_style().font_scale_main, 0.5, 2
     )
 
   runner_params.callbacks.show_status = show_edit_font_scale_in_status_bar
@@ -1913,7 +1913,7 @@ def show_imgui(panels: list[ImGuiPanel]) -> None:  ##
 _show_code_states: dict[str, bool] = {}
 
 
-def im_id(value: str, id: str) -> str:  ##
+def imgui_id(value: str, id: str) -> str:  ##
   return str(value) + "#" + "#" + str(id)
   ##
 
@@ -1925,7 +1925,7 @@ def _show_module_demo(
     return
   if show_code:
     current = _show_code_states.get(demo_filename, False)
-    _, current = imgui.checkbox(im_id("Show code", demo_filename), current)
+    _, current = imgui.checkbox(imgui_id("Show code", demo_filename), current)
     _show_code_states[demo_filename] = current
     if current:
       demo_utils.show_python_vs_cpp_file(demo_filename, 40)
