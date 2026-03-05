@@ -1782,6 +1782,7 @@ def show_imgui(panels: list[ImGuiPanel]) -> None:  ##
   # Menu bar
   runner_params.imgui_window_params.show_menu_bar = True
   runner_params.imgui_window_params.show_status_bar = True
+  runner_params.imgui_window_params.remember_theme = True
 
   # Part 2: Define the application layout and windows
 

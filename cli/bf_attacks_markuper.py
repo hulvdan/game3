@@ -46,12 +46,12 @@ def v2sub(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.An
   return (v1[0] - v2[0], v1[1] - v2[1])
 
 
-def panel_visualizer() -> None:  ##
+def panel_explorer() -> None:  ##
   pass
   ##
 
 
-def panel_explorer() -> None:  ##
+def panel_visualizer() -> None:  ##
   pass
   ##
 
@@ -63,31 +63,23 @@ def panel_timeline() -> None:  ##
     imgui.text_colored(color, field)
     if imgui.is_item_hovered():
       hovered_line = field_index
+
+  # draw_list = im.get_window_draw_list()
+  # pos = im.get_cursor_screen_pos()
+  # size = v2sub(im.get_window_size(), v2sub(pos, im.get_window_pos()))
+  # draw_list.add_line(pos, v2add(pos, size), im.color_convert_float4_to_u32((1, 0, 0, 1)))
+  # # # Draw keyframes as small circles
+  # # for kf in g.timeline:
+  # #   x = pos[0] + (kf.index / 5.0) * timeline_width
+  # #   y = pos[1] + timeline_height / 2
+  # #   draw_list.add_circle_filled((x, y), 5, im.color_convert_float4_to_u32((1, 0, 0, 1)))
+
   g.timeline_hovered_line = hovered_line
   ##
 
 
-# def _frame() -> None:  ##
-#   im.begin("Visualization")
-#   im.end()
-#   im.begin("Explorer")
-#   im.end()
-#   im.begin("Timeline")
-#   draw_list = im.get_window_draw_list()
-#   pos = im.get_cursor_screen_pos()
-#   size = v2sub(im.get_window_size(), v2sub(pos, im.get_window_pos()))
-#   draw_list.add_line(pos, v2add(pos, size), im.color_convert_float4_to_u32((1, 0, 0, 1)))
-#   # # Draw keyframes as small circles
-#   # for kf in g.timeline:
-#   #   x = pos[0] + (kf.index / 5.0) * timeline_width
-#   #   y = pos[1] + timeline_height / 2
-#   #   draw_list.add_circle_filled((x, y), 5, im.color_convert_float4_to_u32((1, 0, 0, 1)))
-#   im.end()
-#   ##
-
-
 @command
-def tool_attacks_markuper() -> None:
+def tool_attacks_markuper() -> None:  ##
   bf.show_imgui(
     [
       bf.ImGuiPanel("Explorer", panel_explorer),
@@ -95,3 +87,4 @@ def tool_attacks_markuper() -> None:
       bf.ImGuiPanel("Timeline", panel_timeline),
     ]
   )
+  ##
