@@ -20,4 +20,4 @@
 /src/codegen/nolint/glib.gd
 __pycache__/
 node_modules/
-tool_attack_markuper_last_run.toml
+tool_attack_markuper_app_save_state.toml

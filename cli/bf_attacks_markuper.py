@@ -20,7 +20,7 @@ from pydantic import BaseModel
 # def v2sub(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.Any]:
 #   return (v1[0] - v2[0], v1[1] - v2[1])
 
-_LAST_RUN_STATE_FILE_PATH = bf.PROJECT_DIR / "tool_attack_markuper_last_run.toml"
+_LAST_RUN_STATE_FILE_PATH = bf.PROJECT_DIR / "tool_attack_markuper_app_save_state.toml"
 
 
 LOGD = partial(hello_imgui.log, hello_imgui.LogLevel.debug)
@@ -47,7 +47,7 @@ class DataCreature:
   attacks: list[DataAttack]
 
 
-class StateDump(BaseModel):
+class AppSaveState(BaseModel):
   creature: str | None = None
   attack: str | None = None
 
@@ -68,8 +68,8 @@ class State:
 
   scheduled_dump: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(0))
 
-  def dump(self) -> StateDump:  ##
-    return StateDump(
+  def dump(self) -> AppSaveState:  ##
+    return AppSaveState(
       creature=(
         self.ref_selected_attack_creature.name
         if self.ref_selected_attack_creature
@@ -79,7 +79,7 @@ class State:
     )
     ##
 
-  def load(self, value: StateDump) -> None:  ##
+  def load(self, value: AppSaveState) -> None:  ##
     for c in self.creatures:
       if c.name == value.creature:
         for atk in c.attacks:
@@ -188,7 +188,7 @@ def tool_attacks_markuper() -> None:  ##
   if _LAST_RUN_STATE_FILE_PATH.exists():
     with open(_LAST_RUN_STATE_FILE_PATH, encoding="utf-8") as in_file:
       state_data = toml.load(in_file)
-    g.load(StateDump(**state_data))
+    g.load(AppSaveState(**state_data))
 
   async def wrapper() -> None:
     _dump_task = asyncio.create_task(_dump_run_data())
