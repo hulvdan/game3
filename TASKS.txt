@@ -35,8 +35,10 @@ x markuper: logs
 x markuper: saving state
 x markuper: explorer nodes are opened by default
 x docs
+x markuper: attack inspector: dataclasses
 
 * markuper: attack inspector: button create collider circle
+* markuper: attack inspector: button create collider capsule
 * markuper: attack inspector: GAttackConditionValue
 * markuper: attack inspector: colliders with keyframe animations
 * markuper: attack inspector:

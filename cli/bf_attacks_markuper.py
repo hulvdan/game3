@@ -2,9 +2,12 @@ import asyncio
 import shutil
 import tempfile
 import typing as t
+from abc import ABC
 from dataclasses import dataclass, field
+from enum import IntEnum, unique
 from functools import partial
 from pathlib import Path
+from typing import Generic, TypeVar
 
 import bf_lib as bf
 import toml
@@ -12,6 +15,8 @@ from bf_typer import command
 from imgui_bundle import ImVec2_Pydantic, hello_imgui
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
+
+T = TypeVar("T")
 
 # def v2add(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.Any]:
 #   return (v1[0] + v2[0], v1[1] + v2[1])
@@ -35,10 +40,50 @@ LOGE = partial(hello_imgui.log, hello_imgui.LogLevel.error)
 #   offset: V2
 
 
+@unique
+class ColliderType(IntEnum):
+  INVALID = 0
+  CIRCLE = 1
+  CAPSULE = 2
+
+
+class ColliderBase:  ##
+  collider_type: t.ClassVar[ColliderType] = ColliderType.INVALID
+
+  def __new__(cls):
+    assert cls is not ColliderBase
+    return super().__new__(cls)
+
+  ##
+
+
+@dataclass(slots=True)
+class Frame(Generic[T]):
+  index: int
+  value: T
+
+
+@dataclass(slots=True)
+class ColliderCircle(ColliderBase):
+  collider_type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
+
+  radius: list[Frame[float]] = field(default_factory=list)
+  pos: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class ColliderCapsule(ColliderBase):
+  collider_type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
+
+  radius: list[Frame[float]] = field(default_factory=list)
+  pos1: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
+  pos2: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
+
+
 @dataclass
 class DataAttack:
   name: str
-  selected: bool = False
+  colliders: list[ColliderBase] = field(default_factory=list)
 
 
 @dataclass
@@ -120,6 +165,12 @@ def _panel_explorer() -> None:  ##
   ##
 
 
+def _panel_attack_inspector() -> None:  ##
+  if not g.ref_selected_attack:
+    return
+  ##
+
+
 def _panel_visualizer() -> None:  ##
   if g.ref_selected_attack is not None:
     assert g.ref_selected_attack_creature is not None
@@ -149,12 +200,6 @@ def _panel_timeline() -> None:  ##
   # #   draw_list.add_circle_filled((x, y), 5, im.color_convert_float4_to_u32((1, 0, 0, 1)))
 
   g.timeline_hovered_line = hovered_line
-  ##
-
-
-def _panel_attack_inspector() -> None:  ##
-  if not g.ref_selected_attack:
-    return
   ##
 
 
