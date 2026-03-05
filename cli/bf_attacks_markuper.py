@@ -122,8 +122,6 @@ def tool_attacks_markuper() -> None:  ##
   runner_params.imgui_window_params.show_menu_bar = True
   runner_params.imgui_window_params.show_status_bar = True
 
-  runner_params.ini_clear_previous_settings = True
-
   # Part 2: Define the application layout and windows
 
   # First, tell HelloImGui that we want full screen dock space (this will create "MainDockSpace")
@@ -257,36 +255,44 @@ def tool_attacks_markuper() -> None:  ##
 _show_code_states: dict[str, bool] = {}
 
 
+def idify(value: str, id: str) -> str:  ##
+  return str(value) + "#" + "#" + str(id)
+  ##
+
+
 def show_module_demo(
   demo_filename: str, demo_function: Callable[[], None], show_code: bool = False
-) -> None:
+) -> None:  ##
   if imgui.get_frame_count() < 2:  # cf https://github.com/pthom/imgui_bundle/issues/293
     return
   if show_code:
     current = _show_code_states.get(demo_filename, False)
-    _, current = imgui.checkbox("Show code##" + demo_filename, current)
+    _, current = imgui.checkbox(idify("Show code", demo_filename), current)
     _show_code_states[demo_filename] = current
     if current:
       demo_utils.show_python_vs_cpp_file(demo_filename, 40)
   demo_function()
+  ##
 
 
 @dataclass
-class DemoDetails:
+class DemoDetails:  ##
   label: str
   demo_module: ModuleType
   show_code: bool = False
+  ##
 
 
 @dataclass
-class DemoGroup:
+class DemoGroup:  ##
   """A group of demos shown as collapsing headers inside a single tab."""
 
   label: str
   demos: List[DemoDetails] = field(default_factory=list)
+  ##
 
 
-def _show_group_gui(group: DemoGroup) -> None:
+def _show_group_gui(group: DemoGroup) -> None:  ##
   """Gui function for a grouped tab: each sub-demo is a collapsing header."""
   if imgui.get_frame_count() < 2:
     return
@@ -296,3 +302,4 @@ def _show_group_gui(group: DemoGroup) -> None:
       imgui.indent()
       show_module_demo(demo_module_name, demo.demo_module.demo_gui, demo.show_code)
       imgui.unindent()
+  ##

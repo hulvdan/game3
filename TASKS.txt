@@ -28,8 +28,8 @@ x markuper: docking setup
 x markuper: added imgui-bundle
 x markuper: maximized
 x markuper: my own tabs
+x markuper: remember windows size / maximized state
 
-* markuper: remember windows size / maximized state
 * markuper: remember docks
 * markuper:
 * markuper:
