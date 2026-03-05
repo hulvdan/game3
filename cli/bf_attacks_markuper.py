@@ -3,8 +3,10 @@ from dataclasses import dataclass
 
 import bf_lib as bf
 import glfw
+import OpenGL.GL as gl  # noqa: N811
 from bf_typer import command
 from slimgui import imgui as im
+from slimgui.integrations.glfw import GlfwRenderer
 
 
 @dataclass
@@ -84,5 +86,44 @@ def _key_callback(_window, key, _scan, action, _mods) -> None:  ##
 
 @command
 def tool_attacks_markuper() -> None:  ##
-  bf.show_imgui(_frame, _key_callback, lambda: g.exiting)
+  show_imgui(_frame, _key_callback, lambda: g.exiting)
+  ##
+
+
+def show_imgui(
+  frame: t.Callable[[], None], key_callback, should_exit: t.Callable[[], bool]
+):  ##
+  glfw.init()
+  glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
+  glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+  glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, glfw.TRUE)
+  glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+  glfw.window_hint(glfw.VISIBLE, True)
+  window = glfw.create_window(
+    width=1600, height=900, title="Attacks Markuper", monitor=None, share=None
+  )
+  glfw.maximize_window(window)
+  glfw.make_context_current(window)
+  im.create_context()
+  io = im.get_io()
+  io.config_flags |= im.ConfigFlags.NAV_ENABLE_KEYBOARD
+  with open(bf.PROJECT_DIR / "cli" / "ComicCode-Semibold.ttf", "rb") as f:
+    font_data = f.read()
+  font = io.fonts.add_font_from_memory_ttf(font_data, 32)
+  renderer = GlfwRenderer(window, prev_key_callback=key_callback)
+
+  while not (glfw.window_should_close(window) or should_exit()):
+    glfw.poll_events()
+    gl.glClear(int(gl.GL_COLOR_BUFFER_BIT) | int(gl.GL_DEPTH_BUFFER_BIT))
+    renderer.new_frame()
+    im.new_frame()
+    im.push_font(font, 0)
+    frame()
+    im.pop_font()
+    im.render()
+    renderer.render(im.get_draw_data())
+    glfw.swap_buffers(window)
+
+  renderer.shutdown()
+  im.destroy_context(None)
   ##

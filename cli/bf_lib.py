@@ -16,16 +16,12 @@ from typing import Any, Callable, Iterator, Sequence, TypeAlias, TypeVar
 
 import cv2
 import fnvhash
-import glfw
 import numpy as np
-import OpenGL.GL as gl  # noqa: N811
 import pydantic_core
 import pyfiglet
 from bf_typer import log
 from PIL import Image, ImageChops, ImageDraw, ImageEnhance
 from pydantic import BaseModel
-from slimgui import imgui as im
-from slimgui.integrations.glfw import GlfwRenderer
 
 ##
 
@@ -1731,45 +1727,6 @@ def ldtk_load(filepath: Path | str) -> Ldtk:  ##
   loaded_json = pydantic_core.from_json(data)
   _ldtk_transform_field_names(loaded_json)
   return Ldtk.model_validate(loaded_json)
-  ##
-
-
-def show_imgui(
-  frame: Callable[[], None], key_callback, should_exit: Callable[[], bool]
-):  ##
-  glfw.init()
-  glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-  glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-  glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, glfw.TRUE)
-  glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-  glfw.window_hint(glfw.VISIBLE, True)
-  window = glfw.create_window(
-    width=1600, height=900, title="Attacks Markuper", monitor=None, share=None
-  )
-  glfw.maximize_window(window)
-  glfw.make_context_current(window)
-  im.create_context()
-  io = im.get_io()
-  io.config_flags |= im.ConfigFlags.NAV_ENABLE_KEYBOARD
-  with open(PROJECT_DIR / "cli" / "ComicCode-Semibold.ttf", "rb") as f:
-    font_data = f.read()
-  font = io.fonts.add_font_from_memory_ttf(font_data, 32)
-  renderer = GlfwRenderer(window, prev_key_callback=key_callback)
-
-  while not (glfw.window_should_close(window) or should_exit()):
-    glfw.poll_events()
-    gl.glClear(int(gl.GL_COLOR_BUFFER_BIT) | int(gl.GL_DEPTH_BUFFER_BIT))
-    renderer.new_frame()
-    im.new_frame()
-    im.push_font(font, 0)
-    frame()
-    im.pop_font()
-    im.render()
-    renderer.render(im.get_draw_data())
-    glfw.swap_buffers(window)
-
-  renderer.shutdown()
-  im.destroy_context(None)
   ##
 
 

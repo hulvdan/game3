@@ -24,38 +24,10 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x fixing web build
-x fixed itch build
-x itch emberveil2
-x hulvdan.itch.io add secret itch links
-x f
-x jagras: bigger hitbox
-x jagras: attacks: long rolling into player
-x jagras: rotation speed
-x jagras: `stops_tracking_at` stop rotation
-x jagras: front attack: proto condition
-x jagras: front attack: only when he'd damage player w his collider
-x better bf_game.py asserts
-x circle condition
-x don't escape file path pprint
-x good attack activation conditions
-x ref
-x jagras: side attack: prepare proto + yaml
-x jagras: side attack: impl rotated dash
-x jagras: side attack: works
-x jagras: side attack: mirroring
-x jagras: mass
-x markuper: shown window
-x markuper: font
-x markuper: maximized
-x pyright
-x markuper: drew fields
-x f
-x slimgui docking branch
-x f
 
 * markuper: docking setup
-* markuper: LEFT COLUMN with hierarchy list
+* markuper: LEFT COLUMN with hierarchy list (or just 2 listboxes)
+  1st one has mob select + add + rename + delete (WITH SHIT TON A LOT OF CONFIRM) buttons
 * markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
 * markuper:
 * markuper:
