@@ -31,9 +31,9 @@ x markuper: my own tabs
 x markuper: remember windows size / maximized state, remember docks
 x markuper: ref
 x markuper: selecting attack+creature
+x markuper: logs
+x markuper: saving state
 
-* markuper:
-* markuper:
 * markuper:
 * markuper:
 * markuper:

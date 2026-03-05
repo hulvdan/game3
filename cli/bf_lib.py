@@ -1768,7 +1768,7 @@ class ImGuiPanel:  ##
   ##
 
 
-def show_imgui(panels: list[ImGuiPanel]) -> None:  ##
+def show_imgui(panels: list[ImGuiPanel]) -> t.Coroutine[None, None, None]:  ##
   print(
     f"For information, demos sources are available in {demo_utils.demos_assets_folder()}"
   )
@@ -1906,7 +1906,8 @@ def show_imgui(panels: list[ImGuiPanel]) -> None:  ##
   addons.with_implot = True
   addons.with_implot3d = True
   addons.with_im_anim = True
-  immapp.run(runner_params=runner_params, add_ons_params=addons)
+
+  return immapp.run_async(runner_params, addons)
   ##
 
 

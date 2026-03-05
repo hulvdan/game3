@@ -34,6 +34,7 @@ dependencies = [
     "ruff>=0.14.6",
     "scons>=4.10.1",
     "spacy>=3.8.11",
+    "toml>=0.10.2",
     "typer>=0.20.0",
     "types-pyyaml>=6.0.12.20250915",
     "websockets>=15.0.1",
