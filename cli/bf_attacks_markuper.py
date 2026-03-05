@@ -241,14 +241,10 @@ def _panel_visualizer() -> None:  ##
   draw = im.get_foreground_draw_list()
 
   def draw_line(p1: vec2, p2: vec2, color: int = YELLOW_DIMMED):
-    draw.add_line(
-      tuplify(m_pos(model, p1)),
-      tuplify(m_pos(model, p2)),
-      color,
-    )
+    draw.add_line(_tuplify(m_pos(model, p1)), _tuplify(m_pos(model, p2)), color)
 
   def draw_circle(p: vec2, radius: float, color: int = YELLOW_DIMMED):
-    draw.add_circle(tuplify(m_pos(model, p)), m_size(model, radius), color)
+    draw.add_circle(_tuplify(m_pos(model, p)), m_size(model, radius), color)
 
   cells = 10
 
@@ -263,7 +259,7 @@ def _panel_visualizer() -> None:  ##
 
   # draw.add_circle(panel_center, 5, YELLOW)  # type: ignore
 
-  def tuplify(v: vec2) -> tuple[float, float]:
+  def _tuplify(v: vec2) -> tuple[float, float]:
     return (v.x, v.y)
 
   # Drawing grid.
