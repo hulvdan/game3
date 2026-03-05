@@ -25,8 +25,8 @@ PLAN
 ============================================================
 x clear
 x markuper: docking setup
+x markuper: added imgui-bundle
 
-* markuper:
 * markuper:
 * markuper:
 * markuper:

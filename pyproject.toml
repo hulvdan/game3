@@ -3,16 +3,14 @@ name = "cli"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "Aleksei Chistov", email = "aleksey.chistov@gmail.com" }
-]
+authors = []
 requires-python = ">=3.11.3"
 dependencies = [
     "cogapp>=3.6.0",
     "cpplint>=2.0.2",
     "fnvhash>=0.2.1",
     "gdtoolkit>=4.5.0",
-    "glfw>=2.10.0",
+    "imgui-bundle[full]>=1.92.600",
     "livereload>=2.7.1",
     "lxml>=6.0.2",
     "mypy>=1.18.2",
@@ -35,7 +33,6 @@ dependencies = [
     "rpp>=0.5",
     "ruff>=0.14.6",
     "scons>=4.10.1",
-    "slimgui",
     "spacy>=3.8.11",
     "typer>=0.20.0",
     "types-pyyaml>=6.0.12.20250915",
@@ -52,33 +49,9 @@ cli = "cli:main"
 [tool.uv.build-backend]
 module-root = ""
 
-[tool.uv.sources]
-slimgui = { git = "https://github.com/nurpax/slimgui", branch = "docking" }
-
 [build-system]
 requires = ["uv_build>=0.9.13,<0.10.0"]
 build-backend = "uv_build"
-
-[tool.poetry.dependencies]
-fnvhash = "^0.1.0"
-pillow = "^10.3.0"
-pre-commit-hooks = "^5.0.0"
-pyjson5 = "^1.6.6"
-python = "^3.11"
-typer = "^0.12.3"
-lxml = "^5.3.0"
-pydantic = "^2.10.4"
-cpplint = "^2.0.0"
-pyyaml = "^6.0.2"
-pytest = "^8.3.4"
-cogapp = "^3.4.1"
-opencv-python = "^4.11.0.86"
-numpy = "^2.2.3"
-ruff = "^0.11.2"
-mypy = "^1.16.1"
-types-pyyaml = "^6.0.12.20250516"
-livereload = "^2.7.1"
-pydub = "^0.25.1"
 
 [tool.ruff]
 line-length = 90
