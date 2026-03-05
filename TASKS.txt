@@ -54,11 +54,24 @@ x f
 
 * markuper: lines have different background colors
 * markuper: frame columns
+* markuper: WHAT DO I NEED FOR JAGRAS???
+  * markuper: circle pos
+  * markuper: circle radius
+  * markuper: circle pos keyframe easing
+  * markuper: can specidy another circle
+  * markuper:
+  * markuper:
+  * markuper:
+  * markuper:
+  * markuper:
+  * markuper:
+  * markuper:
+  * markuper:
+  * markuper:
 * markuper: column width zoom
 * markuper: show keyframe as circle
 * markuper: can select scale keyframe
 * markuper: can change scale value on specific keyframe
-* markuper:
 * markuper:
 * markuper:
 * markuper:
