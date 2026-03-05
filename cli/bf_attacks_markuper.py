@@ -1,8 +1,10 @@
 import asyncio
 import shutil
 import tempfile
+import threading
 import typing as t
 from abc import ABC
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from enum import IntEnum, unique
 from functools import partial
@@ -16,6 +18,8 @@ from imgui_bundle import ImVec2_Pydantic, hello_imgui
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
 
+HUE_GREEN = 2 / 7
+
 T = TypeVar("T")
 
 # def v2add(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.Any]:
@@ -25,7 +29,7 @@ T = TypeVar("T")
 # def v2sub(v1: tuple[t.Any, t.Any], v2: tuple[t.Any, t.Any]) -> tuple[t.Any, t.Any]:
 #   return (v1[0] - v2[0], v1[1] - v2[1])
 
-_LAST_RUN_STATE_FILE_PATH = bf.PROJECT_DIR / "tool_attack_markuper_app_save_state.toml"
+_APP_STATE_FILE_PATH = bf.PROJECT_DIR / "tool_attack_markuper_app_save_state.toml"
 
 
 LOGD = partial(hello_imgui.log, hello_imgui.LogLevel.debug)
@@ -48,7 +52,7 @@ class ColliderType(IntEnum):
 
 
 class ColliderBase:  ##
-  collider_type: t.ClassVar[ColliderType] = ColliderType.INVALID
+  type: t.ClassVar[ColliderType] = ColliderType.INVALID
 
   def __new__(cls):
     assert cls is not ColliderBase
@@ -65,7 +69,7 @@ class Frame(Generic[T]):
 
 @dataclass(slots=True)
 class ColliderCircle(ColliderBase):
-  collider_type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
+  type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
   radius: list[Frame[float]] = field(default_factory=list)
   pos: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
@@ -73,7 +77,7 @@ class ColliderCircle(ColliderBase):
 
 @dataclass(slots=True)
 class ColliderCapsule(ColliderBase):
-  collider_type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
+  type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
   radius: list[Frame[float]] = field(default_factory=list)
   pos1: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
@@ -81,26 +85,30 @@ class ColliderCapsule(ColliderBase):
 
 
 @dataclass
-class DataAttack:
+class Attack:
   name: str
   colliders: list[ColliderBase] = field(default_factory=list)
 
+  ref_selected_collider: ColliderBase | None = None
+
 
 @dataclass
-class DataCreature:
+class Creature:
   name: str
-  attacks: list[DataAttack]
+  attacks: list[Attack]
 
 
 class AppSaveState(BaseModel):
+  font_scale_main: float = 1
   creature: str | None = None
   attack: str | None = None
+  collider_index: int | None = None
 
 
 @dataclass
 class State:
   # timeline: list[Keyframe] = field(default_factory=list)
-  creatures: list[DataCreature] = field(default_factory=list)
+  creatures: list[Creature] = field(default_factory=list)
 
   exiting: bool = False
   count: int = 0
@@ -108,13 +116,14 @@ class State:
   timeline_hovered_line: int = -1
   frame: int = 0
 
-  ref_selected_attack_creature: DataCreature | None = None
-  ref_selected_attack: DataAttack | None = None
+  ref_selected_attack_creature: Creature | None = None
+  ref_selected_attack: Attack | None = None
 
   scheduled_dump: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(0))
 
   def dump(self) -> AppSaveState:  ##
     return AppSaveState(
+      font_scale_main=im.get_style().font_scale_main,
       creature=(
         self.ref_selected_attack_creature.name
         if self.ref_selected_attack_creature
@@ -144,7 +153,7 @@ g = State()
 def _panel_explorer() -> None:  ##
   for creature in g.creatures:
     creature_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
-    if creature == g.ref_selected_attack_creature:
+    if creature is g.ref_selected_attack_creature:
       creature_flags |= im.TreeNodeFlags_.selected
     if im.tree_node_ex(creature.name, creature_flags):
       for attack in creature.attacks:
@@ -153,7 +162,7 @@ def _panel_explorer() -> None:  ##
           | im.TreeNodeFlags_.span_avail_width
           | im.TreeNodeFlags_.default_open
         )
-        if attack == g.ref_selected_attack:
+        if attack is g.ref_selected_attack:
           flags |= im.TreeNodeFlags_.selected
         if im.tree_node_ex(attack.name, flags):
           if im.is_item_clicked():
@@ -165,9 +174,35 @@ def _panel_explorer() -> None:  ##
   ##
 
 
+@contextmanager
+def colorify_button(hue: float):  ##
+  im.push_style_color(im.Col_.button, im.ImColor.hsv(hue, 0.6, 0.6).value)
+  im.push_style_color(im.Col_.button_hovered, im.ImColor.hsv(hue, 0.7, 0.7).value)
+  im.push_style_color(im.Col_.button_active, im.ImColor.hsv(hue, 0.8, 0.8).value)
+  yield
+  im.pop_style_color(3)
+  ##
+
+
 def _panel_attack_inspector() -> None:  ##
   if not g.ref_selected_attack:
     return
+
+  with colorify_button(HUE_GREEN):
+    if im.button("+circle"):
+      g.ref_selected_attack.colliders.append(ColliderCircle())
+    im.same_line()
+    if im.button("+capsule"):
+      g.ref_selected_attack.colliders.append(ColliderCapsule())
+
+  for i, collider in enumerate(g.ref_selected_attack.colliders):
+    flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
+    if g.ref_selected_attack.ref_selected_collider is collider:
+      flags |= im.TreeNodeFlags_.selected
+    if im.tree_node_ex(f"{i} {collider.type.name}", flags):
+      if im.is_item_clicked():
+        g.ref_selected_attack.ref_selected_collider = collider
+      im.tree_pop()
   ##
 
 
@@ -203,46 +238,61 @@ def _panel_timeline() -> None:  ##
   ##
 
 
-async def _dump_run_data():  ##
-  while True:
-    await g.scheduled_dump.acquire()
+_dump_app_state_lock = threading.Lock()
+
+
+def _dump_app_state():  ##
+  with _dump_app_state_lock:
     LOGD("Saving...")
     with tempfile.NamedTemporaryFile(
       "w", encoding="utf-8", delete=False, suffix=".toml"
     ) as out:
       out_path = Path(out.name)
       toml.dump(g.dump().model_dump(), out)
-    shutil.move(out_path, _LAST_RUN_STATE_FILE_PATH)
+    shutil.move(out_path, _APP_STATE_FILE_PATH)
+  ##
+
+
+async def _background_dump_run_data():  ##
+  while True:
+    await g.scheduled_dump.acquire()
+    _dump_app_state()
   ##
 
 
 @command
 def tool_attacks_markuper() -> None:  ##
   g.creatures = [
-    DataCreature(
+    Creature(
       name="MOB_SPEAR",
       attacks=[
-        DataAttack(name="DASH"),
-        DataAttack(name="SWING"),
+        Attack(name="DASH"),
+        Attack(name="SWING"),
       ],
     ),
-    DataCreature(
+    Creature(
       name="BOSS_JAGRAS",
       attacks=[
-        DataAttack(name="ROLL_FRONT"),
-        DataAttack(name="ROLL_SIDE"),
-        DataAttack(name="JUMP_BACK"),
+        Attack(name="ROLL_FRONT"),
+        Attack(name="ROLL_SIDE"),
+        Attack(name="JUMP_BACK"),
       ],
     ),
   ]
 
-  if _LAST_RUN_STATE_FILE_PATH.exists():
-    with open(_LAST_RUN_STATE_FILE_PATH, encoding="utf-8") as in_file:
+  loaded_state: AppSaveState | None = None
+  if _APP_STATE_FILE_PATH.exists():
+    with open(_APP_STATE_FILE_PATH, encoding="utf-8") as in_file:
       state_data = toml.load(in_file)
-    g.load(AppSaveState(**state_data))
+    loaded_state = AppSaveState(**state_data)
+    g.load(loaded_state)
+
+  def setup_imgui_style():
+    if loaded_state:
+      im.get_style().font_scale_main = loaded_state.font_scale_main
 
   async def wrapper() -> None:
-    _dump_task = asyncio.create_task(_dump_run_data())
+    _dump_task = asyncio.create_task(_background_dump_run_data())
     await bf.show_imgui(
       [
         bf.ImGuiPanel("Explorer", _panel_explorer),
@@ -250,7 +300,9 @@ def tool_attacks_markuper() -> None:  ##
         bf.ImGuiPanel("Timeline", _panel_timeline),
         bf.ImGuiPanel("Attack Inspector", _panel_attack_inspector),
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
-      ]
+      ],
+      setup_imgui_style=setup_imgui_style,
+      before_exit=_dump_app_state,
     )
     _dump_task.cancel()
 

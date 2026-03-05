@@ -1768,7 +1768,11 @@ class ImGuiPanel:  ##
   ##
 
 
-def show_imgui(panels: list[ImGuiPanel]) -> t.Coroutine[None, None, None]:  ##
+def show_imgui(
+  panels: list[ImGuiPanel],
+  setup_imgui_style: hello_imgui.VoidFunction | None = None,
+  before_exit: hello_imgui.VoidFunction | None = None,
+) -> t.Coroutine[None, None, None]:  ##
   print(
     f"For information, demos sources are available in {demo_utils.demos_assets_folder()}"
   )
@@ -1875,6 +1879,10 @@ def show_imgui(panels: list[ImGuiPanel]) -> t.Coroutine[None, None, None]:  ##
     dockable_windows.append(window)
 
   runner_params.docking_params.dockable_windows = dockable_windows
+  if setup_imgui_style:
+    runner_params.callbacks.setup_imgui_style = setup_imgui_style
+  if before_exit:
+    runner_params.callbacks.before_exit = before_exit
 
   # the main gui is only responsible to give focus to ImGui Bundle dockable window
   def show_gui():

@@ -36,9 +36,19 @@ x markuper: saving state
 x markuper: explorer nodes are opened by default
 x docs
 x markuper: attack inspector: dataclasses
+x markuper: attack inspector: button create collider circle
+x markuper: attack inspector: button create collider capsule
+x markuper: remember font scale
 
-* markuper: attack inspector: button create collider circle
-* markuper: attack inspector: button create collider capsule
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
 * markuper: attack inspector: GAttackConditionValue
 * markuper: attack inspector: colliders with keyframe animations
 * markuper: attack inspector:
@@ -52,7 +62,6 @@ x markuper: attack inspector: dataclasses
 * markuper:
 * markuper:
 * markuper:
-* markuper: remember font scale
 * markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
 * markuper:
 * markuper:
