@@ -51,7 +51,13 @@ x markuper: maximized
 x pyright
 x markuper: drew fields
 x f
+x slimgui docking branch
 
+* markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
+* markuper: LEFT COLUMN with hierarchy list
+* markuper:
+* markuper:
+* markuper:
 * markuper: lines have different background colors
 * markuper: frame columns
 * markuper: WHAT DO I NEED FOR JAGRAS???
@@ -59,7 +65,6 @@ x f
   * markuper: circle radius
   * markuper: circle pos keyframe easing
   * markuper: can specidy another circle
-  * markuper:
   * markuper:
   * markuper:
   * markuper:

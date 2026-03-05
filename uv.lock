@@ -236,7 +236,7 @@ requires-dist = [
     { name = "rpp", specifier = ">=0.5" },
     { name = "ruff", specifier = ">=0.14.6" },
     { name = "scons", specifier = ">=4.10.1" },
-    { name = "slimgui", specifier = ">=0.6.0" },
+    { name = "slimgui", git = "https://github.com/nurpax/slimgui?branch=docking" },
     { name = "spacy", specifier = ">=3.8.11" },
     { name = "typer", specifier = ">=0.20.0" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20250915" },
@@ -1716,23 +1716,8 @@ wheels = [
 
 [[package]]
 name = "slimgui"
-version = "0.6.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ea/d6/2be20b8d7bc8d4782fc51f71715ab9c5129e1fad728032bb34b7e3ffbbc4/slimgui-0.6.0.tar.gz", hash = "sha256:29e898ec7b5f1017900d7dd490c3ce55d5c6219ea690ff8dd06e42b19df88ae4", size = 2614345, upload-time = "2025-11-13T14:53:50.611Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/76/fb/9a53d064bd239f1610eea350b9093f1809db45830ce62ef608ad6a4f22d0/slimgui-0.6.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:4734272565e160abad19a0831b7fe59d6d8e6dda9ca868f5baa452e99e677496", size = 785128, upload-time = "2025-11-13T14:53:33.52Z" },
-    { url = "https://files.pythonhosted.org/packages/57/5e/76373bc178a223787a9259f5f3dece7403081c5f1c58729bd136646e38e3/slimgui-0.6.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:f81f64139b038d6ca847250c7e40f9b1829e49fc561d532bdaa850e265bfcc77", size = 882485, upload-time = "2025-11-13T14:53:35.354Z" },
-    { url = "https://files.pythonhosted.org/packages/47/27/69b548da5e5e91f6fa7a6e37395a5f2e9b0758810139f35f43269bf000f7/slimgui-0.6.0-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:6a44c97dca8c3603efb678ac3cace83e345fe3d0ddda747d8c9e26cff8e13415", size = 1339012, upload-time = "2025-11-13T14:53:36.597Z" },
-    { url = "https://files.pythonhosted.org/packages/c4/9f/0f98466a626b52c894ec7bfe2f37b5d7ca002b29abad7a220d7163ee923b/slimgui-0.6.0-cp311-cp311-win_amd64.whl", hash = "sha256:d25beee8df7632e51641a07e941b5f4c86e439115f80c01ff6525d64f5891de2", size = 888391, upload-time = "2025-11-13T14:53:38.194Z" },
-    { url = "https://files.pythonhosted.org/packages/d1/40/a820cdc22a8aef8bfaeb897b8387c7ceaa61b977389ac46beb251a99bf74/slimgui-0.6.0-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:4312d87f6ab0534388611abe678758bf1e181ce924b0aed43308ae6cbb1a9c47", size = 787436, upload-time = "2025-11-13T14:53:39.72Z" },
-    { url = "https://files.pythonhosted.org/packages/a5/55/2d9bef5efb2c86844f4525204751c3e32eabb021a327b130c2f763545bea/slimgui-0.6.0-cp312-abi3-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:04afe8c56f9ef5c8b72ec7fec17caffc83b4beef4c0203dfa4ab19a90a055e79", size = 881336, upload-time = "2025-11-13T14:53:41.19Z" },
-    { url = "https://files.pythonhosted.org/packages/ef/6d/8be5b6e8c06ea132631eeab23cdb5dd35f09a8f0c50f0f4037dbbff82fdd/slimgui-0.6.0-cp312-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:30683ab40d3149f1f7d0d248c0a5eed5d9ab5f8d828467f085df4db419400ff6", size = 1337698, upload-time = "2025-11-13T14:53:42.698Z" },
-    { url = "https://files.pythonhosted.org/packages/30/f4/d96a69bd71ddfb71ed2c13a7d0bbe1bbbf25e5ca94fc4f4f35927461242a/slimgui-0.6.0-cp312-abi3-win_amd64.whl", hash = "sha256:285060ff49444e61ccdd8df606e846b0271fd386e2ba3c8184b4ebd01cb0f110", size = 887654, upload-time = "2025-11-13T14:53:43.923Z" },
-    { url = "https://files.pythonhosted.org/packages/be/30/07f0395cd9be7be3e14204f24ce386987fcc312570add71ec38252f73d09/slimgui-0.6.0-cp314-cp314t-macosx_11_0_arm64.whl", hash = "sha256:cbe793942c768a6eeb2eb443b562c64cede877866490b63d166219d3fe8b3cbc", size = 793085, upload-time = "2025-11-13T14:53:45.663Z" },
-    { url = "https://files.pythonhosted.org/packages/fd/0b/664084d1deb58be767f66092be6460216a92550ed4da1b27377508c3d33e/slimgui-0.6.0-cp314-cp314t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:59518c6fcbfe51a313f16d7d5c324f82c580f44a7c9d4234646240a27aa1f545", size = 890185, upload-time = "2025-11-13T14:53:46.815Z" },
-    { url = "https://files.pythonhosted.org/packages/78/b0/165071e3531213ea393e90972edbdee0540187b16fc26d0bcc5c7996c012/slimgui-0.6.0-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:f329bf2cb2140eb6a239e76561eefb8237a2b3dc43f7a3f9f8c652842c3b4f0a", size = 1347436, upload-time = "2025-11-13T14:53:48.028Z" },
-    { url = "https://files.pythonhosted.org/packages/c8/96/e7f168d38b61c8d40532eb5138b0e95499689d51a476fbe3bda3f8748706/slimgui-0.6.0-cp314-cp314t-win_amd64.whl", hash = "sha256:a687cf7e2a9ee38ba9ea3df7f7be9162f161769f159959294ba048641acefbba", size = 927751, upload-time = "2025-11-13T14:53:49.367Z" },
-]
+version = "0.4.1"
+source = { git = "https://github.com/nurpax/slimgui?branch=docking#b059bc8b8b733bda3453464ac6d1c90f534550aa" }
 
 [[package]]
 name = "smart-open"

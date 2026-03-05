@@ -35,7 +35,7 @@ dependencies = [
     "rpp>=0.5",
     "ruff>=0.14.6",
     "scons>=4.10.1",
-    "slimgui>=0.6.0",
+    "slimgui",
     "spacy>=3.8.11",
     "typer>=0.20.0",
     "types-pyyaml>=6.0.12.20250915",
@@ -51,6 +51,9 @@ cli = "cli:main"
 
 [tool.uv.build-backend]
 module-root = ""
+
+[tool.uv.sources]
+slimgui = { git = "https://github.com/nurpax/slimgui", branch = "docking" }
 
 [build-system]
 requires = ["uv_build>=0.9.13,<0.10.0"]
