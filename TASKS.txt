@@ -11,7 +11,10 @@ PILLARS
   * ФАРМ КАКЕХ
   *
   *
-  *
+* ЧТО ЛЮДЯМ ТУТ НРАВИТСЯ
+* В ЧЕМ КЛЮЧЕВЫЕ ФИШКИ
+* ЧТО ЛЮДЯМ НЕ НРАВИТСЯ - УЛУЧШИТЬ / ВЫПИЛИТЬ
+  * тупая handler
 * БЕЗ РАЗДРАЖИТЕЛЯ В ВИДЕ ЗАТОЧКИ
 * ПОЧЕМУ МОЯ ИГРА «КРУТАЯ»?
 * СБОРКА ОРУЖИЙ КАК В LIES OF P?
@@ -51,12 +54,12 @@ x markuper: catching exceptions
 x markuper: drew circle and capsule
 x markuper: better colliders
 x markuper: circle also has mat4
+x markuper: displayed view cube
 
+* markuper: ПРОСТО ДОБАВИТЬ МОДЕЛЬ НА ЭКРАН
 * markuper: can move collider using gizmo
-* markuper:
-* markuper:
-* markuper:
-* markuper:
+* markuper: circle acquire radius from scale
+* markuper: where can i get diamond icon (look inside demos!!!)
 * markuper:
 * markuper: attack inspector: GAttackConditionValue
 * markuper: attack inspector: colliders with keyframe animations

@@ -1903,6 +1903,7 @@ def show_imgui(
   runner_params.callbacks.show_status = show_edit_font_scale_in_status_bar
 
   runner_params.callbacks.show_gui = show_gui
+  runner_params.callbacks.post_new_frame = gizmo.begin_frame
 
   def setup_imgui_config() -> None:
     imgui.get_io().config_flags |= imgui.ConfigFlags_.nav_enable_keyboard.value

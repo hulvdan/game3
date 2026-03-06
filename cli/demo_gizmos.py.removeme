@@ -1,8 +1,6 @@
 # Demo ImGuizmo (only the 3D gizmo)
 # See equivalent python program: demos_cpp/demos_imguizmo/demo_guizmo_pure.cpp
 
-# nocheckin
-
 """
 Note: there was a breaking change on ImGuizmo Python API in Nov 2024:
 Added classes Matrix3/6/16, modifiable by manipulate and view_manipulate
