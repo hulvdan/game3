@@ -132,6 +132,7 @@ ignore_missing_imports = false
 [tool.pyright]
 include = ["cli"]
 exclude = [
+    "**/.*",
     "**/node_modules",
     "**/__pycache__",
     "**/.venv",

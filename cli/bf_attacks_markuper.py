@@ -11,16 +11,16 @@ from datetime import datetime
 from enum import IntEnum, unique
 from functools import partial, wraps
 from pathlib import Path
-from typing import Generic, Self, TypeVar
+from typing import Generic, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
 import toml
 from bf_typer import command
-from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui
+from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
 from pyglm import glm
-from pyglm.glm import make_mat3, make_mat4, mat3, mat4, vec2, vec3, vec4
+from pyglm.glm import mat3, mat4, vec2, vec3, vec4
 
 ##
 
@@ -45,6 +45,19 @@ LOGD = partial(_log, hello_imgui.LogLevel.debug)
 LOGI = partial(_log, hello_imgui.LogLevel.info)
 LOGW = partial(_log, hello_imgui.LogLevel.warning)
 LOGE = partial(_log, hello_imgui.LogLevel.error)
+
+
+gizmo = imguizmo.im_guizmo
+
+Matrix16: TypeAlias = imguizmo.im_guizmo.Matrix16
+
+# fmt: off
+identity_matrix: Matrix16 = gizmo.Matrix16(
+  [ 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0])
+# fmt: on
 ##
 
 # @dataclass
@@ -84,13 +97,13 @@ class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
   radius: list[Frame[float]]
-  center: list[Frame[ImVec2_Pydantic]]
+  center: list[Frame[Matrix16]]
 
   @classmethod
   def make(cls) -> Self:
     return cls(
       radius=[Frame(0, 0.5)],
-      center=[Frame(0, ImVec2(0.0, 0.0))],
+      center=[Frame(0, identity_matrix)],
     )
 
   ##
@@ -100,18 +113,16 @@ class ColliderCircle(ColliderBase):  ##
 class ColliderCapsule(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
-  radius: list[Frame[float]] = field(default_factory=list)
-  center: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
-  rot: list[Frame[float]] = field(default_factory=list)
-  circles_spread: list[Frame[float]] = field(default_factory=list)
+  radius: list[Frame[float]]
+  center_and_rotation: list[Frame[Matrix16]]
+  circles_spread: list[Frame[float]]
 
   @classmethod
   def make(cls) -> Self:
     return cls(
       radius=[Frame(0, 0.5)],
-      center=[Frame(0, ImVec2(0.0, 0.0))],
-      rot=[Frame(0, 0)],
-      circles_spread=[Frame(0, 0.5)],
+      center_and_rotation=[Frame(0, identity_matrix)],
+      circles_spread=[Frame(0, 1)],
     )
 
   ##
@@ -282,12 +293,15 @@ def _panel_visualizer() -> None:  ##
     match c.type:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
-        draw_circle(vec2(), c.radius[0].value, color)
+        m = _to_mat4(c.center[0].value)
+        center = vec2(m * vec4(0, 0, 0, 1))
+        draw_circle(center, c.radius[0].value, color)
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
-        dirr = glm.rotate(vec2(c.circles_spread[0].value / 2, 0), c.rot[0].value)
-        center = _to_vec2(c.center[0].value)
+        m = _to_mat4(c.center_and_rotation[0].value)
+        center = vec2(m * vec4(0, 0, 0, 1))
+        dirr = vec2(m * vec4(c.circles_spread[0].value / 2, 0, 0, 0))
         draw_circle(center + dirr, c.radius[0].value, color)
         draw_circle(center - dirr, c.radius[0].value, color)
         # draw_line(vec2(), vec2(), YELLOW)
@@ -311,6 +325,10 @@ def _panel_timeline() -> None:  ##
 
 def _to_vec2(v: ImVec2_Pydantic) -> vec2:
   return vec2(v.x, v.y)
+
+
+def _to_mat4(m: Matrix16) -> mat4:
+  return mat4(*m.values.reshape((4, 4)).flatten())
 
 
 ## Setup

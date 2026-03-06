@@ -50,9 +50,9 @@ x markuper: circle is in (0, 0)
 x markuper: catching exceptions
 x markuper: drew circle and capsule
 x markuper: better colliders
+x markuper: circle also has mat4
 
-
-* markuper: can move collider
+* markuper: can move collider using gizmo
 * markuper:
 * markuper:
 * markuper:
