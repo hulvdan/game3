@@ -1770,6 +1770,7 @@ class ImGuiPanel:  ##
 
 
 def show_imgui(
+  window_title: str,
   panels: list[ImGuiPanel],
   setup_imgui_style: hello_imgui.VoidFunction | None = None,
   before_exit: hello_imgui.VoidFunction | None = None,
@@ -1781,7 +1782,7 @@ def show_imgui(
   # Part 1: Define the runner params
 
   runner_params = hello_imgui.RunnerParams()
-  runner_params.app_window_params.window_title = "Attacks Markuper"
+  runner_params.app_window_params.window_title = window_title
   runner_params.app_window_params.restore_previous_geometry = True
 
   # Menu bar
@@ -1925,6 +1926,16 @@ _show_code_states: dict[str, bool] = {}
 
 def imgui_id(value: str, id: str) -> str:  ##
   return str(value) + "#" + "#" + str(id)
+  ##
+
+
+@contextmanager
+def imgui_colorify_button(hue: float):  ##
+  im.push_style_color(im.Col_.button, im.ImColor.hsv(hue, 0.6, 0.6).value)
+  im.push_style_color(im.Col_.button_hovered, im.ImColor.hsv(hue, 0.7, 0.7).value)
+  im.push_style_color(im.Col_.button_active, im.ImColor.hsv(hue, 0.8, 0.8).value)
+  yield
+  im.pop_style_color(3)
   ##
 
 

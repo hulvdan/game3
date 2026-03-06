@@ -1,26 +1,31 @@
+## Imports
 import asyncio
 import shutil
+import sys
 import tempfile
 import threading
+import traceback
 import typing as t
-from abc import ABC
-from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import IntEnum, unique
-from functools import partial
+from functools import partial, wraps
 from pathlib import Path
-from typing import Generic, TypeVar
+from typing import Generic, Self, TypeVar
 
 import bf_lib as bf
 import toml
 from bf_typer import command
-from imgui_bundle import ImVec2_Pydantic, hello_imgui
+from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
 from pyglm import glm
 from pyglm.glm import make_mat3, make_mat4, mat3, mat4, vec2, vec3, vec4
 
+##
+
+
+## Setup
 HUE_GREEN = 2 / 7
 YELLOW = im.color_convert_float4_to_u32((1, 1, 0, 1))
 YELLOW_DIMMED = im.color_convert_float4_to_u32((1, 1, 0, 0.1))
@@ -39,6 +44,7 @@ LOGD = partial(_log, hello_imgui.LogLevel.debug)
 LOGI = partial(_log, hello_imgui.LogLevel.info)
 LOGW = partial(_log, hello_imgui.LogLevel.warning)
 LOGE = partial(_log, hello_imgui.LogLevel.error)
+##
 
 # @dataclass
 # class Keyframe:
@@ -48,16 +54,24 @@ LOGE = partial(_log, hello_imgui.LogLevel.error)
 
 
 @unique
-class ColliderType(IntEnum):
+class ColliderType(IntEnum):  ##
   INVALID = 0
   CIRCLE = 1
   CAPSULE = 2
+  ##
+
+
+@dataclass(slots=True)
+class Frame(Generic[T]):  ##
+  index: int
+  value: T
+  ##
 
 
 class ColliderBase:  ##
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
 
-  def __new__(cls):
+  def __new__(cls, *_args, **_kwargs):
     assert cls is not ColliderBase
     return super().__new__(cls)
 
@@ -65,50 +79,66 @@ class ColliderBase:  ##
 
 
 @dataclass(slots=True)
-class Frame(Generic[T]):
-  index: int
-  value: T
-
-
-@dataclass(slots=True)
-class ColliderCircle(ColliderBase):
+class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
-  radius: list[Frame[float]] = field(default_factory=list)
-  pos: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
+  radius: list[Frame[float]]
+  pos: list[Frame[ImVec2_Pydantic]]
+
+  @classmethod
+  def make(cls) -> Self:
+    return cls(
+      radius=[Frame(0, 0.5)],
+      pos=[Frame(0, ImVec2(0.0, 0.0))],
+    )
+
+  ##
 
 
 @dataclass(slots=True)
-class ColliderCapsule(ColliderBase):
+class ColliderCapsule(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
   radius: list[Frame[float]] = field(default_factory=list)
   pos1: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
   pos2: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
 
+  @classmethod
+  def make(cls) -> Self:
+    return cls(
+      radius=[Frame(0, 0.5)],
+      pos1=[Frame(0, ImVec2(0.0, -0.5))],
+      pos2=[Frame(0, ImVec2(0.0, 0.5))],
+    )
 
-@dataclass
-class Attack:
+  ##
+
+
+@dataclass(slots=True)
+class Attack:  ##
   name: str
   colliders: list[ColliderBase] = field(default_factory=list)
 
   ref_selected_collider: ColliderBase | None = None
+  ##
 
 
-@dataclass
-class Creature:
+@dataclass(slots=True)
+class Creature:  ##
   name: str
   attacks: list[Attack]
+  ##
 
 
-class AppSaveState(BaseModel):
+class AppSaveState(BaseModel):  ##
   font_scale_main: float = 1
   creature: str | None = None
   attack: str | None = None
   collider_index: int | None = None
+  ##
 
 
-@dataclass
+@dataclass(slots=True)
 class State:
   # timeline: list[Keyframe] = field(default_factory=list)
   creatures: list[Creature] = field(default_factory=list)
@@ -177,26 +207,16 @@ def _panel_explorer() -> None:  ##
   ##
 
 
-@contextmanager
-def colorify_button(hue: float):  ##
-  im.push_style_color(im.Col_.button, im.ImColor.hsv(hue, 0.6, 0.6).value)
-  im.push_style_color(im.Col_.button_hovered, im.ImColor.hsv(hue, 0.7, 0.7).value)
-  im.push_style_color(im.Col_.button_active, im.ImColor.hsv(hue, 0.8, 0.8).value)
-  yield
-  im.pop_style_color(3)
-  ##
-
-
 def _panel_attack_inspector() -> None:  ##
   if not g.ref_selected_attack:
     return
 
-  with colorify_button(HUE_GREEN):
+  with bf.imgui_colorify_button(HUE_GREEN):
     if im.button("+circle"):
-      g.ref_selected_attack.colliders.append(ColliderCircle())
+      g.ref_selected_attack.colliders.append(ColliderCircle.make())
     im.same_line()
     if im.button("+capsule"):
-      g.ref_selected_attack.colliders.append(ColliderCapsule())
+      g.ref_selected_attack.colliders.append(ColliderCapsule.make())
 
   for i, collider in enumerate(g.ref_selected_attack.colliders):
     flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
@@ -219,10 +239,10 @@ def _panel_visualizer() -> None:  ##
   pos_ = im.get_cursor_screen_pos()
   draw.push_clip_rect(pos_, pos_ + size_)
 
-  def draw_line(p1: vec2, p2: vec2, color: int = YELLOW_DIMMED):
+  def draw_line(p1: vec2, p2: vec2, color: int = YELLOW):
     draw.add_line(_tuplify(bf.m_pos(model, p1)), _tuplify(bf.m_pos(model, p2)), color)
 
-  def draw_circle(p: vec2, radius: float, color: int = YELLOW_DIMMED):
+  def draw_circle(p: vec2, radius: float, color: int = YELLOW):
     draw.add_circle(_tuplify(bf.m_pos(model, p)), bf.m_size(model, radius), color)
 
   cells = 10
@@ -242,12 +262,24 @@ def _panel_visualizer() -> None:  ##
   model_ = model
   model = bf.mat_translate(model, -vec2(1, 1) * cells / 2)
   for x in range(cells + 1):
-    draw_line(vec2(x, 0), vec2(x, cells))
+    draw_line(vec2(x, 0), vec2(x, cells), YELLOW_DIMMED)
   for y in range(cells + 1):
-    draw_line(vec2(0, y), vec2(cells, y))
+    draw_line(vec2(0, y), vec2(cells, y), YELLOW_DIMMED)
   model = model_
 
-  draw_circle(vec2(), 1, YELLOW)
+  for c in g.ref_selected_attack.colliders:
+    match c.type:
+      case ColliderType.CIRCLE:
+        assert isinstance(c, ColliderCircle)
+        draw_circle(vec2(), c.radius[0].value, YELLOW)
+      case ColliderType.CAPSULE:
+        assert isinstance(c, ColliderCapsule)
+        draw_circle(_to_vec2(c.pos1[0].value), c.radius[0].value, YELLOW)
+        draw_circle(_to_vec2(c.pos2[0].value), c.radius[0].value, YELLOW)
+        # draw_line(vec2(), vec2(), YELLOW)
+        # draw_line(vec2(), vec2(), YELLOW)
+
+  draw.pop_clip_rect()
   ##
 
 
@@ -263,10 +295,15 @@ def _panel_timeline() -> None:  ##
   ##
 
 
+def _to_vec2(v: ImVec2_Pydantic) -> vec2:
+  return vec2(v.x, v.y)
+
+
+## Setup
 _dump_app_state_lock = threading.Lock()
 
 
-def _dump_app_state():  ##
+def _dump_app_state():
   with _dump_app_state_lock:
     LOGD("Saving...")
     with tempfile.NamedTemporaryFile(
@@ -275,18 +312,16 @@ def _dump_app_state():  ##
       out_path = Path(out.name)
       toml.dump(g.dump().model_dump(), out)
     shutil.move(out_path, _APP_STATE_FILE_PATH)
-  ##
 
 
-async def _background_dump_run_data():  ##
+async def _background_dump_run_data():
   while True:
     await g.scheduled_dump.acquire()
     _dump_app_state()
-  ##
 
 
 @command
-def tool_attacks_markuper() -> None:  ##
+def tool_attacks_markuper() -> None:
   g.creatures = [
     Creature(
       name="MOB_SPEAR",
@@ -316,14 +351,28 @@ def tool_attacks_markuper() -> None:  ##
     if loaded_state:
       im.get_style().font_scale_main = loaded_state.font_scale_main
 
+  def enable_debug(func):
+    @wraps(func)
+    def exception_wrapper():
+      try:
+        func()
+      except Exception as e:
+        traceback.print_exception(*sys.exc_info())
+        _trace = traceback.format_exception(e)
+        breakpoint()
+        raise
+
+    return exception_wrapper
+
   async def wrapper() -> None:
     _dump_task = asyncio.create_task(_background_dump_run_data())
     await bf.show_imgui(
+      "Attacks Markuper",
       [
-        bf.ImGuiPanel("Explorer", _panel_explorer),
-        bf.ImGuiPanel("Visualizer", _panel_visualizer),
-        bf.ImGuiPanel("Timeline", _panel_timeline),
-        bf.ImGuiPanel("Attack Inspector", _panel_attack_inspector),
+        bf.ImGuiPanel("Explorer", enable_debug(_panel_explorer)),
+        bf.ImGuiPanel("Visualizer", enable_debug(_panel_visualizer)),
+        bf.ImGuiPanel("Timeline", enable_debug(_panel_timeline)),
+        bf.ImGuiPanel("Attack Inspector", enable_debug(_panel_attack_inspector)),
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
       ],
       setup_imgui_style=setup_imgui_style,
@@ -331,9 +380,7 @@ def tool_attacks_markuper() -> None:  ##
     )
     _dump_task.cancel()
 
-  asyncio.run(wrapper())
-  ##
+  asyncio.run(wrapper(), debug=True)
 
 
-def _to_vec2(v: ImVec2_Pydantic) -> vec2:
-  return vec2(v.x, v.y)
+##

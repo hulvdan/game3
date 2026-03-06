@@ -59,7 +59,8 @@
         "tool_attacks_markuper"
       ],
       "console": "integratedTerminal",
-      "preLaunchTask": "5_types"
+      "preLaunchTask": "5_types",
+      "justMyCode": false
     }
   ]
 }

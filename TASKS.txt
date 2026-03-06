@@ -47,8 +47,9 @@ x markuper: log time
 x markuper: ref
 x markuper: restrict drawing to viewport (SCISSOR)
 x markuper: circle is in (0, 0)
+x markuper: catching exceptions
+x markuper: drew circle and capsule
 
-* markuper:
 * markuper: attack inspector: GAttackConditionValue
 * markuper: attack inspector: colliders with keyframe animations
 * markuper: attack inspector:
@@ -57,7 +58,6 @@ x markuper: circle is in (0, 0)
 * markuper: attack inspector:
 * markuper: attack inspector:
 * markuper: attack inspector:
-* markuper:
 * markuper:
 * markuper:
 * markuper:
