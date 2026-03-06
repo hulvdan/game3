@@ -28,7 +28,8 @@ from pyglm.glm import make_mat3, make_mat4, mat3, mat4, vec2, vec3, vec4
 ## Setup
 HUE_GREEN = 2 / 7
 YELLOW = im.color_convert_float4_to_u32((1, 1, 0, 1))
-YELLOW_DIMMED = im.color_convert_float4_to_u32((1, 1, 0, 0.1))
+YELLOW_DIMMED = im.color_convert_float4_to_u32((1, 1, 0, 0.25))
+COLOR_GRID = im.color_convert_float4_to_u32((1, 1, 1, 0.15))
 
 T = TypeVar("T")
 
@@ -83,13 +84,13 @@ class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
   radius: list[Frame[float]]
-  pos: list[Frame[ImVec2_Pydantic]]
+  center: list[Frame[ImVec2_Pydantic]]
 
   @classmethod
   def make(cls) -> Self:
     return cls(
       radius=[Frame(0, 0.5)],
-      pos=[Frame(0, ImVec2(0.0, 0.0))],
+      center=[Frame(0, ImVec2(0.0, 0.0))],
     )
 
   ##
@@ -100,15 +101,17 @@ class ColliderCapsule(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
   radius: list[Frame[float]] = field(default_factory=list)
-  pos1: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
-  pos2: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
+  center: list[Frame[ImVec2_Pydantic]] = field(default_factory=list)
+  rot: list[Frame[float]] = field(default_factory=list)
+  circles_spread: list[Frame[float]] = field(default_factory=list)
 
   @classmethod
   def make(cls) -> Self:
     return cls(
       radius=[Frame(0, 0.5)],
-      pos1=[Frame(0, ImVec2(0.0, -0.5))],
-      pos2=[Frame(0, ImVec2(0.0, 0.5))],
+      center=[Frame(0, ImVec2(0.0, 0.0))],
+      rot=[Frame(0, 0)],
+      circles_spread=[Frame(0, 0.5)],
     )
 
   ##
@@ -224,7 +227,10 @@ def _panel_attack_inspector() -> None:  ##
       flags |= im.TreeNodeFlags_.selected
     if im.tree_node_ex(f"{i} {collider.type.name}", flags):
       if im.is_item_clicked():
-        g.ref_selected_attack.ref_selected_collider = collider
+        if g.ref_selected_attack.ref_selected_collider is collider:
+          g.ref_selected_attack.ref_selected_collider = None
+        else:
+          g.ref_selected_attack.ref_selected_collider = collider
       im.tree_pop()
   ##
 
@@ -262,20 +268,28 @@ def _panel_visualizer() -> None:  ##
   model_ = model
   model = bf.mat_translate(model, -vec2(1, 1) * cells / 2)
   for x in range(cells + 1):
-    draw_line(vec2(x, 0), vec2(x, cells), YELLOW_DIMMED)
+    draw_line(vec2(x, 0), vec2(x, cells), COLOR_GRID)
   for y in range(cells + 1):
-    draw_line(vec2(0, y), vec2(cells, y), YELLOW_DIMMED)
+    draw_line(vec2(0, y), vec2(cells, y), COLOR_GRID)
   model = model_
 
+  sel_col = g.ref_selected_attack.ref_selected_collider
   for c in g.ref_selected_attack.colliders:
+    color = YELLOW
+    if (sel_col is not None) and (sel_col is not c):
+      color = YELLOW_DIMMED
+
     match c.type:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
-        draw_circle(vec2(), c.radius[0].value, YELLOW)
+        draw_circle(vec2(), c.radius[0].value, color)
+
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
-        draw_circle(_to_vec2(c.pos1[0].value), c.radius[0].value, YELLOW)
-        draw_circle(_to_vec2(c.pos2[0].value), c.radius[0].value, YELLOW)
+        dirr = glm.rotate(vec2(c.circles_spread[0].value / 2, 0), c.rot[0].value)
+        center = _to_vec2(c.center[0].value)
+        draw_circle(center + dirr, c.radius[0].value, color)
+        draw_circle(center - dirr, c.radius[0].value, color)
         # draw_line(vec2(), vec2(), YELLOW)
         # draw_line(vec2(), vec2(), YELLOW)
 
