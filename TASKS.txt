@@ -51,7 +51,8 @@ x markuper: catching exceptions
 x markuper: drew circle and capsule
 x markuper: better colliders
 
-* markuper:
+
+* markuper: can move collider
 * markuper:
 * markuper:
 * markuper:
@@ -67,6 +68,17 @@ x markuper: better colliders
 * markuper: attack inspector:
 * markuper:
 * markuper:
+* Docking Splits
+  runner_params.docking_params.docking_splits = [hello_imgui.DockingSplit(
+    initial_dock_="MainDockSpace",
+    new_dock_="EditorDock",
+    direction_=imgui.Dir.left,
+    ratio_=0.25,
+  )]
+  runner_params.docking_params.dockable_windows = [
+    hello_imgui.DockableWindow(label_="Editor", dock_space_name_="EditorDock"),
+    hello_imgui.DockableWindow(label_="Gizmo", dock_space_name_="MainDockSpace"),
+  ]
 * markuper:
 * markuper:
 * markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
