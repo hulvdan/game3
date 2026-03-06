@@ -19,13 +19,7 @@ from typing import List, Tuple
 from imgui_bundle import ImVec2, hello_imgui, imgui, imguizmo, immapp
 from imgui_bundle.demos_python.demo_utils.api_demos import GuiFunction
 
-try:
-  import glm  # pip install PyGLM
-except ModuleNotFoundError:
-  print(
-    "\nThis demo require PyGLM, please install it with this command:\n\n\tpip install PyGLM\n"
-  )
-  exit(1)
+from pyglm import glm
 
 
 gizmo = imguizmo.im_guizmo

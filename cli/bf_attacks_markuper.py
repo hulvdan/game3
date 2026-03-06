@@ -185,6 +185,8 @@ class State:
     perspective__cam_angle_x: float = radians(32)
     perspective__distance: float = 10
     perspective__view_dirty: bool = False
+
+    gizmoWindowFlags: im.WindowFlags_ = im.WindowFlags_.none
     ##
 
   visualizer: Visualizer = field(default_factory=Visualizer)
@@ -313,10 +315,15 @@ def _panel_visualizer() -> None:
   pos_ = im.get_cursor_screen_pos()
   size = _to_vec2(size_)
   pos = _to_vec2(pos_)
+  gvis = g.visualizer
+
+  gizmo.begin_frame()
+  gizmo.set_drawlist()
+  gizmo.set_rect(pos_.x, pos_.y, size_.x, size_.y)
   ##
 
   ## Old 2d
-  if 1:
+  if 0:
     draw.push_clip_rect(pos_, pos_ + size_)
 
     def draw_line(p1: vec2, p2: vec2, color: int = YELLOW):
@@ -367,11 +374,9 @@ def _panel_visualizer() -> None:
           # draw_line(vec2(), vec2(), YELLOW)
 
     draw.pop_clip_rect()
-  ##
+    ##
 
   ## 3D
-  gvis = g.visualizer
-
   if gvis.perspective__view_dirty or gvis.first_frame:
     gvis.first_frame = False
     eye = vec3(
@@ -403,29 +408,17 @@ def _panel_visualizer() -> None:
     )
 
   gizmo.set_orthographic(not gvis.is_perspective)
-  gizmo.set_rect(pos_.x, pos_.y, size_.x, size_.y)
   gizmo.draw_grid(gvis.camera_view, gvis.camera_projection, identity_matrix, cells / 2)
 
-  # gizmo.enable(True)
+  gizmo.manipulate(
+    gvis.camera_view,
+    gvis.camera_projection,
+    gizmo.OPERATION.rotate,
+    gizmo.MODE.local,
+    identity_matrix,
+  )
 
-  # gizmo.push_id(1)
-  # gizmo.manipulate(
-  #   gvis.camera_view,
-  #   gvis.camera_projection,
-  #   gizmo.OPERATION.translate,
-  #   gizmo.MODE.local,
-  #   identity_matrix,
-  #   None,
-  #   None,
-  #   None,
-  #   None,
-  #   # statics.snap if statics.useSnap else None,
-  #   # statics.bounds if statics.boundSizing else None,
-  #   # statics.boundsSnap if statics.boundSizingSnap else None,
-  # )
-
-  # gizmo.enable(True)
-  gizmo_size = 256
+  gizmo_size = 160
   gizmo.view_manipulate(
     gvis.camera_view,
     gvis.camera_projection,
@@ -444,7 +437,6 @@ def _panel_visualizer() -> None:
   #   ImVec2(256, 256),
   #   0x10101010,
   # )
-  # gizmo.pop_id()
   ##
 
 
@@ -544,8 +536,8 @@ def tool_attacks_markuper() -> None:
     await bf.show_imgui(
       "Attacks Markuper",
       [
-        bf.ImGuiPanel("Explorer", enable_debug(_panel_explorer)),
         bf.ImGuiPanel("Visualizer", enable_debug(_panel_visualizer)),
+        bf.ImGuiPanel("Explorer", enable_debug(_panel_explorer)),
         bf.ImGuiPanel("Timeline", enable_debug(_panel_timeline)),
         bf.ImGuiPanel("Attack Inspector", enable_debug(_panel_attack_inspector)),
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
