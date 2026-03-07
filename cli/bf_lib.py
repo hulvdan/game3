@@ -44,7 +44,7 @@ from imgui_bundle.demos_python import (
 from PIL import Image, ImageChops, ImageDraw, ImageEnhance
 from pydantic import BaseModel
 from pyglm import glm
-from pyglm.glm import mat3, vec2, vec3
+from pyglm.glm import mat3, mat4, vec2, vec3
 
 ##
 
@@ -2025,8 +2025,19 @@ def mat_translate(m: mat3, offset: vec2) -> mat3:
   return glm.translate(m, offset)  # type: ignore
 
 
-def m_pos(m: mat3, p: vec2) -> vec2:
-  return (m * vec3(p, 1)).xy  # type: ignore
+@t.overload
+def m_pos(m: mat3, p: vec2, /) -> vec2: ...
+
+
+@t.overload
+def m_pos(m: mat4, p: vec3, /) -> vec3: ...  # pyright: ignore[reportOverlappingOverload]
+
+
+def m_pos(m, p):
+  if isinstance(m, mat3):
+    return (m * vec3(p, 1)).xy  # type: ignore
+  else:
+    return (m * vec4(p, 1)).xyz  # type: ignore
 
 
 @t.overload

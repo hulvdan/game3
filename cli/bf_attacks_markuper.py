@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import IntEnum, unique
 from functools import partial, wraps
+from math import pi
 from pathlib import Path
 from typing import Generic, Self, TypeAlias, TypeVar
 
@@ -21,7 +22,7 @@ from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
 from pyglm import glm
-from pyglm.glm import degrees, mat3, mat4, pi, radians, vec2, vec3, vec4
+from pyglm.glm import degrees, mat3, mat4, radians, vec2, vec3, vec4
 
 ##
 
@@ -185,8 +186,6 @@ class State:
     perspective__cam_angle_x: float = radians(32)
     perspective__distance: float = 10
     perspective__view_dirty: bool = False
-
-    gizmoWindowFlags: im.WindowFlags_ = im.WindowFlags_.none
     ##
 
   visualizer: Visualizer = field(default_factory=Visualizer)
@@ -303,6 +302,21 @@ def _panel_attack_inspector() -> None:  ##
   ##
 
 
+@t.overload
+def _tuplify(v: vec2) -> tuple[float, float]: ...  # pyright: ignore[reportOverlappingOverload]
+
+
+@t.overload
+def _tuplify(v: vec3) -> tuple[float, float, float]: ...  # pyright: ignore[reportOverlappingOverload]
+
+
+def _tuplify(v):
+  if isinstance(v, vec2):
+    return (v.x, v.y)
+  else:
+    return (v.x, v.y, v.z)
+
+
 def _panel_visualizer() -> None:
   if g.ref_selected_attack is None:
     assert g.ref_selected_attack_creature is None
@@ -313,6 +327,7 @@ def _panel_visualizer() -> None:
   draw = im.get_foreground_draw_list()
   size_ = im.get_content_region_avail()
   pos_ = im.get_cursor_screen_pos()
+  viewport = vec4(pos_.x, pos_.y, size_.x, size_.y)
   size = _to_vec2(size_)
   pos = _to_vec2(pos_)
   gvis = g.visualizer
@@ -323,70 +338,66 @@ def _panel_visualizer() -> None:
   ##
 
   ## Old 2d
-  if 0:
-    draw.push_clip_rect(pos_, pos_ + size_)
+  # if 0:
+  #   draw.push_clip_rect(pos_, pos_ + size_)
 
-    def draw_line(p1: vec2, p2: vec2, color: int = YELLOW):
-      draw.add_line(_tuplify(bf.m_pos(model, p1)), _tuplify(bf.m_pos(model, p2)), color)
+  #   def draw_line_2d(p1: vec2, p2: vec2, color: int = YELLOW):
+  #     draw.add_line(_tuplify(bf.m_pos(model, p1)), _tuplify(bf.m_pos(model, p2)), color)
 
-    def draw_circle(p: vec2, radius: float, color: int = YELLOW):
-      draw.add_circle(_tuplify(bf.m_pos(model, p)), bf.m_size(model, radius), color)
+  #   def draw_circle_2d(p: vec2, radius: float, color: int = YELLOW):
+  #     draw.add_circle(_tuplify(bf.m_pos(model, p)), bf.m_size(model, radius), color)
 
-    model = mat3()
-    model = bf.mat_translate(model, pos + size / 2.0)
-    model = bf.mat_scale(model, bf.scale_to_fit(vec2_one, size) * 0.98)
-    model = bf.mat_scale(model, vec2_one / cells)
-    assert isinstance(model, mat3)
+  #   model = mat3()
+  #   model = bf.mat_translate(model, pos + size / 2.0)
+  #   model = bf.mat_scale(model, bf.scale_to_fit(vec2_one, size) * 0.98)
+  #   model = bf.mat_scale(model, vec2_one / cells)
+  #   assert isinstance(model, mat3)
 
-    def _tuplify(v: vec2) -> tuple[float, float]:
-      return (v.x, v.y)
+  #   # Drawing grid
+  #   model_ = model
+  #   model = bf.mat_translate(model, -vec2_one * cells / 2)
+  #   for x in range(cells + 1):
+  #     draw_line_2d(vec2(x, 0), vec2(x, cells), COLOR_GRID)
+  #   for y in range(cells + 1):
+  #     draw_line_2d(vec2(0, y), vec2(cells, y), COLOR_GRID)
+  #   model = model_
 
-    # Drawing grid
-    model_ = model
-    model = bf.mat_translate(model, -vec2_one * cells / 2)
-    for x in range(cells + 1):
-      draw_line(vec2(x, 0), vec2(x, cells), COLOR_GRID)
-    for y in range(cells + 1):
-      draw_line(vec2(0, y), vec2(cells, y), COLOR_GRID)
-    model = model_
+  #   sel_col = g.ref_selected_attack.ref_selected_collider
+  #   for c in g.ref_selected_attack.colliders:
+  #     color = YELLOW
+  #     if (sel_col is not None) and (sel_col is not c):
+  #       color = YELLOW_DIMMED
 
-    sel_col = g.ref_selected_attack.ref_selected_collider
-    for c in g.ref_selected_attack.colliders:
-      color = YELLOW
-      if (sel_col is not None) and (sel_col is not c):
-        color = YELLOW_DIMMED
+  #     match c.type:
+  #       case ColliderType.CIRCLE:
+  #         assert isinstance(c, ColliderCircle)
+  #         m = _to_mat4(c.center[0].value)
+  #         center = vec2(m * vec4(0, 0, 0, 1))
+  #         draw_circle_2d(center, c.radius[0].value, color)
 
-      match c.type:
-        case ColliderType.CIRCLE:
-          assert isinstance(c, ColliderCircle)
-          m = _to_mat4(c.center[0].value)
-          center = vec2(m * vec4(0, 0, 0, 1))
-          draw_circle(center, c.radius[0].value, color)
+  #       case ColliderType.CAPSULE:
+  #         assert isinstance(c, ColliderCapsule)
+  #         m = _to_mat4(c.center_and_rotation[0].value)
+  #         center = vec2(m * vec4(0, 0, 0, 1))
+  #         dirr = vec2(m * vec4(c.circles_spread[0].value / 2, 0, 0, 0))
+  #         draw_circle_2d(center + dirr, c.radius[0].value, color)
+  #         draw_circle_2d(center - dirr, c.radius[0].value, color)
+  #         # draw_line(vec2(), vec2(), YELLOW)
+  #         # draw_line(vec2(), vec2(), YELLOW)
 
-        case ColliderType.CAPSULE:
-          assert isinstance(c, ColliderCapsule)
-          m = _to_mat4(c.center_and_rotation[0].value)
-          center = vec2(m * vec4(0, 0, 0, 1))
-          dirr = vec2(m * vec4(c.circles_spread[0].value / 2, 0, 0, 0))
-          draw_circle(center + dirr, c.radius[0].value, color)
-          draw_circle(center - dirr, c.radius[0].value, color)
-          # draw_line(vec2(), vec2(), YELLOW)
-          # draw_line(vec2(), vec2(), YELLOW)
-
-    draw.pop_clip_rect()
-    ##
+  #   draw.pop_clip_rect()
+  ##
 
   ## 3D
   if gvis.perspective__view_dirty or gvis.first_frame:
     gvis.first_frame = False
-    eye = vec3(
-      math.cos(gvis.perspective__cam_angle_y)
-      * math.cos(gvis.perspective__cam_angle_x)
-      * gvis.perspective__distance,
-      math.sin(gvis.perspective__cam_angle_x) * gvis.perspective__distance,
-      math.sin(gvis.perspective__cam_angle_y)
-      * math.cos(gvis.perspective__cam_angle_x)
-      * gvis.perspective__distance,
+    eye = (
+      vec3(
+        math.cos(gvis.perspective__cam_angle_y) * math.cos(gvis.perspective__cam_angle_x),
+        math.sin(gvis.perspective__cam_angle_x),
+        math.sin(gvis.perspective__cam_angle_y) * math.cos(gvis.perspective__cam_angle_x),
+      )
+      * gvis.perspective__distance
     )
     gvis.camera_view = _to_Matrix16(glm.lookAt(eye, vec3_zero, vec3_up))
 
@@ -407,16 +418,66 @@ def _panel_visualizer() -> None:
       )
     )
 
+  model = _to_mat4(identity_matrix)
+  view = _to_mat4(gvis.camera_view)
+  projection = _to_mat4(gvis.camera_projection)
+  view_model = view * model
+  # view_model = model * view
+  view_projection = view * projection
+
+  vp: mat4 = projection * view  # type:ignore
+
+  def world_to_screen(p: vec3) -> vec2:
+    clip: vec4 = vp * vec4(p, 1.0)  # type: ignore
+
+    w = clip.w
+    # if w <= 0:
+    #     return None
+
+    inv = 1.0 / w
+    return vec2(
+      pos_.x + (clip.x * inv + 1.0) * size_.x * 0.5,
+      pos_.y + (1.0 - clip.y * inv) * size_.y * 0.5,
+    )
+
+  def draw_line(p1: vec3, p2: vec3, color: int = YELLOW):
+    draw.add_line(_tuplify(world_to_screen(p1)), _tuplify(world_to_screen(p2)), color)
+
+  def draw_polyline(
+    points: list[vec3], color: int = YELLOW, flags: im.ImDrawFlags_ = im.ImDrawFlags_.none
+  ):
+    draw.add_polyline([_tuplify(world_to_screen(x)) for x in points], color, flags, 1)
+
+  _draw_circle_points: list[vec3] = []
+
+  def draw_circle(
+    p: vec3,
+    radius: float,
+    color: int = YELLOW,
+    segments: int = 24,
+    normal: vec3 = vec3_up,
+  ):
+    m = glm.rotate(2.0 * pi / segments, normal)
+    cur = glm.cross(normal, vec3_forward)
+    for _ in range(segments):
+      _draw_circle_points.append(p + vec3(cur))
+      cur = m * cur
+    draw_polyline(_draw_circle_points, color, flags=im.ImDrawFlags_.closed)
+    _draw_circle_points.clear()
+
   gizmo.set_orthographic(not gvis.is_perspective)
   gizmo.draw_grid(gvis.camera_view, gvis.camera_projection, identity_matrix, cells / 2)
 
-  gizmo.manipulate(
-    gvis.camera_view,
-    gvis.camera_projection,
-    gizmo.OPERATION.rotate,
-    gizmo.MODE.local,
-    identity_matrix,
-  )
+  # gizmo.manipulate(
+  #   gvis.camera_view,
+  #   gvis.camera_projection,
+  #   gizmo.OPERATION.rotate,
+  #   gizmo.MODE.local,
+  #   identity_matrix,
+  # )
+
+  draw_line(vec3(1, 0, 1), vec3())
+  draw_circle(vec3(2, 0, 0), 1)
 
   gizmo_size = 160
   gizmo.view_manipulate(
