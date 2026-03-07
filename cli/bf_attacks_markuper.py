@@ -265,6 +265,7 @@ _gizmo_restricted: bool = False
 @contextmanager
 def gizmo_restrict(
   m: Matrix16,
+  mask: tuple[bool, bool, bool],
   disable_translation_x: bool = False,
   disable_translation_y: bool = False,
   disable_translation_z: bool = False,
@@ -272,7 +273,7 @@ def gizmo_restrict(
   global _gizmo_restricted
   assert not _gizmo_restricted
   _gizmo_restricted = True
-  gizmo.set_axis_mask(False, True, False)
+  gizmo.set_axis_mask(*mask)
   comps = gizmo.decompose_matrix_to_components(m)
   yield
   gizmo.set_axis_mask(True, True, True)
@@ -766,22 +767,23 @@ def _panel_visualizer() -> None:
         center = c.center[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
-            with gizmo_restrict(center, disable_translation_y=True):
+            with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
               gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
           case GizmoMode.ROTATE:
             error("Can't use ROTATE on CIRCLE collider")
           case GizmoMode.SCALE:
-            error("Can't use SCALE on CIRCLE collider")
+            with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
+              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
         center = c.center_and_rotation[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
-            with gizmo_restrict(center, disable_translation_y=True):
+            with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
               gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
           case GizmoMode.ROTATE:
-            with gizmo_restrict(center, disable_translation_y=True):
+            with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
               gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
           case GizmoMode.SCALE:
             error("Can't use SCALE on CIRCLE collider")

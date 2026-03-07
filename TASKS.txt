@@ -39,9 +39,16 @@ x markuper: better capsule draw
 x markuper: capsule draw outline
 x f
 x markuper: capsule rotate
+x markuper: circle scale (acquire radius from scale)
 
-* markuper: circle scale (acquire radius from scale)
-*
+* markuper: capsule scale affects radius and spread
+* markuper: can change capsule spread
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
+* markuper:
 * markuper: where can i get diamond icon (look inside demos!!!)
 * markuper: attack inspector: GAttackConditionValue
 * markuper: attack inspector: colliders with keyframe animations
