@@ -40,6 +40,7 @@ x markuper: capsule draw outline
 x f
 x markuper: capsule rotate
 x markuper: circle scale (acquire radius from scale)
+x markuper: moving world space
 
 * markuper: capsule scale affects radius and spread
 * markuper: can change capsule spread

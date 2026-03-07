@@ -754,7 +754,7 @@ def _panel_visualizer() -> None:
         GizmoMode.ROTATE: gizmo.OPERATION.rotate_y,
         GizmoMode.SCALE: gizmo.OPERATION.scale,
       }[vis.gizmo_mode],
-      mode=gizmo.MODE.local,
+      mode=gizmo.MODE.world,
       snap={
         GizmoMode.TRANSLATE: SNAP_TRANSLATE,
         GizmoMode.ROTATE: SNAP_ROTATE,
