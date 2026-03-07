@@ -198,8 +198,6 @@ async def _background_dump_run_data():
 
 @command
 def tool_attacks_markuper() -> None:
-  # gizmo.set_axis_mask(False, False, True)
-
   g.creatures = [
     Creature(
       name="MOB_SPEAR",
@@ -347,13 +345,6 @@ class ColliderType(IntEnum):  ##
   ##
 
 
-@dataclass(slots=True)
-class Frame(Generic[T]):  ##
-  index: int
-  value: T
-  ##
-
-
 class ColliderBase:  ##
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
 
@@ -397,6 +388,13 @@ class ColliderCapsule(ColliderBase):  ##
       circles_spread=[Frame(0, 1)],
     )
 
+  ##
+
+
+@dataclass(slots=True)
+class Frame(Generic[T]):  ##
+  index: int
+  value: T
   ##
 
 
