@@ -33,10 +33,11 @@ x markuper: selecting collider changes it to blue. COG support
 x markuper: hovering collider dims others
 x markuper: clip
 x markuper: fix: make it impossible to change y of circle
+x markuper: angle snap 15, pos snap 0.25?
 
-* markuper: angle snap 15, pos snap 0.25?
-*
+* markuper: circle radius / 2
 * markuper: circle scale (acquire radius from scale)
+* markuper: capsule rotate
 *
 * markuper: where can i get diamond icon (look inside demos!!!)
 * markuper: attack inspector: GAttackConditionValue

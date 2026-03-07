@@ -29,8 +29,6 @@ from pyglm.glm import degrees, mat3, mat4, radians, vec2, vec3, vec4
 
 
 ## Setup
-
-
 def color_hsva(h: float, s: float = 1, v: float = 1, a: float = 1) -> im.ImColor:
   result = im.ImColor.hsv(h, s, v)
   result.value.w = a
@@ -144,6 +142,13 @@ gizmo = imguizmo.im_guizmo
 Matrix16: TypeAlias = imguizmo.im_guizmo.Matrix16
 Matrix6: TypeAlias = imguizmo.im_guizmo.Matrix6
 Matrix3: TypeAlias = imguizmo.im_guizmo.Matrix3
+
+SNAP_TRANSLATION = Matrix3()
+SNAP_TRANSLATION.values[:] = 0.25
+SNAP_ROTATION = Matrix3()
+SNAP_ROTATION.values[:] = 15
+SNAP_SCALE = Matrix3()
+SNAP_SCALE.values[:] = 0.25
 
 
 # fmt: off
@@ -693,6 +698,7 @@ def _panel_visualizer() -> None:
             gizmo.OPERATION.translate,
             gizmo.MODE.local,
             center,
+            snap=SNAP_TRANSLATION,
           )
 
   gizmo_size = 120 * im.get_window_dpi_scale()
