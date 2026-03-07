@@ -32,8 +32,8 @@ x markuper: can move collider using gizmo
 x markuper: selecting collider changes it to blue. COG support
 x markuper: hovering collider dims others
 x markuper: clip
+x markuper: fix: make it impossible to change y of circle
 
-* markuper: fix: make it impossible to change y of circle
 * markuper: angle snap 15, pos snap 0.25?
 *
 * markuper: circle scale (acquire radius from scale)

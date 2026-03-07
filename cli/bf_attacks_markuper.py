@@ -257,10 +257,28 @@ def tool_attacks_markuper() -> None:
 
 
 @contextmanager
-def _gizmo_axis_mask_no_y(m: Matrix16):
+def gizmo_restrict(
+  m: Matrix16,
+  disable_translation_x: bool = False,
+  disable_translation_y: bool = False,
+  disable_translation_z: bool = False,
+):
   gizmo.set_axis_mask(False, True, False)
+  comps = gizmo.decompose_matrix_to_components(m)
   yield
   gizmo.set_axis_mask(True, True, True)
+  comps_new = gizmo.decompose_matrix_to_components(m)
+
+  should_override = False
+  for i, v in enumerate(
+    (disable_translation_x, disable_translation_y, disable_translation_z)
+  ):
+    if v:
+      if comps_new.translation.values[i] != (c := comps.translation.values[i]):
+        comps_new.translation.values[i] = c
+        should_override = True
+  if should_override:
+    m.values[:] = gizmo.recompose_matrix_from_components(comps_new).values
 
 
 @t.overload
@@ -668,7 +686,7 @@ def _panel_visualizer() -> None:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
         center = c.center[0].value
-        with _gizmo_axis_mask_no_y(center):
+        with gizmo_restrict(center, disable_translation_y=True):
           gizmo.manipulate(
             vis.camera_view,
             vis.camera_projection,
