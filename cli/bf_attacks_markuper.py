@@ -261,6 +261,9 @@ def tool_attacks_markuper() -> None:
   asyncio.run(wrapper(), debug=True)
 
 
+_gizmo_restricted: bool = False
+
+
 @contextmanager
 def gizmo_restrict(
   m: Matrix16,
@@ -268,6 +271,9 @@ def gizmo_restrict(
   disable_translation_y: bool = False,
   disable_translation_z: bool = False,
 ):
+  global _gizmo_restricted
+  assert not _gizmo_restricted
+  _gizmo_restricted = True
   gizmo.set_axis_mask(False, True, False)
   comps = gizmo.decompose_matrix_to_components(m)
   yield
@@ -284,6 +290,7 @@ def gizmo_restrict(
         should_override = True
   if should_override:
     m.values[:] = gizmo.recompose_matrix_from_components(comps_new).values
+  _gizmo_restricted = False
 
 
 @t.overload
@@ -428,7 +435,7 @@ class State:
     fov: float = 27.0
     is_perspective: bool = True
     ortho__view_width: float = 10.0
-    perspective__cam_angle_y: float = radians(165)
+    perspective__cam_angle_y: float = radians(90)
     perspective__cam_angle_x: float = radians(32)
     perspective__distance: float = 10
     perspective__view_dirty: bool = False
@@ -623,6 +630,7 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
+    assert segments >= 8
     assert radius > 0
     assert isinstance(p, vec3)
     assert glm.dot(plane[1], plane[0]) < 0.00001
@@ -645,6 +653,7 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
+    assert segments >= 8
     assert spread > 0
     assert radius > 0
     assert isinstance(p, vec3)
@@ -653,20 +662,25 @@ def _panel_visualizer() -> None:
     normal = glm.cross(plane[1], plane[0])
     assert abs(glm.length(normal) - 1) < 0.00001
     m = glm.rotate(2.0 * pi / segments, normal)
-    if spread == 0:
+    if spread <= 0:
       draw_circle(p, radius, color, segments, plane)
-    else:
-      for i in range(-1, 3, 2):
-        draw_circle(p + plane[0] * (spread * (i - 1) / 2), radius, color, segments, plane)
-    # cur = glm.cross(normal, glm.normalize(p2 - p1)) * radius
-    # for _ in range(segments // 2):
-    #   _draw_points.append(p + vec3(cur))
-    #   cur = m * cur
-    # for _ in range(segments // 2):
-    #   _draw_points.append(p + vec3(cur))
-    #   cur = m * cur
-    # draw_polyline(_draw_points, color, flags=im.ImDrawFlags_.closed)
-    # _draw_points.clear()
+      return
+
+    spread_vector = plane[0] * spread
+    p1 = p + spread_vector / 2
+    p2 = p - spread_vector / 2
+
+    cur = glm.cross(normal, glm.normalize(p2 - p1)) * radius
+    for _ in range(segments // 2 + 1):
+      _draw_points.append(p + vec3(cur))
+      cur = m * cur
+    off = -spread_vector
+    _draw_points.append(_draw_points[-1] + off)
+    for _ in range(segments // 2):
+      _draw_points.append(p + vec3(cur) + off)
+      cur = m * cur
+    draw_polyline(_draw_points, color, flags=im.ImDrawFlags_.closed)
+    _draw_points.clear()
 
   gizmo.begin_frame()
   gizmo.set_drawlist()
@@ -706,19 +720,23 @@ def _panel_visualizer() -> None:
         assert 0
 
   if c := atk.ref_selected_collider:
+    manipulate_args = (
+      vis.camera_view,
+      vis.camera_projection,
+      gizmo.OPERATION.translate,
+      gizmo.MODE.local,
+    )
     match c.type:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
         center = c.center[0].value
         with gizmo_restrict(center, disable_translation_y=True):
-          gizmo.manipulate(
-            vis.camera_view,
-            vis.camera_projection,
-            gizmo.OPERATION.translate,
-            gizmo.MODE.local,
-            center,
-            snap=SNAP_TRANSLATION,
-          )
+          gizmo.manipulate(*manipulate_args, center, snap=SNAP_TRANSLATION)
+      case ColliderType.CAPSULE:
+        assert isinstance(c, ColliderCapsule)
+        center = c.center_and_rotation[0].value
+        with gizmo_restrict(center, disable_translation_y=True):
+          gizmo.manipulate(*manipulate_args, center, snap=SNAP_TRANSLATION)
 
   gizmo_size = 120 * im.get_window_dpi_scale()
   gizmo.view_manipulate(

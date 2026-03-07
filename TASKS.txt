@@ -36,8 +36,8 @@ x markuper: fix: make it impossible to change y of circle
 x markuper: angle snap 15, pos snap 0.25?
 x markuper: circle radius / 2
 x markuper: better capsule draw
+x markuper: capsule draw outline
 
-* markuper: circle draw outline
 * markuper: capsule rotate
 * markuper: circle scale (acquire radius from scale)
 *
