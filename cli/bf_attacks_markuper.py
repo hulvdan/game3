@@ -257,7 +257,7 @@ def tool_attacks_markuper() -> None:
 
 
 @contextmanager
-def _gizmo_axis_mask_no_y():
+def _gizmo_axis_mask_no_y(m: Matrix16):
   gizmo.set_axis_mask(False, True, False)
   yield
   gizmo.set_axis_mask(True, True, True)
@@ -488,9 +488,11 @@ def _panel_attack_inspector() -> None:  ##
   with bf.imgui_colorify_button(HUE_GREEN):
     if im.button("+circle"):
       atk.colliders.append(ColliderCircle.make())
+      atk.ref_selected_collider = atk.colliders[-1]
     im.same_line()
     if im.button("+capsule"):
       atk.colliders.append(ColliderCapsule.make())
+      atk.ref_selected_collider = atk.colliders[-1]
 
   atk.ref_hovered_collider = None
   for i, collider in enumerate(atk.colliders):
@@ -525,6 +527,8 @@ def _panel_visualizer() -> None:
   pos = _to_vec2(pos_)
   vis = g.visualizer
   ##
+
+  draw.push_clip_rect(pos_, pos_ + size_, True)
 
   ## Matrices
   if vis.perspective__view_dirty or vis.first_frame:
@@ -578,14 +582,14 @@ def _panel_visualizer() -> None:
 
   ## Draw functions
   def draw_line(p1: vec3, p2: vec3, color: int = COLOR_YELLOW):
-    draw.add_line(_tuplify(world_to_screen(p1)), _tuplify(world_to_screen(p2)), color)
+    draw.add_line(_tuplify(world_to_screen(p1)), _tuplify(world_to_screen(p2)), color, 2)
 
   def draw_polyline(
     points: list[vec3],
     color: int = COLOR_YELLOW,
     flags: im.ImDrawFlags_ = im.ImDrawFlags_.none,
   ):
-    draw.add_polyline([_tuplify(world_to_screen(x)) for x in points], color, flags, 1)
+    draw.add_polyline([_tuplify(world_to_screen(x)) for x in points], color, flags, 2)
 
   _draw_circle_points: list[vec3] = []
 
@@ -664,7 +668,7 @@ def _panel_visualizer() -> None:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
         center = c.center[0].value
-        with _gizmo_axis_mask_no_y():
+        with _gizmo_axis_mask_no_y(center):
           gizmo.manipulate(
             vis.camera_view,
             vis.camera_projection,
@@ -686,6 +690,8 @@ def _panel_visualizer() -> None:
     0x20FFFFFF,
   )
   ##
+
+  draw.pop_clip_rect()
 
 
 def _panel_timeline() -> None:  ##

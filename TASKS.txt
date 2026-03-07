@@ -30,11 +30,14 @@ x clear
 x markuper: drew 3d circle
 x markuper: can move collider using gizmo
 x markuper: selecting collider changes it to blue. COG support
+x markuper: hovering collider dims others
+x markuper: clip
 
+* markuper: fix: make it impossible to change y of circle
 * markuper: angle snap 15, pos snap 0.25?
-* markuper: hovering collider dims others
 *
-* markuper: circle acquire radius from scale
+* markuper: circle scale (acquire radius from scale)
+*
 * markuper: where can i get diamond icon (look inside demos!!!)
 * markuper: attack inspector: GAttackConditionValue
 * markuper: attack inspector: colliders with keyframe animations
