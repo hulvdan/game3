@@ -614,40 +614,59 @@ def _panel_visualizer() -> None:
   ):
     draw.add_polyline([_tuplify(world_to_screen(x)) for x in points], color, flags, 2)
 
-  _draw_circle_points: list[vec3] = []
+  _draw_points: list[vec3] = []
 
   def draw_circle(
     p: vec3,
     radius: float,
     color: int = COLOR_YELLOW,
     segments: int = 24,
-    normal: vec3 = vec3_up,
+    plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
+    assert radius > 0
+    assert isinstance(p, vec3)
+    assert glm.dot(plane[1], plane[0]) < 0.00001
+    normal = glm.cross(plane[0], plane[1])
+    assert abs(glm.length(normal) - 1) < 0.00001
     m = glm.rotate(2.0 * pi / segments, normal)
     cur = glm.cross(normal, vec3_forward) * radius
     for _ in range(segments):
-      _draw_circle_points.append(p + vec3(cur))
+      _draw_points.append(p + vec3(cur))
       cur = m * cur
-    draw_polyline(_draw_circle_points, color, flags=im.ImDrawFlags_.closed)
-    _draw_circle_points.clear()
+    draw_polyline(_draw_points, color, flags=im.ImDrawFlags_.closed)
+    _draw_points.clear()
 
   def draw_capsule(
-    p1: vec3,
-    p2: vec3,
+    p: vec3,
+    spread: float,
     radius: float,
+    angle: float,
     color: int = COLOR_YELLOW,
-    circle_segments: int = 24,
-    normal: vec3 = vec3_up,
+    segments: int = 24,
+    plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
-    # m = glm.rotate(2.0 * pi / segments, normal)
-    # cur = glm.cross(normal, vec3_forward)
-    # for _ in range(segments):
-    #   _draw_circle_points.append(p + vec3(cur))
+    assert spread > 0
+    assert radius > 0
+    assert isinstance(p, vec3)
+    assert segments % 2 == 0
+    assert glm.dot(plane[0], plane[1]) < 0.00001
+    normal = glm.cross(plane[1], plane[0])
+    assert abs(glm.length(normal) - 1) < 0.00001
+    m = glm.rotate(2.0 * pi / segments, normal)
+    if spread == 0:
+      draw_circle(p, radius, color, segments, plane)
+    else:
+      for i in range(-1, 3, 2):
+        draw_circle(p + plane[0] * (spread * (i - 1) / 2), radius, color, segments, plane)
+    # cur = glm.cross(normal, glm.normalize(p2 - p1)) * radius
+    # for _ in range(segments // 2):
+    #   _draw_points.append(p + vec3(cur))
     #   cur = m * cur
-    # draw_polyline(_draw_circle_points, color, flags=im.ImDrawFlags_.closed)
-    # _draw_circle_points.clear()
-    draw_circle(p1, radius, color, segments=circle_segments, normal=normal)
-    draw_circle(p2, radius, color, segments=circle_segments, normal=normal)
+    # for _ in range(segments // 2):
+    #   _draw_points.append(p + vec3(cur))
+    #   cur = m * cur
+    # draw_polyline(_draw_points, color, flags=im.ImDrawFlags_.closed)
+    # _draw_points.clear()
 
   gizmo.begin_frame()
   gizmo.set_drawlist()
@@ -681,7 +700,7 @@ def _panel_visualizer() -> None:
         center = vec3(m * vec4(0, 0, 0, 1))
         dirr = vec3(m * vec4(c.circles_spread[0].value / 2, 0, 0, 0))
         r = (m * vec4(0.5, 0, 0, 0)).x
-        draw_capsule(center + dirr, center - dirr, r, color)
+        draw_capsule(center + dirr, 1, r, 0, color)
 
       case _:
         assert 0
