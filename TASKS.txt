@@ -34,8 +34,8 @@ x markuper: hovering collider dims others
 x markuper: clip
 x markuper: fix: make it impossible to change y of circle
 x markuper: angle snap 15, pos snap 0.25?
+x markuper: circle radius / 2
 
-* markuper: circle radius / 2
 * markuper: circle scale (acquire radius from scale)
 * markuper: capsule rotate
 *

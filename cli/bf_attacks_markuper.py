@@ -624,7 +624,7 @@ def _panel_visualizer() -> None:
     normal: vec3 = vec3_up,
   ) -> None:
     m = glm.rotate(2.0 * pi / segments, normal)
-    cur = glm.cross(normal, vec3_forward)
+    cur = glm.cross(normal, vec3_forward) * radius
     for _ in range(segments):
       _draw_circle_points.append(p + vec3(cur))
       cur = m * cur
