@@ -38,8 +38,8 @@ x markuper: circle radius / 2
 x markuper: better capsule draw
 x markuper: capsule draw outline
 x f
+x markuper: capsule rotate
 
-* markuper: capsule rotate
 * markuper: circle scale (acquire radius from scale)
 *
 * markuper: where can i get diamond icon (look inside demos!!!)

@@ -143,10 +143,10 @@ Matrix16: TypeAlias = imguizmo.im_guizmo.Matrix16
 Matrix6: TypeAlias = imguizmo.im_guizmo.Matrix6
 Matrix3: TypeAlias = imguizmo.im_guizmo.Matrix3
 
-SNAP_TRANSLATION = Matrix3()
-SNAP_TRANSLATION.values[:] = 0.25
-SNAP_ROTATION = Matrix3()
-SNAP_ROTATION.values[:] = 15
+SNAP_TRANSLATE = Matrix3()
+SNAP_TRANSLATE.values[:] = 0.25
+SNAP_ROTATE = Matrix3()
+SNAP_ROTATE.values[:] = 15
 SNAP_SCALE = Matrix3()
 SNAP_SCALE.values[:] = 0.25
 
@@ -337,6 +337,13 @@ def input_only_first_value_matrix3(label: str, matrix3: Matrix3) -> tuple[bool, 
 ##
 
 
+@dataclass(slots=True)
+class Frame(Generic[T]):  ##
+  index: int
+  value: T
+  ##
+
+
 @unique
 class ColliderType(IntEnum):  ##
   INVALID = 0
@@ -392,13 +399,6 @@ class ColliderCapsule(ColliderBase):  ##
 
 
 @dataclass(slots=True)
-class Frame(Generic[T]):  ##
-  index: int
-  value: T
-  ##
-
-
-@dataclass(slots=True)
 class Attack:  ##
   name: str
   colliders: list[ColliderBase] = field(default_factory=list)
@@ -415,11 +415,18 @@ class Creature:  ##
   ##
 
 
+@unique
+class GizmoMode(IntEnum):
+  TRANSLATE = 0
+  ROTATE = 1
+  SCALE = 2
+
+
 class AppSaveState(BaseModel):  ##
   font_scale_main: float = 1
   creature: str | None = None
   attack: str | None = None
-  collider_index: int | None = None
+  visualizer__gizmo_mode: int = GizmoMode.TRANSLATE
   ##
 
 
@@ -433,10 +440,11 @@ class State:
     fov: float = 27.0
     is_perspective: bool = True
     ortho__view_width: float = 10.0
-    perspective__cam_angle_y: float = radians(90)
+    perspective__cam_angle_y: float = radians(105)
     perspective__cam_angle_x: float = radians(32)
     perspective__distance: float = 10
     perspective__view_dirty: bool = False
+    gizmo_mode: GizmoMode = GizmoMode.TRANSLATE
     ##
 
   visualizer: Visualizer = field(default_factory=Visualizer)
@@ -456,6 +464,7 @@ class State:
   scheduled_dump: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(0))
 
   def dump(self) -> AppSaveState:  ##
+    vis = self.visualizer
     return AppSaveState(
       font_scale_main=im.get_style().font_scale_main,
       creature=(
@@ -464,6 +473,7 @@ class State:
         else None
       ),
       attack=self.ref_selected_attack.name if self.ref_selected_attack else None,
+      visualizer__gizmo_mode=vis.gizmo_mode,
     )
     ##
 
@@ -664,7 +674,7 @@ def _panel_visualizer() -> None:
       draw_circle(p, radius, color, segments, plane)
       return
 
-    spread_vector = plane[0] * spread
+    spread_vector = vec3(glm.rotate(angle, normal) * vec4(plane[0] * spread, 0))
     p1 = p + spread_vector / 2
     p2 = p - spread_vector / 2
 
@@ -703,7 +713,7 @@ def _panel_visualizer() -> None:
         assert isinstance(c, ColliderCircle)
         m = _to_mat4(c.center[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
-        r = (m * vec4(0.5, 0, 0, 0)).x
+        r = glm.length(m * vec4(0.5, 0, 0, 0))
         draw_circle(center, r, color)
 
       case ColliderType.CAPSULE:
@@ -711,30 +721,70 @@ def _panel_visualizer() -> None:
         m = _to_mat4(c.center_and_rotation[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         dirr = vec3(m * vec4(c.circles_spread[0].value / 2, 0, 0, 0))
-        r = (m * vec4(0.5, 0, 0, 0)).x
-        draw_capsule(center + dirr, 1, r, 0, color)
+        r_vec = vec3(m * vec4(0.5, 0, 0, 0))
+        angle = -glm.atan2(r_vec.z, r_vec.x)
+        r = glm.length(r_vec)
+        draw_capsule(center + dirr, 1, r, angle, color)
 
       case _:
         assert 0
 
+  if im.is_key_pressed(im.Key.t) or im.is_key_pressed(im.Key._1):
+    vis.gizmo_mode = GizmoMode.TRANSLATE
+  elif im.is_key_pressed(im.Key.r) or im.is_key_pressed(im.Key._2):
+    vis.gizmo_mode = GizmoMode.ROTATE
+  elif im.is_key_pressed(im.Key.s) or im.is_key_pressed(im.Key._3):
+    vis.gizmo_mode = GizmoMode.SCALE
+
+  def error(message: str) -> None:
+    im.push_style_color(im.Col_.child_bg, (0.2, 0.1, 0.1, 1.0))
+    avail = im.get_content_region_avail()
+    im.begin_child("visualizer_error_bar", ImVec2(size_.x, 25))
+    im.text(message)
+    im.end_child()
+    im.pop_style_color()
+
   if c := atk.ref_selected_collider:
-    manipulate_args = (
-      vis.camera_view,
-      vis.camera_projection,
-      gizmo.OPERATION.translate,
-      gizmo.MODE.local,
+    manipulate_kwargs = dict(
+      view=vis.camera_view,
+      projection=vis.camera_projection,
+      operation={
+        GizmoMode.TRANSLATE: gizmo.OPERATION.translate,
+        GizmoMode.ROTATE: gizmo.OPERATION.rotate_y,
+        GizmoMode.SCALE: gizmo.OPERATION.scale,
+      }[vis.gizmo_mode],
+      mode=gizmo.MODE.local,
+      snap={
+        GizmoMode.TRANSLATE: SNAP_TRANSLATE,
+        GizmoMode.ROTATE: SNAP_ROTATE,
+        GizmoMode.SCALE: SNAP_SCALE,
+      }[vis.gizmo_mode],
     )
     match c.type:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
         center = c.center[0].value
-        with gizmo_restrict(center, disable_translation_y=True):
-          gizmo.manipulate(*manipulate_args, center, snap=SNAP_TRANSLATION)
+        match vis.gizmo_mode:
+          case GizmoMode.TRANSLATE:
+            with gizmo_restrict(center, disable_translation_y=True):
+              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
+          case GizmoMode.ROTATE:
+            error("Can't use ROTATE on CIRCLE collider")
+          case GizmoMode.SCALE:
+            error("Can't use SCALE on CIRCLE collider")
+
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
         center = c.center_and_rotation[0].value
-        with gizmo_restrict(center, disable_translation_y=True):
-          gizmo.manipulate(*manipulate_args, center, snap=SNAP_TRANSLATION)
+        match vis.gizmo_mode:
+          case GizmoMode.TRANSLATE:
+            with gizmo_restrict(center, disable_translation_y=True):
+              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
+          case GizmoMode.ROTATE:
+            with gizmo_restrict(center, disable_translation_y=True):
+              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
+          case GizmoMode.SCALE:
+            error("Can't use SCALE on CIRCLE collider")
 
   gizmo_size = 120 * im.get_window_dpi_scale()
   gizmo.view_manipulate(
