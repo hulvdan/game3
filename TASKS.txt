@@ -27,41 +27,11 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x markuper: docking setup
-x markuper: added imgui-bundle
-x markuper: maximized
-x markuper: my own tabs
-x markuper: remember windows size / maximized state, remember docks
-x markuper: ref
-x markuper: selecting attack+creature
-x markuper: logs
-x markuper: saving state
-x markuper: explorer nodes are opened by default
-x docs
-x markuper: attack inspector: dataclasses
-x markuper: attack inspector: button create collider circle
-x markuper: attack inspector: button create collider capsule
-x markuper: remember font scale
-x markuper: drew circle
-x markuper: pyglm
-x markuper: drew grid
-x markuper: draw circle inside Visualizer viewport
-x markuper: log time
-x markuper: ref
-x markuper: restrict drawing to viewport (SCISSOR)
-x markuper: circle is in (0, 0)
-x markuper: catching exceptions
-x markuper: drew circle and capsule
-x markuper: better colliders
-x markuper: circle also has mat4
-x markuper: displayed view cube
-x markuper: ПРОСТО ДОБАВИТЬ МОДЕЛЬ НА ЭКРАН
-x markuper: imguizmo works
 x markuper: drew 3d circle
 x markuper: can move collider using gizmo
+x markuper: selecting collider changes it to blue. COG support
 
 * markuper: angle snap 15, pos snap 0.25?
-* markuper: selecting collider changes it to blue
 * markuper: hovering collider dims others
 *
 * markuper: circle acquire radius from scale

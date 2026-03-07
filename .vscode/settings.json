@@ -55,7 +55,7 @@
     },
     {
       "match": ".py$",
-      "command": "uv run ruff format ${file} && uv run ruff check --select I ${file} --fix",
+      "command": "uv run cog -n utf-8 -U -r -P ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix",
       "runIn": "backend"
     }
     // {
