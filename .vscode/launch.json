@@ -8,7 +8,7 @@
       "name": "build",
       "type": "debugpy",
       "request": "launch",
-      "program": "cli/bf_cli.py",
+      "module": "cli.bf_cli",
       "args": [
         "run"
       ],
@@ -19,7 +19,7 @@
       "name": "process_images",
       "type": "debugpy",
       "request": "launch",
-      "program": "cli/bf_cli.py",
+      "module": "cli.bf_cli",
       "args": [
         "process_images"
       ],
@@ -30,7 +30,7 @@
       "name": "codegen",
       "type": "debugpy",
       "request": "launch",
-      "program": "cli/bf_cli.py",
+      "module": "cli.bf_cli",
       "args": [
         "codegen",
         "windows",
@@ -43,7 +43,7 @@
       "name": "temp",
       "type": "debugpy",
       "request": "launch",
-      "program": "cli/bf_cli.py",
+      "module": "cli.bf_cli",
       "args": [
         "temp"
       ],
@@ -54,7 +54,7 @@
       "name": "tool_attacks_markuper",
       "type": "debugpy",
       "request": "launch",
-      "program": "cli/bf_cli.py",
+      "module": "cli.bf_cli",
       "args": [
         "tool_attacks_markuper"
       ],

@@ -21,7 +21,6 @@ import fnvhash
 import numpy as np
 import pydantic_core
 import pyfiglet
-from bf_typer import log
 from imgui_bundle import hello_imgui, imgui, immapp
 from imgui_bundle.demos_python import (
   demo_im_anim,
@@ -45,6 +44,8 @@ from PIL import Image, ImageChops, ImageDraw, ImageEnhance
 from pydantic import BaseModel
 from pyglm import glm
 from pyglm.glm import mat3, mat4, vec2, vec3
+
+from .bf_typer import log
 
 ##
 
@@ -980,7 +981,7 @@ def im_outline(
   assert threshold >= 0
 
   if len(color) == 3:
-    color = (*color, 255)
+    color = (*color, 255)  # type: ignore
 
   img = np.asarray(image)
 
@@ -1009,7 +1010,7 @@ def im_outline(
     extend_padding,
     extend_padding,
     cv2.BORDER_CONSTANT,
-    value=0,  # type: ignore
+    value=0,
   )
   bigger_img = cv2.merge((bigger_img, alpha))
   h, w, _ = bigger_img.shape
@@ -1030,13 +1031,13 @@ def im_outline(
   stroke_b = np.full((h, w), color[0], np.uint8)
   stroke_g = np.full((h, w), color[1], np.uint8)
   stroke_r = np.full((h, w), color[2], np.uint8)
-  stroke_alpha = (stroked * color[3]).astype(np.uint8)
+  stroke_alpha = (stroked * color[3]).astype(np.uint8)  # type: ignore
 
   stroke = cv2.merge((stroke_b, stroke_g, stroke_r, stroke_alpha))
   stroke = _cv2pil(stroke)
   if blend_image_on_top:
     bigger_img = _cv2pil(bigger_img)
-    stroke = Image.alpha_composite(stroke, bigger_img)  # type: ignore
+    stroke = Image.alpha_composite(stroke, bigger_img)
   return stroke
   ##
 
@@ -2018,11 +2019,11 @@ def scale_to_fit(inner, outer):  ##
 
 
 def mat_scale(m: mat3, v: float | vec2) -> mat3:
-  return glm.scale(m, vec2(1, 1) * v)  # type: ignore
+  return glm.scale(m, vec2(1, 1) * v)
 
 
 def mat_translate(m: mat3, offset: vec2) -> mat3:
-  return glm.translate(m, offset)  # type: ignore
+  return glm.translate(m, offset)
 
 
 @t.overload
@@ -2055,4 +2056,4 @@ def m_size(m: mat3, v: vec2 | float | int) -> vec2 | float | int:
   return result
 
 
-from bf_game import *  # noqa
+from .bf_game import *  # noqa

@@ -86,9 +86,10 @@ def timing(f: Callable[P, T]) -> Callable[P, T]:  ##
       _timing_recursion_depth -= 1
 
       elapsed = time() - started_at
-      log.info("Running '{}' took: {:.2f} ms".format(f.__name__, elapsed * 1000))
+      fname = f.__name__  # type: ignore
+      log.info("Running '{}' took: {:.2f} ms".format(fname, elapsed * 1000))
 
-      old_stack.append((f.__name__, elapsed, timings_stack, _timing_marks))
+      old_stack.append((fname, elapsed, timings_stack, _timing_marks))
 
       timings_stack = old_stack
       _timing_marks = old_timing_marks
@@ -181,8 +182,8 @@ globals()["exit"] = timed_exit
 
 
 def hook_exit():
-  global exit
-  exit = timed_exit  # type: ignore[name-defined]  # noqa: A001
+  global exit  # type: ignore
+  exit = timed_exit  # noqa: A001
 
 
 app = typer.Typer(
@@ -191,7 +192,7 @@ app = typer.Typer(
 
 
 def command(f: Callable[P, T]) -> Callable[P, T]:
-  return app.command(f.__name__)(f)
+  return app.command(f.__name__)(f)  # type: ignore
 
 
 ###

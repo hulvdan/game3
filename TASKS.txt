@@ -41,7 +41,14 @@ x f
 x markuper: capsule rotate
 x markuper: circle scale (acquire radius from scale)
 x markuper: moving world space
+x fucked with lsps
+x ref
+x ty
 
+* markuper: scaled capsule properly spreads
+* WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
+* markuper:
+* markuper:
 * markuper: capsule scale affects radius and spread
 * markuper: can change capsule spread
 * markuper: maybe just store matrices?

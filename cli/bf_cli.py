@@ -6,12 +6,13 @@ import zipfile
 from collections import Counter
 from pathlib import Path
 
-import bf_lib as bf
-import bf_swatch
 import colornames
-from bf_game import *  # noqa
-from bf_glib import do_generate, get_sounds_that_reaper_would_export
-from bf_typer import app, command, global_timing_manager_instance, timing
+
+from . import bf_lib as bf
+from . import bf_swatch
+from .bf_game import *  # noqa
+from .bf_glib import do_generate, get_sounds_that_reaper_would_export
+from .bf_typer import app, command, global_timing_manager_instance, timing
 
 ##
 
@@ -299,7 +300,7 @@ def banner(filepaths: list[Path]) -> None:  ##
 
 @command
 def list_sounds() -> None:  ##
-  a = Counter()  # type: ignore[var-annotated]
+  a = Counter()
   a.update(x.split("__", 1)[0] for x in get_sounds_that_reaper_would_export())
   print(a)
   ##
@@ -394,8 +395,7 @@ def gitf():  ##
     ["git", "commit", "-m", message],
     "git push",
   ):
-    x: t.Any
-    bf.run_command(x)
+    bf.run_command(x)  # type: ignore
   ##
 
 

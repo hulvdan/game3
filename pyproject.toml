@@ -6,7 +6,6 @@ readme = "README.md"
 authors = []
 requires-python = ">=3.11.3"
 dependencies = [
-    "beartype>=0.22.9",
     "cogapp>=3.6.0",
     "cpplint>=2.0.2",
     "fnvhash>=0.2.1",
@@ -55,6 +54,9 @@ module-root = ""
 [build-system]
 requires = ["uv_build>=0.9.13,<0.10.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = []
 
 [tool.ruff]
 line-length = 90

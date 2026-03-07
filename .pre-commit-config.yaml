@@ -56,7 +56,7 @@ repos:
         exclude: ^addons/.*$
       - id: proto-renumber
         name: proto-renumber
-        entry: uv run python cli/bf_cli.py proto_renumber
+        entry: uv run python -m cli.bf_cli proto_renumber
         language: system
         require_serial: true
         always_run: true
@@ -79,7 +79,7 @@ repos:
         stages: [pre-commit, pre-merge-commit, pre-push, manual]
       - id: banner
         name: banner
-        entry: uv run python cli/bf_cli.py banner
+        entry: uv run python -m cli.bf_cli banner
         language: system
         require_serial: true
         files: \.(yml|yaml|gd|py|c|h|cxx|cpp|txt|md|proto|fbs|lua)$

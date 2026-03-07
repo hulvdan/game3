@@ -16,19 +16,28 @@ from math import pi
 from pathlib import Path
 from typing import Generic, Self, TypeAlias, TypeVar
 
-import bf_lib as bf
 import toml
-from bf_typer import command
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
 from pyglm import glm
 from pyglm.glm import degrees, mat3, mat4, radians, vec2, vec3, vec4
 
+from . import bf_lib as bf
+from .bf_typer import command
+
 ##
 
 
 ## Setup
+def im_error_top_bar(message: str) -> None:
+  im.push_style_color(im.Col_.child_bg, (0.2, 0.1, 0.1, 1.0))
+  im.begin_child("visualizer_error_bar", ImVec2(im.get_content_region_avail().x, 25))
+  im.text(message)
+  im.end_child()
+  im.pop_style_color()
+
+
 def color_hsva(h: float, s: float = 1, v: float = 1, a: float = 1) -> im.ImColor:
   result = im.ImColor.hsv(h, s, v)
   result.value.w = a
@@ -67,7 +76,7 @@ def color_to_u32(v: im.ImColor) -> int:
 #   print(f"COLOR_{name}_FADED = fade(COLOR_{name}, 0.25)")
 #   print(f"COLOR_{name}_U32 = color_to_u32(COLOR_{name})")
 #   print(f"COLOR_{name}_FADED_U32 = color_to_u32(COLOR_{name}_FADED)")
-# ]]]
+# cog]]]
 HUE_RED = 0.000
 COLOR_RED = color_hsva(0.000, 1.000, 1.000)
 COLOR_RED_FADED = fade(COLOR_RED, 0.25)
@@ -602,7 +611,7 @@ def _panel_visualizer() -> None:
   view = _to_mat4(vis.camera_view)
   projection = _to_mat4(vis.camera_projection)
 
-  vp: mat4 = projection * view  # type:ignore
+  vp: mat4 = projection * view
 
   def world_to_screen(p: vec3) -> vec2:
     clip: vec4 = vp * vec4(p, 1.0)  # type: ignore
@@ -620,12 +629,12 @@ def _panel_visualizer() -> None:
   ##
 
   ## Draw functions
-  def draw_line(p1: vec3, p2: vec3, color: int = COLOR_YELLOW):
+  def draw_line(p1: vec3, p2: vec3, color: int = COLOR_YELLOW_U32):
     draw.add_line(_tuplify(world_to_screen(p1)), _tuplify(world_to_screen(p2)), color, 2)
 
   def draw_polyline(
     points: list[vec3],
-    color: int = COLOR_YELLOW,
+    color: int = COLOR_YELLOW_U32,
     flags: im.ImDrawFlags_ = im.ImDrawFlags_.none,
   ):
     draw.add_polyline([_tuplify(world_to_screen(x)) for x in points], color, flags, 2)
@@ -635,7 +644,7 @@ def _panel_visualizer() -> None:
   def draw_circle(
     p: vec3,
     radius: float,
-    color: int = COLOR_YELLOW,
+    color: int = COLOR_YELLOW_U32,
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
@@ -658,7 +667,7 @@ def _panel_visualizer() -> None:
     spread: float,
     radius: float,
     angle: float,
-    color: int = COLOR_YELLOW,
+    color: int = COLOR_YELLOW_U32,
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
@@ -675,7 +684,8 @@ def _panel_visualizer() -> None:
       draw_circle(p, radius, color, segments, plane)
       return
 
-    spread_vector = vec3(glm.rotate(angle, normal) * vec4(plane[0] * spread, 0))
+    plane_axis = vec4(plane[0], 0)  # type: ignore
+    spread_vector = vec3(glm.rotate(angle, normal) * plane_axis) * spread
     p1 = p + spread_vector / 2
     p2 = p - spread_vector / 2
 
@@ -723,7 +733,7 @@ def _panel_visualizer() -> None:
         center = vec3(m * vec4(0, 0, 0, 1))
         dirr = vec3(m * vec4(c.circles_spread[0].value / 2, 0, 0, 0))
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
-        angle = -glm.atan2(r_vec.z, r_vec.x)
+        angle = -math.atan2(r_vec.z, r_vec.x)
         r = glm.length(r_vec)
         draw_capsule(center + dirr, 1, r, angle, color)
 
@@ -737,16 +747,8 @@ def _panel_visualizer() -> None:
   elif im.is_key_pressed(im.Key.s) or im.is_key_pressed(im.Key._3):
     vis.gizmo_mode = GizmoMode.SCALE
 
-  def error(message: str) -> None:
-    im.push_style_color(im.Col_.child_bg, (0.2, 0.1, 0.1, 1.0))
-    avail = im.get_content_region_avail()
-    im.begin_child("visualizer_error_bar", ImVec2(size_.x, 25))
-    im.text(message)
-    im.end_child()
-    im.pop_style_color()
-
   if c := atk.ref_selected_collider:
-    manipulate_kwargs = dict(
+    man_kwargs = dict(
       view=vis.camera_view,
       projection=vis.camera_projection,
       operation={
@@ -768,12 +770,12 @@ def _panel_visualizer() -> None:
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
+              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
           case GizmoMode.ROTATE:
-            error("Can't use ROTATE on CIRCLE collider")
+            im_error_top_bar("Can't use ROTATE on CIRCLE collider")
           case GizmoMode.SCALE:
             with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
+              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
@@ -781,13 +783,13 @@ def _panel_visualizer() -> None:
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
+              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
           case GizmoMode.ROTATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
+              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
           case GizmoMode.SCALE:
             with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
+              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
 
   gizmo_size = 120 * im.get_window_dpi_scale()
   gizmo.view_manipulate(

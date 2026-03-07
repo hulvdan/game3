@@ -10,6 +10,17 @@
     "node_modules": true,
     "uv.lock": true
   },
+  "search.exclude": {
+    "**/*.binpb": true,
+    "**/*.translation": true,
+    "**/*.tscn*.tmp": true,
+    "**/*.uid": true,
+    "**/*_pb2.py": true,
+    ".godot/": true,
+    // ".venv/": true,
+    "node_modules": true,
+    "uv.lock": true
+  },
   "files.associations": {
     "*.ldtk": "json",
     ".prettierrc": "json"
@@ -55,7 +66,7 @@
     },
     {
       "match": ".py$",
-      "command": "uv run cog -n utf-8 -U -r -P ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix",
+      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix",
       "runIn": "backend"
     }
     // {

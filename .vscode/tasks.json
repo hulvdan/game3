@@ -4,7 +4,7 @@
     {
       "label": "2_test",
       "type": "shell",
-      "command": "uv run python cli/bf_cli.py test",
+      "command": "uv run python -m cli.bf_cli test",
       "icon": {
         "id": "run"
       }
@@ -12,48 +12,52 @@
     {
       "label": "1_gitf",
       "type": "shell",
-      "command": "uv run python cli/bf_cli.py gitf",
+      "command": "uv run python -m cli.bf_cli gitf",
       "icon": {
         "id": "run"
       },
       "presentation": {
         "reveal": "silent",
-        "panel": "shared",
         "clear": true
       }
     },
     {
       "label": "3_itch",
       "type": "shell",
-      "command": "uv run python cli/bf_cli.py deploy_itch",
+      "command": "uv run python -m cli.bf_cli deploy_itch",
       "icon": {
         "id": "run"
       },
       "presentation": {
         "reveal": "always",
-        "panel": "shared",
         "clear": true
       }
     },
     {
       "label": "4_profiles",
       "type": "shell",
-      "command": "uv run python cli/bf_cli.py profiles",
+      "command": "uv run python -m cli.bf_cli profiles",
       "icon": {
         "id": "run"
       },
       "presentation": {
         "reveal": "always",
-        "panel": "shared",
         "clear": true
       }
     },
     {
       "label": "5_types",
       "type": "shell",
-      "command": "pyright",
+      // "command": "pyright",
+      // "args": [
+      //   "cli"
+      // ],
+      "command": "ty",
       "args": [
-        "cli"
+        "check",
+        "cli",
+        "--output-format=concise",
+        "--no-progress"
       ],
       "group": {
         "kind": "build",
@@ -65,17 +69,17 @@
       "presentation": {
         "echo": true,
         "reveal": "silent",
-        "focus": false,
-        "panel": "shared"
+        "focus": false
       },
       "problemMatcher": {
         "owner": "python",
-        "fileLocation": [
-          "absolute"
-        ],
+        // "fileLocation": [
+        //   "absolute"
+        // ],
         "pattern": [
           {
-            "regexp": "^(.*\\.py):(\\d+):(\\d+) - (.*)$",
+            // "regexp": "^(.*\\.py):(\\d+):(\\d+) - (.*)$",
+            "regexp": "^(.*\\.py):(\\d+):(\\d+): (.*)$",
             "file": 1,
             "line": 2,
             "column": 3,
