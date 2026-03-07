@@ -43,7 +43,7 @@ x markuper: circle scale (acquire radius from scale)
 
 * markuper: capsule scale affects radius and spread
 * markuper: can change capsule spread
-* markuper:
+* markuper: maybe just store matrices?
 * markuper:
 * markuper:
 * markuper:

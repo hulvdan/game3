@@ -786,7 +786,8 @@ def _panel_visualizer() -> None:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
               gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
           case GizmoMode.SCALE:
-            error("Can't use SCALE on CIRCLE collider")
+            with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
+              gizmo.manipulate(object_matrix=center, **manipulate_kwargs)
 
   gizmo_size = 120 * im.get_window_dpi_scale()
   gizmo.view_manipulate(
