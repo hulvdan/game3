@@ -519,6 +519,7 @@ class State:
   @dataclass(slots=True)
   class Timeline:  ##
     playhead: float = 0
+    playhead_captured_mouse: bool = False
     ##
 
   visualizer: Visualizer = field(default_factory=Visualizer)
@@ -530,7 +531,6 @@ class State:
   exiting: bool = False
   count: int = 0
 
-  timeline_hovered_line: int = -1
   frame: int = 0
 
   ref_selected_attack_creature: Creature | None = None
@@ -984,17 +984,17 @@ def _panel_timeline() -> None:  ##
 
       if frame_values is None:
         im.invisible_button("timeline_playhead", ImVec2(avail, line_height))
-        if im.is_mouse_down(0) and im.is_item_hovered():
-          g.timeline.playhead = (
-            (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames
+        if im.is_mouse_down(0) and (
+          im.is_item_hovered() or g.timeline.playhead_captured_mouse
+        ):
+          g.timeline.playhead = bf.clamp(
+            (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames,
+            0,
+            atk.duration_frames,
           )
-
-        # Playhead first line
-        # w = 8 * im.get_window_dpi_scale() * line_height / 20
-        # p_center_top = pos_top_left
-        # p_center_bottom = ImVec2(pos_top_left.x, lines_bottom_right.y)
-        # draw.add_line(p_center_top, p_center_bottom, COLOR_RED_FADED_U32, 8)
-        # draw.add_triangle()
+          g.timeline.playhead_captured_mouse = True
+        elif not im.is_mouse_down(0):
+          g.timeline.playhead_captured_mouse = False
 
       else:
         # Keyframe lines
@@ -1032,14 +1032,6 @@ def _panel_timeline() -> None:  ##
     )
 
     im.end_table()
-
-  # for field_index, field in enumerate(("scale", "offset", "rotation")):
-  #   color = (1, 1, 0, 1) if (field_index == g.timeline_hovered_line) else (1, 1, 1, 1)
-  #   im.text_colored(color, field)
-  #   if im.is_item_hovered():
-  #     hovered_line = field_index
-  # hovered_line = -1
-  # g.timeline_hovered_line = hovered_line
   ##
 
 

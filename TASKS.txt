@@ -58,9 +58,8 @@ x docs
 x markuper: add another radius frame to pre-made circle
 x markuper: timeline line + red playhead
 x markuper: can click to set playhead
+x markuper: playhead mouse capture
 
-* markuper: playhead capture (can set even when
-  dragging outside of bounds of first line in timeline)
 * markuper: timeline play button
 * markuper: blend radius
 * markuper: show selected keyframe data
