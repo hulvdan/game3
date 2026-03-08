@@ -27,8 +27,8 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x markuper: scaled capsule properly spreads
 
-* markuper: scaled capsule properly spreads
 * WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
 * markuper:
 * markuper:

@@ -691,12 +691,12 @@ def _panel_visualizer() -> None:
 
     cur = glm.cross(normal, glm.normalize(p2 - p1)) * radius
     for _ in range(segments // 2 + 1):
-      _draw_points.append(p + vec3(cur))
+      _draw_points.append(p1 + vec3(cur))
       cur = m * cur
     off = -spread_vector
     _draw_points.append(_draw_points[-1] + off)
     for _ in range(segments // 2):
-      _draw_points.append(p + vec3(cur) + off)
+      _draw_points.append(p2 + vec3(cur))
       cur = m * cur
     draw_polyline(_draw_points, color, flags=im.ImDrawFlags_.closed)
     _draw_points.clear()
@@ -731,11 +731,10 @@ def _panel_visualizer() -> None:
         assert isinstance(c, ColliderCapsule)
         m = _to_mat4(c.center_and_rotation[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
-        dirr = vec3(m * vec4(c.circles_spread[0].value / 2, 0, 0, 0))
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
         angle = -math.atan2(r_vec.z, r_vec.x)
         r = glm.length(r_vec)
-        draw_capsule(center + dirr, 1, r, angle, color)
+        draw_capsule(center, 1, r, angle, color)
 
       case _:
         assert 0
