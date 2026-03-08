@@ -39,11 +39,9 @@ x markuper: show circle/capsule info: translation + stepped changing of translat
 - markuper: maybe just store matrices?
 x f
 - temp files formatting
+x WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
 x fucked with vscode reinstalling
 
-* LATER
-  * markuper: show capsule info: rotation
-* markuper:
 * markuper:
 * markuper:
 * markuper:
@@ -60,7 +58,9 @@ x fucked with vscode reinstalling
 * markuper: attack inspector:
 * markuper:
 *
-* WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
+* LATER
+  * markuper: correct docks placement
+  * markuper: show capsule info: rotation
 *
 * markuper:
 * Docking Splits
