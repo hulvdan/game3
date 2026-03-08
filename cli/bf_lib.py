@@ -1932,7 +1932,7 @@ def imgui_id(value: str, id: str) -> str:  ##
 
 
 @contextmanager
-def imgui_colorify_button(hue: float):  ##
+def imgui_colorify_inputs(hue: float):  ##
   im.push_style_color(im.Col_.button, im.ImColor.hsv(hue, 0.6, 0.6).value)
   im.push_style_color(im.Col_.button_hovered, im.ImColor.hsv(hue, 0.7, 0.7).value)
   im.push_style_color(im.Col_.button_active, im.ImColor.hsv(hue, 0.8, 0.8).value)

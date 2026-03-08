@@ -22,11 +22,12 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Generator
 
-from . import bf_lib as bf
 import numpy as np
+from PIL import Image
+
+from . import bf_lib as bf
 from .bf_attacks_markuper import *  # noqa: F403
 from .bf_typer import command, timing
-from PIL import Image
 
 ##
 

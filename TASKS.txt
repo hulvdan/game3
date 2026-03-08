@@ -38,6 +38,8 @@ x markuper: show circle/capsule info: translation + stepped changing of translat
 - markuper: show circle info: scale
 - markuper: maybe just store matrices?
 x f
+- temp files formatting
+x fucked with vscode reinstalling
 
 * LATER
   * markuper: show capsule info: rotation

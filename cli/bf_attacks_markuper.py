@@ -552,7 +552,7 @@ def _panel_attack_inspector() -> None:  ##
   if not atk:
     return
 
-  with bf.imgui_colorify_button(HUE_GREEN):
+  with bf.imgui_colorify_inputs(HUE_GREEN):
     if im.button("+circle"):
       atk.colliders.append(ColliderCircle.make())
       atk.ref_selected_collider = atk.colliders[-1]
@@ -915,7 +915,7 @@ def _panel_collider_inspector() -> None:  ##
     case ColliderType.CIRCLE:
       assert isinstance(c, ColliderCircle)
 
-      with bf.imgui_colorify_button(HUE_GREEN):
+      with bf.imgui_colorify_inputs(HUE_GREEN):
         _inspector_value(
           "radius",
           lambda: c.radius[0].value,
@@ -930,7 +930,7 @@ def _panel_collider_inspector() -> None:  ##
     case ColliderType.CAPSULE:
       assert isinstance(c, ColliderCapsule)
 
-      with bf.imgui_colorify_button(HUE_GREEN):
+      with bf.imgui_colorify_inputs(HUE_GREEN):
         _inspector_value(
           "radius",
           lambda: c.radius[0].value,
