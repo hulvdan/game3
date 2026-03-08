@@ -24,6 +24,11 @@ PILLARS
 BIG PLAN
 ============================================================
 
+!!! «MARKUPER» ПОЗВОЛИТ:
+!!! - создавать клевые мувсеты атак игрока вроде MH:W Insect Glaive
+!!! - создавать выразительные паттерны атак мобов в т.ч. боссов
+!!! Важно это? Да
+
 PLAN
 ============================================================
 x clear
@@ -50,9 +55,9 @@ x markuper: timeline: show frame cells timeline grid
 x markuper: timeline: keyframe scale with text line height
 - markuper: where can i get diamond icon (look inside demos!!!)
 x docs
+x markuper: add another radius frame to pre-made circle
+x markuper: timeline line + red playhead
 
-* markuper: add another radius to pre-made circle
-* markuper: timeline red playhead
 * markuper: timeline rect on which you can click to set playhead
 * markuper: timeline play button
 * markuper: blend radius

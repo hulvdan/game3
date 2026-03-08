@@ -250,7 +250,7 @@ def tool_attacks_markuper() -> None:
     Creature(
       name="MOB_SPEAR",
       attacks=[
-        Attack(name="DASH"),
+        Attack(name="DASH", duration_frames=10),
         Attack(name="SWING"),
       ],
     ),
@@ -269,6 +269,9 @@ def tool_attacks_markuper() -> None:
       ],
     ),
   ]
+  c = ColliderCapsule.make()
+  c.radius.append(Frame(4, 1))
+  g.creatures[0].attacks[0].colliders.append(c)
 
   loaded_state: AppSaveState | None = None
   if _APP_STATE_FILE_PATH.exists():
@@ -498,7 +501,7 @@ class AppSaveState(BaseModel):  ##
 
 @dataclass(slots=True)
 class State:
-  @dataclass
+  @dataclass(slots=True)
   class Visualizer:  ##
     first_frame: bool = True
     camera_view: Matrix16 = field(default_factory=Matrix16)
@@ -511,6 +514,11 @@ class State:
     perspective__distance: float = 10
     perspective__view_dirty: bool = False
     gizmo_mode: GizmoMode = GizmoMode.TRANSLATE
+    ##
+
+  @dataclass(slots=True)
+  class Timeline:  ##
+    playhead: float = 0
     ##
 
   visualizer: Visualizer = field(default_factory=Visualizer)
@@ -906,8 +914,8 @@ def _panel_timeline() -> None:  ##
     scale = im.get_window_dpi_scale() * im.get_frame_height() / 24
 
     half = _keyframe_off * scale
-    im.set_cursor_screen_pos(pos - half * 2)
-    im.invisible_button(label, half * 4)
+    im.set_cursor_screen_pos(pos - half)
+    im.invisible_button(label, half * 2)
 
     color_index = 0
     if im.is_item_hovered():
@@ -950,7 +958,7 @@ def _panel_timeline() -> None:  ##
     lines_top_left: ImVec2 | None = None
     lines_bottom_right = ImVec2()
 
-    for label, frame_values in tracks:
+    for label, frame_values in ((" ", None), *tracks):
       im.table_next_row()
 
       im.table_set_column_index(0)
@@ -971,13 +979,27 @@ def _panel_timeline() -> None:  ##
         color_to_u32(fade_replace(COLOR_WHITE, 0.1)),
       )
 
-      for fr in frame_values:
-        fr.index * avail
-        if imgui_keyframe(
-          f"keyframe_{label}_{fr.index}",
-          pos_top_left + ImVec2(fr.index * avail, im.get_frame_height() / 2),
-        ):
-          LOGD("aboba")
+      line_height = im.get_frame_height()
+
+      if frame_values is None:
+        pass
+        # Playhead first line
+        # w = 8 * im.get_window_dpi_scale() * line_height / 20
+        # p_center_top = pos_top_left
+        # p_center_bottom = ImVec2(pos_top_left.x, lines_bottom_right.y)
+        # draw.add_line(p_center_top, p_center_bottom, COLOR_RED_FADED_U32, 8)
+        # draw.add_triangle()
+
+      else:
+        # Keyframe lines
+        for fr in frame_values:
+          if imgui_keyframe(
+            f"keyframe_{label}_{fr.index}",
+            pos_top_left
+            + ImVec2(fr.index * avail / atk.duration_frames, line_height / 2),
+            # selected=True,
+          ):
+            LOGD("aboba")
 
     assert lines_top_left
     lines_width = lines_bottom_right.x - lines_top_left.x
@@ -988,6 +1010,18 @@ def _panel_timeline() -> None:  ##
         ImVec2(posx, lines_bottom_right.y),
         COLOR_GRAY_FADED_U32,
       )
+
+    playhead_top = lines_top_left
+    playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
+    draw.add_triangle_filled(
+      playhead_top + ImVec2(0, line_height / 2),
+      playhead_top + ImVec2(line_height / 4, 0),
+      playhead_top + ImVec2(-line_height / 4, 0),
+      COLOR_RED_U32,
+    )
+    draw.add_line(
+      playhead_top, playhead_bottom, COLOR_RED_U32, 2 * im.get_window_dpi_scale()
+    )
 
     im.end_table()
 
