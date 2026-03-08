@@ -400,6 +400,7 @@ class ColliderCircle(ColliderBase):  ##
 
 @dataclass(slots=True)
 class ColliderCapsule(ColliderBase):  ##
+  MAX_SPREAD: t.ClassVar[float] = 10.0
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
   radius: list[Frame[float]]
@@ -682,7 +683,7 @@ def _panel_visualizer() -> None:
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
     assert segments >= 8
-    assert spread > 0
+    assert spread >= 0
     assert radius > 0
     assert isinstance(p, vec3)
     assert segments % 2 == 0
@@ -724,7 +725,12 @@ def _panel_visualizer() -> None:
     color_ = COLOR_YELLOW
     if c is sel_col:
       color_ = COLOR_LIGHT_BLUE
-    if (hov_col is not None) and (hov_col is not c):
+    fade_ = False
+    if hov_col is None:
+      fade_ = (sel_col is not None) and (sel_col is not c)
+    else:
+      fade_ = c is not hov_col
+    if fade_:
       color_ = fade(color_, 0.25)
     color = color_to_u32(color_)
 
@@ -743,7 +749,7 @@ def _panel_visualizer() -> None:
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
         angle = -math.atan2(r_vec.z, r_vec.x)
         r = glm.length(r_vec)
-        draw_capsule(center, 1, r, angle, color)
+        draw_capsule(center, c.circles_spread[0].value, r, angle, color)
 
       case _:
         assert 0
@@ -842,11 +848,24 @@ def _panel_collider_inspector() -> None:  ##
   match c.type:
     case ColliderType.CIRCLE:
       assert isinstance(c, ColliderCircle)
+
     case ColliderType.CAPSULE:
       assert isinstance(c, ColliderCapsule)
-      changed, new_value = im.slider_float("spread", c.circles_spread[0].value, 0, 10)
+
+      changed, spread_local = im.slider_float(
+        "spread l", c.circles_spread[0].value, 0, c.MAX_SPREAD
+      )
       if changed:
-        c.circles_spread[0].value = new_value
+        c.circles_spread[0].value = spread_local
+
+      m = _to_mat4(c.center_and_rotation[0].value)
+      scale = glm.length(m * vec3(1, 0, 0))
+      changed, spread_world = im.slider_float(
+        "spread w", c.circles_spread[0].value * scale, 0, c.MAX_SPREAD * scale
+      )
+      if changed:
+        c.circles_spread[0].value = spread_world / scale
+
     case _:
       assert 0
   ##
