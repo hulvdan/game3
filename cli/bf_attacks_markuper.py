@@ -522,6 +522,7 @@ class State:
     ##
 
   visualizer: Visualizer = field(default_factory=Visualizer)
+  timeline: Timeline = field(default_factory=Timeline)
 
   # timeline: list[Keyframe] = field(default_factory=list)
   creatures: list[Creature] = field(default_factory=list)
@@ -982,7 +983,12 @@ def _panel_timeline() -> None:  ##
       line_height = im.get_frame_height()
 
       if frame_values is None:
-        pass
+        im.invisible_button("timeline_playhead", ImVec2(avail, line_height))
+        if im.is_mouse_down(0) and im.is_item_hovered():
+          g.timeline.playhead = (
+            (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames
+          )
+
         # Playhead first line
         # w = 8 * im.get_window_dpi_scale() * line_height / 20
         # p_center_top = pos_top_left
@@ -1011,7 +1017,9 @@ def _panel_timeline() -> None:  ##
         COLOR_GRAY_FADED_U32,
       )
 
-    playhead_top = lines_top_left
+    playhead_top = lines_top_left + ImVec2(
+      g.timeline.playhead / atk.duration_frames * avail, 0
+    )
     playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
     draw.add_triangle_filled(
       playhead_top + ImVec2(0, line_height / 2),

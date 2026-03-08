@@ -57,8 +57,10 @@ x markuper: timeline: keyframe scale with text line height
 x docs
 x markuper: add another radius frame to pre-made circle
 x markuper: timeline line + red playhead
+x markuper: can click to set playhead
 
-* markuper: timeline rect on which you can click to set playhead
+* markuper: playhead capture (can set even when
+  dragging outside of bounds of first line in timeline)
 * markuper: timeline play button
 * markuper: blend radius
 * markuper: show selected keyframe data
