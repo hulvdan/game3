@@ -52,7 +52,7 @@ _keyframe_quad_points = [
 ]
 
 
-def im_error_top_bar(message: str) -> None:
+def imgui_error_top_bar(message: str) -> None:
   im.push_style_color(im.Col_.child_bg, (0.2, 0.1, 0.1, 1.0))
   im.begin_child("visualizer_error_bar", ImVec2(im.get_content_region_avail().x, 25))
   im.text(message)
@@ -60,7 +60,7 @@ def im_error_top_bar(message: str) -> None:
   im.pop_style_color()
 
 
-def im_draw_cross() -> None:
+def imgui_draw_cross() -> None:
   draw = im.get_foreground_draw_list()
   size = im.get_content_region_avail()
   pos = im.get_cursor_screen_pos()
@@ -68,13 +68,13 @@ def im_draw_cross() -> None:
   draw.add_line(pos + ImVec2(0, size.y), pos + ImVec2(size.x, 0), COLOR_GRAY_U32, 2)
 
 
-def color_hsva(h: float, s: float = 1, v: float = 1, a: float = 1) -> im.ImColor:
+def imgui_color_hsva(h: float, s: float = 1, v: float = 1, a: float = 1) -> im.ImColor:
   result = im.ImColor.hsv(h, s, v)
   result.value.w = a
   return result
 
 
-def fade_replace(v: im.ImColor, a: float) -> im.ImColor:
+def imgui_fade_replace(v: im.ImColor, a: float) -> im.ImColor:
   result = im.ImColor()
   result.value.x = v.value.x
   result.value.y = v.value.y
@@ -83,7 +83,7 @@ def fade_replace(v: im.ImColor, a: float) -> im.ImColor:
   return result
 
 
-def fade_multiply(v: im.ImColor, a: float) -> im.ImColor:
+def imgui_fade_multiply(v: im.ImColor, a: float) -> im.ImColor:
   result = im.ImColor()
   result.value.x = v.value.x
   result.value.y = v.value.y
@@ -92,7 +92,7 @@ def fade_multiply(v: im.ImColor, a: float) -> im.ImColor:
   return result
 
 
-def color_to_u32(v: im.ImColor) -> int:
+def imgui_color_to_u32(v: im.ImColor) -> int:
   return im.color_convert_float4_to_u32((v.value.x, v.value.y, v.value.z, v.value.w))
 
 
@@ -111,61 +111,61 @@ def color_to_u32(v: im.ImColor) -> int:
 #   ('BLACK',      0,     0, 0),
 # ]:
 #   print(f"HUE_{name} = {h:.3f}")
-#   print(f"COLOR_{name} = color_hsva({h:.3f}, {s:.3f}, {v:.3f})")
-#   print(f"COLOR_{name}_FADED = fade_replace(COLOR_{name}, 0.25)")
-#   print(f"COLOR_{name}_U32 = color_to_u32(COLOR_{name})")
-#   print(f"COLOR_{name}_FADED_U32 = color_to_u32(COLOR_{name}_FADED)")
+#   print(f"COLOR_{name} = imgui_color_hsva({h:.3f}, {s:.3f}, {v:.3f})")
+#   print(f"COLOR_{name}_FADED = imgui_fade_replace(COLOR_{name}, 0.25)")
+#   print(f"COLOR_{name}_U32 = imgui_color_to_u32(COLOR_{name})")
+#   print(f"COLOR_{name}_FADED_U32 = imgui_color_to_u32(COLOR_{name}_FADED)")
 # cog]]]
 HUE_RED = 0.000
-COLOR_RED = color_hsva(0.000, 1.000, 1.000)
-COLOR_RED_FADED = fade_replace(COLOR_RED, 0.25)
-COLOR_RED_U32 = color_to_u32(COLOR_RED)
-COLOR_RED_FADED_U32 = color_to_u32(COLOR_RED_FADED)
+COLOR_RED = imgui_color_hsva(0.000, 1.000, 1.000)
+COLOR_RED_FADED = imgui_fade_replace(COLOR_RED, 0.25)
+COLOR_RED_U32 = imgui_color_to_u32(COLOR_RED)
+COLOR_RED_FADED_U32 = imgui_color_to_u32(COLOR_RED_FADED)
 HUE_YELLOW = 0.143
-COLOR_YELLOW = color_hsva(0.143, 1.000, 1.000)
-COLOR_YELLOW_FADED = fade_replace(COLOR_YELLOW, 0.25)
-COLOR_YELLOW_U32 = color_to_u32(COLOR_YELLOW)
-COLOR_YELLOW_FADED_U32 = color_to_u32(COLOR_YELLOW_FADED)
+COLOR_YELLOW = imgui_color_hsva(0.143, 1.000, 1.000)
+COLOR_YELLOW_FADED = imgui_fade_replace(COLOR_YELLOW, 0.25)
+COLOR_YELLOW_U32 = imgui_color_to_u32(COLOR_YELLOW)
+COLOR_YELLOW_FADED_U32 = imgui_color_to_u32(COLOR_YELLOW_FADED)
 HUE_GREEN = 0.286
-COLOR_GREEN = color_hsva(0.286, 1.000, 1.000)
-COLOR_GREEN_FADED = fade_replace(COLOR_GREEN, 0.25)
-COLOR_GREEN_U32 = color_to_u32(COLOR_GREEN)
-COLOR_GREEN_FADED_U32 = color_to_u32(COLOR_GREEN_FADED)
+COLOR_GREEN = imgui_color_hsva(0.286, 1.000, 1.000)
+COLOR_GREEN_FADED = imgui_fade_replace(COLOR_GREEN, 0.25)
+COLOR_GREEN_U32 = imgui_color_to_u32(COLOR_GREEN)
+COLOR_GREEN_FADED_U32 = imgui_color_to_u32(COLOR_GREEN_FADED)
 HUE_CYAN = 0.429
-COLOR_CYAN = color_hsva(0.429, 1.000, 1.000)
-COLOR_CYAN_FADED = fade_replace(COLOR_CYAN, 0.25)
-COLOR_CYAN_U32 = color_to_u32(COLOR_CYAN)
-COLOR_CYAN_FADED_U32 = color_to_u32(COLOR_CYAN_FADED)
+COLOR_CYAN = imgui_color_hsva(0.429, 1.000, 1.000)
+COLOR_CYAN_FADED = imgui_fade_replace(COLOR_CYAN, 0.25)
+COLOR_CYAN_U32 = imgui_color_to_u32(COLOR_CYAN)
+COLOR_CYAN_FADED_U32 = imgui_color_to_u32(COLOR_CYAN_FADED)
 HUE_LIGHT_BLUE = 0.571
-COLOR_LIGHT_BLUE = color_hsva(0.571, 1.000, 1.000)
-COLOR_LIGHT_BLUE_FADED = fade_replace(COLOR_LIGHT_BLUE, 0.25)
-COLOR_LIGHT_BLUE_U32 = color_to_u32(COLOR_LIGHT_BLUE)
-COLOR_LIGHT_BLUE_FADED_U32 = color_to_u32(COLOR_LIGHT_BLUE_FADED)
+COLOR_LIGHT_BLUE = imgui_color_hsva(0.571, 1.000, 1.000)
+COLOR_LIGHT_BLUE_FADED = imgui_fade_replace(COLOR_LIGHT_BLUE, 0.25)
+COLOR_LIGHT_BLUE_U32 = imgui_color_to_u32(COLOR_LIGHT_BLUE)
+COLOR_LIGHT_BLUE_FADED_U32 = imgui_color_to_u32(COLOR_LIGHT_BLUE_FADED)
 HUE_BLUE = 0.714
-COLOR_BLUE = color_hsva(0.714, 1.000, 1.000)
-COLOR_BLUE_FADED = fade_replace(COLOR_BLUE, 0.25)
-COLOR_BLUE_U32 = color_to_u32(COLOR_BLUE)
-COLOR_BLUE_FADED_U32 = color_to_u32(COLOR_BLUE_FADED)
+COLOR_BLUE = imgui_color_hsva(0.714, 1.000, 1.000)
+COLOR_BLUE_FADED = imgui_fade_replace(COLOR_BLUE, 0.25)
+COLOR_BLUE_U32 = imgui_color_to_u32(COLOR_BLUE)
+COLOR_BLUE_FADED_U32 = imgui_color_to_u32(COLOR_BLUE_FADED)
 HUE_PURPLE = 0.857
-COLOR_PURPLE = color_hsva(0.857, 1.000, 1.000)
-COLOR_PURPLE_FADED = fade_replace(COLOR_PURPLE, 0.25)
-COLOR_PURPLE_U32 = color_to_u32(COLOR_PURPLE)
-COLOR_PURPLE_FADED_U32 = color_to_u32(COLOR_PURPLE_FADED)
+COLOR_PURPLE = imgui_color_hsva(0.857, 1.000, 1.000)
+COLOR_PURPLE_FADED = imgui_fade_replace(COLOR_PURPLE, 0.25)
+COLOR_PURPLE_U32 = imgui_color_to_u32(COLOR_PURPLE)
+COLOR_PURPLE_FADED_U32 = imgui_color_to_u32(COLOR_PURPLE_FADED)
 HUE_WHITE = 0.000
-COLOR_WHITE = color_hsva(0.000, 0.000, 1.000)
-COLOR_WHITE_FADED = fade_replace(COLOR_WHITE, 0.25)
-COLOR_WHITE_U32 = color_to_u32(COLOR_WHITE)
-COLOR_WHITE_FADED_U32 = color_to_u32(COLOR_WHITE_FADED)
+COLOR_WHITE = imgui_color_hsva(0.000, 0.000, 1.000)
+COLOR_WHITE_FADED = imgui_fade_replace(COLOR_WHITE, 0.25)
+COLOR_WHITE_U32 = imgui_color_to_u32(COLOR_WHITE)
+COLOR_WHITE_FADED_U32 = imgui_color_to_u32(COLOR_WHITE_FADED)
 HUE_GRAY = 0.000
-COLOR_GRAY = color_hsva(0.000, 0.000, 0.500)
-COLOR_GRAY_FADED = fade_replace(COLOR_GRAY, 0.25)
-COLOR_GRAY_U32 = color_to_u32(COLOR_GRAY)
-COLOR_GRAY_FADED_U32 = color_to_u32(COLOR_GRAY_FADED)
+COLOR_GRAY = imgui_color_hsva(0.000, 0.000, 0.500)
+COLOR_GRAY_FADED = imgui_fade_replace(COLOR_GRAY, 0.25)
+COLOR_GRAY_U32 = imgui_color_to_u32(COLOR_GRAY)
+COLOR_GRAY_FADED_U32 = imgui_color_to_u32(COLOR_GRAY_FADED)
 HUE_BLACK = 0.000
-COLOR_BLACK = color_hsva(0.000, 0.000, 0.000)
-COLOR_BLACK_FADED = fade_replace(COLOR_BLACK, 0.25)
-COLOR_BLACK_U32 = color_to_u32(COLOR_BLACK)
-COLOR_BLACK_FADED_U32 = color_to_u32(COLOR_BLACK_FADED)
+COLOR_BLACK = imgui_color_hsva(0.000, 0.000, 0.000)
+COLOR_BLACK_FADED = imgui_fade_replace(COLOR_BLACK, 0.25)
+COLOR_BLACK_U32 = imgui_color_to_u32(COLOR_BLACK)
+COLOR_BLACK_FADED_U32 = imgui_color_to_u32(COLOR_BLACK_FADED)
 # [[[end]]]
 
 
@@ -270,8 +270,9 @@ def tool_attacks_markuper() -> None:
     ),
   ]
   c = ColliderCapsule.make()
-  c.radius.append(Frame(4, 1))
+  c.radius.append(Frame(4, 5))
   g.creatures[0].attacks[0].colliders.append(c)
+  g.timeline.playhead_frame = 2
 
   loaded_state: AppSaveState | None = None
   if _APP_STATE_FILE_PATH.exists():
@@ -518,14 +519,13 @@ class State:
 
   @dataclass(slots=True)
   class Timeline:  ##
-    playhead: float = 0
+    playhead_frame: float = 0
     playhead_captured_mouse: bool = False
     ##
 
   visualizer: Visualizer = field(default_factory=Visualizer)
   timeline: Timeline = field(default_factory=Timeline)
 
-  # timeline: list[Keyframe] = field(default_factory=list)
   creatures: list[Creature] = field(default_factory=list)
 
   exiting: bool = False
@@ -795,8 +795,8 @@ def _panel_visualizer() -> None:
     else:
       fade_ = c is not hov_col
     if fade_:
-      color_ = fade_replace(color_, 0.25)
-    color = color_to_u32(color_)
+      color_ = imgui_fade_replace(color_, 0.25)
+    color = imgui_color_to_u32(color_)
 
     match c.type:
       case ColliderType.CIRCLE:
@@ -850,7 +850,7 @@ def _panel_visualizer() -> None:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
               gizmo.manipulate(object_matrix=center, **man_kwargs)
           case GizmoMode.ROTATE:
-            im_error_top_bar("Can't use ROTATE on CIRCLE collider")
+            imgui_error_top_bar("Can't use ROTATE on CIRCLE collider")
           case GizmoMode.SCALE:
             with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
               gizmo.manipulate(object_matrix=center, **man_kwargs)
@@ -889,14 +889,14 @@ def _panel_visualizer() -> None:
 def _panel_timeline() -> None:  ##
   atk = g.ref_selected_attack
   if not atk:
-    im_draw_cross()
+    imgui_draw_cross()
     return
   assert atk.duration_frames > 0
   c = atk.ref_selected_collider
   if atk.ref_hovered_collider:
     c = atk.ref_hovered_collider
   if not c:
-    im_draw_cross()
+    imgui_draw_cross()
     return
 
   draw = im.get_foreground_draw_list()
@@ -977,7 +977,7 @@ def _panel_timeline() -> None:  ##
       draw.add_rect_filled(
         pos_top_left,
         lines_bottom_right,
-        color_to_u32(fade_replace(COLOR_WHITE, 0.1)),
+        imgui_color_to_u32(imgui_fade_replace(COLOR_WHITE, 0.1)),
       )
 
       line_height = im.get_frame_height()
@@ -987,7 +987,7 @@ def _panel_timeline() -> None:  ##
         if im.is_mouse_down(0) and (
           im.is_item_hovered() or g.timeline.playhead_captured_mouse
         ):
-          g.timeline.playhead = bf.clamp(
+          g.timeline.playhead_frame = bf.clamp(
             (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames,
             0,
             atk.duration_frames,
@@ -1018,7 +1018,7 @@ def _panel_timeline() -> None:  ##
       )
 
     playhead_top = lines_top_left + ImVec2(
-      g.timeline.playhead / atk.duration_frames * avail, 0
+      g.timeline.playhead_frame / atk.duration_frames * avail, 0
     )
     playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
     draw.add_triangle_filled(
@@ -1096,13 +1096,13 @@ def _inspector_value(
 def _panel_collider_inspector() -> None:  ##
   atk = g.ref_selected_attack
   if not atk:
-    im_draw_cross()
+    imgui_draw_cross()
     return
   c = atk.ref_hovered_collider
   if not c:
     c = atk.ref_selected_collider
   if not c:
-    im_draw_cross()
+    imgui_draw_cross()
     return
 
   match c.type:
