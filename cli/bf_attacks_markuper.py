@@ -190,7 +190,7 @@ def identity_matrix() ->  Matrix16:
     0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0])
-# fmt: on
+fmt: on
 
 vec2_zero = vec2()
 vec2_one = vec2(1, 1)
@@ -241,8 +241,8 @@ def tool_attacks_markuper() -> None:
     Creature(
       name="BOSS_JAGRAS",
       attacks=[
-        Attack(name="ROLL_FRONT"),
-        Attack(name="ROLL_SIDE"),
+        Attack(name="ROLL_FRONT", duration_frames=24),
+        Attack(name="ROLL_SIDE", duration_frames=10),
         Attack(name="JUMP_BACK"),
       ],
     ),
@@ -441,6 +441,8 @@ class ColliderCapsule(ColliderBase):  ##
 @dataclass(slots=True)
 class Attack:  ##
   name: str
+
+  duration_frames: int = 1
   colliders: list[ColliderBase] = field(default_factory=list)
 
   ref_selected_collider: ColliderBase | None = None
@@ -842,6 +844,17 @@ def _panel_visualizer() -> None:
 
 
 def _panel_timeline() -> None:  ##
+  atk = g.ref_selected_attack
+  if not atk:
+    im_draw_cross()
+    return
+  c = atk.ref_selected_collider
+  if atk.ref_hovered_collider:
+    c = atk.ref_hovered_collider
+  if not c:
+    im_draw_cross()
+    return
+
   draw = im.get_foreground_draw_list()
   size_ = im.get_content_region_avail()
   pos_ = im.get_cursor_screen_pos()
@@ -852,15 +865,15 @@ def _panel_timeline() -> None:  ##
     im.get_color_u32(im.Col_.button_active),
   )
 
-  mouse = im.get_mouse_pos()
+  def imgui_keyframe(label: str, pos: ImVec2, selected: bool = False) -> bool:
+    remembered_pos = im.get_cursor_screen_pos()
 
-  def imgui_keyframe(id: str, pos: ImVec2, selected: bool = False) -> bool:
-    min_x, max_x = pos.x - _keyframe_off.x, pos.x + _keyframe_off.y
-    min_y, max_y = pos.y - _keyframe_off.y, pos.y + _keyframe_off.y
+    half = _keyframe_off * im.get_window_dpi_scale()
+    im.set_cursor_screen_pos(pos - half * 2)
+    im.invisible_button(label, half * 4)
 
     color_index = 0
-    hovering = (min_x <= mouse.x <= max_x) and (min_y <= mouse.y <= max_y)
-    if hovering:
+    if im.is_item_hovered():
       color_index = 1
     if selected:
       color_index = 2
@@ -869,18 +882,44 @@ def _panel_timeline() -> None:  ##
       *(pos + x * im.get_window_dpi_scale() for x in _keyframe_quad_points),
       col=keyframe_colors[color_index],
     )
-    return False
+
+    im.set_cursor_screen_pos(remembered_pos)
+    return im.is_item_clicked()
 
   if imgui_keyframe("keyframe1", pos_ + size_ / 2):
     LOGD("aboba")
+  if imgui_keyframe("keyframe2", pos_ + size_ * 2 / 3):
+    LOGD("aboba")
 
   hovered_line = -1
-  for field_index, field in enumerate(("scale", "offset", "rotation")):
-    color = (1, 1, 0, 1) if (field_index == g.timeline_hovered_line) else (1, 1, 1, 1)
-    im.text_colored(color, field)
-    if im.is_item_hovered():
-      hovered_line = field_index
 
+  if im.begin_table("table", 2, im.TableFlags_.sizing_stretch_same):
+    im.table_setup_column("label", im.TableColumnFlags_.width_fixed)
+    im.table_setup_column("value", im.TableColumnFlags_.width_stretch)
+
+    im.table_next_row()
+
+    im.table_set_column_index(0)
+    im.text("Width")
+    im.text("ABOASDLKJ ASLDKJASD")
+    im.text("W")
+
+    im.table_set_column_index(1)
+    avail = im.get_content_region_avail().x
+    draw.add_rect_filled(
+      im.get_cursor_screen_pos(),
+      im.get_cursor_screen_pos() + ImVec2(avail, im.get_frame_height()),
+      COLOR_YELLOW_U32,
+    )
+    im.dummy((avail, im.get_frame_height()))
+
+    im.end_table()
+
+  # for field_index, field in enumerate(("scale", "offset", "rotation")):
+  #   color = (1, 1, 0, 1) if (field_index == g.timeline_hovered_line) else (1, 1, 1, 1)
+  #   im.text_colored(color, field)
+  #   if im.is_item_hovered():
+  #     hovered_line = field_index
   g.timeline_hovered_line = hovered_line
   ##
 

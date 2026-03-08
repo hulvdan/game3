@@ -42,7 +42,17 @@ x f
 x WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
 x fucked with vscode reinstalling
 x markuper: draw keyframe
+x markuper: timeline: playhead line
 
+* markuper: timeline: lines alternate backgrounds
+* markuper: timeline:
+* markuper: timeline:
+* markuper: timeline:
+* markuper: timeline:
+* markuper: timeline:
+* markuper:
+* markuper:
+* markuper:
 * markuper:
 * markuper:
 * markuper:
