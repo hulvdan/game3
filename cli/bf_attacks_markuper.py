@@ -381,18 +381,22 @@ class ColliderBase:  ##
   ##
 
 
+MIN_RADIUS: float = 0.125
+MAX_RADIUS: float = 5.0
+
+
 @dataclass(slots=True)
 class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
   radius: list[Frame[float]]
-  center: list[Frame[Matrix16]]
+  tr_center_and_scale: list[Frame[Matrix16]]
 
   @classmethod
   def make(cls) -> Self:
     return cls(
       radius=[Frame(0, 0.5)],
-      center=[Frame(0, identity_matrix())],
+      tr_center_and_scale=[Frame(0, identity_matrix())],
     )
 
   ##
@@ -403,16 +407,16 @@ class ColliderCapsule(ColliderBase):  ##
   MAX_SPREAD: t.ClassVar[float] = 10.0
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
+  tr_center_and_rotation_and_scale: list[Frame[Matrix16]]
   radius: list[Frame[float]]
-  center_and_rotation: list[Frame[Matrix16]]
-  circles_spread: list[Frame[float]]
+  spread: list[Frame[float]]
 
   @classmethod
   def make(cls) -> Self:
     return cls(
+      tr_center_and_rotation_and_scale=[Frame(0, identity_matrix())],
       radius=[Frame(0, 0.5)],
-      center_and_rotation=[Frame(0, identity_matrix())],
-      circles_spread=[Frame(0, 1)],
+      spread=[Frame(0, 1)],
     )
 
   ##
@@ -639,7 +643,7 @@ def _panel_visualizer() -> None:
 
   ##
 
-  ## Draw functions
+  ## Drawing functions
   def draw_line(p1: vec3, p2: vec3, color: int = COLOR_YELLOW_U32):
     draw.add_line(_tuplify(world_to_screen(p1)), _tuplify(world_to_screen(p2)), color, 2)
 
@@ -675,8 +679,8 @@ def _panel_visualizer() -> None:
 
   def draw_capsule(
     p: vec3,
-    spread: float,
     radius: float,
+    spread: float,
     angle: float,
     color: int = COLOR_YELLOW_U32,
     segments: int = 24,
@@ -702,8 +706,7 @@ def _panel_visualizer() -> None:
     for _ in range(segments // 2 + 1):
       _draw_points.append(p1 + vec3(cur))
       cur = m * cur
-    if spread > 0:
-      _draw_points.append(_draw_points[-1] - spread_vector)
+    _draw_points.append(_draw_points[-1] - spread_vector)
     for i in range(segments // 2):
       _draw_points.append(p2 + vec3(cur))
       cur = m * cur
@@ -737,19 +740,19 @@ def _panel_visualizer() -> None:
     match c.type:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
-        m = _to_mat4(c.center[0].value)
+        m = _to_mat4(c.tr_center_and_scale[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
-        r = glm.length(m * vec4(0.5, 0, 0, 0))
-        draw_circle(center, r, color)
+        scale = glm.length(m * vec4(1, 0, 0, 0))
+        draw_circle(center, c.radius[0].value * scale, color)
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
-        m = _to_mat4(c.center_and_rotation[0].value)
+        m = _to_mat4(c.tr_center_and_rotation_and_scale[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
         angle = -math.atan2(r_vec.z, r_vec.x)
         r = glm.length(r_vec)
-        draw_capsule(center, c.circles_spread[0].value, r, angle, color)
+        draw_capsule(center, c.radius[0].value, c.spread[0].value, angle, color)
 
       case _:
         assert 0
@@ -758,8 +761,8 @@ def _panel_visualizer() -> None:
     vis.gizmo_mode = GizmoMode.TRANSLATE
   elif im.is_key_pressed(im.Key.r) or im.is_key_pressed(im.Key._2):
     vis.gizmo_mode = GizmoMode.ROTATE
-  elif im.is_key_pressed(im.Key.s) or im.is_key_pressed(im.Key._3):
-    vis.gizmo_mode = GizmoMode.SCALE
+  # elif im.is_key_pressed(im.Key.s) or im.is_key_pressed(im.Key._3):
+  #   vis.gizmo_mode = GizmoMode.SCALE
 
   if c := atk.ref_selected_collider:
     man_kwargs = dict(
@@ -780,7 +783,7 @@ def _panel_visualizer() -> None:
     match c.type:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
-        center = c.center[0].value
+        center = c.tr_center_and_scale[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
@@ -793,7 +796,7 @@ def _panel_visualizer() -> None:
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
-        center = c.center_and_rotation[0].value
+        center = c.tr_center_and_rotation_and_scale[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
@@ -849,22 +852,30 @@ def _panel_collider_inspector() -> None:  ##
     case ColliderType.CIRCLE:
       assert isinstance(c, ColliderCircle)
 
+      m = _to_mat4(c.tr_center_and_scale[0].value)
+      scale = glm.length(m * vec4(1, 0, 0, 0))
+
+      changed, radius = im.slider_float(
+        "radius", c.radius[0].value * scale, MIN_RADIUS, MAX_RADIUS * scale
+      )
+      if changed:
+        c.radius[0].value = radius / scale
+
     case ColliderType.CAPSULE:
       assert isinstance(c, ColliderCapsule)
 
-      changed, spread_local = im.slider_float(
-        "spread l", c.circles_spread[0].value, 0, c.MAX_SPREAD
-      )
-      if changed:
-        c.circles_spread[0].value = spread_local
+      m = _to_mat4(c.tr_center_and_rotation_and_scale[0].value)
+      scale = glm.length(m * vec4(1, 0, 0, 0))
 
-      m = _to_mat4(c.center_and_rotation[0].value)
-      scale = glm.length(m * vec3(1, 0, 0))
-      changed, spread_world = im.slider_float(
-        "spread w", c.circles_spread[0].value * scale, 0, c.MAX_SPREAD * scale
+      changed, spread = im.slider_float("spread", c.spread[0].value, 0, c.MAX_SPREAD)
+      if changed:
+        c.spread[0].value = spread
+
+      changed, radius = im.slider_float(
+        "radius", c.radius[0].value, MIN_RADIUS, MAX_RADIUS
       )
       if changed:
-        c.circles_spread[0].value = spread_world / scale
+        c.radius[0].value = radius
 
     case _:
       assert 0
