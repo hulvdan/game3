@@ -266,8 +266,8 @@ def tool_attacks_markuper() -> None:
       "Attacks Markuper",
       [
         bf.ImGuiPanel("Explorer", enable_debug(_panel_explorer)),
-        bf.ImGuiPanel("Attack Inspector", enable_debug(_panel_attack_inspector)),
-        bf.ImGuiPanel("Collider Inspector", enable_debug(_panel_collider_inspector)),
+        bf.ImGuiPanel("Attack", enable_debug(_panel_attack_inspector)),
+        bf.ImGuiPanel("Collider", enable_debug(_panel_collider_inspector)),
         bf.ImGuiPanel("Timeline", enable_debug(_panel_timeline)),
         bf.ImGuiPanel("Visualizer", enable_debug(_panel_visualizer)),
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
@@ -843,25 +843,44 @@ def _panel_timeline() -> None:  ##
 
 def _inspector_components(m: Matrix16, rotation: bool = False) -> Matrix16:  ##
   comps = gizmo.decompose_matrix_to_components(m)
-  im.text("Tr")
-  changed, tr_x = im.slider_float(
-    bf.imgui_id("", "collider_inspector_tr_x"),
-    comps.translation.values[0],
+
+  def tr_setter(index, value):
+    nonlocal m
+    comps.translation.values[index] = value
+    m = gizmo.recompose_matrix_from_components(comps)
+
+  def rot_setter(index, value):
+    nonlocal m
+    comps.rotation.values[index] = value
+    m = gizmo.recompose_matrix_from_components(comps)
+
+  _inspector_value(
+    "TrX",
+    lambda: comps.translation.values[0],
+    partial(tr_setter, 0),
     -MAX_OFFSET,
     MAX_OFFSET,
+    STEP_TRANSLATE,
   )
-  if changed:
-    comps.translation.values[0] = round(tr_x / STEP_TRANSLATE) * STEP_TRANSLATE
-    m = gizmo.recompose_matrix_from_components(comps)
-  changed, tr_z = im.slider_float(
-    bf.imgui_id("", "collider_inspector_tr_z"),
-    comps.translation.values[2],
+  _inspector_value(
+    "TrZ",
+    lambda: comps.translation.values[2],
+    partial(tr_setter, 2),
     -MAX_OFFSET,
     MAX_OFFSET,
+    STEP_TRANSLATE,
   )
-  if changed:
-    comps.translation.values[2] = round(tr_z / STEP_TRANSLATE) * STEP_TRANSLATE
-    m = gizmo.recompose_matrix_from_components(comps)
+
+  # if rotation:
+  #   _inspector_value(
+  #     "RotY",
+  #     lambda: comps.rotation.values[1],
+  #     partial(rot_setter, 1),
+  #     -180,
+  #     180,
+  #     STEP_ROTATE,
+  #   )
+
   return m
   ##
 
@@ -896,37 +915,39 @@ def _panel_collider_inspector() -> None:  ##
     case ColliderType.CIRCLE:
       assert isinstance(c, ColliderCircle)
 
-      _inspector_value(
-        "radius",
-        lambda: c.radius[0].value,
-        lambda x: setattr(c.radius[0], "value", x),
-        MIN_RADIUS,
-        MAX_RADIUS,
-        STEP_TRANSLATE,
-      )
+      with bf.imgui_colorify_button(HUE_GREEN):
+        _inspector_value(
+          "radius",
+          lambda: c.radius[0].value,
+          lambda x: setattr(c.radius[0], "value", x),
+          MIN_RADIUS,
+          MAX_RADIUS,
+          STEP_TRANSLATE,
+        )
 
       c.tr_center[0].value = _inspector_components(c.tr_center[0].value)
 
     case ColliderType.CAPSULE:
       assert isinstance(c, ColliderCapsule)
 
-      _inspector_value(
-        "radius",
-        lambda: c.radius[0].value,
-        lambda x: setattr(c.radius[0], "value", x),
-        MIN_RADIUS,
-        MAX_RADIUS,
-        STEP_TRANSLATE,
-      )
+      with bf.imgui_colorify_button(HUE_GREEN):
+        _inspector_value(
+          "radius",
+          lambda: c.radius[0].value,
+          lambda x: setattr(c.radius[0], "value", x),
+          MIN_RADIUS,
+          MAX_RADIUS,
+          STEP_TRANSLATE,
+        )
 
-      _inspector_value(
-        "spread",
-        lambda: c.spread[0].value,
-        lambda x: setattr(c.spread[0], "value", x),
-        0,
-        c.MAX_SPREAD,
-        STEP_TRANSLATE,
-      )
+        _inspector_value(
+          "spread",
+          lambda: c.spread[0].value,
+          lambda x: setattr(c.spread[0], "value", x),
+          0,
+          c.MAX_SPREAD,
+          STEP_TRANSLATE,
+        )
 
       c.tr_center_and_rotation[0].value = _inspector_components(
         c.tr_center_and_rotation[0].value, rotation=True

@@ -1936,8 +1936,11 @@ def imgui_colorify_button(hue: float):  ##
   im.push_style_color(im.Col_.button, im.ImColor.hsv(hue, 0.6, 0.6).value)
   im.push_style_color(im.Col_.button_hovered, im.ImColor.hsv(hue, 0.7, 0.7).value)
   im.push_style_color(im.Col_.button_active, im.ImColor.hsv(hue, 0.8, 0.8).value)
+  im.push_style_color(im.Col_.frame_bg, im.ImColor.hsv(hue, 0.6, 0.3).value)
+  im.push_style_color(im.Col_.frame_bg_hovered, im.ImColor.hsv(hue, 0.7, 0.4).value)
+  im.push_style_color(im.Col_.frame_bg_active, im.ImColor.hsv(hue, 0.8, 0.5).value)
   yield
-  im.pop_style_color(3)
+  im.pop_style_color(6)
   ##
 
 
