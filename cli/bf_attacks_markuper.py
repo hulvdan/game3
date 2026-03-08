@@ -882,6 +882,7 @@ def _panel_timeline() -> None:  ##
   if not atk:
     im_draw_cross()
     return
+  assert atk.duration_frames > 0
   c = atk.ref_selected_collider
   if atk.ref_hovered_collider:
     c = atk.ref_hovered_collider
@@ -944,6 +945,9 @@ def _panel_timeline() -> None:  ##
     im.table_setup_column("label", im.TableColumnFlags_.width_fixed)
     im.table_setup_column("value", im.TableColumnFlags_.width_stretch)
 
+    lines_top_left: ImVec2 | None = None
+    lines_bottom_right = ImVec2()
+
     for label, frame_values in tracks:
       im.table_next_row()
 
@@ -951,12 +955,17 @@ def _panel_timeline() -> None:  ##
       im.text(label)
 
       im.table_set_column_index(1)
+
       pos_top_left = im.get_cursor_screen_pos()
+      if not lines_top_left:
+        lines_top_left = pos_top_left
+
       avail = im.get_content_region_avail().x
-      # im.dummy((avail, im.get_frame_height()))
+      lines_bottom_right = pos_top_left + ImVec2(avail, im.get_frame_height())
+
       draw.add_rect_filled(
         pos_top_left,
-        pos_top_left + ImVec2(avail, im.get_frame_height()),
+        lines_bottom_right,
         color_to_u32(fade_replace(COLOR_WHITE, 0.1)),
       )
 
@@ -967,6 +976,16 @@ def _panel_timeline() -> None:  ##
           pos_top_left + ImVec2(fr.index * avail, im.get_frame_height() / 2),
         ):
           LOGD("aboba")
+
+    assert lines_top_left
+    lines_width = lines_bottom_right.x - lines_top_left.x
+    for i in range(atk.duration_frames):
+      posx = lines_top_left.x + i * avail / atk.duration_frames
+      draw.add_line(
+        ImVec2(posx, lines_top_left.y),
+        ImVec2(posx, lines_bottom_right.y),
+        COLOR_GRAY_FADED_U32,
+      )
 
     im.end_table()
 
