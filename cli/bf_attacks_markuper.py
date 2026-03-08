@@ -30,6 +30,18 @@ from .bf_typer import command
 
 
 ## Setup
+_keyframe_off = ImVec2(5, 8)
+_keyframe_quad_points = [
+  off
+  for off in (
+    ImVec2(_keyframe_off.x, 0),
+    ImVec2(0, -_keyframe_off.y),
+    ImVec2(-_keyframe_off.x, 0),
+    ImVec2(0, _keyframe_off.y),
+  )
+]
+
+
 def im_error_top_bar(message: str) -> None:
   im.push_style_color(im.Col_.child_bg, (0.2, 0.1, 0.1, 1.0))
   im.begin_child("visualizer_error_bar", ImVec2(im.get_content_region_avail().x, 25))
@@ -830,6 +842,38 @@ def _panel_visualizer() -> None:
 
 
 def _panel_timeline() -> None:  ##
+  draw = im.get_foreground_draw_list()
+  size_ = im.get_content_region_avail()
+  pos_ = im.get_cursor_screen_pos()
+
+  keyframe_colors = (
+    im.get_color_u32(im.Col_.button),
+    im.get_color_u32(im.Col_.button_hovered),
+    im.get_color_u32(im.Col_.button_active),
+  )
+
+  mouse = im.get_mouse_pos()
+
+  def imgui_keyframe(id: str, pos: ImVec2, selected: bool = False) -> bool:
+    min_x, max_x = pos.x - _keyframe_off.x, pos.x + _keyframe_off.y
+    min_y, max_y = pos.y - _keyframe_off.y, pos.y + _keyframe_off.y
+
+    color_index = 0
+    hovering = (min_x <= mouse.x <= max_x) and (min_y <= mouse.y <= max_y)
+    if hovering:
+      color_index = 1
+    if selected:
+      color_index = 2
+
+    draw.add_quad_filled(
+      *(pos + x * im.get_window_dpi_scale() for x in _keyframe_quad_points),
+      col=keyframe_colors[color_index],
+    )
+    return False
+
+  if imgui_keyframe("keyframe1", pos_ + size_ / 2):
+    LOGD("aboba")
+
   hovered_line = -1
   for field_index, field in enumerate(("scale", "offset", "rotation")):
     color = (1, 1, 0, 1) if (field_index == g.timeline_hovered_line) else (1, 1, 1, 1)

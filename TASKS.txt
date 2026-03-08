@@ -41,8 +41,8 @@ x f
 - temp files formatting
 x WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
 x fucked with vscode reinstalling
+x markuper: draw keyframe
 
-* markuper:
 * markuper:
 * markuper:
 * markuper:
