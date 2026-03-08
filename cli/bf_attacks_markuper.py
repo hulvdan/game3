@@ -28,6 +28,16 @@ from .bf_typer import command
 
 ##
 
+## Consts
+FPS = 30
+MAX_ATTACK_FRAMES_DURATION = 10 * FPS
+STEP_TRANSLATE = 0.25
+STEP_ROTATE = 15
+STEP_SCALE = 0.25
+MIN_RADIUS: float = 0.125
+MAX_RADIUS: float = 5.0
+MAX_OFFSET: float = 10.0
+##
 
 ## Setup
 _keyframe_off = ImVec2(5, 8)
@@ -172,9 +182,6 @@ Matrix16: TypeAlias = imguizmo.im_guizmo.Matrix16
 Matrix6: TypeAlias = imguizmo.im_guizmo.Matrix6
 Matrix3: TypeAlias = imguizmo.im_guizmo.Matrix3
 
-STEP_TRANSLATE = 0.25
-STEP_ROTATE = 15
-STEP_SCALE = 0.25
 SNAP_TRANSLATE = Matrix3()
 SNAP_ROTATE = Matrix3()
 SNAP_SCALE = Matrix3()
@@ -190,7 +197,7 @@ def identity_matrix() ->  Matrix16:
     0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0])
-fmt: on
+# fmt: on
 
 vec2_zero = vec2()
 vec2_one = vec2(1, 1)
@@ -396,11 +403,6 @@ class ColliderBase:  ##
   ##
 
 
-MIN_RADIUS: float = 0.125
-MAX_RADIUS: float = 5.0
-MAX_OFFSET: float = 10.0
-
-
 @dataclass(slots=True)
 class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
@@ -565,6 +567,17 @@ def _panel_attack_inspector() -> None:  ##
   atk = g.ref_selected_attack
   if not atk:
     return
+
+  im.text("Frames")
+  im.same_line()
+  changed, frames = im.slider_int(
+    bf.imgui_id("", "attack_duration_frames"),
+    atk.duration_frames,
+    1,
+    MAX_ATTACK_FRAMES_DURATION,
+  )
+  if changed:
+    atk.duration_frames = frames
 
   with bf.imgui_colorify_inputs(HUE_GREEN):
     if im.button("+circle"):
