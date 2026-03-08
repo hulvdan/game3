@@ -48,76 +48,52 @@ x markuper: timeline: attack inspector: duration frames
 x drew timeline lines
 x markuper: timeline: show frame cells timeline grid
 x markuper: timeline: keyframe scale with text line height
+- markuper: where can i get diamond icon (look inside demos!!!)
+x docs
 
-* markuper: timeline: zoom (support min + max)
-* markuper: timeline: scroll
-* markuper: timeline: capsule rotation is not in matrix
+* markuper: add another radius to pre-made circle
+* markuper: timeline red playhead
+* markuper: timeline rect on which you can click to set playhead
+* markuper: timeline play button
+* markuper: blend radius
+* markuper: show selected keyframe data
 * markuper:
 * markuper:
-* markuper:
-* markuper:
-* markuper:
-* markuper:
-* markuper:
-* markuper: where can i get diamond icon (look inside demos!!!)
-* markuper: attack inspector: GAttackConditionValue
-* markuper: attack inspector: colliders with keyframe animations
-* markuper: attack inspector:
-* markuper: LEFT COLUMN with hierarchy list (or just 2 listboxes).
-  1st one has mob select + add + rename + delete (WITH SHIT TON A LOT OF CONFIRM) buttons.
-* markuper: attack inspector:
-* markuper: attack inspector:
-* markuper: attack inspector:
 * markuper:
 *
 * LATER
   * markuper: correct docks placement
   * markuper: show capsule info: rotation
-*
-* markuper:
-* Docking Splits
-  runner_params.docking_params.docking_splits = [hello_imgui.DockingSplit(
-    initial_dock_="MainDockSpace",
-    new_dock_="EditorDock",
-    direction_=imgui.Dir.left,
-    ratio_=0.25,
-  )]
-  runner_params.docking_params.dockable_windows = [
-    hello_imgui.DockableWindow(label_="Editor", dock_space_name_="EditorDock"),
-    hello_imgui.DockableWindow(label_="Gizmo", dock_space_name_="MainDockSpace"),
-  ]
-* markuper:
-* markuper:
-* markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
-* markuper:
-* markuper:
-* markuper:
-* markuper: lines have different background colors
-* markuper: frame columns
-* markuper: WHAT DO I NEED FOR JAGRAS???
-  * markuper: circle pos
-  * markuper: circle radius
-  * markuper: circle pos keyframe easing
-  * markuper: can specidy another circle
-  * markuper:
-  * markuper:
-  * markuper:
-  * markuper:
-  * markuper:
-  * markuper:
-  * markuper:
-  * markuper:
-* markuper: column width zoom
-* markuper: show keyframe as circle
-* markuper: can select scale keyframe
-* markuper: can change scale value on specific keyframe
-* markuper:
-* markuper:
-* markuper:
-* markuper:
-* markuper:
-* markuper:
-* markuper:
+  * markuper: timeline: capsule rotation is not in matrix
+  * markuper: timeline: zoom (support min + max)
+  * markuper: timeline: scroll
+  * markuper: attack inspector: GAttackConditionValue
+  * markuper: attack inspector: colliders with keyframe animations
+  * markuper: LEFT COLUMN with hierarchy list (or just 2 listboxes).
+    1st one has mob select + add + rename + delete (WITH SHIT TON A LOT OF CONFIRM) buttons.
+  * Docking Splits
+    runner_params.docking_params.docking_splits = [hello_imgui.DockingSplit(
+      initial_dock_="MainDockSpace",
+      new_dock_="EditorDock",
+      direction_=imgui.Dir.left,
+      ratio_=0.25,
+    )]
+    runner_params.docking_params.dockable_windows = [
+      hello_imgui.DockableWindow(label_="Editor", dock_space_name_="EditorDock"),
+      hello_imgui.DockableWindow(label_="Gizmo", dock_space_name_="MainDockSpace"),
+    ]
+  * markuper: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
+  * markuper: lines have different background colors
+  * markuper: frame columns
+  * markuper: WHAT DO I NEED FOR JAGRAS???
+    * markuper: circle pos
+    * markuper: circle radius
+    * markuper: circle pos keyframe easing
+    * markuper: can specidy another circle
+  * markuper: column width zoom
+  * markuper: show keyframe as circle
+  * markuper: can select scale keyframe
+  * markuper: can change scale value on specific keyframe
 *
 * jagras: attacks: swing with segments
 * jagras: attacks: spit
