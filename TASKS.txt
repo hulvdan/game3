@@ -28,13 +28,18 @@ PLAN
 ============================================================
 x clear
 x markuper: scaled capsule properly spreads
+- markuper: capsule scale affects radius and spread
+x markuper: show capsule info: spread
 
-* WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
-* markuper:
-* markuper:
-* markuper: capsule scale affects radius and spread
 * markuper: can change capsule spread
 * markuper: maybe just store matrices?
+* markuper: show capsule info: translation
+* markuper: show capsule info: rotation
+* markuper: show capsule info: scale
+* markuper: show circle info: translation
+* markuper: show circle info: scale
+* markuper: show circle info: radius
+* markuper:
 * markuper:
 * markuper:
 * markuper:
@@ -50,6 +55,9 @@ x markuper: scaled capsule properly spreads
 * markuper: attack inspector:
 * markuper: attack inspector:
 * markuper:
+*
+* WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
+*
 * markuper:
 * Docking Splits
   runner_params.docking_params.docking_splits = [hello_imgui.DockingSplit(

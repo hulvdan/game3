@@ -38,6 +38,14 @@ def im_error_top_bar(message: str) -> None:
   im.pop_style_color()
 
 
+def im_draw_cross() -> None:
+  draw = im.get_foreground_draw_list()
+  size = im.get_content_region_avail()
+  pos = im.get_cursor_screen_pos()
+  draw.add_line(pos, pos + size, COLOR_GRAY_U32, 2)
+  draw.add_line(pos + ImVec2(0, size.y), pos + ImVec2(size.x, 0), COLOR_GRAY_U32, 2)
+
+
 def color_hsva(h: float, s: float = 1, v: float = 1, a: float = 1) -> im.ImColor:
   result = im.ImColor.hsv(h, s, v)
   result.value.w = a
@@ -254,10 +262,11 @@ def tool_attacks_markuper() -> None:
     await bf.show_imgui(
       "Attacks Markuper",
       [
-        bf.ImGuiPanel("Visualizer", enable_debug(_panel_visualizer)),
         bf.ImGuiPanel("Explorer", enable_debug(_panel_explorer)),
-        bf.ImGuiPanel("Timeline", enable_debug(_panel_timeline)),
         bf.ImGuiPanel("Attack Inspector", enable_debug(_panel_attack_inspector)),
+        bf.ImGuiPanel("Collider Inspector", enable_debug(_panel_collider_inspector)),
+        bf.ImGuiPanel("Timeline", enable_debug(_panel_timeline)),
+        bf.ImGuiPanel("Visualizer", enable_debug(_panel_visualizer)),
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
       ],
       setup_imgui_style=setup_imgui_style,
@@ -426,10 +435,11 @@ class Creature:  ##
 
 
 @unique
-class GizmoMode(IntEnum):
+class GizmoMode(IntEnum):  ##
   TRANSLATE = 0
   ROTATE = 1
   SCALE = 2
+  ##
 
 
 class AppSaveState(BaseModel):  ##
@@ -693,8 +703,7 @@ def _panel_visualizer() -> None:
     for _ in range(segments // 2 + 1):
       _draw_points.append(p1 + vec3(cur))
       cur = m * cur
-    off = -spread_vector
-    _draw_points.append(_draw_points[-1] + off)
+    _draw_points.append(_draw_points[-1] - spread_vector)
     for _ in range(segments // 2):
       _draw_points.append(p2 + vec3(cur))
       cur = m * cur
@@ -816,4 +825,28 @@ def _panel_timeline() -> None:  ##
       hovered_line = field_index
 
   g.timeline_hovered_line = hovered_line
+  ##
+
+
+def _panel_collider_inspector() -> None:  ##
+  atk = g.ref_selected_attack
+  if not atk:
+    im_draw_cross()
+    return
+  c = atk.ref_hovered_collider
+  if not c:
+    c = atk.ref_selected_collider
+  if not c:
+    im_draw_cross()
+    return
+  match c.type:
+    case ColliderType.CIRCLE:
+      assert isinstance(c, ColliderCircle)
+    case ColliderType.CAPSULE:
+      assert isinstance(c, ColliderCapsule)
+      changed, new_value = im.slider_float("spread", c.circles_spread[0].value, 0, 10)
+      if changed:
+        c.circles_spread[0].value = new_value
+    case _:
+      assert 0
   ##
