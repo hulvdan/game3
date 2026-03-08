@@ -27,23 +27,6 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x markuper: drew 3d circle
-x markuper: can move collider using gizmo
-x markuper: selecting collider changes it to blue. COG support
-x markuper: hovering collider dims others
-x markuper: clip
-x markuper: fix: make it impossible to change y of circle
-x markuper: angle snap 15, pos snap 0.25?
-x markuper: circle radius / 2
-x markuper: better capsule draw
-x markuper: capsule draw outline
-x f
-x markuper: capsule rotate
-x markuper: circle scale (acquire radius from scale)
-x markuper: moving world space
-x fucked with lsps
-x ref
-x ty
 
 * markuper: scaled capsule properly spreads
 * WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
