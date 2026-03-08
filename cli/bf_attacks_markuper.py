@@ -903,7 +903,9 @@ def _panel_timeline() -> None:  ##
   def imgui_keyframe(label: str, pos: ImVec2, selected: bool = False) -> bool:
     remembered_pos = im.get_cursor_screen_pos()
 
-    half = _keyframe_off * im.get_window_dpi_scale()
+    scale = im.get_window_dpi_scale() * im.get_frame_height() / 24
+
+    half = _keyframe_off * scale
     im.set_cursor_screen_pos(pos - half * 2)
     im.invisible_button(label, half * 4)
 
@@ -914,7 +916,7 @@ def _panel_timeline() -> None:  ##
       color_index = 2
 
     draw.add_quad_filled(
-      *(pos + x * im.get_window_dpi_scale() for x in _keyframe_quad_points),
+      *(pos + x * scale for x in _keyframe_quad_points),
       col=keyframe_colors[color_index],
     )
 

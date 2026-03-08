@@ -47,8 +47,8 @@ x markuper: timeline: attack inspector: duration frames
 - markuper: timeline: lines alternate backgrounds
 x drew timeline lines
 x markuper: timeline: show frame cells timeline grid
+x markuper: timeline: keyframe scale with text line height
 
-* markuper: timeline: keyframe scale with text line height
 * markuper: timeline: zoom (support min + max)
 * markuper: timeline: scroll
 * markuper: timeline: capsule rotation is not in matrix
