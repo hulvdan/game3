@@ -691,25 +691,25 @@ def _panel_visualizer() -> None:
     normal = glm.cross(plane[1], plane[0])
     assert abs(glm.length(normal) - 1) < 0.00001
     m = glm.rotate(2.0 * pi / segments, normal)
-    if spread <= 0:
-      draw_circle(p, radius, color, segments, plane)
-      return
 
     plane_axis = vec4(plane[0], 0)  # type: ignore
-    spread_vector = vec3(glm.rotate(angle, normal) * plane_axis) * spread
+    capsule_dir = vec3(glm.rotate(angle, normal) * plane_axis)
+    spread_vector = capsule_dir * spread
     p1 = p + spread_vector / 2
     p2 = p - spread_vector / 2
 
-    cur = glm.cross(normal, glm.normalize(p2 - p1)) * radius
+    cur = -glm.cross(normal, capsule_dir) * radius
     for _ in range(segments // 2 + 1):
       _draw_points.append(p1 + vec3(cur))
       cur = m * cur
-    _draw_points.append(_draw_points[-1] - spread_vector)
-    for _ in range(segments // 2):
+    if spread > 0:
+      _draw_points.append(_draw_points[-1] - spread_vector)
+    for i in range(segments // 2):
       _draw_points.append(p2 + vec3(cur))
       cur = m * cur
     draw_polyline(_draw_points, color, flags=im.ImDrawFlags_.closed)
     _draw_points.clear()
+    draw_line(p1 + capsule_dir / 5, p2 - capsule_dir / 5, color)
 
   gizmo.begin_frame()
   gizmo.set_drawlist()
