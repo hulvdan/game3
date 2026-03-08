@@ -67,9 +67,8 @@
         "id": "run"
       },
       "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false
+        "revealProblems": "onProblem",
+        "reveal": "never"
       },
       "problemMatcher": {
         "owner": "python",
