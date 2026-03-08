@@ -14,7 +14,7 @@ from enum import IntEnum, unique
 from functools import partial, wraps
 from math import pi
 from pathlib import Path
-from typing import Generic, Self, TypeAlias, TypeVar
+from typing import Callable, Generic, Self, TypeAlias, TypeVar
 
 import toml
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
@@ -160,12 +160,15 @@ Matrix16: TypeAlias = imguizmo.im_guizmo.Matrix16
 Matrix6: TypeAlias = imguizmo.im_guizmo.Matrix6
 Matrix3: TypeAlias = imguizmo.im_guizmo.Matrix3
 
+STEP_TRANSLATE = 0.25
+STEP_ROTATE = 15
+STEP_SCALE = 0.25
 SNAP_TRANSLATE = Matrix3()
-SNAP_TRANSLATE.values[:] = 0.25
 SNAP_ROTATE = Matrix3()
-SNAP_ROTATE.values[:] = 15
 SNAP_SCALE = Matrix3()
-SNAP_SCALE.values[:] = 0.25
+SNAP_TRANSLATE.values[:] = STEP_TRANSLATE
+SNAP_ROTATE.values[:] = STEP_ROTATE
+SNAP_SCALE.values[:] = STEP_SCALE
 
 
 # fmt: off
@@ -383,6 +386,7 @@ class ColliderBase:  ##
 
 MIN_RADIUS: float = 0.125
 MAX_RADIUS: float = 5.0
+MAX_OFFSET: float = 10.0
 
 
 @dataclass(slots=True)
@@ -390,13 +394,13 @@ class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
   radius: list[Frame[float]]
-  tr_center_and_scale: list[Frame[Matrix16]]
+  tr_center: list[Frame[Matrix16]]
 
   @classmethod
   def make(cls) -> Self:
     return cls(
       radius=[Frame(0, 0.5)],
-      tr_center_and_scale=[Frame(0, identity_matrix())],
+      tr_center=[Frame(0, identity_matrix())],
     )
 
   ##
@@ -407,14 +411,14 @@ class ColliderCapsule(ColliderBase):  ##
   MAX_SPREAD: t.ClassVar[float] = 10.0
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
-  tr_center_and_rotation_and_scale: list[Frame[Matrix16]]
+  tr_center_and_rotation: list[Frame[Matrix16]]
   radius: list[Frame[float]]
   spread: list[Frame[float]]
 
   @classmethod
   def make(cls) -> Self:
     return cls(
-      tr_center_and_rotation_and_scale=[Frame(0, identity_matrix())],
+      tr_center_and_rotation=[Frame(0, identity_matrix())],
       radius=[Frame(0, 0.5)],
       spread=[Frame(0, 1)],
     )
@@ -740,14 +744,14 @@ def _panel_visualizer() -> None:
     match c.type:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
-        m = _to_mat4(c.tr_center_and_scale[0].value)
+        m = _to_mat4(c.tr_center[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         scale = glm.length(m * vec4(1, 0, 0, 0))
         draw_circle(center, c.radius[0].value * scale, color)
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
-        m = _to_mat4(c.tr_center_and_rotation_and_scale[0].value)
+        m = _to_mat4(c.tr_center_and_rotation[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
         angle = -math.atan2(r_vec.z, r_vec.x)
@@ -783,7 +787,7 @@ def _panel_visualizer() -> None:
     match c.type:
       case ColliderType.CIRCLE:
         assert isinstance(c, ColliderCircle)
-        center = c.tr_center_and_scale[0].value
+        center = c.tr_center[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
@@ -796,7 +800,7 @@ def _panel_visualizer() -> None:
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
-        center = c.tr_center_and_rotation_and_scale[0].value
+        center = c.tr_center_and_rotation[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
@@ -837,6 +841,45 @@ def _panel_timeline() -> None:  ##
   ##
 
 
+def _inspector_components(m: Matrix16, rotation: bool = False) -> Matrix16:  ##
+  comps = gizmo.decompose_matrix_to_components(m)
+  im.text("Tr")
+  changed, tr_x = im.slider_float(
+    bf.imgui_id("", "collider_inspector_tr_x"),
+    comps.translation.values[0],
+    -MAX_OFFSET,
+    MAX_OFFSET,
+  )
+  if changed:
+    comps.translation.values[0] = round(tr_x / STEP_TRANSLATE) * STEP_TRANSLATE
+    m = gizmo.recompose_matrix_from_components(comps)
+  changed, tr_z = im.slider_float(
+    bf.imgui_id("", "collider_inspector_tr_z"),
+    comps.translation.values[2],
+    -MAX_OFFSET,
+    MAX_OFFSET,
+  )
+  if changed:
+    comps.translation.values[2] = round(tr_z / STEP_TRANSLATE) * STEP_TRANSLATE
+    m = gizmo.recompose_matrix_from_components(comps)
+  return m
+  ##
+
+
+def _inspector_value(
+  label: str,
+  getter: Callable[[], float],
+  setter: Callable[[float], None],
+  vmin: float,
+  vmax: float,
+  step: float,
+) -> None:  ##
+  changed, spread = im.slider_float(label, getter(), vmin, vmax)
+  if changed:
+    setter(bf.clamp(round(spread / step) * step, vmin, vmax))
+  ##
+
+
 def _panel_collider_inspector() -> None:  ##
   atk = g.ref_selected_attack
   if not atk:
@@ -848,34 +891,46 @@ def _panel_collider_inspector() -> None:  ##
   if not c:
     im_draw_cross()
     return
+
   match c.type:
     case ColliderType.CIRCLE:
       assert isinstance(c, ColliderCircle)
 
-      m = _to_mat4(c.tr_center_and_scale[0].value)
-      scale = glm.length(m * vec4(1, 0, 0, 0))
-
-      changed, radius = im.slider_float(
-        "radius", c.radius[0].value * scale, MIN_RADIUS, MAX_RADIUS * scale
+      _inspector_value(
+        "radius",
+        lambda: c.radius[0].value,
+        lambda x: setattr(c.radius[0], "value", x),
+        MIN_RADIUS,
+        MAX_RADIUS,
+        STEP_TRANSLATE,
       )
-      if changed:
-        c.radius[0].value = radius / scale
+
+      c.tr_center[0].value = _inspector_components(c.tr_center[0].value)
 
     case ColliderType.CAPSULE:
       assert isinstance(c, ColliderCapsule)
 
-      m = _to_mat4(c.tr_center_and_rotation_and_scale[0].value)
-      scale = glm.length(m * vec4(1, 0, 0, 0))
-
-      changed, spread = im.slider_float("spread", c.spread[0].value, 0, c.MAX_SPREAD)
-      if changed:
-        c.spread[0].value = spread
-
-      changed, radius = im.slider_float(
-        "radius", c.radius[0].value, MIN_RADIUS, MAX_RADIUS
+      _inspector_value(
+        "radius",
+        lambda: c.radius[0].value,
+        lambda x: setattr(c.radius[0], "value", x),
+        MIN_RADIUS,
+        MAX_RADIUS,
+        STEP_TRANSLATE,
       )
-      if changed:
-        c.radius[0].value = radius
+
+      _inspector_value(
+        "spread",
+        lambda: c.spread[0].value,
+        lambda x: setattr(c.spread[0], "value", x),
+        0,
+        c.MAX_SPREAD,
+        STEP_TRANSLATE,
+      )
+
+      c.tr_center_and_rotation[0].value = _inspector_components(
+        c.tr_center_and_rotation[0].value, rotation=True
+      )
 
     case _:
       assert 0

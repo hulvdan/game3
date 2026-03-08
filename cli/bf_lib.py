@@ -1995,6 +1995,11 @@ def _show_group_gui(group: _DemoGroup) -> None:  ##
 # ╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
 
 
+def clamp(v: float, vmin: float, vmax: float) -> float:  ##
+  return min(max(v, vmin), vmax)
+  ##
+
+
 @t.overload
 def scale_to_fit(inner: tuple[int, int], outer: tuple[int, int]) -> float: ...
 
