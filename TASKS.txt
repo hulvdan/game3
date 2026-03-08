@@ -44,9 +44,11 @@ x fucked with vscode reinstalling
 x markuper: draw keyframe
 x markuper: timeline: playhead line
 x markuper: timeline: attack inspector: duration frames
+- markuper: timeline: lines alternate backgrounds
+x drew timeline lines
 
-* markuper: timeline: lines alternate backgrounds
-* markuper: timeline: show frame cells in timeline
+* markuper: timeline: show frame cells grid timeline
+* markuper: timeline: keyframe scale with text line height
 * markuper: timeline: zoom (support min + max)
 * markuper: timeline: scroll
 * markuper: timeline:

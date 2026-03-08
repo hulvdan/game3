@@ -74,7 +74,16 @@ def color_hsva(h: float, s: float = 1, v: float = 1, a: float = 1) -> im.ImColor
   return result
 
 
-def fade(v: im.ImColor, a: float) -> im.ImColor:
+def fade_replace(v: im.ImColor, a: float) -> im.ImColor:
+  result = im.ImColor()
+  result.value.x = v.value.x
+  result.value.y = v.value.y
+  result.value.z = v.value.z
+  result.value.w = a
+  return result
+
+
+def fade_multiply(v: im.ImColor, a: float) -> im.ImColor:
   result = im.ImColor()
   result.value.x = v.value.x
   result.value.y = v.value.y
@@ -103,58 +112,58 @@ def color_to_u32(v: im.ImColor) -> int:
 # ]:
 #   print(f"HUE_{name} = {h:.3f}")
 #   print(f"COLOR_{name} = color_hsva({h:.3f}, {s:.3f}, {v:.3f})")
-#   print(f"COLOR_{name}_FADED = fade(COLOR_{name}, 0.25)")
+#   print(f"COLOR_{name}_FADED = fade_replace(COLOR_{name}, 0.25)")
 #   print(f"COLOR_{name}_U32 = color_to_u32(COLOR_{name})")
 #   print(f"COLOR_{name}_FADED_U32 = color_to_u32(COLOR_{name}_FADED)")
 # cog]]]
 HUE_RED = 0.000
 COLOR_RED = color_hsva(0.000, 1.000, 1.000)
-COLOR_RED_FADED = fade(COLOR_RED, 0.25)
+COLOR_RED_FADED = fade_replace(COLOR_RED, 0.25)
 COLOR_RED_U32 = color_to_u32(COLOR_RED)
 COLOR_RED_FADED_U32 = color_to_u32(COLOR_RED_FADED)
 HUE_YELLOW = 0.143
 COLOR_YELLOW = color_hsva(0.143, 1.000, 1.000)
-COLOR_YELLOW_FADED = fade(COLOR_YELLOW, 0.25)
+COLOR_YELLOW_FADED = fade_replace(COLOR_YELLOW, 0.25)
 COLOR_YELLOW_U32 = color_to_u32(COLOR_YELLOW)
 COLOR_YELLOW_FADED_U32 = color_to_u32(COLOR_YELLOW_FADED)
 HUE_GREEN = 0.286
 COLOR_GREEN = color_hsva(0.286, 1.000, 1.000)
-COLOR_GREEN_FADED = fade(COLOR_GREEN, 0.25)
+COLOR_GREEN_FADED = fade_replace(COLOR_GREEN, 0.25)
 COLOR_GREEN_U32 = color_to_u32(COLOR_GREEN)
 COLOR_GREEN_FADED_U32 = color_to_u32(COLOR_GREEN_FADED)
 HUE_CYAN = 0.429
 COLOR_CYAN = color_hsva(0.429, 1.000, 1.000)
-COLOR_CYAN_FADED = fade(COLOR_CYAN, 0.25)
+COLOR_CYAN_FADED = fade_replace(COLOR_CYAN, 0.25)
 COLOR_CYAN_U32 = color_to_u32(COLOR_CYAN)
 COLOR_CYAN_FADED_U32 = color_to_u32(COLOR_CYAN_FADED)
 HUE_LIGHT_BLUE = 0.571
 COLOR_LIGHT_BLUE = color_hsva(0.571, 1.000, 1.000)
-COLOR_LIGHT_BLUE_FADED = fade(COLOR_LIGHT_BLUE, 0.25)
+COLOR_LIGHT_BLUE_FADED = fade_replace(COLOR_LIGHT_BLUE, 0.25)
 COLOR_LIGHT_BLUE_U32 = color_to_u32(COLOR_LIGHT_BLUE)
 COLOR_LIGHT_BLUE_FADED_U32 = color_to_u32(COLOR_LIGHT_BLUE_FADED)
 HUE_BLUE = 0.714
 COLOR_BLUE = color_hsva(0.714, 1.000, 1.000)
-COLOR_BLUE_FADED = fade(COLOR_BLUE, 0.25)
+COLOR_BLUE_FADED = fade_replace(COLOR_BLUE, 0.25)
 COLOR_BLUE_U32 = color_to_u32(COLOR_BLUE)
 COLOR_BLUE_FADED_U32 = color_to_u32(COLOR_BLUE_FADED)
 HUE_PURPLE = 0.857
 COLOR_PURPLE = color_hsva(0.857, 1.000, 1.000)
-COLOR_PURPLE_FADED = fade(COLOR_PURPLE, 0.25)
+COLOR_PURPLE_FADED = fade_replace(COLOR_PURPLE, 0.25)
 COLOR_PURPLE_U32 = color_to_u32(COLOR_PURPLE)
 COLOR_PURPLE_FADED_U32 = color_to_u32(COLOR_PURPLE_FADED)
 HUE_WHITE = 0.000
 COLOR_WHITE = color_hsva(0.000, 0.000, 1.000)
-COLOR_WHITE_FADED = fade(COLOR_WHITE, 0.25)
+COLOR_WHITE_FADED = fade_replace(COLOR_WHITE, 0.25)
 COLOR_WHITE_U32 = color_to_u32(COLOR_WHITE)
 COLOR_WHITE_FADED_U32 = color_to_u32(COLOR_WHITE_FADED)
 HUE_GRAY = 0.000
 COLOR_GRAY = color_hsva(0.000, 0.000, 0.500)
-COLOR_GRAY_FADED = fade(COLOR_GRAY, 0.25)
+COLOR_GRAY_FADED = fade_replace(COLOR_GRAY, 0.25)
 COLOR_GRAY_U32 = color_to_u32(COLOR_GRAY)
 COLOR_GRAY_FADED_U32 = color_to_u32(COLOR_GRAY_FADED)
 HUE_BLACK = 0.000
 COLOR_BLACK = color_hsva(0.000, 0.000, 0.000)
-COLOR_BLACK_FADED = fade(COLOR_BLACK, 0.25)
+COLOR_BLACK_FADED = fade_replace(COLOR_BLACK, 0.25)
 COLOR_BLACK_U32 = color_to_u32(COLOR_BLACK)
 COLOR_BLACK_FADED_U32 = color_to_u32(COLOR_BLACK_FADED)
 # [[[end]]]
@@ -248,7 +257,13 @@ def tool_attacks_markuper() -> None:
     Creature(
       name="BOSS_JAGRAS",
       attacks=[
-        Attack(name="ROLL_FRONT", duration_frames=24),
+        Attack(
+          name="ROLL_FRONT",
+          duration_frames=24,
+          colliders=[
+            ColliderCapsule.make(),
+          ],
+        ),
         Attack(name="ROLL_SIDE", duration_frames=10),
         Attack(name="JUMP_BACK"),
       ],
@@ -261,6 +276,11 @@ def tool_attacks_markuper() -> None:
       state_data = toml.load(in_file)
     loaded_state = AppSaveState(**state_data)
     g.load(loaded_state)
+
+  # removeme
+  if atk := g.ref_selected_attack:
+    if atk.colliders:
+      atk.ref_selected_collider = atk.colliders[0]
 
   def setup_imgui_style():
     if loaded_state:
@@ -284,11 +304,12 @@ def tool_attacks_markuper() -> None:
     await bf.show_imgui(
       "Attacks Markuper",
       [
+        bf.ImGuiPanel("Visualizer", enable_debug(_panel_visualizer)),
         bf.ImGuiPanel("Explorer", enable_debug(_panel_explorer)),
         bf.ImGuiPanel("Attack", enable_debug(_panel_attack_inspector)),
         bf.ImGuiPanel("Collider", enable_debug(_panel_collider_inspector)),
         bf.ImGuiPanel("Timeline", enable_debug(_panel_timeline)),
-        bf.ImGuiPanel("Visualizer", enable_debug(_panel_visualizer)),
+        bf.ImGuiPanel("Keyframe", enable_debug(_panel_keyframe_inspector)),
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
       ],
       setup_imgui_style=setup_imgui_style,
@@ -765,7 +786,7 @@ def _panel_visualizer() -> None:
     else:
       fade_ = c is not hov_col
     if fade_:
-      color_ = fade(color_, 0.25)
+      color_ = fade_replace(color_, 0.25)
     color = color_to_u32(color_)
 
     match c.type:
@@ -796,7 +817,7 @@ def _panel_visualizer() -> None:
   #   vis.gizmo_mode = GizmoMode.SCALE
 
   if c := atk.ref_selected_collider:
-    man_kwargs = dict(
+    man_kwargs: dict = dict(
       view=vis.camera_view,
       projection=vis.camera_projection,
       operation={
@@ -818,12 +839,12 @@ def _panel_visualizer() -> None:
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
+              gizmo.manipulate(object_matrix=center, **man_kwargs)
           case GizmoMode.ROTATE:
             im_error_top_bar("Can't use ROTATE on CIRCLE collider")
           case GizmoMode.SCALE:
             with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
+              gizmo.manipulate(object_matrix=center, **man_kwargs)
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
@@ -831,13 +852,13 @@ def _panel_visualizer() -> None:
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
+              gizmo.manipulate(object_matrix=center, **man_kwargs)
           case GizmoMode.ROTATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
+              gizmo.manipulate(object_matrix=center, **man_kwargs)
           case GizmoMode.SCALE:
             with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)  # type: ignore
+              gizmo.manipulate(object_matrix=center, **man_kwargs)
 
   gizmo_size = 120 * im.get_window_dpi_scale()
   gizmo.view_manipulate(
@@ -899,32 +920,53 @@ def _panel_timeline() -> None:  ##
     im.set_cursor_screen_pos(remembered_pos)
     return im.is_item_clicked()
 
-  if imgui_keyframe("keyframe1", pos_ + size_ / 2):
-    LOGD("aboba")
-  if imgui_keyframe("keyframe2", pos_ + size_ * 2 / 3):
-    LOGD("aboba")
+  tracks = tuple()
+  match c.type:
+    case ColliderType.CIRCLE:
+      assert isinstance(c, ColliderCircle)
+      tracks = (
+        ("radius", c.radius),
+        ("transform", c.tr_center),
+      )
 
-  hovered_line = -1
+    case ColliderType.CAPSULE:
+      assert isinstance(c, ColliderCapsule)
+      tracks = (
+        ("radius", c.radius),
+        ("spread", c.spread),
+        ("transform", c.tr_center_and_rotation),
+      )
+
+    case _:
+      assert 0
 
   if im.begin_table("table", 2, im.TableFlags_.sizing_stretch_same):
     im.table_setup_column("label", im.TableColumnFlags_.width_fixed)
     im.table_setup_column("value", im.TableColumnFlags_.width_stretch)
 
-    im.table_next_row()
+    for label, frame_values in tracks:
+      im.table_next_row()
 
-    im.table_set_column_index(0)
-    im.text("Width")
-    im.text("ABOASDLKJ ASLDKJASD")
-    im.text("W")
+      im.table_set_column_index(0)
+      im.text(label)
 
-    im.table_set_column_index(1)
-    avail = im.get_content_region_avail().x
-    draw.add_rect_filled(
-      im.get_cursor_screen_pos(),
-      im.get_cursor_screen_pos() + ImVec2(avail, im.get_frame_height()),
-      COLOR_YELLOW_U32,
-    )
-    im.dummy((avail, im.get_frame_height()))
+      im.table_set_column_index(1)
+      pos_top_left = im.get_cursor_screen_pos()
+      avail = im.get_content_region_avail().x
+      # im.dummy((avail, im.get_frame_height()))
+      draw.add_rect_filled(
+        pos_top_left,
+        pos_top_left + ImVec2(avail, im.get_frame_height()),
+        color_to_u32(fade_replace(COLOR_WHITE, 0.1)),
+      )
+
+      for fr in frame_values:
+        fr.index * avail
+        if imgui_keyframe(
+          f"keyframe_{label}_{fr.index}",
+          pos_top_left + ImVec2(fr.index * avail, im.get_frame_height() / 2),
+        ):
+          LOGD("aboba")
 
     im.end_table()
 
@@ -933,7 +975,8 @@ def _panel_timeline() -> None:  ##
   #   im.text_colored(color, field)
   #   if im.is_item_hovered():
   #     hovered_line = field_index
-  g.timeline_hovered_line = hovered_line
+  # hovered_line = -1
+  # g.timeline_hovered_line = hovered_line
   ##
 
 
@@ -1051,4 +1094,9 @@ def _panel_collider_inspector() -> None:  ##
 
     case _:
       assert 0
+  ##
+
+
+def _panel_keyframe_inspector() -> None:  ##
+  pass
   ##
