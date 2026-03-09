@@ -14,16 +14,15 @@
   ```
 - Download buf and place it into PATH
   https://github.com/bufbuild/buf/releases/tag/v1.65.0
-- Optional. For nvim:
-  - Download and put in PATH
-    https://github.com/GDQuest/GDScript-formatter/releases
-  - Web local testing
-    ```
-    npm install -g serve
-    ```
+- Download and put in PATH
+  https://github.com/GDQuest/GDScript-formatter/releases
 - (for stylua pre-commit) Install rust
   https://rust-lang.org/tools/install/
 - (for proto) go install github.com/mariomakdis/proto-renumber@v1.1.0
+- Optional. For web local testing:
+  ```
+  npm install -g serve
+  ```
 
 ## Bootstrap A New Repo
 

@@ -23,7 +23,7 @@ from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
 from pyglm import glm
-from pyglm.glm import degrees, mat3, mat4, radians, vec2, vec3, vec4
+from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
@@ -59,13 +59,10 @@ def recursive_validate(obj: t.Any) -> None:
 
 _keyframe_off = ImVec2(5, 8)
 _keyframe_quad_points = [
-  off
-  for off in (
-    ImVec2(_keyframe_off.x, 0),
-    ImVec2(0, -_keyframe_off.y),
-    ImVec2(-_keyframe_off.x, 0),
-    ImVec2(0, _keyframe_off.y),
-  )
+  ImVec2(_keyframe_off.x, 0),
+  ImVec2(0, -_keyframe_off.y),
+  ImVec2(-_keyframe_off.x, 0),
+  ImVec2(0, _keyframe_off.y),
 ]
 
 
@@ -458,7 +455,7 @@ class ColliderBaseMeta(type):  ##
         origin = t.get_origin(field_type)
         args = t.get_args(field_type)
 
-        if (origin in (list, t.List)) and args:
+        if (origin in (list, t.List)) and args:  # noqa: UP006
           if t.get_origin(args[0]) is Keyframe:
             cls.list_frame_fields.append(field_name)
 
@@ -483,7 +480,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
 
   def validate(self):
     for f in self.list_frame_fields:
-      frames = t.cast(list[Keyframe], getattr(self, f))
+      frames = t.cast("list[Keyframe]", getattr(self, f))
       for i in range(len(frames) - 1):
         bf.imgui_assert(
           frames[i].index < frames[i + 1].index, ("Keyframes must be sorted by `index`")
@@ -554,7 +551,7 @@ class Attack:  ##
 
     for c in self.colliders:
       for f in c.list_frame_fields:
-        frames = t.cast(list[Keyframe], getattr(c, f))
+        frames = t.cast("list[Keyframe]", getattr(c, f))
         for fr in frames:
           bf.imgui_assert(fr.index >= 0)
           bf.imgui_assert(fr.index < self.duration_frames)
@@ -747,9 +744,6 @@ def _panel_visualizer() -> None:
   draw = im.get_window_draw_list()
   size_ = im.get_content_region_avail()
   pos_ = im.get_cursor_screen_pos()
-  viewport = vec4(pos_.x, pos_.y, size_.x, size_.y)
-  size = _to_vec2(size_)
-  pos = _to_vec2(pos_)
   vis = g.visualizer
   ##
 
@@ -869,7 +863,7 @@ def _panel_visualizer() -> None:
       _draw_points.append(p1 + vec3(cur))
       cur = m * cur
     _draw_points.append(_draw_points[-1] - spread_vector)
-    for i in range(segments // 2):
+    for _ in range(segments // 2):
       _draw_points.append(p2 + vec3(cur))
       cur = m * cur
     draw_polyline(_draw_points, color, flags=im.ImDrawFlags_.closed)
@@ -962,21 +956,21 @@ def _panel_visualizer() -> None:
   #   vis.gizmo_mode = GizmoMode.SCALE
 
   if c := atk.ref_selected_collider:
-    man_kwargs: dict = dict(
-      view=vis.camera_view,
-      projection=vis.camera_projection,
-      operation={
+    man_kwargs: dict = {
+      "view": vis.camera_view,
+      "projection": vis.camera_projection,
+      "operation": {
         GizmoMode.TRANSLATE: gizmo.OPERATION.translate,
         GizmoMode.ROTATE: gizmo.OPERATION.rotate_y,
         GizmoMode.SCALE: gizmo.OPERATION.scale,
       }[vis.gizmo_mode],
-      mode=gizmo.MODE.world,
-      snap={
+      "mode": gizmo.MODE.world,
+      "snap": {
         GizmoMode.TRANSLATE: SNAP_TRANSLATE,
         GizmoMode.ROTATE: SNAP_ROTATE,
         GizmoMode.SCALE: SNAP_SCALE,
       }[vis.gizmo_mode],
-    )
+    }
     match c.type:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
@@ -1024,8 +1018,61 @@ def _panel_visualizer() -> None:
   draw.pop_clip_rect()
 
 
-def _keyframe_id(field_name: str, id: int) -> str:  ##
-  return f"keyframe_{field_name}_{id}"
+def _keyframe_id(field_name: str, id_: int) -> str:  ##
+  return f"keyframe_{field_name}_{id_}"
+  ##
+
+
+@dataclass(slots=True)
+class ImguiTimelineLineOut:
+  pos_top_left: ImVec2
+  pos_bottom_right: ImVec2
+  width: float = 0
+  width_per_index: float = 0
+  height: float = 0
+  clicked: bool = False
+  double_clicked: bool = False
+  hovered: bool = False
+  hovered_t: float = -1
+  hovered_index: int = -1
+  hovered_indexf: float = -1
+  hovered_index_half_cell_offset: int = -1
+
+
+imgui_timeline_line_out = ImguiTimelineLineOut(ImVec2(), ImVec2())
+
+
+def imgui_timeline_line(indices_width: int) -> None:  ##
+  out = imgui_timeline_line_out
+  out.pos_top_left = im.get_cursor_screen_pos()
+  out.width = im.get_content_region_avail().x
+  out.width_per_index = out.width / indices_width
+  out.height = im.get_frame_height()
+  out.pos_bottom_right = out.pos_top_left + ImVec2(out.width, out.height)
+
+  draw = im.get_window_draw_list()
+  draw.add_rect_filled(
+    out.pos_top_left,
+    out.pos_bottom_right,
+    imgui_color_to_u32(imgui_fade_replace(COLOR_WHITE, 0.1)),
+  )
+
+  mouse = im.get_mouse_pos()
+  if (out.pos_top_left.x <= mouse.x <= out.pos_bottom_right.x) and (
+    out.pos_top_left.y <= mouse.y <= out.pos_bottom_right.y
+  ):
+    out.hovered = True
+  out.clicked = im.is_mouse_clicked(0)
+  out.double_clicked = im.is_mouse_double_clicked(0)
+
+  out.hovered_t = bf.clamp((mouse.x - out.pos_top_left.x) / out.width, 0, 1)
+  out.hovered_index = min(indices_width - 1, int(out.hovered_t * indices_width))
+  out.hovered_indexf = out.hovered_t * indices_width
+  out.hovered_index_half_cell_offset = bf.clamp(
+    int((im.get_mouse_pos().x - out.pos_top_left.x) / out.width * indices_width + 0.5),
+    0,
+    indices_width - 1,
+  )
   ##
 
 
@@ -1051,8 +1098,6 @@ def _panel_timeline() -> None:  ##
     atk.timeline_at = atk.duration_frames
 
   draw = im.get_window_draw_list()
-  size_ = im.get_content_region_avail()
-  pos_ = im.get_cursor_screen_pos()
 
   keyframe_colors = (
     im.get_color_u32(im.Col_.button),
@@ -1083,7 +1128,7 @@ def _panel_timeline() -> None:  ##
     im.set_cursor_screen_pos(remembered_pos)
     return im.is_item_clicked()
 
-  tracks = tuple()
+  tracks: tuple[tuple[str, list[Keyframe]], ...]
   match c.type:
     case ColliderType.CIRCLE:
       if not isinstance(c, ColliderCircle):
@@ -1103,7 +1148,7 @@ def _panel_timeline() -> None:  ##
       )
 
     case _:
-      bf.imgui_assert(0)
+      raise bf.imgui_assert(0)
 
   if im.begin_table("table", 2, im.TableFlags_.sizing_stretch_same):
     im.table_setup_column("label", im.TableColumnFlags_.width_fixed)
@@ -1126,8 +1171,7 @@ def _panel_timeline() -> None:  ##
         if (
           im.button("<<")
           or im.is_key_pressed(im.Key._0)
-          or im.is_key_pressed(im.Key._6)
-          and io.key_shift
+          or (im.is_key_pressed(im.Key._6) and io.key_shift)
         ):
           atk.timeline_at = 0
           atk.timeline_started_playing_at = 0
@@ -1148,36 +1192,24 @@ def _panel_timeline() -> None:  ##
           im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
 
         im.same_line()
-        if im.button(">>") or im.is_key_pressed(im.Key._4) and io.key_shift:
+        if im.button(">>") or (im.is_key_pressed(im.Key._4) and io.key_shift):
           atk.timeline_at = atk.duration_frames
           atk.timeline_started_playing_at = atk.duration_frames
         im.set_item_tooltip("Key: $")
 
       im.table_set_column_index(1)
 
-      pos_top_left = im.get_cursor_screen_pos()
+      imgui_timeline_line(atk.duration_frames)
+
       if not lines_top_left:
-        lines_top_left = pos_top_left
-
-      avail = im.get_content_region_avail().x
-      lines_bottom_right = pos_top_left + ImVec2(avail, im.get_frame_height())
-
-      draw.add_rect_filled(
-        pos_top_left,
-        lines_bottom_right,
-        imgui_color_to_u32(imgui_fade_replace(COLOR_WHITE, 0.1)),
-      )
-
-      line_height = im.get_frame_height()
+        lines_top_left = imgui_timeline_line_out.pos_top_left
+      lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
 
       if keyframes is None:
-        im.invisible_button("timeline_playhead", ImVec2(avail, line_height))
-        if im.is_mouse_down(0) and (im.is_item_hovered() or g.timeline.dragging_playhead):
-          atk.timeline_at = bf.clamp(
-            (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames,
-            0,
-            atk.duration_frames,
-          )
+        if im.is_mouse_down(0) and (
+          imgui_timeline_line_out.hovered or g.timeline.dragging_playhead
+        ):
+          atk.timeline_at = imgui_timeline_line_out.hovered_indexf
           g.timeline.dragging_playhead = True
         elif not im.is_mouse_down(0):
           g.timeline.dragging_playhead = False
@@ -1191,8 +1223,11 @@ def _panel_timeline() -> None:  ##
           is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
           imgui_keyframe(
             key,
-            pos_top_left
-            + ImVec2(fr.index * avail / atk.duration_frames, line_height / 2),
+            imgui_timeline_line_out.pos_top_left
+            + ImVec2(
+              fr.index * imgui_timeline_line_out.width_per_index,
+              imgui_timeline_line_out.height / 2,
+            ),
             selected=is_selected,
           )
           if im.is_item_hovered() and im.is_mouse_clicked(0):
@@ -1208,23 +1243,15 @@ def _panel_timeline() -> None:  ##
             if fr_index < len(keyframes) - 1:
               max_right = keyframes[fr_index + 1].index - 1
 
-            fr.index = max(
-              min_left,
-              min(
-                max_right,
-                int(
-                  (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames
-                  + 0.5
-                ),
-              ),
+            fr.index = bf.clamp(
+              imgui_timeline_line_out.hovered_index_half_cell_offset, min_left, max_right
             )
             atk.timeline_at = fr.index
 
     if not lines_top_left:
       raise bf.imgui_assert(0)
-    lines_width = lines_bottom_right.x - lines_top_left.x
     for i in range(atk.duration_frames):
-      posx = lines_top_left.x + i * avail / atk.duration_frames
+      posx = lines_top_left.x + i * imgui_timeline_line_out.width / atk.duration_frames
       draw.add_line(
         ImVec2(posx, lines_top_left.y),
         ImVec2(posx, lines_bottom_right.y),
@@ -1232,9 +1259,10 @@ def _panel_timeline() -> None:  ##
       )
 
     playhead_top = lines_top_left + ImVec2(
-      atk.timeline_at / atk.duration_frames * avail, 0
+      atk.timeline_at / atk.duration_frames * imgui_timeline_line_out.width, 0
     )
     playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
+    line_height = imgui_timeline_line_out.height
     draw.add_triangle_filled(
       playhead_top + ImVec2(0, line_height / 2),
       playhead_top + ImVec2(line_height / 4, 0),
@@ -1255,7 +1283,7 @@ def _panel_timeline() -> None:  ##
   ##
 
 
-def _inspector_components(m: Matrix16, rotation: bool = False) -> Matrix16:  ##
+def _inspector_components(m: Matrix16) -> Matrix16:  ##
   comps = gizmo.decompose_matrix_to_components(m)
 
   def tr_setter(index, value):
@@ -1315,13 +1343,13 @@ def _inspector_value(
 
 def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
   bf.imgui_assert(g.ref_selected_attack)
-  atk = t.cast(Attack, g.ref_selected_attack)
+  atk = t.cast("Attack", g.ref_selected_attack)
   c = atk.ref_selected_collider
   if not c:
     bf.imgui_assert(0)
-  c = t.cast(ColliderBase, c)
+  c = t.cast("ColliderBase", c)
 
-  frames = t.cast(list[Keyframe], getattr(c, field_name))
+  frames = t.cast("list[Keyframe]", getattr(c, field_name))
   fr = frames[index_inside_list]
 
   c.selected_keyframe = SelectedKeyframe(
@@ -1430,7 +1458,7 @@ def _panel_collider_inspector() -> None:  ##
         )
 
       c.tr_center_and_rotation[0].value = _inspector_components(
-        c.tr_center_and_rotation[0].value, rotation=True
+        c.tr_center_and_rotation[0].value
       )
 
     case _:

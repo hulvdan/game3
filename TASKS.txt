@@ -52,11 +52,12 @@ x mark: selecting keyframe moves playhead to it
 x mark: drew radius keyframe jump buttons
 x mark: can jump between keyframes
 x mark: fix keyframe dragging (radius crashes)
+x mark: ref timeline line
 
 * mark: create new keyframe with double click
 * mark: can set easing mode for radius keyframe transitions (default is linear)
 * mark: collider inspector: make good widths (slider spans only available width)
-* mark:
+* mark: fix: clicking on "transform" keyframe crash (tr_position / tr_position_and_rotation)
 * mark:
 * mark:
 * mark:

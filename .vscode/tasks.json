@@ -46,18 +46,11 @@
       }
     },
     {
-      "label": "5_types",
+      "label": "5_lint",
       "type": "shell",
-      // "command": "pyright",
-      // "args": [
-      //   "cli"
-      // ],
-      "command": "ty",
-      "args": [
-        "check",
-        "cli",
-        "--output-format=concise",
-        "--no-progress"
+      "dependsOn": [
+        "ty",
+        "ruff"
       ],
       "group": {
         "kind": "build",
@@ -65,19 +58,52 @@
       },
       "icon": {
         "id": "run"
-      },
+      }
+    },
+    {
+      "label": "ty",
+      "type": "shell",
+      "command": "ty",
+      "args": [
+        "check",
+        "cli",
+        "--output-format=concise",
+        "--no-progress"
+      ],
       "presentation": {
         "revealProblems": "onProblem",
         "reveal": "never"
       },
+      "hide": true,
       "problemMatcher": {
         "owner": "python",
-        // "fileLocation": [
-        //   "absolute"
-        // ],
         "pattern": [
           {
-            // "regexp": "^(.*\\.py):(\\d+):(\\d+) - (.*)$",
+            "regexp": "^(.*\\.py):(\\d+):(\\d+): (.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "message": 4
+          }
+        ]
+      }
+    },
+    {
+      "label": "ruff",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "ruff",
+        "check",
+        "cli",
+        "--output-format=concise"
+      ],
+      "hide": true,
+      "problemMatcher": {
+        "owner": "python",
+        "pattern": [
+          {
             "regexp": "^(.*\\.py):(\\d+):(\\d+): (.*)$",
             "file": 1,
             "line": 2,

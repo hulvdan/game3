@@ -14,7 +14,7 @@ from enum import Enum
 from functools import partial
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Callable, Iterator, List, Sequence, TypeAlias, TypeVar
+from typing import Any, Callable, Iterator, Sequence, TypeAlias, TypeVar
 
 import cv2
 import fnvhash
@@ -151,8 +151,8 @@ AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".aac", ".m4a", ".wma", ".ogg"}
 #  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
 
 
-def are_unique(iter: t.Iterable) -> bool:  ##
-  values = list(iter)
+def are_unique(iterable: t.Iterable) -> bool:  ##
+  values = list(iterable)
   return len(values) == len(set(values))
   ##
 
@@ -1822,7 +1822,7 @@ def show_imgui(
   # Define our dockable windows : each window provide a Gui callback, and will be displayed
   # in a docking split.
   #
-  dockable_windows: List[hello_imgui.DockableWindow] = []
+  dockable_windows: list[hello_imgui.DockableWindow] = []
 
   # --- Standalone tabs (no grouping) ---
   standalone_demos = [
@@ -1958,8 +1958,8 @@ def show_imgui(
 _show_code_states: dict[str, bool] = {}
 
 
-def imgui_id(value: str, id: str) -> str:  ##
-  return str(value) + "#" + "#" + str(id)
+def imgui_id(value: str, id_: str) -> str:  ##
+  return str(value) + "#" + "#" + str(id_)
   ##
 
 
@@ -2004,7 +2004,7 @@ class _DemoGroup:  ##
   """A group of demos shown as collapsing headers inside a single tab."""
 
   label: str
-  demos: List[_DemoDetails] = field(default_factory=list)
+  demos: list[_DemoDetails] = field(default_factory=list)
   ##
 
 
@@ -2030,9 +2030,33 @@ def _show_group_gui(group: _DemoGroup) -> None:  ##
 # ╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
 
 
-def clamp(v: float, vmin: float, vmax: float) -> float:  ##
+## def clamp(v, vmin, vmax)
+@t.overload
+def clamp(v: int, vmin: int, vmax: int) -> int: ...
+@t.overload
+def clamp(v: float, vmin: int, vmax: int) -> float: ...
+@t.overload
+def clamp(v: int, vmin: float, vmax: int) -> float: ...
+@t.overload
+def clamp(v: int, vmin: int, vmax: float) -> float: ...
+@t.overload
+def clamp(v: float, vmin: float, vmax: int) -> float: ...
+@t.overload
+def clamp(v: int, vmin: float, vmax: float) -> float: ...
+@t.overload
+def clamp(v: float, vmin: int, vmax: float) -> float: ...
+@t.overload
+def clamp(v: float, vmin: float, vmax: float) -> float: ...
+
+
+def clamp(v, vmin, vmax):
   return min(max(v, vmin), vmax)
-  ##
+
+
+##
+
+
+## def scale_to_fit(inner, outer) -> float
 
 
 @t.overload
@@ -2047,7 +2071,7 @@ def scale_to_fit(inner: tuple[float, float], outer: tuple[float, float]) -> floa
 def scale_to_fit(inner: glm.vec2, outer: glm.vec2) -> float: ...
 
 
-def scale_to_fit(inner, outer):  ##
+def scale_to_fit(inner, outer):
   if hasattr(inner, "x"):
     scale_x = outer.x / inner.x
     scale_y = outer.y / inner.y
@@ -2055,7 +2079,9 @@ def scale_to_fit(inner, outer):  ##
     scale_x = outer[0] / inner[0]
     scale_y = outer[1] / inner[1]
   return min(scale_x, scale_y)
-  ##
+
+
+##
 
 
 def mat_scale(m: mat3, v: float | vec2) -> mat3:
@@ -2082,14 +2108,14 @@ def m_pos(m, p):
 
 
 @t.overload
-def m_size(m: mat3, v: int | float) -> float | int: ...
+def m_size(m: mat3, v: float) -> float: ...
 
 
 @t.overload
 def m_size(m: mat3, v: vec2) -> vec2: ...
 
 
-def m_size(m: mat3, v: vec2 | float | int) -> vec2 | float | int:
+def m_size(m: mat3, v):
   result = (m * vec3(vec2(1, 1) * v, 0)).xy  # type: ignore
   if isinstance(v, (int, float)):
     return result.x
@@ -2097,17 +2123,17 @@ def m_size(m: mat3, v: vec2 | float | int) -> vec2 | float | int:
 
 
 @t.overload
-def lerp(v1: float | int, v2: float | int, t: float | int) -> float: ...
+def lerp(v1: float, v2: float, t: float) -> float: ...
 @t.overload
-def lerp(v1: vec1, v2: vec1, t: float | int) -> vec1: ...
+def lerp(v1: vec1, v2: vec1, t: float) -> vec1: ...
 @t.overload
-def lerp(v1: vec2, v2: vec2, t: float | int) -> vec2: ...
+def lerp(v1: vec2, v2: vec2, t: float) -> vec2: ...
 @t.overload
-def lerp(v1: vec3, v2: vec3, t: float | int) -> vec3: ...
+def lerp(v1: vec3, v2: vec3, t: float) -> vec3: ...
 @t.overload
-def lerp(v1: vec4, v2: vec4, t: float | int) -> vec4: ...
+def lerp(v1: vec4, v2: vec4, t: float) -> vec4: ...
 @t.overload
-def lerp(v1: quat, v2: quat, t: float | int) -> quat: ...
+def lerp(v1: quat, v2: quat, t: float) -> quat: ...
 
 
 def lerp(v1, v2, t):

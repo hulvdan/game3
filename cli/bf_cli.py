@@ -1,7 +1,6 @@
 ## Imports
 import os
 import shutil
-import typing as t
 import zipfile
 from collections import Counter
 from pathlib import Path

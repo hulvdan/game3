@@ -14,7 +14,7 @@ repos:
         exclude: ^addons/.*$
         types: []
       - id: python-no-eval
-        entry: "(^|[ ]+)assert"
+        entry: "^[ ]*assert"
         language: pygrep
         files: ^.*bf_attacks_markuper\.py$
         types: []
@@ -77,7 +77,21 @@ repos:
         stages: [pre-commit, pre-merge-commit, pre-push, manual]
       - id: ruff-format
         name: ruff format
-        entry: ruff format
+        entry: uv run ruff format
+        language: system
+        require_serial: true
+        files: \.py$
+        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --output-format=concise
+        language: system
+        require_serial: true
+        files: \.py$
+        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+      - id: ty-check
+        name: ty check
+        entry: ty check cli --output-format=concise --no-progress
         language: system
         require_serial: true
         files: \.py$
