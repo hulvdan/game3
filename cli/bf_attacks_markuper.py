@@ -704,7 +704,9 @@ def _panel_attack_inspector() -> None:  ##
       atk.ref_selected_collider = atk.colliders[-1]
 
   atk.ref_hovered_collider = None
-  for i, collider in enumerate(atk.colliders):
+  i = -1
+  for collider in atk.colliders:
+    i += 1
     flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
     if atk.ref_selected_collider is collider:
       flags |= im.TreeNodeFlags_.selected
@@ -1085,7 +1087,9 @@ def _panel_timeline() -> None:  ##
     lines_top_left: ImVec2 | None = None
     lines_bottom_right = ImVec2()
 
-    for field, frame_values in (("", None), *tracks):
+    were_dragging_keyframe_this_frame = False
+
+    for field, keyframes in (("", None), *tracks):
       im.table_next_row()
 
       im.table_set_column_index(0)
@@ -1141,7 +1145,7 @@ def _panel_timeline() -> None:  ##
 
       line_height = im.get_frame_height()
 
-      if frame_values is None:
+      if keyframes is None:
         im.invisible_button("timeline_playhead", ImVec2(avail, line_height))
         if im.is_mouse_down(0) and (im.is_item_hovered() or g.timeline.dragging_playhead):
           atk.timeline_at = bf.clamp(
@@ -1155,8 +1159,10 @@ def _panel_timeline() -> None:  ##
 
       else:
         # Keyframe lines
-        for fr in frame_values:
-          key = f"keyframe_{field}_{fr.index}"
+        fr_index = -1
+        for fr in keyframes:
+          fr_index += 1
+          key = f"keyframe_{field}_{fr.id}"
           is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
           imgui_keyframe(
             key,
@@ -1167,11 +1173,26 @@ def _panel_timeline() -> None:  ##
           if im.is_item_hovered() and im.is_mouse_clicked(0):
             c.selected_keyframe = SelectedKeyframe(key=key, field=field, index=fr.index)
             tim.dragging_keyframe = key
-          if is_selected:
-            if im.is_mouse_down(0):
-              pass
-            else:
-              tim.dragging_keyframe = None
+
+          if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
+            were_dragging_keyframe_this_frame = True
+            min_left = 0
+            max_right = atk.duration_frames - 1
+            if fr_index > 0:
+              min_left = keyframes[fr_index - 1].index + 1
+            if fr_index < len(keyframes) - 1:
+              max_right = keyframes[fr_index + 1].index - 1
+
+            fr.index = max(
+              min_left,
+              min(
+                max_right,
+                int(
+                  (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames
+                  + 0.5
+                ),
+              ),
+            )
 
     assert lines_top_left
     lines_width = lines_bottom_right.x - lines_top_left.x
@@ -1197,9 +1218,13 @@ def _panel_timeline() -> None:  ##
       playhead_top, playhead_bottom, COLOR_RED_U32, 2 * im.get_window_dpi_scale()
     )
 
+    if not were_dragging_keyframe_this_frame:
+      tim.dragging_keyframe = None
+
     im.end_table()
 
     recursive_validate(g)
+
   ##
 
 

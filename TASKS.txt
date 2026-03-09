@@ -44,10 +44,8 @@ x mark: >> button
 x mark: can't set attack duration less than most right keyframe
 x mark: ref: can't set attack duration less than most right keyframe
 x mark: recursive validation logic
+x mark: dragging keyframes
 
-* mark: dragging keyframes
-  can't move to the left of left keyframe
-  can't move to the right of right keyframe
 * mark: delete keyframe using RMB and popup
 * mark: create new keyframe with double click
 * mark: can change radius of selected keyframe
