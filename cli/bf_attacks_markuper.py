@@ -920,7 +920,7 @@ def _panel_timeline() -> None:  ##
     return
 
   if tim.is_playing:
-    atk.timeline_at += im.get_io().delta_time
+    atk.timeline_at += im.get_io().delta_time * FPS
     if atk.timeline_at > atk.duration_frames:
       atk.timeline_at -= atk.duration_frames
 
@@ -1002,11 +1002,11 @@ def _panel_timeline() -> None:  ##
           atk.timeline_at = 0
           atk.timeline_started_playing_at = 0
         im.set_item_tooltip("Key: 0 / ^")
-        label = "⏸" if tim.is_playing else "▶"
+
         with bf.imgui_colorify_inputs(HUE_RED if tim.is_playing else HUE_GREEN):
           im.same_line()
           if (
-            im.button(label)
+            im.button("⏸" if tim.is_playing else "▶")
             or im.is_key_pressed(im.Key.space)
             or im.is_key_pressed(im.Key.enter)
           ):
@@ -1016,6 +1016,12 @@ def _panel_timeline() -> None:  ##
             elif im.is_key_pressed(im.Key.space):
               atk.timeline_at = atk.timeline_started_playing_at
           im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
+
+        im.same_line()
+        if im.button(">>") or im.is_key_pressed(im.Key._4) and io.key_shift:
+          atk.timeline_at = atk.duration_frames
+          atk.timeline_started_playing_at = atk.duration_frames
+        im.set_item_tooltip("Key: $")
 
       im.table_set_column_index(1)
 
