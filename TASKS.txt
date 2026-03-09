@@ -38,6 +38,7 @@ x toml formatter
 x bf.lerp
 x markuper: timeline play/pause button + fonts
 x markuper: playing
+x tooltips
 
 * markuper: show selected keyframe data
 * markuper: drag keyframe to move it

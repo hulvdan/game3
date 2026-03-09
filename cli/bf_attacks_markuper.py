@@ -992,8 +992,19 @@ def _panel_timeline() -> None:  ##
       if label:
         im.text(label)
       else:
-        label = "⏸" if tim.is_playing else "\uf04b"
+        io = im.get_io()
+        if (
+          im.button("<<")
+          or im.is_key_pressed(im.Key._0)
+          or im.is_key_pressed(im.Key._6)
+          and io.key_shift
+        ):
+          tim.playhead_frame = 0
+          tim.started_playing_at = 0
+        im.set_item_tooltip("Key: 0 / ^")
+        label = "⏸" if tim.is_playing else "▶"
         with bf.imgui_colorify_inputs(HUE_RED if tim.is_playing else HUE_GREEN):
+          im.same_line()
           if (
             im.button(label)
             or im.is_key_pressed(im.Key.space)
@@ -1004,6 +1015,7 @@ def _panel_timeline() -> None:  ##
               tim.started_playing_at = tim.playhead_frame
             elif im.is_key_pressed(im.Key.space):
               tim.playhead_frame = tim.started_playing_at
+          im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
 
       im.table_set_column_index(1)
 
