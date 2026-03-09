@@ -1769,6 +1769,14 @@ def ldtk_load(filepath: Path | str) -> Ldtk:  ##
 # ╚═╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝ ╚═╝
 
 
+def imgui_assert(expr, *args) -> Exception:  ##
+  if not expr:
+    breakpoint()
+    assert expr, args
+  return ValueError(f"imgui_assert: {expr}, {args}")
+  ##
+
+
 @dataclass
 class ImGuiPanel:  ##
   label: str

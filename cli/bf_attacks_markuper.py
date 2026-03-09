@@ -357,7 +357,8 @@ def gizmo_restrict(
   disable_translation_z: bool = False,
 ):
   global _gizmo_restricted
-  assert not _gizmo_restricted
+  bf.imgui_assert(not _gizmo_restricted)
+
   _gizmo_restricted = True
   gizmo.set_axis_mask(*mask)
   comps = gizmo.decompose_matrix_to_components(m)
@@ -415,8 +416,8 @@ class Keyframe(Generic[T]):  ##
   id: int = 0
 
   def validate(self):
-    assert self.id > 0
-    assert self.index >= 0
+    bf.imgui_assert(self.id > 0)
+    bf.imgui_assert(self.index >= 0)
 
   ##
 
@@ -428,7 +429,7 @@ class SelectedKeyframe:  ##
   index: int
 
   def validate(self):
-    assert self.index >= 0
+    bf.imgui_assert(self.index >= 0)
 
   ##
 
@@ -445,7 +446,7 @@ class ColliderBaseMeta(type):  ##
   def __init__(cls, name, bases, namespace):
     super().__init__(name, bases, namespace)
     is_base = name == "ColliderBase"
-    assert is_base or (ColliderBase in bases)
+    bf.imgui_assert(is_base or (ColliderBase in bases))
 
     if not is_base:
       cls.list_frame_fields = []
@@ -468,7 +469,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   _next_keyframe_id: int = 1
 
   def __new__(cls, *_args, **_kwargs):
-    assert cls is not ColliderBase
+    bf.imgui_assert(cls is not ColliderBase)
     return super().__new__(cls)
 
   def next_keyframe_id(self) -> int:
@@ -480,8 +481,8 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     for f in self.list_frame_fields:
       frames = t.cast(list[Keyframe], getattr(self, f))
       for i in range(len(frames) - 1):
-        assert frames[i].index < frames[i + 1].index, (
-          "Keyframes must be sorted by `index`"
+        bf.imgui_assert(
+          frames[i].index < frames[i + 1].index, ("Keyframes must be sorted by `index`")
         )
 
   ##
@@ -540,19 +541,19 @@ class Attack:  ##
   timeline_started_playing_at: float = 0
 
   def validate(self):
-    assert self.name
-    assert self.duration_frames > 0
-    assert self.timeline_at >= 0
-    assert self.timeline_at <= self.duration_frames
-    assert self.timeline_started_playing_at >= 0
-    assert self.timeline_started_playing_at <= self.duration_frames
+    bf.imgui_assert(self.name)
+    bf.imgui_assert(self.duration_frames > 0)
+    bf.imgui_assert(self.timeline_at >= 0)
+    bf.imgui_assert(self.timeline_at <= self.duration_frames)
+    bf.imgui_assert(self.timeline_started_playing_at >= 0)
+    bf.imgui_assert(self.timeline_started_playing_at <= self.duration_frames)
 
     for c in self.colliders:
       for f in c.list_frame_fields:
         frames = t.cast(list[Keyframe], getattr(c, f))
         for fr in frames:
-          assert fr.index >= 0
-          assert fr.index < self.duration_frames
+          bf.imgui_assert(fr.index >= 0)
+          bf.imgui_assert(fr.index < self.duration_frames)
 
   ##
 
@@ -563,8 +564,8 @@ class Creature:  ##
   attacks: list[Attack]
 
   def validate(self):
-    assert self.name
-    assert bf.are_unique(x.name for x in self.attacks)
+    bf.imgui_assert(self.name)
+    bf.imgui_assert(bf.are_unique(x.name for x in self.attacks))
 
   ##
 
@@ -732,7 +733,7 @@ def _panel_attack_inspector() -> None:  ##
 def _panel_visualizer() -> None:
   atk = g.ref_selected_attack
   if atk is None:
-    assert g.ref_selected_attack_creature is None
+    bf.imgui_assert(g.ref_selected_attack_creature is None)
     return
 
   ## Setup
@@ -818,12 +819,12 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
-    assert segments >= 8
-    assert radius > 0
-    assert isinstance(p, vec3)
-    assert glm.dot(plane[1], plane[0]) < 0.00001
+    bf.imgui_assert(segments >= 8)
+    bf.imgui_assert(radius > 0)
+    bf.imgui_assert(isinstance(p, vec3))
+    bf.imgui_assert(glm.dot(plane[1], plane[0]) < 0.00001)
     normal = glm.cross(plane[0], plane[1])
-    assert abs(glm.length(normal) - 1) < 0.00001
+    bf.imgui_assert(abs(glm.length(normal) - 1) < 0.00001)
     m = glm.rotate(2.0 * pi / segments, normal)
     cur = glm.cross(normal, vec3_forward) * radius
     for _ in range(segments):
@@ -841,14 +842,14 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
-    assert segments >= 8
-    assert spread >= 0
-    assert radius > 0
-    assert isinstance(p, vec3)
-    assert segments % 2 == 0
-    assert glm.dot(plane[0], plane[1]) < 0.00001
+    bf.imgui_assert(segments >= 8)
+    bf.imgui_assert(spread >= 0)
+    bf.imgui_assert(radius > 0)
+    bf.imgui_assert(isinstance(p, vec3))
+    bf.imgui_assert(segments % 2 == 0)
+    bf.imgui_assert(glm.dot(plane[0], plane[1]) < 0.00001)
     normal = glm.cross(plane[1], plane[0])
-    assert abs(glm.length(normal) - 1) < 0.00001
+    bf.imgui_assert(abs(glm.length(normal) - 1) < 0.00001)
     m = glm.rotate(2.0 * pi / segments, normal)
 
     plane_axis = vec4(plane[0], 0)  # type: ignore
@@ -894,7 +895,8 @@ def _panel_visualizer() -> None:
 
     match c.type:
       case ColliderType.CIRCLE:
-        assert isinstance(c, ColliderCircle)
+        if not isinstance(c, ColliderCircle):
+          raise bf.imgui_assert(0)
         m = _to_mat4(c.tr_center[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         scale = glm.length(m * vec4(1, 0, 0, 0))
@@ -909,7 +911,7 @@ def _panel_visualizer() -> None:
             r = v
             break
         t = 0
-        assert r.index >= l.index
+        bf.imgui_assert(r.index >= l.index)
         if r.index != l.index:
           t = (atk.timeline_at - l.index) / (r.index - l.index)
         radius = bf.lerp(l.value, r.value, t)
@@ -917,7 +919,8 @@ def _panel_visualizer() -> None:
         draw_circle(center, radius * scale, color)
 
       case ColliderType.CAPSULE:
-        assert isinstance(c, ColliderCapsule)
+        if not isinstance(c, ColliderCapsule):
+          raise bf.imgui_assert(0)
         m = _to_mat4(c.tr_center_and_rotation[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
@@ -935,7 +938,7 @@ def _panel_visualizer() -> None:
             r = v
             break
         t = 0
-        assert r.index >= l.index
+        bf.imgui_assert(r.index >= l.index)
         if r.index != l.index:
           t = (atk.timeline_at - l.index) / (r.index - l.index)
         radius = bf.lerp(l.value, r.value, t)
@@ -943,7 +946,7 @@ def _panel_visualizer() -> None:
         draw_capsule(center, radius, c.spread[0].value, angle, color)
 
       case _:
-        assert 0
+        bf.imgui_assert(0)
 
   if im.is_key_pressed(im.Key.t) or im.is_key_pressed(im.Key._1):
     vis.gizmo_mode = GizmoMode.TRANSLATE
@@ -970,7 +973,8 @@ def _panel_visualizer() -> None:
     )
     match c.type:
       case ColliderType.CIRCLE:
-        assert isinstance(c, ColliderCircle)
+        if not isinstance(c, ColliderCircle):
+          raise bf.imgui_assert(0)
         center = c.tr_center[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
@@ -983,7 +987,8 @@ def _panel_visualizer() -> None:
               gizmo.manipulate(object_matrix=center, **man_kwargs)
 
       case ColliderType.CAPSULE:
-        assert isinstance(c, ColliderCapsule)
+        if not isinstance(c, ColliderCapsule):
+          raise bf.imgui_assert(0)
         center = c.tr_center_and_rotation[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
@@ -1019,7 +1024,7 @@ def _panel_timeline() -> None:  ##
   if not atk:
     imgui_draw_cross()
     return
-  assert atk.duration_frames > 0
+  bf.imgui_assert(atk.duration_frames > 0)
   c = atk.ref_selected_collider
   if atk.ref_hovered_collider:
     c = atk.ref_hovered_collider
@@ -1070,14 +1075,16 @@ def _panel_timeline() -> None:  ##
   tracks = tuple()
   match c.type:
     case ColliderType.CIRCLE:
-      assert isinstance(c, ColliderCircle)
+      if not isinstance(c, ColliderCircle):
+        raise bf.imgui_assert(0)
       tracks = (
         ("radius", c.radius),
         ("transform", c.tr_center),
       )
 
     case ColliderType.CAPSULE:
-      assert isinstance(c, ColliderCapsule)
+      if not isinstance(c, ColliderCapsule):
+        raise bf.imgui_assert(0)
       tracks = (
         ("radius", c.radius),
         ("spread", c.spread),
@@ -1085,7 +1092,7 @@ def _panel_timeline() -> None:  ##
       )
 
     case _:
-      assert 0
+      bf.imgui_assert(0)
 
   if im.begin_table("table", 2, im.TableFlags_.sizing_stretch_same):
     im.table_setup_column("label", im.TableColumnFlags_.width_fixed)
@@ -1201,7 +1208,8 @@ def _panel_timeline() -> None:  ##
               ),
             )
 
-    assert lines_top_left
+    if not lines_top_left:
+      raise bf.imgui_assert(0)
     lines_width = lines_bottom_right.x - lines_top_left.x
     for i in range(atk.duration_frames):
       posx = lines_top_left.x + i * avail / atk.duration_frames
@@ -1307,7 +1315,8 @@ def _panel_collider_inspector() -> None:  ##
 
   match c.type:
     case ColliderType.CIRCLE:
-      assert isinstance(c, ColliderCircle)
+      if not isinstance(c, ColliderCircle):
+        raise bf.imgui_assert(0)
 
       with bf.imgui_colorify_inputs(HUE_GREEN):
         _inspector_value(
@@ -1322,7 +1331,8 @@ def _panel_collider_inspector() -> None:  ##
       c.tr_center[0].value = _inspector_components(c.tr_center[0].value)
 
     case ColliderType.CAPSULE:
-      assert isinstance(c, ColliderCapsule)
+      if not isinstance(c, ColliderCapsule):
+        raise bf.imgui_assert(0)
 
       with bf.imgui_colorify_inputs(HUE_GREEN):
         _inspector_value(
@@ -1348,7 +1358,7 @@ def _panel_collider_inspector() -> None:  ##
       )
 
     case _:
-      assert 0
+      bf.imgui_assert(0)
   ##
 
 

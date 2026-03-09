@@ -46,8 +46,8 @@ x mark: ref: can't set attack duration less than most right keyframe
 x mark: recursive validation logic
 x mark: dragging keyframes
 x fix drawing over tooltips
+x imgui_assert with breakpoint()
 
-* bfassert with breakpoint()
 * pre-commit remove assert from bf_attack_tool
 * mark: can change radius of selected keyframe
 * mark: delete keyframe (1 - through keyframe inspector? 2 - rmb?)

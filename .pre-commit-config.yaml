@@ -10,8 +10,13 @@ repos:
       - id: python-no-eval
         entry: "nocheckin"
         language: pygrep
-        files: ^(?!.pre-commit-config).*.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
+        files: ^(?!.pre-commit-config).*\.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
         exclude: ^addons/.*$
+        types: []
+      - id: python-no-eval
+        entry: "(^|[ ]+)assert"
+        language: pygrep
+        files: ^.*bf_attacks_markuper\.py$
         types: []
   - repo: https://github.com/google/yamlfmt
     rev: v0.21.0
