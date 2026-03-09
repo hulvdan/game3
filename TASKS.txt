@@ -41,8 +41,9 @@ x mark: playing
 x tooltips
 x mark: move playhead into attack
 x mark: >> button
+x mark: can't set attack duration less than most right keyframe
 
-* mark:
+* mark: ref: can't set attack duration less than most right keyframe
 * mark:
 * mark:
 * mark:

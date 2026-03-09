@@ -8,7 +8,7 @@ import threading
 import traceback
 import typing as t
 from contextlib import contextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from datetime import datetime
 from enum import IntEnum, unique
 from functools import partial, wraps
@@ -403,14 +403,34 @@ class ColliderType(IntEnum):  ##
 
 class ColliderBase:  ##
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
+  list_frame_fields: t.ClassVar[list[str]] = []
 
   def __new__(cls, *_args, **_kwargs):
     assert cls is not ColliderBase
     return super().__new__(cls)
 
+  @classmethod
+  def _init_list_frame_fields(cls):
+    cls.list_frame_fields = [
+      f.name
+      for f in fields(cls)
+      if t.get_origin(f.type) in (list, t.List)
+      and t.get_args(f.type)
+      and t.get_args(f.type)[0].__name__ == Frame.__name__
+    ]
+
   ##
 
 
+def init_collider_class(cls: t.Type[ColliderBase]):  ##
+  assert cls is not ColliderBase
+  assert ColliderBase in cls.__mro__
+  cls._init_list_frame_fields()
+  return cls
+  ##
+
+
+@init_collider_class
 @dataclass(slots=True)
 class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
@@ -428,6 +448,7 @@ class ColliderCircle(ColliderBase):  ##
   ##
 
 
+@init_collider_class
 @dataclass(slots=True)
 class ColliderCapsule(ColliderBase):  ##
   MAX_SPREAD: t.ClassVar[float] = 10.0
@@ -586,10 +607,16 @@ def _panel_attack_inspector() -> None:  ##
 
   im.text("Frames")
   im.same_line()
+  most_right_keyframe = 1
+  for c in atk.colliders:
+    for f in c.list_frame_fields:
+      for frame in getattr(c, f):
+        frame: Frame[t.Any]
+        most_right_keyframe = max(most_right_keyframe, frame.index)
   changed, frames = im.slider_int(
     bf.imgui_id("", "attack_duration_frames"),
     atk.duration_frames,
-    1,
+    most_right_keyframe,
     MAX_ATTACK_FRAMES_DURATION,
   )
   if changed:
@@ -923,6 +950,8 @@ def _panel_timeline() -> None:  ##
     atk.timeline_at += im.get_io().delta_time * FPS
     if atk.timeline_at > atk.duration_frames:
       atk.timeline_at -= atk.duration_frames
+  elif atk.timeline_at > atk.duration_frames:
+    atk.timeline_at = atk.duration_frames
 
   draw = im.get_foreground_draw_list()
   size_ = im.get_content_region_avail()
