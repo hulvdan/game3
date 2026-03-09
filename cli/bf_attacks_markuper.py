@@ -502,6 +502,9 @@ class State:
 
   @dataclass(slots=True)
   class Timeline:  ##
+    is_playing: bool = False
+    started_playing_at: float = 0
+
     playhead_frame: float = 0
     playhead_captured_mouse: bool = False
     ##
@@ -903,6 +906,7 @@ def _panel_visualizer() -> None:
 
 
 def _panel_timeline() -> None:  ##
+  tim = g.timeline
   atk = g.ref_selected_attack
   if not atk:
     imgui_draw_cross()
@@ -975,11 +979,26 @@ def _panel_timeline() -> None:  ##
     lines_top_left: ImVec2 | None = None
     lines_bottom_right = ImVec2()
 
-    for label, frame_values in ((" ", None), *tracks):
+    for label, frame_values in (("", None), *tracks):
       im.table_next_row()
 
       im.table_set_column_index(0)
-      im.text(label)
+
+      if label:
+        im.text(label)
+      else:
+        label = "⏸" if tim.is_playing else "\uf04b"
+        with bf.imgui_colorify_inputs(HUE_RED if tim.is_playing else HUE_GREEN):
+          if (
+            im.button(label)
+            or im.is_key_pressed(im.Key.space)
+            or im.is_key_pressed(im.Key.enter)
+          ):
+            tim.is_playing = not tim.is_playing
+            if tim.is_playing:
+              tim.started_playing_at = tim.playhead_frame
+            elif im.is_key_pressed(im.Key.space):
+              tim.playhead_frame = tim.started_playing_at
 
       im.table_set_column_index(1)
 

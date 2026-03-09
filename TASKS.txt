@@ -36,11 +36,11 @@ x markuper: timeline blends radius
 x ty root cli
 x toml formatter
 x bf.lerp
+x markuper: timeline play/pause button + fonts
 
-* markuper: timeline play button
+* markuper: playing
 * markuper: show selected keyframe data
 * markuper: drag keyframe to move it
-* markuper:
 * markuper:
 *
 * LATER
