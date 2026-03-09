@@ -384,22 +384,6 @@ def _to_mat4(m: Matrix16) -> mat4:
   return mat4(*m.values.reshape((4, 4)).flatten())
 
 
-def input_matrix3(label: str, matrix3: Matrix3) -> tuple[bool, Matrix3]:
-  mat_values = matrix3.values.tolist()
-  changed, new_values = im.input_float3(label, mat_values)
-  if changed:
-    matrix3 = Matrix3(new_values)
-  return changed, matrix3
-
-
-def input_only_first_value_matrix3(label: str, matrix3: Matrix3) -> tuple[bool, Matrix3]:
-  value = float(matrix3.values[0])
-  changed, new_value = im.input_float(label, value)
-  if changed:
-    matrix3.values[0] = new_value
-  return changed, matrix3
-
-
 ##
 
 

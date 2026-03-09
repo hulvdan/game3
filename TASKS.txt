@@ -32,34 +32,6 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x markuper: scaled capsule properly spreads
-- markuper: capsule scale affects radius and spread
-x markuper: show capsule info: spread
-x markuper: can change capsule spread
-x markuper: capsule orientation line in center
-x markuper: changing radius + spread of circle/capsule
-x markuper: show circle/capsule info: translation + stepped changing of translation/radius/spread
-- markuper: show capsule info: scale
-- markuper: show circle info: scale
-- markuper: maybe just store matrices?
-x f
-- temp files formatting
-x WHEN LSP FREEZES: MB RUN ON SAVE THROUGHT STDOUT / TEMPFILES ???
-x fucked with vscode reinstalling
-x markuper: draw keyframe
-x markuper: timeline: playhead line
-x markuper: timeline: attack inspector: duration frames
-- markuper: timeline: lines alternate backgrounds
-x drew timeline lines
-x markuper: timeline: show frame cells timeline grid
-x markuper: timeline: keyframe scale with text line height
-- markuper: where can i get diamond icon (look inside demos!!!)
-x docs
-x markuper: add another radius frame to pre-made circle
-x markuper: timeline line + red playhead
-x markuper: can click to set playhead
-x markuper: playhead mouse capture
-x ref
 
 * markuper: timeline blends radius
 * markuper: timeline play button
