@@ -288,6 +288,7 @@ def tool_attacks_markuper() -> None:
   ]
   c = ColliderCapsule.make()
   c.radius.append(Keyframe(4, 5, c.next_keyframe_id()))
+  c.radius.append(Keyframe(7, 4, c.next_keyframe_id()))
   g.creatures[0].attacks[0].colliders.append(c)
   g.creatures[0].attacks[0].timeline_at = 2
 
@@ -428,6 +429,7 @@ class SelectedKeyframe:  ##
   key: str  # e.g. "keyframe_radius_0"
   field: str  # e.g. "radius" / "spread"
   timeline_cell_index: int
+  index_inside_list: int
 
   def validate(self):
     bf.imgui_assert(self.id > 0)
@@ -1022,6 +1024,11 @@ def _panel_visualizer() -> None:
   draw.pop_clip_rect()
 
 
+def _keyframe_id(field_name: str, id: int) -> str:  ##
+  return f"keyframe_{field_name}_{id}"
+  ##
+
+
 def _panel_timeline() -> None:  ##
   tim = g.timeline
   atk = g.ref_selected_attack
@@ -1180,7 +1187,7 @@ def _panel_timeline() -> None:  ##
         fr_index = -1
         for fr in keyframes:
           fr_index += 1
-          key = f"keyframe_{field}_{fr.id}"
+          key = _keyframe_id(field, fr.id)
           is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
           imgui_keyframe(
             key,
@@ -1189,9 +1196,7 @@ def _panel_timeline() -> None:  ##
             selected=is_selected,
           )
           if im.is_item_hovered() and im.is_mouse_clicked(0):
-            c.selected_keyframe = SelectedKeyframe(
-              id=fr.id, key=key, field=field, timeline_cell_index=fr.index
-            )
+            _select_keyframe(field, fr.index)
             tim.dragging_keyframe = key
 
           if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
@@ -1308,6 +1313,28 @@ def _inspector_value(
   ##
 
 
+def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
+  bf.imgui_assert(g.ref_selected_attack)
+  atk = t.cast(Attack, g.ref_selected_attack)
+  c = atk.ref_selected_collider
+  if not c:
+    bf.imgui_assert(0)
+  c = t.cast(ColliderBase, c)
+
+  frames = t.cast(list[Keyframe], getattr(c, field_name))
+  fr = frames[index_inside_list]
+
+  c.selected_keyframe = SelectedKeyframe(
+    id=fr.id,
+    key=_keyframe_id("radius", fr.id),
+    field="radius",
+    timeline_cell_index=fr.index,
+    index_inside_list=index_inside_list,
+  )
+  atk.timeline_at = fr.index
+  ##
+
+
 def _panel_collider_inspector() -> None:  ##
   atk = g.ref_selected_attack
   if not atk:
@@ -1325,12 +1352,9 @@ def _panel_collider_inspector() -> None:  ##
 
   def field_keyframe_index(field_name: str) -> int:
     keyframe = c.selected_keyframe
-    if not keyframe:
+    if not keyframe or (keyframe.field != field_name):
       return 0
-    if keyframe.field != field_name:
-      return 0
-    frames = t.cast(list[Keyframe], getattr(c, keyframe.field))
-    return next(i for i, f in enumerate(frames) if f.id == keyframe.id)
+    return keyframe.index_inside_list
 
   match c.type:
     case ColliderType.CIRCLE:
@@ -1340,9 +1364,12 @@ def _panel_collider_inspector() -> None:  ##
       index_radius = field_keyframe_index("radius")
       if len(c.radius) > 1:
         im.begin_disabled()
-        im.button("<")
+        im.begin_disabled()
+        if im.button("<"):
+          pass
         im.same_line()
         im.button(">")
+        im.end_disabled()
         im.end_disabled()
         im.same_line()
 
@@ -1365,11 +1392,19 @@ def _panel_collider_inspector() -> None:  ##
       index_radius = field_keyframe_index("radius")
       if not len(c.radius):
         im.begin_disabled()
+      if index_radius == 0:
+        im.begin_disabled()
       if im.button("<"):
-        LOGD("aboba")
+        _select_keyframe("radius", index_radius - 1)
+      if index_radius == 0:
+        im.end_disabled()
       im.same_line()
+      if index_radius >= len(c.radius) - 1:
+        im.begin_disabled()
       if im.button(">"):
-        LOGD("aboba")
+        _select_keyframe("radius", index_radius + 1)
+      if index_radius == len(c.radius) - 1:
+        im.end_disabled()
       if not len(c.radius):
         im.end_disabled()
       im.same_line()

@@ -50,11 +50,11 @@ x imgui_assert with breakpoint() + pre-commit check
 x mark: can change radius of selected keyframe
 x mark: selecting keyframe moves playhead to it
 x mark: drew radius keyframe jump buttons
+x mark: can jump between keyframes
 
-* mark: can jump between keyframes
+* mark: fix keyframe dragging (radius crashes)
 * mark: can set easing mode for radius keyframe transitions (default is linear)
-* mark:
-* mark:
+* mark: collider inspector: make good widths (slider spans only available width)
 * mark:
 * mark:
 * mark:
