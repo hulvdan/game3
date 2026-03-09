@@ -1196,7 +1196,7 @@ def _panel_timeline() -> None:  ##
             selected=is_selected,
           )
           if im.is_item_hovered() and im.is_mouse_clicked(0):
-            _select_keyframe(field, fr.index)
+            _select_keyframe(field, fr_index)
             tim.dragging_keyframe = key
 
           if im.is_mouse_down(0) and (tim.dragging_keyframe == key):

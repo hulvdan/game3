@@ -51,8 +51,9 @@ x mark: can change radius of selected keyframe
 x mark: selecting keyframe moves playhead to it
 x mark: drew radius keyframe jump buttons
 x mark: can jump between keyframes
+x mark: fix keyframe dragging (radius crashes)
 
-* mark: fix keyframe dragging (radius crashes)
+* mark: create new keyframe with double click
 * mark: can set easing mode for radius keyframe transitions (default is linear)
 * mark: collider inspector: make good widths (slider spans only available width)
 * mark:
@@ -65,7 +66,6 @@ x mark: can jump between keyframes
 * mark:
 * mark: truly clamp im.slider* returned values (because while editing it returns unclamped values)
 * mark: delete keyframe (1 - through keyframe inspector? 2 - rmb?)
-* mark: create new keyframe with double click
 * mark: hovering over timeline lines highlights line as yellow
   (so that it's easy to correctly place keyframes)
 * mark: hovering timeline lines enlightens background
