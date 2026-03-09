@@ -8,7 +8,7 @@ import threading
 import traceback
 import typing as t
 from contextlib import contextmanager
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import IntEnum, unique
 from functools import partial, wraps
@@ -401,7 +401,25 @@ class ColliderType(IntEnum):  ##
   ##
 
 
-class ColliderBase:  ##
+class ColliderBaseMeta(type):  ##
+  def __init__(cls, name, bases, namespace):
+    super().__init__(name, bases, namespace)
+    is_base = name == "ColliderBase"
+    assert is_base or (ColliderBase in bases)
+
+    if not is_base:
+      for field_name, field_type in cls.__annotations__.items():
+        origin = t.get_origin(field_type)
+        args = t.get_args(field_type)
+
+        if (origin in (list, t.List)) and args:
+          if t.get_origin(args[0]) is Frame:
+            cls.list_frame_fields.append(field_name)  # ty:ignore[unresolved-attribute]
+
+  ##
+
+
+class ColliderBase(metaclass=ColliderBaseMeta):  ##
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
   list_frame_fields: t.ClassVar[list[str]] = []
 
@@ -409,28 +427,9 @@ class ColliderBase:  ##
     assert cls is not ColliderBase
     return super().__new__(cls)
 
-  @classmethod
-  def _init_list_frame_fields(cls):
-    cls.list_frame_fields = [
-      f.name
-      for f in fields(cls)
-      if t.get_origin(f.type) in (list, t.List)
-      and t.get_args(f.type)
-      and t.get_args(f.type)[0].__name__ == Frame.__name__
-    ]
-
   ##
 
 
-def init_collider_class(cls: t.Type[ColliderBase]):  ##
-  assert cls is not ColliderBase
-  assert ColliderBase in cls.__mro__
-  cls._init_list_frame_fields()
-  return cls
-  ##
-
-
-@init_collider_class
 @dataclass(slots=True)
 class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
@@ -448,7 +447,6 @@ class ColliderCircle(ColliderBase):  ##
   ##
 
 
-@init_collider_class
 @dataclass(slots=True)
 class ColliderCapsule(ColliderBase):  ##
   MAX_SPREAD: t.ClassVar[float] = 10.0
@@ -607,16 +605,16 @@ def _panel_attack_inspector() -> None:  ##
 
   im.text("Frames")
   im.same_line()
-  most_right_keyframe = 1
+  min_attack_frames = 1
   for c in atk.colliders:
     for f in c.list_frame_fields:
       for frame in getattr(c, f):
         frame: Frame[t.Any]
-        most_right_keyframe = max(most_right_keyframe, frame.index)
+        min_attack_frames = max(min_attack_frames, frame.index)
   changed, frames = im.slider_int(
     bf.imgui_id("", "attack_duration_frames"),
     atk.duration_frames,
-    most_right_keyframe,
+    min_attack_frames,
     MAX_ATTACK_FRAMES_DURATION,
   )
   if changed:
