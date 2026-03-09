@@ -6,13 +6,12 @@ import zipfile
 from collections import Counter
 from pathlib import Path
 
+import bf_lib as bf
+import bf_swatch
 import colornames
-
-from . import bf_lib as bf
-from . import bf_swatch
-from .bf_game import *  # noqa
-from .bf_glib import do_generate, get_sounds_that_reaper_would_export
-from .bf_typer import app, command, global_timing_manager_instance, timing
+from bf_game import *  # noqa
+from bf_glib import do_generate, get_sounds_that_reaper_would_export
+from bf_typer import app, command, global_timing_manager_instance, timing
 
 ##
 

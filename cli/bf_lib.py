@@ -21,7 +21,9 @@ import fnvhash
 import numpy as np
 import pydantic_core
 import pyfiglet
-from imgui_bundle import hello_imgui, imgui, immapp
+from bf_typer import log
+from imgui_bundle import hello_imgui, immapp
+from imgui_bundle import imgui as im
 from imgui_bundle.demos_python import (
   demo_im_anim,
   demo_imgui_bundle_intro,
@@ -44,8 +46,6 @@ from PIL import Image, ImageChops, ImageDraw, ImageEnhance
 from pydantic import BaseModel
 from pyglm import glm
 from pyglm.glm import mat3, mat4, vec2, vec3
-
-from .bf_typer import log
 
 ##
 
@@ -1770,6 +1770,9 @@ class ImGuiPanel:  ##
   ##
 
 
+_show_imgui_frame = 0
+
+
 def show_imgui(
   window_title: str,
   panels: list[ImGuiPanel],
@@ -1889,16 +1892,17 @@ def show_imgui(
 
   # the main gui is only responsible to give focus to ImGui Bundle dockable window
   def show_gui():
-    if g.frame == 1:
+    global _show_imgui_frame
+    if _show_imgui_frame == 1:
       # Focus cannot be given at frame 0, since some additional windows will
       # be created after (and will steal the focus)
       runner_params.docking_params.focus_dockable_window("Dear ImGui Bundle")
-    g.frame += 1
+    _show_imgui_frame += 1
 
   def show_edit_font_scale_in_status_bar():
-    imgui.set_next_item_width(imgui.get_content_region_avail().x / 10)
-    _, imgui.get_style().font_scale_main = imgui.slider_float(
-      "Font scale", imgui.get_style().font_scale_main, 0.5, 2
+    im.set_next_item_width(im.get_content_region_avail().x / 10)
+    _, im.get_style().font_scale_main = im.slider_float(
+      "Font scale", im.get_style().font_scale_main, 0.5, 2
     )
 
   runner_params.callbacks.show_status = show_edit_font_scale_in_status_bar
@@ -1907,7 +1911,7 @@ def show_imgui(
   # runner_params.callbacks.post_new_frame = gizmo.begin_frame
 
   def setup_imgui_config() -> None:
-    imgui.get_io().config_flags |= imgui.ConfigFlags_.nav_enable_keyboard.value
+    im.get_io().config_flags |= im.ConfigFlags_.nav_enable_keyboard.value
 
   runner_params.callbacks.setup_imgui_config = setup_imgui_config
 
@@ -1947,11 +1951,11 @@ def imgui_colorify_inputs(hue: float):  ##
 def _show_module_demo(
   demo_filename: str, demo_function: Callable[[], None], show_code: bool = False
 ) -> None:  ##
-  if imgui.get_frame_count() < 2:  # cf https://github.com/pthom/imgui_bundle/issues/293
+  if im.get_frame_count() < 2:  # cf https://github.com/pthom/imgui_bundle/issues/293
     return
   if show_code:
     current = _show_code_states.get(demo_filename, False)
-    _, current = imgui.checkbox(imgui_id("Show code", demo_filename), current)
+    _, current = im.checkbox(imgui_id("Show code", demo_filename), current)
     _show_code_states[demo_filename] = current
     if current:
       demo_utils.show_python_vs_cpp_file(demo_filename, 40)
@@ -1978,14 +1982,14 @@ class _DemoGroup:  ##
 
 def _show_group_gui(group: _DemoGroup) -> None:  ##
   """Gui function for a grouped tab: each sub-demo is a collapsing header."""
-  if imgui.get_frame_count() < 2:
+  if im.get_frame_count() < 2:
     return
   for demo in group.demos:
     demo_module_name = demo.demo_module.__name__.split(".")[-1]
-    if imgui.collapsing_header(demo.label):
-      imgui.indent()
+    if im.collapsing_header(demo.label):
+      im.indent()
       _show_module_demo(demo_module_name, demo.demo_module.demo_gui, demo.show_code)
-      imgui.unindent()
+      im.unindent()
   ##
 
 
@@ -2064,4 +2068,4 @@ def m_size(m: mat3, v: vec2 | float | int) -> vec2 | float | int:
   return result
 
 
-from .bf_game import *  # noqa
+from bf_game import *  # noqa

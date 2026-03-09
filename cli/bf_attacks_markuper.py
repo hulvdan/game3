@@ -16,15 +16,14 @@ from math import pi
 from pathlib import Path
 from typing import Callable, Generic, Self, TypeAlias, TypeVar
 
+import bf_lib as bf
 import toml
+from bf_typer import command
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
 from pyglm import glm
 from pyglm.glm import degrees, mat3, mat4, radians, vec2, vec3, vec4
-
-from . import bf_lib as bf
-from .bf_typer import command
 
 ##
 
@@ -788,7 +787,23 @@ def _panel_visualizer() -> None:
         m = _to_mat4(c.tr_center[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         scale = glm.length(m * vec4(1, 0, 0, 0))
-        draw_circle(center, c.radius[0].value * scale, color)
+
+        l = c.radius[0]
+        r = c.radius[-1]
+        for i in range(len(c.radius)):
+          v = c.radius[i]
+          if v.index <= g.timeline.playhead_frame:
+            l = v
+          if v.index >= g.timeline.playhead_frame:
+            r = v
+            break
+        t = 0
+        assert r.index >= l.index
+        if r.index != l.index:
+          t = (g.timeline.playhead_frame - l.index) / (r.index - l.index)
+        radius: float = glm.lerp(l.value, r.value, t)
+
+        draw_circle(center, radius * scale, color)
 
       case ColliderType.CAPSULE:
         assert isinstance(c, ColliderCapsule)
@@ -796,8 +811,25 @@ def _panel_visualizer() -> None:
         center = vec3(m * vec4(0, 0, 0, 1))
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
         angle = -math.atan2(r_vec.z, r_vec.x)
+
         r = glm.length(r_vec)
-        draw_capsule(center, c.radius[0].value, c.spread[0].value, angle, color)
+
+        l = c.radius[0]
+        r = c.radius[-1]
+        for i in range(len(c.radius)):
+          v = c.radius[i]
+          if v.index <= g.timeline.playhead_frame:
+            l = v
+          if v.index >= g.timeline.playhead_frame:
+            r = v
+            break
+        t = 0
+        assert r.index >= l.index
+        if r.index != l.index:
+          t = (g.timeline.playhead_frame - l.index) / (r.index - l.index)
+        radius = glm.lerp(l.value, r.value, t)
+
+        draw_capsule(center, radius, c.spread[0].value, angle, color)  # ty:ignore[invalid-argument-type]
 
       case _:
         assert 0

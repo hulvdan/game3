@@ -1,7 +1,7 @@
 """
 USAGE:
 
-    from .bf_lib import game_settings, glib_processor
+    from bf_lib import game_settings, glib_processor
 
     game_settings.itch_target = "hulvdan/cult-boy"
     game_settings.languages = ["russian", "english"]
@@ -22,12 +22,11 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Generator
 
+import bf_lib as bf
 import numpy as np
+from bf_attacks_markuper import *  # noqa: F403
+from bf_typer import command, timing
 from PIL import Image
-
-from . import bf_lib as bf
-from .bf_attacks_markuper import *  # noqa: F403
-from .bf_typer import command, timing
 
 ##
 

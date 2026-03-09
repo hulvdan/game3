@@ -3,13 +3,12 @@ import json
 from math import radians
 from pathlib import Path
 
+import bf_lib as bf
 import rpp
 import yaml
+from bf_game import *  # noqa
+from bf_typer import timing
 from google.protobuf import json_format
-
-from . import bf_lib as bf
-from .bf_game import *  # noqa
-from .bf_typer import timing
 
 ##
 
@@ -175,7 +174,7 @@ func _physics_process(_dt: float) -> void:
     json.dump(glib, out_file, indent=2)
 
   ## Validating no invalid fields specified in glib.
-  from . import glib_pb2  # noqa: PLC0415
+  import glib_pb2  # noqa: PLC0415
 
   lib = glib_pb2.Lib()  # type: ignore
   json_format.Parse(json.dumps(glib), lib)
