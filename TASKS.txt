@@ -48,10 +48,23 @@ x mark: dragging keyframes
 x fix drawing over tooltips
 x imgui_assert with breakpoint() + pre-commit check
 x mark: can change radius of selected keyframe
+x mark: selecting keyframe moves playhead to it
 
+* mark:
+* mark: can set easing mode for radius keyframe transitions (default is linear)
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark: truly clamp im.slider* returned values (because while editing it returns unclamped values)
 * mark: delete keyframe (1 - through keyframe inspector? 2 - rmb?)
 * mark: create new keyframe with double click
-* mark: selecting keyframe moves playhead to it
 * mark: hovering over timeline lines highlights line as yellow
   (so that it's easy to correctly place keyframes)
 * mark: hovering timeline lines enlightens background

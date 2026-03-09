@@ -1211,6 +1211,7 @@ def _panel_timeline() -> None:  ##
                 ),
               ),
             )
+            atk.timeline_at = fr.index
 
     if not lines_top_left:
       raise bf.imgui_assert(0)
