@@ -271,7 +271,7 @@ def tool_attacks_markuper() -> None:
   c = ColliderCapsule.make()
   c.radius.append(Frame(4, 5))
   g.creatures[0].attacks[0].colliders.append(c)
-  g.timeline.playhead_frame = 2
+  g.creatures[0].attacks[0].timeline_at = 2
 
   loaded_state: AppSaveState | None = None
   if _APP_STATE_FILE_PATH.exists():
@@ -457,6 +457,9 @@ class Attack:  ##
 
   ref_selected_collider: ColliderBase | None = None
   ref_hovered_collider: ColliderBase | None = None
+
+  timeline_at: float = 0
+  timeline_started_playing_at: float = 0
   ##
 
 
@@ -503,9 +506,6 @@ class State:
   @dataclass(slots=True)
   class Timeline:  ##
     is_playing: bool = False
-    started_playing_at: float = 0
-
-    playhead_frame: float = 0
     playhead_captured_mouse: bool = False
     ##
 
@@ -795,15 +795,15 @@ def _panel_visualizer() -> None:
         r = c.radius[-1]
         for i in range(len(c.radius)):
           v = c.radius[i]
-          if v.index <= g.timeline.playhead_frame:
+          if v.index <= atk.timeline_at:
             l = v
-          if v.index >= g.timeline.playhead_frame:
+          if v.index >= atk.timeline_at:
             r = v
             break
         t = 0
         assert r.index >= l.index
         if r.index != l.index:
-          t = (g.timeline.playhead_frame - l.index) / (r.index - l.index)
+          t = (atk.timeline_at - l.index) / (r.index - l.index)
         radius = bf.lerp(l.value, r.value, t)
 
         draw_circle(center, radius * scale, color)
@@ -821,15 +821,15 @@ def _panel_visualizer() -> None:
         r = c.radius[-1]
         for i in range(len(c.radius)):
           v = c.radius[i]
-          if v.index <= g.timeline.playhead_frame:
+          if v.index <= atk.timeline_at:
             l = v
-          if v.index >= g.timeline.playhead_frame:
+          if v.index >= atk.timeline_at:
             r = v
             break
         t = 0
         assert r.index >= l.index
         if r.index != l.index:
-          t = (g.timeline.playhead_frame - l.index) / (r.index - l.index)
+          t = (atk.timeline_at - l.index) / (r.index - l.index)
         radius = bf.lerp(l.value, r.value, t)
 
         draw_capsule(center, radius, c.spread[0].value, angle, color)
@@ -920,9 +920,9 @@ def _panel_timeline() -> None:  ##
     return
 
   if tim.is_playing:
-    tim.playhead_frame += im.get_io().delta_time
-    if tim.playhead_frame > atk.duration_frames:
-      tim.playhead_frame -= atk.duration_frames
+    atk.timeline_at += im.get_io().delta_time
+    if atk.timeline_at > atk.duration_frames:
+      atk.timeline_at -= atk.duration_frames
 
   draw = im.get_foreground_draw_list()
   size_ = im.get_content_region_avail()
@@ -999,8 +999,8 @@ def _panel_timeline() -> None:  ##
           or im.is_key_pressed(im.Key._6)
           and io.key_shift
         ):
-          tim.playhead_frame = 0
-          tim.started_playing_at = 0
+          atk.timeline_at = 0
+          atk.timeline_started_playing_at = 0
         im.set_item_tooltip("Key: 0 / ^")
         label = "⏸" if tim.is_playing else "▶"
         with bf.imgui_colorify_inputs(HUE_RED if tim.is_playing else HUE_GREEN):
@@ -1012,9 +1012,9 @@ def _panel_timeline() -> None:  ##
           ):
             tim.is_playing = not tim.is_playing
             if tim.is_playing:
-              tim.started_playing_at = tim.playhead_frame
+              atk.timeline_started_playing_at = atk.timeline_at
             elif im.is_key_pressed(im.Key.space):
-              tim.playhead_frame = tim.started_playing_at
+              atk.timeline_at = atk.timeline_started_playing_at
           im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
 
       im.table_set_column_index(1)
@@ -1039,7 +1039,7 @@ def _panel_timeline() -> None:  ##
         if im.is_mouse_down(0) and (
           im.is_item_hovered() or g.timeline.playhead_captured_mouse
         ):
-          g.timeline.playhead_frame = bf.clamp(
+          atk.timeline_at = bf.clamp(
             (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames,
             0,
             atk.duration_frames,
@@ -1070,7 +1070,7 @@ def _panel_timeline() -> None:  ##
       )
 
     playhead_top = lines_top_left + ImVec2(
-      g.timeline.playhead_frame / atk.duration_frames * avail, 0
+      atk.timeline_at / atk.duration_frames * avail, 0
     )
     playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
     draw.add_triangle_filled(
