@@ -45,7 +45,7 @@ from imgui_bundle.demos_python import (
 from PIL import Image, ImageChops, ImageDraw, ImageEnhance
 from pydantic import BaseModel
 from pyglm import glm
-from pyglm.glm import mat3, mat4, vec2, vec3
+from pyglm.glm import mat3, mat4, quat, vec1, vec2, vec3, vec4
 
 ##
 
@@ -2066,6 +2066,24 @@ def m_size(m: mat3, v: vec2 | float | int) -> vec2 | float | int:
   if isinstance(v, (int, float)):
     return result.x
   return result
+
+
+@t.overload
+def lerp(v1: float | int, v2: float | int, t: float | int) -> float: ...
+@t.overload
+def lerp(v1: vec1, v2: vec1, t: float | int) -> vec1: ...
+@t.overload
+def lerp(v1: vec2, v2: vec2, t: float | int) -> vec2: ...
+@t.overload
+def lerp(v1: vec3, v2: vec3, t: float | int) -> vec3: ...
+@t.overload
+def lerp(v1: vec4, v2: vec4, t: float | int) -> vec4: ...
+@t.overload
+def lerp(v1: quat, v2: quat, t: float | int) -> quat: ...
+
+
+def lerp(v1, v2, t):
+  return glm.lerp(v1, v2, t)
 
 
 from bf_game import *  # noqa

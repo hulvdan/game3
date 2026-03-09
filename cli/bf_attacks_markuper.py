@@ -801,7 +801,7 @@ def _panel_visualizer() -> None:
         assert r.index >= l.index
         if r.index != l.index:
           t = (g.timeline.playhead_frame - l.index) / (r.index - l.index)
-        radius: float = glm.lerp(l.value, r.value, t)
+        radius = bf.lerp(l.value, r.value, t)
 
         draw_circle(center, radius * scale, color)
 
@@ -827,9 +827,9 @@ def _panel_visualizer() -> None:
         assert r.index >= l.index
         if r.index != l.index:
           t = (g.timeline.playhead_frame - l.index) / (r.index - l.index)
-        radius = glm.lerp(l.value, r.value, t)
+        radius = bf.lerp(l.value, r.value, t)
 
-        draw_capsule(center, radius, c.spread[0].value, angle, color)  # ty:ignore[invalid-argument-type]
+        draw_capsule(center, radius, c.spread[0].value, angle, color)
 
       case _:
         assert 0

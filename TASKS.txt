@@ -32,8 +32,11 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x markuper: timeline blends radius
+x ty root cli
+x toml formatter
+x bf.lerp
 
-* markuper: timeline blends radius
 * markuper: timeline play button
 * markuper: show selected keyframe data
 * markuper: drag keyframe to move it
