@@ -424,12 +424,14 @@ class Keyframe(Generic[T]):  ##
 
 @dataclass(slots=True, frozen=True)
 class SelectedKeyframe:  ##
+  id: int
   key: str  # e.g. "keyframe_radius_0"
   field: str  # e.g. "radius" / "spread"
-  index: int
+  timeline_cell_index: int
 
   def validate(self):
-    bf.imgui_assert(self.index >= 0)
+    bf.imgui_assert(self.id > 0)
+    bf.imgui_assert(self.timeline_cell_index >= 0)
 
   ##
 
@@ -1185,7 +1187,9 @@ def _panel_timeline() -> None:  ##
             selected=is_selected,
           )
           if im.is_item_hovered() and im.is_mouse_clicked(0):
-            c.selected_keyframe = SelectedKeyframe(key=key, field=field, index=fr.index)
+            c.selected_keyframe = SelectedKeyframe(
+              id=fr.id, key=key, field=field, timeline_cell_index=fr.index
+            )
             tim.dragging_keyframe = key
 
           if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
@@ -1313,16 +1317,29 @@ def _panel_collider_inspector() -> None:  ##
     imgui_draw_cross()
     return
 
+  current_frame = min(int(atk.timeline_at), atk.duration_frames - 1)
+  bf.imgui_assert(current_frame >= 0)
+
+  def field_keyframe_index(field_name: str) -> int:
+    keyframe = c.selected_keyframe
+    if not keyframe:
+      return 0
+    if keyframe.field != field_name:
+      return 0
+    frames = t.cast(list[Keyframe], getattr(c, keyframe.field))
+    return next(i for i, f in enumerate(frames) if f.id == keyframe.id)
+
   match c.type:
     case ColliderType.CIRCLE:
       if not isinstance(c, ColliderCircle):
         raise bf.imgui_assert(0)
 
+      index_radius = field_keyframe_index("radius")
       with bf.imgui_colorify_inputs(HUE_GREEN):
         _inspector_value(
           "radius",
-          lambda: c.radius[0].value,
-          lambda x: setattr(c.radius[0], "value", x),
+          lambda: c.radius[index_radius].value,
+          lambda x: setattr(c.radius[index_radius], "value", x),
           MIN_RADIUS,
           MAX_RADIUS,
           STEP_TRANSLATE,
@@ -1335,19 +1352,21 @@ def _panel_collider_inspector() -> None:  ##
         raise bf.imgui_assert(0)
 
       with bf.imgui_colorify_inputs(HUE_GREEN):
+        index_radius = field_keyframe_index("radius")
         _inspector_value(
           "radius",
-          lambda: c.radius[0].value,
-          lambda x: setattr(c.radius[0], "value", x),
+          lambda: c.radius[index_radius].value,
+          lambda x: setattr(c.radius[index_radius], "value", x),
           MIN_RADIUS,
           MAX_RADIUS,
           STEP_TRANSLATE,
         )
 
+        index_spread = field_keyframe_index("spread")
         _inspector_value(
           "spread",
-          lambda: c.spread[0].value,
-          lambda x: setattr(c.spread[0], "value", x),
+          lambda: c.spread[index_spread].value,
+          lambda x: setattr(c.spread[index_spread], "value", x),
           0,
           c.MAX_SPREAD,
           STEP_TRANSLATE,
