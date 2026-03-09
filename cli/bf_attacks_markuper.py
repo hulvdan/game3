@@ -78,7 +78,7 @@ def imgui_error_top_bar(message: str) -> None:
 
 
 def imgui_draw_cross() -> None:
-  draw = im.get_foreground_draw_list()
+  draw = im.get_window_draw_list()
   size = im.get_content_region_avail()
   pos = im.get_cursor_screen_pos()
   draw.add_line(pos, pos + size, COLOR_GRAY_U32, 2)
@@ -547,6 +547,13 @@ class Attack:  ##
     assert self.timeline_started_playing_at >= 0
     assert self.timeline_started_playing_at <= self.duration_frames
 
+    for c in self.colliders:
+      for f in c.list_frame_fields:
+        frames = t.cast(list[Keyframe], getattr(c, f))
+        for fr in frames:
+          assert fr.index >= 0
+          assert fr.index < self.duration_frames
+
   ##
 
 
@@ -684,7 +691,7 @@ def _panel_attack_inspector() -> None:  ##
     for f in c.list_frame_fields:
       for frame in getattr(c, f):
         frame: Keyframe[t.Any]
-        min_attack_frames = max(min_attack_frames, frame.index)
+        min_attack_frames = max(min_attack_frames, frame.index + 1)
   changed, frames = im.slider_int(
     bf.imgui_id("", "attack_duration_frames"),
     atk.duration_frames,
@@ -730,7 +737,7 @@ def _panel_visualizer() -> None:
 
   ## Setup
   cells = 10
-  draw = im.get_foreground_draw_list()
+  draw = im.get_window_draw_list()
   size_ = im.get_content_region_avail()
   pos_ = im.get_cursor_screen_pos()
   viewport = vec4(pos_.x, pos_.y, size_.x, size_.y)
@@ -1027,7 +1034,7 @@ def _panel_timeline() -> None:  ##
   elif atk.timeline_at > atk.duration_frames:
     atk.timeline_at = atk.duration_frames
 
-  draw = im.get_foreground_draw_list()
+  draw = im.get_window_draw_list()
   size_ = im.get_content_region_avail()
   pos_ = im.get_cursor_screen_pos()
 

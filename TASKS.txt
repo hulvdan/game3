@@ -45,16 +45,19 @@ x mark: can't set attack duration less than most right keyframe
 x mark: ref: can't set attack duration less than most right keyframe
 x mark: recursive validation logic
 x mark: dragging keyframes
+x fix drawing over tooltips
 
-* mark: delete keyframe using RMB and popup
-* mark: create new keyframe with double click
+* bfassert with breakpoint()
+* pre-commit remove assert from bf_attack_tool
 * mark: can change radius of selected keyframe
+* mark: delete keyframe (1 - through keyframe inspector? 2 - rmb?)
+* mark: create new keyframe with double click
 * mark: selecting keyframe moves playhead to it
 * mark: hovering over timeline lines highlights line as yellow
   (so that it's easy to correctly place keyframes)
 * mark: hovering timeline lines enlightens background
-* mark:
-* mark:
+* mark: timeline 0.25 0.5 0.75 1 ... show time mark every line
+* mark: fixed
 * mark:
 * mark:
 * mark: show selected keyframe data
