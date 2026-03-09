@@ -8,7 +8,7 @@ import threading
 import traceback
 import typing as t
 from contextlib import contextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields, is_dataclass
 from datetime import datetime
 from enum import IntEnum, unique
 from functools import partial, wraps
@@ -38,7 +38,25 @@ MAX_RADIUS: float = 5.0
 MAX_OFFSET: float = 10.0
 ##
 
+
 ## Setup
+def recursive_validate(obj: t.Any) -> None:
+  if x := getattr(obj, "validate", None):
+    x()
+
+  if is_dataclass(obj):
+    for f in fields(obj):
+      recursive_validate(getattr(obj, f.name))
+
+  elif isinstance(obj, (list, tuple, set)):
+    for item in obj:
+      recursive_validate(item)
+
+  elif isinstance(obj, dict):
+    for item in obj.values():
+      recursive_validate(item)
+
+
 _keyframe_off = ImVec2(5, 8)
 _keyframe_quad_points = [
   off
@@ -269,9 +287,11 @@ def tool_attacks_markuper() -> None:
     ),
   ]
   c = ColliderCapsule.make()
-  c.radius.append(Frame(4, 5))
+  c.radius.append(Keyframe(4, 5, c.next_keyframe_id()))
   g.creatures[0].attacks[0].colliders.append(c)
   g.creatures[0].attacks[0].timeline_at = 2
+
+  recursive_validate(g)
 
   loaded_state: AppSaveState | None = None
   if _APP_STATE_FILE_PATH.exists():
@@ -279,6 +299,8 @@ def tool_attacks_markuper() -> None:
       state_data = toml.load(in_file)
     loaded_state = AppSaveState(**state_data)
     g.load(loaded_state)
+
+  recursive_validate(g)
 
   # removeme
   if atk := g.ref_selected_attack:
@@ -387,9 +409,27 @@ def _to_mat4(m: Matrix16) -> mat4:
 
 
 @dataclass(slots=True)
-class Frame(Generic[T]):  ##
+class Keyframe(Generic[T]):  ##
   index: int
   value: T
+  id: int = 0
+
+  def validate(self):
+    assert self.id > 0
+    assert self.index >= 0
+
+  ##
+
+
+@dataclass(slots=True, frozen=True)
+class SelectedKeyframe:  ##
+  key: str  # e.g. "keyframe_radius_0"
+  field: str  # e.g. "radius" / "spread"
+  index: int
+
+  def validate(self):
+    assert self.index >= 0
+
   ##
 
 
@@ -408,24 +448,41 @@ class ColliderBaseMeta(type):  ##
     assert is_base or (ColliderBase in bases)
 
     if not is_base:
+      cls.list_frame_fields = []
       for field_name, field_type in cls.__annotations__.items():
         origin = t.get_origin(field_type)
         args = t.get_args(field_type)
 
         if (origin in (list, t.List)) and args:
-          if t.get_origin(args[0]) is Frame:
-            cls.list_frame_fields.append(field_name)  # ty:ignore[unresolved-attribute]
+          if t.get_origin(args[0]) is Keyframe:
+            cls.list_frame_fields.append(field_name)
 
   ##
 
 
 class ColliderBase(metaclass=ColliderBaseMeta):  ##
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
-  list_frame_fields: t.ClassVar[list[str]] = []
+  list_frame_fields: t.ClassVar[list[str]]
+
+  selected_keyframe: SelectedKeyframe | None = None
+  _next_keyframe_id: int = 1
 
   def __new__(cls, *_args, **_kwargs):
     assert cls is not ColliderBase
     return super().__new__(cls)
+
+  def next_keyframe_id(self) -> int:
+    result = self._next_keyframe_id
+    self._next_keyframe_id += 1
+    return result
+
+  def validate(self):
+    for f in self.list_frame_fields:
+      frames = t.cast(list[Keyframe], getattr(self, f))
+      for i in range(len(frames) - 1):
+        assert frames[i].index < frames[i + 1].index, (
+          "Keyframes must be sorted by `index`"
+        )
 
   ##
 
@@ -434,15 +491,15 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
 class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
-  radius: list[Frame[float]]
-  tr_center: list[Frame[Matrix16]]
+  radius: list[Keyframe[float]]
+  tr_center: list[Keyframe[Matrix16]]
 
   @classmethod
   def make(cls) -> Self:
-    return cls(
-      radius=[Frame(0, 0.5)],
-      tr_center=[Frame(0, identity_matrix())],
-    )
+    result = cls([], [])
+    result.radius.append(Keyframe(0, 0.5, result.next_keyframe_id()))
+    result.tr_center.append(Keyframe(0, identity_matrix(), result.next_keyframe_id()))
+    return result
 
   ##
 
@@ -452,17 +509,19 @@ class ColliderCapsule(ColliderBase):  ##
   MAX_SPREAD: t.ClassVar[float] = 10.0
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
-  tr_center_and_rotation: list[Frame[Matrix16]]
-  radius: list[Frame[float]]
-  spread: list[Frame[float]]
+  tr_center_and_rotation: list[Keyframe[Matrix16]]
+  radius: list[Keyframe[float]]
+  spread: list[Keyframe[float]]
 
   @classmethod
   def make(cls) -> Self:
-    return cls(
-      tr_center_and_rotation=[Frame(0, identity_matrix())],
-      radius=[Frame(0, 0.5)],
-      spread=[Frame(0, 1)],
+    result = cls([], [], [])
+    result.tr_center_and_rotation.append(
+      Keyframe(0, identity_matrix(), result.next_keyframe_id())
     )
+    result.radius.append(Keyframe(0, 0.5, result.next_keyframe_id()))
+    result.spread.append(Keyframe(0, 1, result.next_keyframe_id()))
+    return result
 
   ##
 
@@ -479,6 +538,15 @@ class Attack:  ##
 
   timeline_at: float = 0
   timeline_started_playing_at: float = 0
+
+  def validate(self):
+    assert self.name
+    assert self.duration_frames > 0
+    assert self.timeline_at >= 0
+    assert self.timeline_at <= self.duration_frames
+    assert self.timeline_started_playing_at >= 0
+    assert self.timeline_started_playing_at <= self.duration_frames
+
   ##
 
 
@@ -486,6 +554,11 @@ class Attack:  ##
 class Creature:  ##
   name: str
   attacks: list[Attack]
+
+  def validate(self):
+    assert self.name
+    assert bf.are_unique(x.name for x in self.attacks)
+
   ##
 
 
@@ -525,7 +598,8 @@ class State:
   @dataclass(slots=True)
   class Timeline:  ##
     is_playing: bool = False
-    playhead_captured_mouse: bool = False
+    dragging_playhead: bool = False
+    dragging_keyframe: str | None = None
     ##
 
   visualizer: Visualizer = field(default_factory=Visualizer)
@@ -609,7 +683,7 @@ def _panel_attack_inspector() -> None:  ##
   for c in atk.colliders:
     for f in c.list_frame_fields:
       for frame in getattr(c, f):
-        frame: Frame[t.Any]
+        frame: Keyframe[t.Any]
         min_attack_frames = max(min_attack_frames, frame.index)
   changed, frames = im.slider_int(
     bf.imgui_id("", "attack_duration_frames"),
@@ -961,14 +1035,14 @@ def _panel_timeline() -> None:  ##
     im.get_color_u32(im.Col_.button_active),
   )
 
-  def imgui_keyframe(label: str, pos: ImVec2, selected: bool = False) -> bool:
+  def imgui_keyframe(key: str, pos: ImVec2, selected: bool = False) -> bool:
     remembered_pos = im.get_cursor_screen_pos()
 
     scale = im.get_window_dpi_scale() * im.get_frame_height() / 24
 
     half = _keyframe_off * scale
     im.set_cursor_screen_pos(pos - half)
-    im.invisible_button(label, half * 2)
+    im.invisible_button(key, half * 2)
 
     color_index = 0
     if im.is_item_hovered():
@@ -1011,13 +1085,13 @@ def _panel_timeline() -> None:  ##
     lines_top_left: ImVec2 | None = None
     lines_bottom_right = ImVec2()
 
-    for label, frame_values in (("", None), *tracks):
+    for field, frame_values in (("", None), *tracks):
       im.table_next_row()
 
       im.table_set_column_index(0)
 
-      if label:
-        im.text(label)
+      if field:
+        im.text(field)
       else:
         io = im.get_io()
         if (
@@ -1069,28 +1143,35 @@ def _panel_timeline() -> None:  ##
 
       if frame_values is None:
         im.invisible_button("timeline_playhead", ImVec2(avail, line_height))
-        if im.is_mouse_down(0) and (
-          im.is_item_hovered() or g.timeline.playhead_captured_mouse
-        ):
+        if im.is_mouse_down(0) and (im.is_item_hovered() or g.timeline.dragging_playhead):
           atk.timeline_at = bf.clamp(
             (im.get_mouse_pos().x - pos_top_left.x) / avail * atk.duration_frames,
             0,
             atk.duration_frames,
           )
-          g.timeline.playhead_captured_mouse = True
+          g.timeline.dragging_playhead = True
         elif not im.is_mouse_down(0):
-          g.timeline.playhead_captured_mouse = False
+          g.timeline.dragging_playhead = False
 
       else:
         # Keyframe lines
         for fr in frame_values:
-          if imgui_keyframe(
-            f"keyframe_{label}_{fr.index}",
+          key = f"keyframe_{field}_{fr.index}"
+          is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
+          imgui_keyframe(
+            key,
             pos_top_left
             + ImVec2(fr.index * avail / atk.duration_frames, line_height / 2),
-            # selected=True,
-          ):
-            LOGD("aboba")
+            selected=is_selected,
+          )
+          if im.is_item_hovered() and im.is_mouse_clicked(0):
+            c.selected_keyframe = SelectedKeyframe(key=key, field=field, index=fr.index)
+            tim.dragging_keyframe = key
+          if is_selected:
+            if im.is_mouse_down(0):
+              pass
+            else:
+              tim.dragging_keyframe = None
 
     assert lines_top_left
     lines_width = lines_bottom_right.x - lines_top_left.x
@@ -1117,6 +1198,8 @@ def _panel_timeline() -> None:  ##
     )
 
     im.end_table()
+
+    recursive_validate(g)
   ##
 
 

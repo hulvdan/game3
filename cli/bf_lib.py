@@ -151,6 +151,12 @@ AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".aac", ".m4a", ".wma", ".ogg"}
 #  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
 
 
+def are_unique(iter: t.Iterable) -> bool:  ##
+  values = list(iter)
+  return len(values) == len(set(values))
+  ##
+
+
 def replace_double_spaces(string: str) -> str:
   return re.sub(REPLACING_SPACES_PATTERN, " ", string)
 

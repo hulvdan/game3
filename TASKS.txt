@@ -43,14 +43,18 @@ x mark: move playhead into attack
 x mark: >> button
 x mark: can't set attack duration less than most right keyframe
 x mark: ref: can't set attack duration less than most right keyframe
+x mark: recursive validation logic
 
-* mark:
-* mark:
-* mark:
-* mark:
-* mark:
-* mark:
-* mark:
+* mark: dragging keyframes
+  can't move to the left of left keyframe
+  can't move to the right of right keyframe
+* mark: delete keyframe using RMB and popup
+* mark: create new keyframe with double click
+* mark: can change radius of selected keyframe
+* mark: selecting keyframe moves playhead to it
+* mark: hovering over timeline lines highlights line as yellow
+  (so that it's easy to correctly place keyframes)
+* mark: hovering timeline lines enlightens background
 * mark:
 * mark:
 * mark:
