@@ -703,6 +703,8 @@ def _panel_attack_inspector() -> None:  ##
   )
   if changed:
     atk.duration_frames = frames
+    atk.timeline_at = min(atk.timeline_at, frames)
+    atk.timeline_started_playing_at = min(atk.timeline_started_playing_at, frames)
 
   with bf.imgui_colorify_inputs(HUE_GREEN):
     if im.button("+circle"):
@@ -1336,6 +1338,14 @@ def _panel_collider_inspector() -> None:  ##
         raise bf.imgui_assert(0)
 
       index_radius = field_keyframe_index("radius")
+      if len(c.radius) > 1:
+        im.begin_disabled()
+        im.button("<")
+        im.same_line()
+        im.button(">")
+        im.end_disabled()
+        im.same_line()
+
       with bf.imgui_colorify_inputs(HUE_GREEN):
         _inspector_value(
           "radius",
@@ -1352,8 +1362,19 @@ def _panel_collider_inspector() -> None:  ##
       if not isinstance(c, ColliderCapsule):
         raise bf.imgui_assert(0)
 
+      index_radius = field_keyframe_index("radius")
+      if not len(c.radius):
+        im.begin_disabled()
+      if im.button("<"):
+        LOGD("aboba")
+      im.same_line()
+      if im.button(">"):
+        LOGD("aboba")
+      if not len(c.radius):
+        im.end_disabled()
+      im.same_line()
+
       with bf.imgui_colorify_inputs(HUE_GREEN):
-        index_radius = field_keyframe_index("radius")
         _inspector_value(
           "radius",
           lambda: c.radius[index_radius].value,
