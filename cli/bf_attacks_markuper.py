@@ -919,6 +919,11 @@ def _panel_timeline() -> None:  ##
     imgui_draw_cross()
     return
 
+  if tim.is_playing:
+    tim.playhead_frame += im.get_io().delta_time
+    if tim.playhead_frame > atk.duration_frames:
+      tim.playhead_frame -= atk.duration_frames
+
   draw = im.get_foreground_draw_list()
   size_ = im.get_content_region_avail()
   pos_ = im.get_cursor_screen_pos()

@@ -37,8 +37,8 @@ x ty root cli
 x toml formatter
 x bf.lerp
 x markuper: timeline play/pause button + fonts
+x markuper: playing
 
-* markuper: playing
 * markuper: show selected keyframe data
 * markuper: drag keyframe to move it
 * markuper:
