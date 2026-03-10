@@ -39,8 +39,22 @@ x mark: collider inspector: make good widths (slider spans only available width)
 x mark: fix crash upon changing tr keyframe
 x mark: tooltips
 
+* mark: moving from collider to timeline: draw fields in timeline
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
+* mark: moving from collider to timeline:
 * mark:
 * mark:
+* mark:
+* mark: keyframe selection on `tr` works incorrectly
+* mark: make `tr` keyframes actually move collider in visualizer
 * mark:
 * mark:
 * mark: can set easing mode for radius keyframe transitions (default is linear)

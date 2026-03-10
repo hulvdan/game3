@@ -802,6 +802,7 @@ def _panel_attack_inspector() -> None:  ##
       for frame in getattr(c, f):
         frame = t.cast("Keyframe[t.Any]", frame)
         min_attack_frames = max(min_attack_frames, frame.timeline_index + 1)
+  im.set_next_item_width(im.get_content_region_avail()[0])
   changed, frames = im.slider_int(
     bf.imgui_id("", "attack_duration_frames"),
     atk.duration_frames,
