@@ -32,29 +32,9 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x mark: timeline blends radius
-x ty root cli
-x toml formatter
-x bf.lerp
-x mark: timeline play/pause button + fonts
-x mark: playing
-x tooltips
-x mark: move playhead into attack
-x mark: >> button
-x mark: can't set attack duration less than most right keyframe
-x mark: ref: can't set attack duration less than most right keyframe
-x mark: recursive validation logic
-x mark: dragging keyframes
-x fix drawing over tooltips
-x imgui_assert with breakpoint() + pre-commit check
-x mark: can change radius of selected keyframe
-x mark: selecting keyframe moves playhead to it
-x mark: drew radius keyframe jump buttons
-x mark: can jump between keyframes
-x mark: fix keyframe dragging (radius crashes)
-x mark: ref timeline line
+- find pomatez alternative
+x mark: create new keyframe with double click
 
-* mark: create new keyframe with double click
 * mark: can set easing mode for radius keyframe transitions (default is linear)
 * mark: collider inspector: make good widths (slider spans only available width)
 * mark: fix: clicking on "transform" keyframe crash (tr_position / tr_position_and_rotation)

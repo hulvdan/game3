@@ -284,8 +284,8 @@ def tool_attacks_markuper() -> None:
     ),
   ]
   c = ColliderCapsule.make()
-  c.radius.append(Keyframe(4, 5, c.next_keyframe_id()))
-  c.radius.append(Keyframe(7, 4, c.next_keyframe_id()))
+  c.radius.append(Keyframe(4, 5, c._next_keyframe_id()))
+  c.radius.append(Keyframe(7, 4, c._next_keyframe_id()))
   g.creatures[0].attacks[0].colliders.append(c)
   g.creatures[0].attacks[0].timeline_at = 2
 
@@ -409,13 +409,13 @@ def _to_mat4(m: Matrix16) -> mat4:
 
 @dataclass(slots=True)
 class Keyframe(Generic[T]):  ##
-  index: int
+  timeline_index: int
   value: T
   id: int = 0
 
   def validate(self):
     bf.imgui_assert(self.id > 0)
-    bf.imgui_assert(self.index >= 0)
+    bf.imgui_assert(self.timeline_index >= 0)
 
   ##
 
@@ -443,21 +443,84 @@ class ColliderType(IntEnum):  ##
   ##
 
 
+@t.runtime_checkable
+class KeyframeType(t.Protocol[T]):  ##
+  def make_default(self) -> T: ...
+
+  def make_copy(self, v: T) -> T: ...
+
+  def make_lerp(self, v1: T, v2: T, t: float) -> T: ...
+
+  ##
+
+
+class KeyframeTypeFloat(KeyframeType[float]):  ##
+  def __init__(self, default: float):
+    self._default = default
+
+  def make_default(self) -> float:
+    return self._default
+
+  def make_copy(self, v: float) -> float:
+    return v
+
+  def make_lerp(self, v1: float, v2: float, t: float) -> float:
+    return bf.lerp(v1, v2, t)
+
+  ##
+
+
+class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
+  def __init__(self, default: Matrix16 | None = None):
+    self._default = default if default else identity_matrix()
+
+  def make_default(self) -> Matrix16:
+    result = Matrix16()
+    result.values[:] = self._default.values[:]
+    return result
+
+  def make_copy(self, v: Matrix16) -> Matrix16:
+    result = Matrix16()
+    result.values[:] = v.values[:]
+    return result
+
+  def make_lerp(self, v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
+    c1 = gizmo.decompose_matrix_to_components(v1)
+    c2 = gizmo.decompose_matrix_to_components(v2)
+    c = gizmo.MatrixComponents()
+    c.translation[:].values = c1.translation.values * t + c2.translation.values * (1 - t)
+    c.rotation[:].values = c1.rotation.values
+    c.scale[:].values = c1.scale.values
+    return gizmo.recompose_matrix_from_components(c)
+
+  ##
+
+
 class ColliderBaseMeta(type):  ##
   def __init__(cls, name, bases, namespace):
     super().__init__(name, bases, namespace)
     is_base = name == "ColliderBase"
     bf.imgui_assert(is_base or (ColliderBase in bases))
+    if is_base:
+      return
 
-    if not is_base:
-      cls.list_frame_fields = []
-      for field_name, field_type in cls.__annotations__.items():
-        origin = t.get_origin(field_type)
-        args = t.get_args(field_type)
+    cls.list_frame_fields = []
+    for field_name, field_type in cls.__annotations__.items():
+      origin = t.get_origin(field_type)
+      args = t.get_args(field_type)
 
-        if (origin in (list, t.List)) and args:  # noqa: UP006
-          if t.get_origin(args[0]) is Keyframe:
-            cls.list_frame_fields.append(field_name)
+      if (origin in (list, t.List)) and args:  # noqa: UP006
+        if t.get_origin(args[0]) is Keyframe:
+          cls.list_frame_fields.append(field_name)
+
+    cls._keyframe_values = {}
+    prefix = "_keyframe_"
+    for field_name, field_value in namespace.items():
+      if field_name == "_keyframe_values":
+        continue
+      if field_name.startswith(prefix):
+        bf.imgui_assert(isinstance(field_value, KeyframeType))
+        cls._keyframe_values[field_name.removeprefix(prefix)] = field_value
 
   ##
 
@@ -465,26 +528,72 @@ class ColliderBaseMeta(type):  ##
 class ColliderBase(metaclass=ColliderBaseMeta):  ##
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
   list_frame_fields: t.ClassVar[list[str]]
+  _keyframe_values: t.ClassVar[dict[str, KeyframeType]]
 
   selected_keyframe: SelectedKeyframe | None = None
-  _next_keyframe_id: int = 1
+  __next_keyframe_id: int = 1
 
   def __new__(cls, *_args, **_kwargs):
     bf.imgui_assert(cls is not ColliderBase)
     return super().__new__(cls)
 
-  def next_keyframe_id(self) -> int:
-    result = self._next_keyframe_id
-    self._next_keyframe_id += 1
+  def _next_keyframe_id(self) -> int:
+    result = self.__next_keyframe_id
+    self.__next_keyframe_id += 1
     return result
+
+  def make_default_keyframe_at(self, field: str, timeline_index: int) -> None:
+    bf.imgui_assert(field in self.list_frame_fields)
+    bf.imgui_assert(field in self._keyframe_values)
+
+    frames = t.cast("list[Keyframe]", getattr(self, field))
+    factory = self._keyframe_values[field]
+
+    value: t.Any
+    insert_index = 0
+    if not frames:
+      value = factory.make_default()
+    else:
+      left_list_index = 0
+      right_list_index = 0
+      for i, fr in enumerate(frames):
+        fr = t.cast("Keyframe", fr)
+        if fr.timeline_index < timeline_index:
+          left_list_index = i
+        if fr.timeline_index > timeline_index:
+          right_list_index = i
+          break
+      left = frames[left_list_index]
+      insert_index = left_list_index + 1
+      if right_list_index:
+        bf.imgui_assert(right_list_index > left_list_index)
+        right = frames[right_list_index]
+        value = factory.make_lerp(
+          left.value,
+          right.value,
+          (timeline_index - left.timeline_index)
+          / (right.timeline_index - left.timeline_index),
+        )
+      else:
+        value = factory.make_copy(left.value)
+    frames.insert(insert_index, Keyframe(timeline_index, value, self._next_keyframe_id()))
 
   def validate(self):
     for f in self.list_frame_fields:
       frames = t.cast("list[Keyframe]", getattr(self, f))
       for i in range(len(frames) - 1):
         bf.imgui_assert(
-          frames[i].index < frames[i + 1].index, ("Keyframes must be sorted by `index`")
+          frames[i].timeline_index < frames[i + 1].timeline_index,
+          ("Keyframes must be sorted by `index`"),
         )
+
+  @classmethod
+  def make(cls) -> Self:
+    bf.imgui_assert(cls is not ColliderBase)
+    result = cls(*[[] for _ in range(len(cls.list_frame_fields))])
+    for f in cls.list_frame_fields:
+      result.make_default_keyframe_at(f, 0)
+    return result
 
   ##
 
@@ -494,14 +603,10 @@ class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
   radius: list[Keyframe[float]]
-  tr_center: list[Keyframe[Matrix16]]
+  tr: list[Keyframe[Matrix16]]
 
-  @classmethod
-  def make(cls) -> Self:
-    result = cls([], [])
-    result.radius.append(Keyframe(0, 0.5, result.next_keyframe_id()))
-    result.tr_center.append(Keyframe(0, identity_matrix(), result.next_keyframe_id()))
-    return result
+  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(0.5)
+  _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
 
   ##
 
@@ -511,20 +616,13 @@ class ColliderCapsule(ColliderBase):  ##
   MAX_SPREAD: t.ClassVar[float] = 10.0
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
-  tr_center_and_rotation: list[Keyframe[Matrix16]]
+  tr: list[Keyframe[Matrix16]]
   radius: list[Keyframe[float]]
   spread: list[Keyframe[float]]
 
-  @classmethod
-  def make(cls) -> Self:
-    result = cls([], [], [])
-    result.tr_center_and_rotation.append(
-      Keyframe(0, identity_matrix(), result.next_keyframe_id())
-    )
-    result.radius.append(Keyframe(0, 0.5, result.next_keyframe_id()))
-    result.spread.append(Keyframe(0, 1, result.next_keyframe_id()))
-    return result
-
+  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(0.5)
+  _keyframe_spread: t.ClassVar[KeyframeType] = KeyframeTypeFloat(1)
+  _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
   ##
 
 
@@ -553,8 +651,8 @@ class Attack:  ##
       for f in c.list_frame_fields:
         frames = t.cast("list[Keyframe]", getattr(c, f))
         for fr in frames:
-          bf.imgui_assert(fr.index >= 0)
-          bf.imgui_assert(fr.index < self.duration_frames)
+          bf.imgui_assert(fr.timeline_index >= 0)
+          bf.imgui_assert(fr.timeline_index < self.duration_frames)
 
   ##
 
@@ -692,8 +790,8 @@ def _panel_attack_inspector() -> None:  ##
   for c in atk.colliders:
     for f in c.list_frame_fields:
       for frame in getattr(c, f):
-        frame: Keyframe[t.Any]
-        min_attack_frames = max(min_attack_frames, frame.index + 1)
+        frame = t.cast("Keyframe[t.Any]", frame)
+        min_attack_frames = max(min_attack_frames, frame.timeline_index + 1)
   changed, frames = im.slider_int(
     bf.imgui_id("", "attack_duration_frames"),
     atk.duration_frames,
@@ -897,7 +995,7 @@ def _panel_visualizer() -> None:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
           raise bf.imgui_assert(0)
-        m = _to_mat4(c.tr_center[0].value)
+        m = _to_mat4(c.tr[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         scale = glm.length(m * vec4(1, 0, 0, 0))
 
@@ -905,15 +1003,15 @@ def _panel_visualizer() -> None:
         r = c.radius[-1]
         for i in range(len(c.radius)):
           v = c.radius[i]
-          if v.index <= atk.timeline_at:
+          if v.timeline_index <= atk.timeline_at:
             l = v
-          if v.index >= atk.timeline_at:
+          if v.timeline_index >= atk.timeline_at:
             r = v
             break
         t = 0
-        bf.imgui_assert(r.index >= l.index)
-        if r.index != l.index:
-          t = (atk.timeline_at - l.index) / (r.index - l.index)
+        bf.imgui_assert(r.timeline_index >= l.timeline_index)
+        if r.timeline_index != l.timeline_index:
+          t = (atk.timeline_at - l.timeline_index) / (r.timeline_index - l.timeline_index)
         radius = bf.lerp(l.value, r.value, t)
 
         draw_circle(center, radius * scale, color)
@@ -921,7 +1019,7 @@ def _panel_visualizer() -> None:
       case ColliderType.CAPSULE:
         if not isinstance(c, ColliderCapsule):
           raise bf.imgui_assert(0)
-        m = _to_mat4(c.tr_center_and_rotation[0].value)
+        m = _to_mat4(c.tr[0].value)
         center = vec3(m * vec4(0, 0, 0, 1))
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
         angle = -math.atan2(r_vec.z, r_vec.x)
@@ -932,15 +1030,15 @@ def _panel_visualizer() -> None:
         r = c.radius[-1]
         for i in range(len(c.radius)):
           v = c.radius[i]
-          if v.index <= atk.timeline_at:
+          if v.timeline_index <= atk.timeline_at:
             l = v
-          if v.index >= atk.timeline_at:
+          if v.timeline_index >= atk.timeline_at:
             r = v
             break
         t = 0
-        bf.imgui_assert(r.index >= l.index)
-        if r.index != l.index:
-          t = (atk.timeline_at - l.index) / (r.index - l.index)
+        bf.imgui_assert(r.timeline_index >= l.timeline_index)
+        if r.timeline_index != l.timeline_index:
+          t = (atk.timeline_at - l.timeline_index) / (r.timeline_index - l.timeline_index)
         radius = bf.lerp(l.value, r.value, t)
 
         draw_capsule(center, radius, c.spread[0].value, angle, color)
@@ -975,7 +1073,7 @@ def _panel_visualizer() -> None:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
           raise bf.imgui_assert(0)
-        center = c.tr_center[0].value
+        center = c.tr[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
@@ -989,7 +1087,7 @@ def _panel_visualizer() -> None:
       case ColliderType.CAPSULE:
         if not isinstance(c, ColliderCapsule):
           raise bf.imgui_assert(0)
-        center = c.tr_center_and_rotation[0].value
+        center = c.tr[0].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
@@ -1062,8 +1160,12 @@ def imgui_timeline_line(indices_width: int) -> None:  ##
     out.pos_top_left.y <= mouse.y <= out.pos_bottom_right.y
   ):
     out.hovered = True
-  out.clicked = im.is_mouse_clicked(0)
-  out.double_clicked = im.is_mouse_double_clicked(0)
+    out.clicked = im.is_mouse_clicked(0)
+    out.double_clicked = im.is_mouse_double_clicked(0)
+  else:
+    out.hovered = False
+    out.clicked = False
+    out.double_clicked = False
 
   out.hovered_t = bf.clamp((mouse.x - out.pos_top_left.x) / out.width, 0, 1)
   out.hovered_index = min(indices_width - 1, int(out.hovered_t * indices_width))
@@ -1128,28 +1230,6 @@ def _panel_timeline() -> None:  ##
     im.set_cursor_screen_pos(remembered_pos)
     return im.is_item_clicked()
 
-  tracks: tuple[tuple[str, list[Keyframe]], ...]
-  match c.type:
-    case ColliderType.CIRCLE:
-      if not isinstance(c, ColliderCircle):
-        raise bf.imgui_assert(0)
-      tracks = (
-        ("radius", c.radius),
-        ("transform", c.tr_center),
-      )
-
-    case ColliderType.CAPSULE:
-      if not isinstance(c, ColliderCapsule):
-        raise bf.imgui_assert(0)
-      tracks = (
-        ("radius", c.radius),
-        ("spread", c.spread),
-        ("transform", c.tr_center_and_rotation),
-      )
-
-    case _:
-      raise bf.imgui_assert(0)
-
   if im.begin_table("table", 2, im.TableFlags_.sizing_stretch_same):
     im.table_setup_column("label", im.TableColumnFlags_.width_fixed)
     im.table_setup_column("value", im.TableColumnFlags_.width_stretch)
@@ -1158,8 +1238,13 @@ def _panel_timeline() -> None:  ##
     lines_bottom_right = ImVec2()
 
     were_dragging_keyframe_this_frame = False
+    created_keyframe_this_frame = False
 
-    for field, keyframes in (("", None), *tracks):
+    for field, keyframes in (
+      ("", None),
+      *((x, getattr(c, x)) for x in c.list_frame_fields),
+    ):
+      keyframes = t.cast("list[Keyframe]", keyframes)
       im.table_next_row()
 
       im.table_set_column_index(0)
@@ -1225,7 +1310,7 @@ def _panel_timeline() -> None:  ##
             key,
             imgui_timeline_line_out.pos_top_left
             + ImVec2(
-              fr.index * imgui_timeline_line_out.width_per_index,
+              fr.timeline_index * imgui_timeline_line_out.width_per_index,
               imgui_timeline_line_out.height / 2,
             ),
             selected=is_selected,
@@ -1239,14 +1324,27 @@ def _panel_timeline() -> None:  ##
             min_left = 0
             max_right = atk.duration_frames - 1
             if fr_index > 0:
-              min_left = keyframes[fr_index - 1].index + 1
+              min_left = keyframes[fr_index - 1].timeline_index + 1
             if fr_index < len(keyframes) - 1:
-              max_right = keyframes[fr_index + 1].index - 1
+              max_right = keyframes[fr_index + 1].timeline_index - 1
 
-            fr.index = bf.clamp(
+            fr.timeline_index = bf.clamp(
               imgui_timeline_line_out.hovered_index_half_cell_offset, min_left, max_right
             )
-            atk.timeline_at = fr.index
+            atk.timeline_at = fr.timeline_index
+
+          if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
+            if imgui_timeline_line_out.double_clicked:
+              create_index = imgui_timeline_line_out.hovered_index_half_cell_offset
+              can_create_keyframe = True
+              for frrr in keyframes:
+                if frrr.timeline_index == create_index:
+                  can_create_keyframe = False
+                  break
+
+              if can_create_keyframe:
+                created_keyframe_this_frame = True
+                c.make_default_keyframe_at(field, create_index)
 
     if not lines_top_left:
       raise bf.imgui_assert(0)
@@ -1356,10 +1454,10 @@ def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
     id=fr.id,
     key=_keyframe_id("radius", fr.id),
     field="radius",
-    timeline_cell_index=fr.index,
+    timeline_cell_index=fr.timeline_index,
     index_inside_list=index_inside_list,
   )
-  atk.timeline_at = fr.index
+  atk.timeline_at = fr.timeline_index
   ##
 
 
@@ -1411,7 +1509,7 @@ def _panel_collider_inspector() -> None:  ##
           STEP_TRANSLATE,
         )
 
-      c.tr_center[0].value = _inspector_components(c.tr_center[0].value)
+      c.tr[0].value = _inspector_components(c.tr[0].value)
 
     case ColliderType.CAPSULE:
       if not isinstance(c, ColliderCapsule):
@@ -1457,9 +1555,7 @@ def _panel_collider_inspector() -> None:  ##
           STEP_TRANSLATE,
         )
 
-      c.tr_center_and_rotation[0].value = _inspector_components(
-        c.tr_center_and_rotation[0].value
-      )
+      c.tr[0].value = _inspector_components(c.tr[0].value)
 
     case _:
       bf.imgui_assert(0)
