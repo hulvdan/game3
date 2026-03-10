@@ -1510,24 +1510,36 @@ def _panel_collider_inspector() -> None:  ##
       im.table_set_column_index(1)
 
       index_f = field_keyframe_index(f)
+      field_is_the_same_as_of_selected_keyframe = c.selected_keyframe and (
+        c.selected_keyframe.field == f
+      )
 
       if not len(keyframes):
         bf.imgui_begin_disabled()
       if index_f <= 0:
         bf.imgui_begin_disabled()
       if im.button(bf.imgui_id("<", f)) or (
-        (not bf.imgui_is_disabled()) and im.is_key_pressed(im.Key.a)
+        (not bf.imgui_is_disabled())
+        and im.is_key_pressed(im.Key.a)
+        and field_is_the_same_as_of_selected_keyframe
       ):
         _select_keyframe(f, index_f - 1)
+      if field_is_the_same_as_of_selected_keyframe:
+        im.set_item_tooltip("Key: A")
       if index_f == 0:
         bf.imgui_end_disabled()
       im.same_line()
       if index_f >= len(keyframes) - 1:
         bf.imgui_begin_disabled()
       if im.button(bf.imgui_id(">", f)) or (
-        (not bf.imgui_is_disabled()) and im.is_key_pressed(im.Key.d)
+        (not bf.imgui_is_disabled())
+        and im.is_key_pressed(im.Key.d)
+        and c.selected_keyframe
+        and field_is_the_same_as_of_selected_keyframe
       ):
         _select_keyframe(f, index_f + 1)
+      if field_is_the_same_as_of_selected_keyframe:
+        im.set_item_tooltip("Key: D")
       if index_f >= len(keyframes) - 1:
         bf.imgui_end_disabled()
       if not len(keyframes):

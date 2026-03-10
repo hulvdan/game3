@@ -1969,12 +1969,14 @@ _imgui_disabled = 0
 def imgui_begin_disabled() -> None:  ##
   global _imgui_disabled
   _imgui_disabled += 1
+  im.begin_disabled()
   ##
 
 
 def imgui_end_disabled() -> None:  ##
   global _imgui_disabled
   _imgui_disabled -= 1
+  im.end_disabled()
   ##
 
 
