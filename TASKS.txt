@@ -34,15 +34,15 @@ PLAN
 x clear
 - find pomatez alternative
 x mark: create new keyframe with double click
+x mark: fix: clicking on "transform" keyframe crash (tr_position / tr_position_and_rotation)
+x mark: collider inspector: make good widths (slider spans only available width)
 
+* mark: fix crash upon changing tr keyframe
+* mark:
+* mark:
+* mark:
+* mark:
 * mark: can set easing mode for radius keyframe transitions (default is linear)
-* mark: collider inspector: make good widths (slider spans only available width)
-* mark: fix: clicking on "transform" keyframe crash (tr_position / tr_position_and_rotation)
-* mark:
-* mark:
-* mark:
-* mark:
-* mark:
 * mark:
 * mark:
 * mark: truly clamp im.slider* returned values (because while editing it returns unclamped values)

@@ -1958,8 +1958,28 @@ def show_imgui(
 _show_code_states: dict[str, bool] = {}
 
 
-def imgui_id(value: str, id_: str) -> str:  ##
-  return str(value) + "#" + "#" + str(id_)
+def imgui_id(label: str, id_: str) -> str:  ##
+  return str(label) + "#" + "#" + str(id_)
+  ##
+
+
+_imgui_disabled = 0
+
+
+def imgui_begin_disabled() -> None:  ##
+  global _imgui_disabled
+  _imgui_disabled += 1
+  ##
+
+
+def imgui_end_disabled() -> None:  ##
+  global _imgui_disabled
+  _imgui_disabled -= 1
+  ##
+
+
+def imgui_is_disabled() -> bool:  ##
+  return bool(_imgui_disabled)
   ##
 
 

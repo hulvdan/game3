@@ -332,7 +332,6 @@ def tool_attacks_markuper() -> None:
         bf.ImGuiPanel("Attack", enable_debug(_panel_attack_inspector)),
         bf.ImGuiPanel("Collider", enable_debug(_panel_collider_inspector)),
         bf.ImGuiPanel("Timeline", enable_debug(_panel_timeline)),
-        bf.ImGuiPanel("Keyframe", enable_debug(_panel_keyframe_inspector)),
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
       ],
       setup_imgui_style=setup_imgui_style,
@@ -454,12 +453,15 @@ class KeyframeType(t.Protocol[T]):  ##
   ##
 
 
+@dataclass
 class KeyframeTypeFloat(KeyframeType[float]):  ##
-  def __init__(self, default: float):
-    self._default = default
+  default: float
+  min: float
+  max: float
+  step: float
 
   def make_default(self) -> float:
-    return self._default
+    return self.default
 
   def make_copy(self, v: float) -> float:
     return v
@@ -488,9 +490,9 @@ class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
     c1 = gizmo.decompose_matrix_to_components(v1)
     c2 = gizmo.decompose_matrix_to_components(v2)
     c = gizmo.MatrixComponents()
-    c.translation[:].values = c1.translation.values * t + c2.translation.values * (1 - t)
-    c.rotation[:].values = c1.rotation.values
-    c.scale[:].values = c1.scale.values
+    c.translation.values[:] = c1.translation.values * t + c2.translation.values * (1 - t)
+    c.rotation.values[:] = c1.rotation.values
+    c.scale.values[:] = c1.scale.values
     return gizmo.recompose_matrix_from_components(c)
 
   ##
@@ -546,28 +548,28 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     bf.imgui_assert(field in self.list_frame_fields)
     bf.imgui_assert(field in self._keyframe_values)
 
-    frames = t.cast("list[Keyframe]", getattr(self, field))
+    keyframes = t.cast("list[Keyframe]", getattr(self, field))
     factory = self._keyframe_values[field]
 
     value: t.Any
     insert_index = 0
-    if not frames:
+    if not keyframes:
       value = factory.make_default()
     else:
       left_list_index = 0
       right_list_index = 0
-      for i, fr in enumerate(frames):
+      for i, fr in enumerate(keyframes):
         fr = t.cast("Keyframe", fr)
         if fr.timeline_index < timeline_index:
           left_list_index = i
         if fr.timeline_index > timeline_index:
           right_list_index = i
           break
-      left = frames[left_list_index]
+      left = keyframes[left_list_index]
       insert_index = left_list_index + 1
       if right_list_index:
         bf.imgui_assert(right_list_index > left_list_index)
-        right = frames[right_list_index]
+        right = keyframes[right_list_index]
         value = factory.make_lerp(
           left.value,
           right.value,
@@ -576,14 +578,16 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
         )
       else:
         value = factory.make_copy(left.value)
-    frames.insert(insert_index, Keyframe(timeline_index, value, self._next_keyframe_id()))
+    keyframes.insert(
+      insert_index, Keyframe(timeline_index, value, self._next_keyframe_id())
+    )
 
   def validate(self):
     for f in self.list_frame_fields:
-      frames = t.cast("list[Keyframe]", getattr(self, f))
-      for i in range(len(frames) - 1):
+      keyframes = t.cast("list[Keyframe]", getattr(self, f))
+      for i in range(len(keyframes) - 1):
         bf.imgui_assert(
-          frames[i].timeline_index < frames[i + 1].timeline_index,
+          keyframes[i].timeline_index < keyframes[i + 1].timeline_index,
           ("Keyframes must be sorted by `index`"),
         )
 
@@ -605,7 +609,9 @@ class ColliderCircle(ColliderBase):  ##
   radius: list[Keyframe[float]]
   tr: list[Keyframe[Matrix16]]
 
-  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(0.5)
+  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
+    0.5, MIN_RADIUS, MAX_RADIUS, STEP_TRANSLATE
+  )
   _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
 
   ##
@@ -620,8 +626,12 @@ class ColliderCapsule(ColliderBase):  ##
   radius: list[Keyframe[float]]
   spread: list[Keyframe[float]]
 
-  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(0.5)
-  _keyframe_spread: t.ClassVar[KeyframeType] = KeyframeTypeFloat(1)
+  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
+    0.5, MIN_RADIUS, MAX_RADIUS, STEP_TRANSLATE
+  )
+  _keyframe_spread: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
+    1, 0, MAX_SPREAD, STEP_TRANSLATE
+  )
   _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
   ##
 
@@ -649,8 +659,8 @@ class Attack:  ##
 
     for c in self.colliders:
       for f in c.list_frame_fields:
-        frames = t.cast("list[Keyframe]", getattr(c, f))
-        for fr in frames:
+        keyframes = t.cast("list[Keyframe]", getattr(c, f))
+        for fr in keyframes:
           bf.imgui_assert(fr.timeline_index >= 0)
           bf.imgui_assert(fr.timeline_index < self.duration_frames)
 
@@ -1230,7 +1240,7 @@ def _panel_timeline() -> None:  ##
     im.set_cursor_screen_pos(remembered_pos)
     return im.is_item_clicked()
 
-  if im.begin_table("table", 2, im.TableFlags_.sizing_stretch_same):
+  if im.begin_table("timeline_table", 2, im.TableFlags_.sizing_stretch_same):
     im.table_setup_column("label", im.TableColumnFlags_.width_fixed)
     im.table_setup_column("value", im.TableColumnFlags_.width_stretch)
 
@@ -1395,7 +1405,7 @@ def _inspector_components(m: Matrix16) -> Matrix16:  ##
     m = gizmo.recompose_matrix_from_components(comps)
 
   _inspector_value(
-    "TrX",
+    bf.imgui_id("", "TrX"),
     lambda: comps.translation.values[0],
     partial(tr_setter, 0),
     -MAX_OFFSET,
@@ -1403,7 +1413,7 @@ def _inspector_components(m: Matrix16) -> Matrix16:  ##
     STEP_TRANSLATE,
   )
   _inspector_value(
-    "TrZ",
+    bf.imgui_id("", "TrZ"),
     lambda: comps.translation.values[2],
     partial(tr_setter, 2),
     -MAX_OFFSET,
@@ -1433,6 +1443,7 @@ def _inspector_value(
   vmax: float,
   step: float,
 ) -> None:  ##
+  im.set_next_item_width(im.get_content_region_avail()[0])
   changed, spread = im.slider_float(label, getter(), vmin, vmax)
   if changed:
     setter(bf.clamp(round(spread / step) * step, vmin, vmax))
@@ -1447,8 +1458,8 @@ def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
     bf.imgui_assert(0)
   c = t.cast("ColliderBase", c)
 
-  frames = t.cast("list[Keyframe]", getattr(c, field_name))
-  fr = frames[index_inside_list]
+  keyframes = t.cast("list[Keyframe]", getattr(c, field_name))
+  fr = keyframes[index_inside_list]
 
   c.selected_keyframe = SelectedKeyframe(
     id=fr.id,
@@ -1482,86 +1493,66 @@ def _panel_collider_inspector() -> None:  ##
       return 0
     return keyframe.index_inside_list
 
-  match c.type:
-    case ColliderType.CIRCLE:
-      if not isinstance(c, ColliderCircle):
-        raise bf.imgui_assert(0)
+  if im.begin_table("collider_table", 3):
+    im.table_setup_column("", im.TableColumnFlags_.width_fixed)
+    im.table_setup_column("", im.TableColumnFlags_.width_fixed)
+    im.table_setup_column("", im.TableColumnFlags_.width_stretch)
 
-      index_radius = field_keyframe_index("radius")
-      if len(c.radius) > 1:
-        im.begin_disabled()
-        im.begin_disabled()
-        if im.button("<"):
-          pass
-        im.same_line()
-        im.button(">")
-        im.end_disabled()
-        im.end_disabled()
-        im.same_line()
+    for f in c.list_frame_fields:
+      keyframe_type = t.cast("KeyframeType", getattr(c, f"_keyframe_{f}"))
+      keyframes = t.cast("list[Keyframe]", getattr(c, f))
 
-      with bf.imgui_colorify_inputs(HUE_GREEN):
-        _inspector_value(
-          "radius",
-          lambda: c.radius[index_radius].value,
-          lambda x: setattr(c.radius[index_radius], "value", x),
-          MIN_RADIUS,
-          MAX_RADIUS,
-          STEP_TRANSLATE,
-        )
+      im.table_next_row()
+      im.table_set_column_index(0)
 
-      c.tr[0].value = _inspector_components(c.tr[0].value)
+      im.text(f)
 
-    case ColliderType.CAPSULE:
-      if not isinstance(c, ColliderCapsule):
-        raise bf.imgui_assert(0)
+      im.table_set_column_index(1)
 
-      index_radius = field_keyframe_index("radius")
-      if not len(c.radius):
-        im.begin_disabled()
-      if index_radius == 0:
-        im.begin_disabled()
-      if im.button("<"):
-        _select_keyframe("radius", index_radius - 1)
-      if index_radius == 0:
-        im.end_disabled()
+      index_f = field_keyframe_index(f)
+
+      if not len(keyframes):
+        bf.imgui_begin_disabled()
+      if index_f <= 0:
+        bf.imgui_begin_disabled()
+      if im.button(bf.imgui_id("<", f)) or (
+        (not bf.imgui_is_disabled()) and im.is_key_pressed(im.Key.a)
+      ):
+        _select_keyframe(f, index_f - 1)
+      if index_f == 0:
+        bf.imgui_end_disabled()
       im.same_line()
-      if index_radius >= len(c.radius) - 1:
-        im.begin_disabled()
-      if im.button(">"):
-        _select_keyframe("radius", index_radius + 1)
-      if index_radius == len(c.radius) - 1:
-        im.end_disabled()
-      if not len(c.radius):
-        im.end_disabled()
-      im.same_line()
+      if index_f >= len(keyframes) - 1:
+        bf.imgui_begin_disabled()
+      if im.button(bf.imgui_id(">", f)) or (
+        (not bf.imgui_is_disabled()) and im.is_key_pressed(im.Key.d)
+      ):
+        _select_keyframe(f, index_f + 1)
+      if index_f >= len(keyframes) - 1:
+        bf.imgui_end_disabled()
+      if not len(keyframes):
+        bf.imgui_end_disabled()
 
-      with bf.imgui_colorify_inputs(HUE_GREEN):
-        _inspector_value(
-          "radius",
-          lambda: c.radius[index_radius].value,
-          lambda x: setattr(c.radius[index_radius], "value", x),
-          MIN_RADIUS,
-          MAX_RADIUS,
-          STEP_TRANSLATE,
-        )
+      im.table_set_column_index(2)
 
-        index_spread = field_keyframe_index("spread")
-        _inspector_value(
-          "spread",
-          lambda: c.spread[index_spread].value,
-          lambda x: setattr(c.spread[index_spread], "value", x),
-          0,
-          c.MAX_SPREAD,
-          STEP_TRANSLATE,
-        )
+      match keyframe_type:
+        case KeyframeTypeFloat():
+          with bf.imgui_colorify_inputs(HUE_GREEN):
+            _inspector_value(
+              bf.imgui_id("", f"slider_{f}"),
+              lambda: keyframes[index_f].value,
+              lambda x: setattr(keyframes[index_f], "value", x),
+              keyframe_type.min,
+              keyframe_type.max,
+              keyframe_type.step,
+            )
 
-      c.tr[0].value = _inspector_components(c.tr[0].value)
+        case KeyframeTypeTr():
+          keyframes[index_f].value = _inspector_components(keyframes[index_f].value)
 
-    case _:
-      bf.imgui_assert(0)
-  ##
+        case _:
+          raise bf.imgui_assert(0)
 
+    im.end_table()
 
-def _panel_keyframe_inspector() -> None:  ##
-  pass
   ##
