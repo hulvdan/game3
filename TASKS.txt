@@ -59,8 +59,13 @@ x mark: hovered vertical line in timeline
 x mark: right click remove keyframe (if it's not the last one)
 x mark: fix why trying to make keyframe to the left of the most left one pushes it to the right
 x ass
+x docs
 
+* mark: fix why starting keyframes don't affect visual (moving playhead a bit to the right does the job)
 * mark: UNDO
+* mark: attack gets exported to yaml
+* mark: attack gets imported from yaml
+*
 * mark: min frame cell width (don't forget DPI) + timeline horizontal scrollbar
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y step_x step_y
 * mark: don't use matrix16 in collider
