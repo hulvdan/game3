@@ -1142,7 +1142,7 @@ def _panel_visualizer() -> None:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
           raise bf.imgui_assert(0)
-        center = c.tr[0].value
+        center = _get_closest_keyframe(c.get_keyframes("tr"), atk.timeline_at)[1].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
@@ -1156,7 +1156,7 @@ def _panel_visualizer() -> None:
       case ColliderType.CAPSULE:
         if not isinstance(c, ColliderCapsule):
           raise bf.imgui_assert(0)
-        center = c.tr[0].value
+        center = _get_closest_keyframe(c.get_keyframes("tr"), atk.timeline_at)[1].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
             with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
