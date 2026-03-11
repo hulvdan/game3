@@ -78,8 +78,10 @@ def imgui_draw_cross() -> None:
   draw = im.get_window_draw_list()
   size = im.get_content_region_avail()
   pos = im.get_cursor_screen_pos()
-  draw.add_line(pos, pos + size, COLOR_GRAY_U32, 2)
-  draw.add_line(pos + ImVec2(0, size.y), pos + ImVec2(size.x, 0), COLOR_GRAY_U32, 2)
+  draw.add_line(pos, pos + size, im.get_color_u32(im.Col_.border), 2)
+  draw.add_line(
+    pos + ImVec2(0, size.y), pos + ImVec2(size.x, 0), im.get_color_u32(im.Col_.border), 2
+  )
 
 
 def imgui_color_hsva(h: float, s: float = 1, v: float = 1, a: float = 1) -> im.ImColor:
@@ -1247,9 +1249,6 @@ def imgui_timeline_line(indices_width: int, rows: int, color: int) -> None:  ##
   out.height = im.get_frame_height() * rows
   out.pos_bottom_right = out.pos_top_left + ImVec2(out.width, out.height)
 
-  draw = im.get_window_draw_list()
-  draw.add_rect_filled(out.pos_top_left, out.pos_bottom_right, color)
-
   mouse = im.get_mouse_pos()
   if (out.pos_top_left.x <= mouse.x <= out.pos_bottom_right.x) and (
     out.pos_top_left.y <= mouse.y <= out.pos_bottom_right.y
@@ -1261,6 +1260,13 @@ def imgui_timeline_line(indices_width: int, rows: int, color: int) -> None:  ##
     out.hovered = False
     out.clicked = False
     out.double_clicked = False
+
+  draw = im.get_window_draw_list()
+  draw.add_rect_filled(
+    out.pos_top_left,
+    out.pos_bottom_right,
+    im.get_color_u32(im.Col_.frame_bg_hovered) if out.hovered else color,
+  )
 
   out.hovered_t = bf.clamp((mouse.x - out.pos_top_left.x) / out.width, 0, 1)
   out.hovered_index = min(indices_width - 1, int(out.hovered_t * indices_width))

@@ -53,6 +53,7 @@ x mark: correctly show transform gizmo
 x mark: unified colors
 x mark: is_active keyframes
 x mark: draw timeline playhead even when no collider is selected
+x mark: better timeline colors
 
 * mark: is_active keyframes W/O metaclass
 * mark: draw both transform gizmos?
