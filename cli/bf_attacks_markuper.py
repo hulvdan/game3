@@ -644,6 +644,26 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     frames = self.get_keyframes(field)
     frames.insert(insert_index, Keyframe(index_timeline, value, self._next_keyframe_id()))
 
+  def select_keyframe(
+    self,
+    field_name: str,
+    index_inside_list: int,
+    *,
+    update_timeline_playhead: bool = True,
+  ) -> None:
+    frames = self.get_keyframes(field_name)
+    fr = frames[index_inside_list]
+    self.keyframe_to_select = (
+      SelectedKeyframe(
+        id=fr.id,
+        key=_keyframe_id(field_name, fr.id),
+        field=field_name,
+        index_timeline=fr.index_timeline,
+        index_inside_list=index_inside_list,
+      ),
+      update_timeline_playhead,
+    )
+
   def validate(self):
     for frames in (self.get_keyframes(x) for x in self.keyframe_fields):
       for i in range(len(frames) - 1):
@@ -1248,13 +1268,6 @@ def _panel_timeline() -> None:  ##
   else:
     atk.timeline_at = min(atk.timeline_at, atk.duration_frames)
 
-  if sel_key := c.selected_keyframe:
-    _select_keyframe(
-      sel_key.field,
-      _get_closest_keyframe(getattr(c, sel_key.field), atk.timeline_at)[0],
-      update_timeline_playhead=False,
-    )
-
   bf.imgui_set_idling(not tim.is_playing)
 
   draw = im.get_window_draw_list()
@@ -1378,7 +1391,7 @@ def _panel_timeline() -> None:  ##
           closest=closest_index == fr_index,
         )
         if im.is_item_hovered() and im.is_mouse_clicked(0):
-          _select_keyframe(field_name, fr_index)
+          c.select_keyframe(field_name, fr_index)
           tim.dragging_keyframe = key
 
         if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
@@ -1501,32 +1514,6 @@ def _inspector_value(
   ##
 
 
-def _select_keyframe(
-  field_name: str, index_inside_list: int, *, update_timeline_playhead: bool = True
-) -> None:  ##
-  if not g.ref_selected_attack:
-    raise bf.imgui_assert(0)
-  atk = g.ref_selected_attack
-  c = atk.get_visualization_collider()
-  if not c:
-    raise bf.imgui_assert(0)
-
-  frames = c.get_keyframes(field_name)
-  fr = frames[index_inside_list]
-
-  c.keyframe_to_select = (
-    SelectedKeyframe(
-      id=fr.id,
-      key=_keyframe_id(field_name, fr.id),
-      field=field_name,
-      index_timeline=fr.index_timeline,
-      index_inside_list=index_inside_list,
-    ),
-    update_timeline_playhead,
-  )
-  ##
-
-
 def _get_closest_keyframe(
   keyframes: list[Keyframe[T]], to: float = 0
 ) -> tuple[int, Keyframe[T]]:  ##
@@ -1596,7 +1583,7 @@ def _panel_collider_inspector() -> None:  ##
 
       if vertical_off and (c.selected_keyframe is not None):
         new_field_to_select = c.keyframe_fields[field_index + vertical_off]
-        _select_keyframe(
+        c.select_keyframe(
           new_field_to_select,
           _get_closest_keyframe(
             getattr(c, new_field_to_select), c.selected_keyframe.index_timeline
@@ -1612,7 +1599,7 @@ def _panel_collider_inspector() -> None:  ##
         and im.is_key_pressed(im.Key.a)
         and field_is_the_same_as_of_selected_keyframe
       ):
-        _select_keyframe(f, index_f - 1)
+        c.select_keyframe(f, index_f - 1)
       if field_is_the_same_as_of_selected_keyframe:
         im.set_item_tooltip("Key: A")
       if index_f == 0:
@@ -1626,7 +1613,7 @@ def _panel_collider_inspector() -> None:  ##
         and c.selected_keyframe
         and field_is_the_same_as_of_selected_keyframe
       ):
-        _select_keyframe(f, index_f + 1)
+        c.select_keyframe(f, index_f + 1)
       if field_is_the_same_as_of_selected_keyframe:
         im.set_item_tooltip("Key: D")
       if index_f >= len(frames) - 1:
@@ -1688,5 +1675,12 @@ def _post_new_frame() -> None:  ##
           atk.timeline_at = keyframe.index_timeline
         c.selected_keyframe = keyframe
         c.keyframe_to_select = None
+
+      if sel_key := c.selected_keyframe:
+        c.select_keyframe(
+          sel_key.field,
+          _get_closest_keyframe(getattr(c, sel_key.field), atk.timeline_at)[0],
+          update_timeline_playhead=False,
+        )
 
   ##
