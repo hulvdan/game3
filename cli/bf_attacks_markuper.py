@@ -1466,8 +1466,8 @@ def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
 
   c.selected_keyframe = SelectedKeyframe(
     id=fr.id,
-    key=_keyframe_id("radius", fr.id),
-    field="radius",
+    key=_keyframe_id(field_name, fr.id),
+    field=field_name,
     timeline_cell_index=fr.timeline_index,
     index_inside_list=index_inside_list,
   )
@@ -1497,7 +1497,6 @@ def _panel_collider_inspector() -> None:  ##
     return keyframe.index_inside_list
 
   # im.dummy((1, im.get_frame_height()))
-  # im.dummy((1, im.get_text_line_height_with_spacing()))
   im.dummy((1, im.get_text_line_height()))
   im.dummy((1, im.get_text_line_height_with_spacing()))
 
