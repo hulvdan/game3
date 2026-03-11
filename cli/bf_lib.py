@@ -1784,7 +1784,13 @@ class ImGuiPanel:  ##
   ##
 
 
-_show_imgui_frame = 0
+_imgui_frame = 0
+_imgui_runner_params = hello_imgui.RunnerParams()
+
+
+def imgui_set_idling(enabled: bool) -> None:  ##
+  _imgui_runner_params.fps_idling.enable_idling = enabled
+  ##
 
 
 def show_imgui(
@@ -1796,10 +1802,10 @@ def show_imgui(
   print(
     f"For information, demos sources are available in {demo_utils.demos_assets_folder()}"
   )
+  runner_params = _imgui_runner_params
 
   # Part 1: Define the runner params
 
-  runner_params = hello_imgui.RunnerParams()
   runner_params.app_window_params.window_title = window_title
   runner_params.app_window_params.restore_previous_geometry = True
 
@@ -1906,12 +1912,12 @@ def show_imgui(
 
   # the main gui is only responsible to give focus to ImGui Bundle dockable window
   def show_gui():
-    global _show_imgui_frame
-    if _show_imgui_frame == 1:
+    global _imgui_frame
+    if _imgui_frame == 1:
       # Focus cannot be given at frame 0, since some additional windows will
       # be created after (and will steal the focus)
       runner_params.docking_params.focus_dockable_window("Dear ImGui Bundle")
-    _show_imgui_frame += 1
+    _imgui_frame += 1
 
   def show_edit_font_scale_in_status_bar():
     im.set_next_item_width(im.get_content_region_avail().x / 10)

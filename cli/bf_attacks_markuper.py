@@ -113,16 +113,19 @@ def imgui_color_to_u32(v: im.ImColor) -> int:
 # [[[cog
 # import cog
 # for name, h, s, v in [
-#   ('RED',        0 / 7, 1, 1),
-#   ('YELLOW',     1 / 7, 1, 1),
-#   ('GREEN',      2 / 7, 1, 1),
-#   ('CYAN',       3 / 7, 1, 1),
-#   ('LIGHT_BLUE', 4 / 7, 1, 1),
-#   ('BLUE',       5 / 7, 1, 1),
-#   ('PURPLE',     6 / 7, 1, 1),
-#   ('WHITE',      0,     0, 1),
-#   ('GRAY',       0,     0, 0.5),
-#   ('BLACK',      0,     0, 0),
+#   ('RED',        0 / 7, 1.0, 1.0),
+#   ('YELLOW',     1 / 7, 1.0, 1.0),
+#   ('GREEN',      2 / 7, 1.0, 1.0),
+#   ('CYAN',       3 / 7, 1.0, 1.0),
+#   ('LIGHT_BLUE', 4 / 7, 1.0, 1.0),
+#   ('BLUE',       5 / 7, 1.0, 1.0),
+#   ('PURPLE',     6 / 7, 1.0, 1.0),
+#   ('WHITE',      0,     0.0, 1.0),
+#   ('GRAY',       0,     0.0, 0.5),
+#   ('BLACK',      0,     0.0, 0.0),
+#   ('APP_TIMELINE_DEFAULT_LINE',  0.0, 0.0, 0.1),
+#   ('APP_TIMELINE_SELECTED_LINE', 0.0, 0.0, 0.2),
+#   ('APP_TIMELINE_TIMELINE_LINE', 0.0, 0.4, 0.3),
 # ]:
 #   print(f"HUE_{name} = {h:.3f}")
 #   print(f"COLOR_{name} = imgui_color_hsva({h:.3f}, {s:.3f}, {v:.3f})")
@@ -180,6 +183,37 @@ COLOR_BLACK = imgui_color_hsva(0.000, 0.000, 0.000)
 COLOR_BLACK_FADED = imgui_fade_replace(COLOR_BLACK, 0.25)
 COLOR_BLACK_U32 = imgui_color_to_u32(COLOR_BLACK)
 COLOR_BLACK_FADED_U32 = imgui_color_to_u32(COLOR_BLACK_FADED)
+HUE_APP_TIMELINE_DEFAULT_LINE = 0.000
+COLOR_APP_TIMELINE_DEFAULT_LINE = imgui_color_hsva(0.000, 0.000, 0.100)
+COLOR_APP_TIMELINE_DEFAULT_LINE_FADED = imgui_fade_replace(
+  COLOR_APP_TIMELINE_DEFAULT_LINE, 0.25
+)
+COLOR_APP_TIMELINE_DEFAULT_LINE_U32 = imgui_color_to_u32(COLOR_APP_TIMELINE_DEFAULT_LINE)
+COLOR_APP_TIMELINE_DEFAULT_LINE_FADED_U32 = imgui_color_to_u32(
+  COLOR_APP_TIMELINE_DEFAULT_LINE_FADED
+)
+HUE_APP_TIMELINE_SELECTED_LINE = 0.000
+COLOR_APP_TIMELINE_SELECTED_LINE = imgui_color_hsva(0.000, 0.000, 0.200)
+COLOR_APP_TIMELINE_SELECTED_LINE_FADED = imgui_fade_replace(
+  COLOR_APP_TIMELINE_SELECTED_LINE, 0.25
+)
+COLOR_APP_TIMELINE_SELECTED_LINE_U32 = imgui_color_to_u32(
+  COLOR_APP_TIMELINE_SELECTED_LINE
+)
+COLOR_APP_TIMELINE_SELECTED_LINE_FADED_U32 = imgui_color_to_u32(
+  COLOR_APP_TIMELINE_SELECTED_LINE_FADED
+)
+HUE_APP_TIMELINE_TIMELINE_LINE = 0.000
+COLOR_APP_TIMELINE_TIMELINE_LINE = imgui_color_hsva(0.000, 0.400, 0.300)
+COLOR_APP_TIMELINE_TIMELINE_LINE_FADED = imgui_fade_replace(
+  COLOR_APP_TIMELINE_TIMELINE_LINE, 0.25
+)
+COLOR_APP_TIMELINE_TIMELINE_LINE_U32 = imgui_color_to_u32(
+  COLOR_APP_TIMELINE_TIMELINE_LINE
+)
+COLOR_APP_TIMELINE_TIMELINE_LINE_FADED_U32 = imgui_color_to_u32(
+  COLOR_APP_TIMELINE_TIMELINE_LINE_FADED
+)
 # [[[end]]]
 
 
@@ -264,7 +298,7 @@ def tool_attacks_markuper() -> None:
     Creature(
       name="MOB_SPEAR",
       attacks=[
-        Attack(name="DASH", duration_frames=10),
+        Attack(name="DASH", duration_frames=90),
         Attack(name="SWING"),
       ],
     ),
@@ -273,19 +307,19 @@ def tool_attacks_markuper() -> None:
       attacks=[
         Attack(
           name="ROLL_FRONT",
-          duration_frames=24,
+          duration_frames=60,
           colliders=[
             ColliderCapsule.make(),
           ],
         ),
-        Attack(name="ROLL_SIDE", duration_frames=10),
+        Attack(name="ROLL_SIDE", duration_frames=50),
         Attack(name="JUMP_BACK"),
       ],
     ),
   ]
   c = ColliderCapsule.make()
-  c.radius.append(Keyframe(4, 5, c._next_keyframe_id()))
-  c.radius.append(Keyframe(7, 4, c._next_keyframe_id()))
+  c.radius.append(Keyframe(40, 5, c._next_keyframe_id()))
+  c.radius.append(Keyframe(70, 4, c._next_keyframe_id()))
   g.creatures[0].attacks[0].colliders.append(c)
   g.creatures[0].attacks[0].timeline_at = 2
 
@@ -644,7 +678,7 @@ class ColliderCapsule(ColliderBase):  ##
 class Attack:  ##
   name: str
 
-  duration_frames: int = 1
+  duration_frames: int = 90
   colliders: list[ColliderBase] = field(default_factory=list)
 
   ref_selected_collider: ColliderBase | None = None
@@ -1155,7 +1189,7 @@ class ImguiTimelineLineOut:
 imgui_timeline_line_out = ImguiTimelineLineOut(ImVec2(), ImVec2())
 
 
-def imgui_timeline_line(indices_width: int, rows: int = 1) -> None:  ##
+def imgui_timeline_line(indices_width: int, rows: int, color: int) -> None:  ##
   bf.imgui_assert(indices_width >= 1)
   bf.imgui_assert(rows >= 1)
 
@@ -1167,11 +1201,7 @@ def imgui_timeline_line(indices_width: int, rows: int = 1) -> None:  ##
   out.pos_bottom_right = out.pos_top_left + ImVec2(out.width, out.height)
 
   draw = im.get_window_draw_list()
-  draw.add_rect_filled(
-    out.pos_top_left,
-    out.pos_bottom_right,
-    imgui_color_to_u32(imgui_fade_replace(COLOR_WHITE, 0.1)),
-  )
+  draw.add_rect_filled(out.pos_top_left, out.pos_bottom_right, color)
 
   mouse = im.get_mouse_pos()
   if (out.pos_top_left.x <= mouse.x <= out.pos_bottom_right.x) and (
@@ -1214,11 +1244,13 @@ def _panel_timeline() -> None:  ##
   io = im.get_io()
 
   if tim.is_playing:
+    bf.imgui_set_idling(False)
     atk.timeline_at += im.get_io().delta_time * FPS
     if atk.timeline_at > atk.duration_frames:
       atk.timeline_at -= atk.duration_frames
-  elif atk.timeline_at > atk.duration_frames:
-    atk.timeline_at = atk.duration_frames
+  else:
+    bf.imgui_set_idling(True)
+    atk.timeline_at = min(atk.timeline_at, atk.duration_frames)
 
   draw = im.get_window_draw_list()
 
@@ -1298,7 +1330,14 @@ def _panel_timeline() -> None:  ##
         "KeyframeType", getattr(c, f"_keyframe_{field_name}")
       ).line_spanning_rows
 
-    imgui_timeline_line(atk.duration_frames, line_spanning_rows)
+    line_color = COLOR_APP_TIMELINE_DEFAULT_LINE_U32
+    if field_name:
+      if c.selected_keyframe and (field_name == c.selected_keyframe.field):
+        line_color = COLOR_APP_TIMELINE_SELECTED_LINE_U32
+    else:
+      line_color = COLOR_APP_TIMELINE_TIMELINE_LINE_U32
+
+    imgui_timeline_line(atk.duration_frames, line_spanning_rows, line_color)
 
     if not lines_top_left:
       lines_top_left = imgui_timeline_line_out.pos_top_left

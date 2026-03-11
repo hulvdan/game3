@@ -35,11 +35,12 @@ x clear
 x mark: timeline is not a table anymore
 x mark: x2 tr timeline height
 x mark: fix spread setting
+x mark: highlight timeline lines
+x mark: correct idling
 
 * mark: W/S buttons for changing keyframes vertically
 * mark: on each line select specific keyframe?
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y stepx stepy
-* mark:
 * mark:
 * mark:
 * mark:
