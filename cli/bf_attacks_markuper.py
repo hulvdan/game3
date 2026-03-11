@@ -348,7 +348,7 @@ def tool_attacks_markuper() -> None:
   # removeme
   if atk := g.ref_selected_attack:
     if atk.colliders:
-      atk.ref_selected_collider = atk.colliders[0]
+      atk.collider_to_select = atk.colliders[0]
 
   def setup_imgui_style():
     if loaded_state:
@@ -380,6 +380,7 @@ def tool_attacks_markuper() -> None:
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
       ],
       setup_imgui_style=setup_imgui_style,
+      post_new_frame=_post_new_frame,
       before_exit=_dump_app_state,
     )
     _dump_task.cancel()
@@ -579,6 +580,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   keyframe_fields: t.ClassVar[list[str]]
 
   selected_keyframe: SelectedKeyframe | None = None
+  keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
   __next_keyframe_id: int = 1
 
   def __new__(cls, *_args, **_kwargs):
@@ -616,7 +618,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
       frame_index += 1
       if fr.index_timeline < index_timeline:
         left_list_index = frame_index
-      if fr.index_timeline > index_timeline:
+      if fr.index_timeline >= index_timeline:
         right_list_index = frame_index
         break
 
@@ -702,11 +704,19 @@ class Attack:  ##
   duration_frames: int = 90
   colliders: list[ColliderBase] = field(default_factory=list)
 
+  collider_deselection_scheduled: bool = False
+  collider_to_select: ColliderBase | None = None
+  collider_to_hover: ColliderBase | None = None
   ref_selected_collider: ColliderBase | None = None
   ref_hovered_collider: ColliderBase | None = None
 
   timeline_at: float = 0
   timeline_started_playing_at: float = 0
+
+  def get_visualization_collider(self) -> ColliderBase | None:
+    if self.ref_hovered_collider:
+      return self.ref_hovered_collider
+    return self.ref_selected_collider
 
   def validate(self):
     bf.imgui_assert(self.name)
@@ -787,6 +797,7 @@ class State:
 
   frame: int = 0
 
+  attack_to_select: Attack | None = None
   ref_selected_attack_creature: Creature | None = None
   ref_selected_attack: Attack | None = None
 
@@ -874,13 +885,12 @@ def _panel_attack_inspector() -> None:  ##
   with bf.imgui_colorify_inputs(HUE_GREEN):
     if im.button("+circle"):
       atk.colliders.append(ColliderCircle.make())
-      atk.ref_selected_collider = atk.colliders[-1]
+      atk.collider_to_select = atk.colliders[-1]
     im.same_line()
     if im.button("+capsule"):
       atk.colliders.append(ColliderCapsule.make())
-      atk.ref_selected_collider = atk.colliders[-1]
+      atk.collider_to_select = atk.colliders[-1]
 
-  atk.ref_hovered_collider = None
   i = -1
   for collider in atk.colliders:
     i += 1
@@ -889,13 +899,14 @@ def _panel_attack_inspector() -> None:  ##
       flags |= im.TreeNodeFlags_.selected
     if im.tree_node_ex(f"{i} {collider.type.name}", flags):
       if im.is_item_hovered():
-        atk.ref_hovered_collider = collider
+        atk.collider_to_hover = collider
       if im.is_item_clicked():
         if atk.ref_selected_collider is collider:
-          atk.ref_selected_collider = None
+          atk.collider_deselection_scheduled = True
         else:
-          atk.ref_selected_collider = collider
+          atk.collider_to_select = collider
       im.tree_pop()
+
   ##
 
 
@@ -1223,9 +1234,7 @@ def _panel_timeline() -> None:  ##
     imgui_draw_cross()
     return
   bf.imgui_assert(atk.duration_frames > 0)
-  c = atk.ref_selected_collider
-  if atk.ref_hovered_collider:
-    c = atk.ref_hovered_collider
+  c = atk.get_visualization_collider()
   if not c:
     imgui_draw_cross()
     return
@@ -1498,22 +1507,23 @@ def _select_keyframe(
   if not g.ref_selected_attack:
     raise bf.imgui_assert(0)
   atk = g.ref_selected_attack
-  c = atk.ref_selected_collider
+  c = atk.get_visualization_collider()
   if not c:
     raise bf.imgui_assert(0)
 
   frames = c.get_keyframes(field_name)
   fr = frames[index_inside_list]
 
-  c.selected_keyframe = SelectedKeyframe(
-    id=fr.id,
-    key=_keyframe_id(field_name, fr.id),
-    field=field_name,
-    index_timeline=fr.index_timeline,
-    index_inside_list=index_inside_list,
+  c.keyframe_to_select = (
+    SelectedKeyframe(
+      id=fr.id,
+      key=_keyframe_id(field_name, fr.id),
+      field=field_name,
+      index_timeline=fr.index_timeline,
+      index_inside_list=index_inside_list,
+    ),
+    update_timeline_playhead,
   )
-  if update_timeline_playhead:
-    atk.timeline_at = fr.index_timeline
   ##
 
 
@@ -1529,9 +1539,7 @@ def _panel_collider_inspector() -> None:  ##
   if not atk:
     imgui_draw_cross()
     return
-  c = atk.ref_hovered_collider
-  if not c:
-    c = atk.ref_selected_collider
+  c = atk.get_visualization_collider()
   if not c:
     imgui_draw_cross()
     return
@@ -1649,5 +1657,36 @@ def _panel_collider_inspector() -> None:  ##
 
   if g.timeline.is_playing:
     im.end_disabled()
+
+  ##
+
+
+def _post_new_frame() -> None:  ##
+  if g.attack_to_select:
+    g.ref_selected_attack = g.attack_to_select
+    g.attack_to_select = None
+
+  atk = g.ref_selected_attack
+  if atk:
+    if atk.collider_to_select:
+      atk.ref_selected_collider = atk.collider_to_select
+      atk.collider_to_select = None
+    if atk.collider_deselection_scheduled:
+      atk.ref_selected_collider = None
+      atk.collider_deselection_scheduled = False
+
+    atk.ref_hovered_collider = None
+    if atk.collider_to_hover:
+      atk.ref_hovered_collider = atk.collider_to_hover
+      atk.collider_to_hover = None
+
+    c = atk.get_visualization_collider()
+    if c:
+      if k := c.keyframe_to_select:
+        keyframe, update_timeline = k
+        if update_timeline:
+          atk.timeline_at = keyframe.index_timeline
+        c.selected_keyframe = keyframe
+        c.keyframe_to_select = None
 
   ##

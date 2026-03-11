@@ -43,10 +43,12 @@ x mark: highlight closest timeline keyframes
 x mark: selected keyframe is always the one closest to playhead
 x mark: make `tr` and `spread` keyframes affect visualizer
 x mark: ref getting keyframes w/o cast
+x mark: fix selecting (clicking on) other tr keyframe resets position to 0,0
+x mark: post_new_frame
 
-* mark: fix selecting (clicking on) other tr keyframe resets position to 0,0
+* mark: fix crash: selecting spread -> creating circle collider -> choosing it -> retuning back
+  (USE keyframe_to_select)
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y stepx stepy
-* mark:
 * mark:
 * mark:
 * mark:

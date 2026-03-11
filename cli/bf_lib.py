@@ -1797,6 +1797,7 @@ def show_imgui(
   window_title: str,
   panels: list[ImGuiPanel],
   setup_imgui_style: hello_imgui.VoidFunction | None = None,
+  post_new_frame: hello_imgui.VoidFunction | None = None,
   before_exit: hello_imgui.VoidFunction | None = None,
 ) -> t.Coroutine[None, None, None]:  ##
   print(
@@ -1907,6 +1908,8 @@ def show_imgui(
   runner_params.docking_params.dockable_windows = dockable_windows
   if setup_imgui_style:
     runner_params.callbacks.setup_imgui_style = setup_imgui_style
+  if post_new_frame:
+    runner_params.callbacks.post_new_frame = post_new_frame
   if before_exit:
     runner_params.callbacks.before_exit = before_exit
 
