@@ -55,13 +55,14 @@ x mark: is_active keyframes
 x mark: draw timeline playhead even when no collider is selected
 x mark: better timeline colors
 x mark: hovered vertical line in timeline
+- mark: hovering timeline lines enlightens background
 
+* mark: right click remove keyframe (if it's not the last one)
+* mark: min frame cell width (don't forget DPI) + timeline horizontal scrollbar
 * mark: is_active keyframes W/O metaclass
-* mark: draw both transform gizmos?
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y step_x step_y
 * mark: don't use matrix16 in collider
-* mark:
-* mark:
+* mark: capsule angle keyframes
 * mark:
 * mark:
 * mark: keyframe selection on `tr` works incorrectly
@@ -74,8 +75,6 @@ x mark: hovered vertical line in timeline
 * mark: delete keyframe (1 - through keyframe inspector? 2 - rmb?)
 * mark: hovering over timeline lines highlights line as yellow
   (so that it's easy to correctly place keyframes)
-* mark: hovering timeline lines enlightens background
-* mark: timeline 0.25 0.5 0.75 1 ... show time mark every line
 * mark: fixed
 * mark:
 * mark:
@@ -83,6 +82,8 @@ x mark: hovered vertical line in timeline
 * mark: drag keyframe to move it
 *
 * LATER
+  * mark: timeline 0.25 0.5 0.75 1 ... show time mark every line
+  * mark: draw both transform gizmos?
   * mark: disable idling when playing
   * mark: Reaper-like keybindings
   * mark: correct docks placement
