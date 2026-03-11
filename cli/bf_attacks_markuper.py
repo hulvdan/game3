@@ -1154,7 +1154,7 @@ imgui_timeline_line_out = ImguiTimelineLineOut(ImVec2(), ImVec2())
 def imgui_timeline_line(indices_width: int) -> None:  ##
   out = imgui_timeline_line_out
   out.pos_top_left = im.get_cursor_screen_pos()
-  out.width = im.get_content_region_avail().x
+  out.width = max(1, im.get_content_region_avail().x)
   out.width_per_index = out.width / indices_width
   out.height = im.get_frame_height()
   out.pos_bottom_right = out.pos_top_left + ImVec2(out.width, out.height)
@@ -1186,6 +1186,7 @@ def imgui_timeline_line(indices_width: int) -> None:  ##
     0,
     indices_width - 1,
   )
+  im.dummy((out.width, out.height))
   ##
 
 
@@ -1202,6 +1203,8 @@ def _panel_timeline() -> None:  ##
   if not c:
     imgui_draw_cross()
     return
+
+  io = im.get_io()
 
   if tim.is_playing:
     atk.timeline_at += im.get_io().delta_time * FPS
@@ -1241,153 +1244,139 @@ def _panel_timeline() -> None:  ##
     im.set_cursor_screen_pos(remembered_pos)
     return im.is_item_clicked()
 
-  if im.begin_table("timeline_table", 2, im.TableFlags_.sizing_stretch_same):
-    im.table_setup_column("label", im.TableColumnFlags_.width_fixed)
-    im.table_setup_column("value", im.TableColumnFlags_.width_stretch)
+  if (
+    im.button("<<")
+    or im.is_key_pressed(im.Key._0)
+    or (im.is_key_pressed(im.Key._6) and io.key_shift)
+  ):
+    atk.timeline_at = 0
+    atk.timeline_started_playing_at = 0
+  im.set_item_tooltip("Key: 0 / ^")
 
-    lines_top_left: ImVec2 | None = None
-    lines_bottom_right = ImVec2()
-
-    were_dragging_keyframe_this_frame = False
-    created_keyframe_this_frame = False
-
-    for field, keyframes in (
-      ("", None),
-      *((x, getattr(c, x)) for x in c.list_frame_fields),
+  with bf.imgui_colorify_inputs(HUE_RED if tim.is_playing else HUE_GREEN):
+    im.same_line()
+    if (
+      im.button("⏸" if tim.is_playing else "▶")
+      or im.is_key_pressed(im.Key.space)
+      or im.is_key_pressed(im.Key.enter)
     ):
-      keyframes = t.cast("list[Keyframe]", keyframes)
-      im.table_next_row()
+      tim.is_playing = not tim.is_playing
+      if tim.is_playing:
+        atk.timeline_started_playing_at = atk.timeline_at
+      elif im.is_key_pressed(im.Key.space):
+        atk.timeline_at = atk.timeline_started_playing_at
+    im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
 
-      im.table_set_column_index(0)
+  im.same_line()
+  if im.button(">>") or (im.is_key_pressed(im.Key._4) and io.key_shift):
+    atk.timeline_at = atk.duration_frames
+    atk.timeline_started_playing_at = atk.duration_frames
+  im.set_item_tooltip("Key: $")
 
-      if field:
-        im.text(field)
-      else:
-        io = im.get_io()
-        if (
-          im.button("<<")
-          or im.is_key_pressed(im.Key._0)
-          or (im.is_key_pressed(im.Key._6) and io.key_shift)
-        ):
-          atk.timeline_at = 0
-          atk.timeline_started_playing_at = 0
-        im.set_item_tooltip("Key: 0 / ^")
+  lines_top_left: ImVec2 | None = None
+  lines_bottom_right = ImVec2()
 
-        with bf.imgui_colorify_inputs(HUE_RED if tim.is_playing else HUE_GREEN):
-          im.same_line()
-          if (
-            im.button("⏸" if tim.is_playing else "▶")
-            or im.is_key_pressed(im.Key.space)
-            or im.is_key_pressed(im.Key.enter)
-          ):
-            tim.is_playing = not tim.is_playing
-            if tim.is_playing:
-              atk.timeline_started_playing_at = atk.timeline_at
-            elif im.is_key_pressed(im.Key.space):
-              atk.timeline_at = atk.timeline_started_playing_at
-          im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
+  were_dragging_keyframe_this_frame = False
+  created_keyframe_this_frame = False
 
-        im.same_line()
-        if im.button(">>") or (im.is_key_pressed(im.Key._4) and io.key_shift):
-          atk.timeline_at = atk.duration_frames
-          atk.timeline_started_playing_at = atk.duration_frames
-        im.set_item_tooltip("Key: $")
+  for field_name, keyframes in (
+    ("", None),
+    *((x, getattr(c, x)) for x in c.list_frame_fields),
+  ):
+    keyframes = t.cast("list[Keyframe]", keyframes)
 
-      im.table_set_column_index(1)
-
-      imgui_timeline_line(atk.duration_frames)
-
-      if not lines_top_left:
-        lines_top_left = imgui_timeline_line_out.pos_top_left
-      lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
-
-      if keyframes is None:
-        if im.is_mouse_down(0) and (
-          imgui_timeline_line_out.hovered or g.timeline.dragging_playhead
-        ):
-          atk.timeline_at = imgui_timeline_line_out.hovered_indexf
-          g.timeline.dragging_playhead = True
-        elif not im.is_mouse_down(0):
-          g.timeline.dragging_playhead = False
-
-      else:
-        # Keyframe lines
-        fr_index = -1
-        for fr in keyframes:
-          fr_index += 1
-          key = _keyframe_id(field, fr.id)
-          is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
-          imgui_keyframe(
-            key,
-            imgui_timeline_line_out.pos_top_left
-            + ImVec2(
-              fr.timeline_index * imgui_timeline_line_out.width_per_index,
-              imgui_timeline_line_out.height / 2,
-            ),
-            selected=is_selected,
-          )
-          if im.is_item_hovered() and im.is_mouse_clicked(0):
-            _select_keyframe(field, fr_index)
-            tim.dragging_keyframe = key
-
-          if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
-            were_dragging_keyframe_this_frame = True
-            min_left = 0
-            max_right = atk.duration_frames - 1
-            if fr_index > 0:
-              min_left = keyframes[fr_index - 1].timeline_index + 1
-            if fr_index < len(keyframes) - 1:
-              max_right = keyframes[fr_index + 1].timeline_index - 1
-
-            fr.timeline_index = bf.clamp(
-              imgui_timeline_line_out.hovered_index_half_cell_offset, min_left, max_right
-            )
-            atk.timeline_at = fr.timeline_index
-
-          if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
-            if imgui_timeline_line_out.double_clicked:
-              create_index = imgui_timeline_line_out.hovered_index_half_cell_offset
-              can_create_keyframe = True
-              for frrr in keyframes:
-                if frrr.timeline_index == create_index:
-                  can_create_keyframe = False
-                  break
-
-              if can_create_keyframe:
-                created_keyframe_this_frame = True
-                c.make_default_keyframe_at(field, create_index)
+    imgui_timeline_line(atk.duration_frames)
 
     if not lines_top_left:
-      raise bf.imgui_assert(0)
-    for i in range(atk.duration_frames):
-      posx = lines_top_left.x + i * imgui_timeline_line_out.width / atk.duration_frames
-      draw.add_line(
-        ImVec2(posx, lines_top_left.y),
-        ImVec2(posx, lines_bottom_right.y),
-        COLOR_GRAY_FADED_U32,
-      )
+      lines_top_left = imgui_timeline_line_out.pos_top_left
+    lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
 
-    playhead_top = lines_top_left + ImVec2(
-      atk.timeline_at / atk.duration_frames * imgui_timeline_line_out.width, 0
-    )
-    playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
-    line_height = imgui_timeline_line_out.height
-    draw.add_triangle_filled(
-      playhead_top + ImVec2(0, line_height / 2),
-      playhead_top + ImVec2(line_height / 4, 0),
-      playhead_top + ImVec2(-line_height / 4, 0),
-      COLOR_RED_U32,
-    )
+    if keyframes is None:
+      if im.is_mouse_down(0) and (
+        imgui_timeline_line_out.hovered or g.timeline.dragging_playhead
+      ):
+        atk.timeline_at = imgui_timeline_line_out.hovered_indexf
+        g.timeline.dragging_playhead = True
+      elif not im.is_mouse_down(0):
+        g.timeline.dragging_playhead = False
+
+    else:
+      # Keyframe lines
+      fr_index = -1
+      for fr in keyframes:
+        fr_index += 1
+        key = _keyframe_id(field_name, fr.id)
+        is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
+        imgui_keyframe(
+          key,
+          imgui_timeline_line_out.pos_top_left
+          + ImVec2(
+            fr.timeline_index * imgui_timeline_line_out.width_per_index,
+            imgui_timeline_line_out.height / 2,
+          ),
+          selected=is_selected,
+        )
+        if im.is_item_hovered() and im.is_mouse_clicked(0):
+          _select_keyframe(field_name, fr_index)
+          tim.dragging_keyframe = key
+
+        if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
+          were_dragging_keyframe_this_frame = True
+          min_left = 0
+          max_right = atk.duration_frames - 1
+          if fr_index > 0:
+            min_left = keyframes[fr_index - 1].timeline_index + 1
+          if fr_index < len(keyframes) - 1:
+            max_right = keyframes[fr_index + 1].timeline_index - 1
+
+          fr.timeline_index = bf.clamp(
+            imgui_timeline_line_out.hovered_index_half_cell_offset, min_left, max_right
+          )
+          atk.timeline_at = fr.timeline_index
+
+        if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
+          if imgui_timeline_line_out.double_clicked:
+            create_index = imgui_timeline_line_out.hovered_index_half_cell_offset
+            can_create_keyframe = True
+            for frrr in keyframes:
+              if frrr.timeline_index == create_index:
+                can_create_keyframe = False
+                break
+
+            if can_create_keyframe:
+              created_keyframe_this_frame = True
+              c.make_default_keyframe_at(field_name, create_index)
+
+  if not lines_top_left:
+    raise bf.imgui_assert(0)
+  for i in range(atk.duration_frames):
+    posx = lines_top_left.x + i * imgui_timeline_line_out.width / atk.duration_frames
     draw.add_line(
-      playhead_top, playhead_bottom, COLOR_RED_U32, 2 * im.get_window_dpi_scale()
+      ImVec2(posx, lines_top_left.y),
+      ImVec2(posx, lines_bottom_right.y),
+      COLOR_GRAY_FADED_U32,
     )
 
-    if not were_dragging_keyframe_this_frame:
-      tim.dragging_keyframe = None
+  playhead_top = lines_top_left + ImVec2(
+    atk.timeline_at / atk.duration_frames * imgui_timeline_line_out.width, 0
+  )
+  playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
+  line_height = imgui_timeline_line_out.height
+  draw.add_triangle_filled(
+    playhead_top + ImVec2(0, line_height / 2),
+    playhead_top + ImVec2(line_height / 4, 0),
+    playhead_top + ImVec2(-line_height / 4, 0),
+    COLOR_RED_U32,
+  )
+  draw.add_line(
+    playhead_top, playhead_bottom, COLOR_RED_U32, 2 * im.get_window_dpi_scale()
+  )
 
-    im.end_table()
+  if not were_dragging_keyframe_this_frame:
+    tim.dragging_keyframe = None
 
-    recursive_validate(g)
+  recursive_validate(g)
+  im.dummy((0, 0))
 
   ##
 
@@ -1493,6 +1482,9 @@ def _panel_collider_inspector() -> None:  ##
     if not keyframe or (keyframe.field != field_name):
       return 0
     return keyframe.index_inside_list
+
+  im.dummy((1, im.get_frame_height()))
+  im.dummy((1, im.get_frame_height()))
 
   if im.begin_table("collider_table", 3):
     im.table_setup_column("", im.TableColumnFlags_.width_fixed)

@@ -32,9 +32,9 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x mark: moving from collider to timeline: timeline is not a table anymore
 
-* mark: moving from collider to timeline: draw fields in timeline
-* mark: moving from collider to timeline:
+* mark: moving from collider to timeline: add buttons: rotation +-15* +-90* to collider, +- 1x 1y stepx stepy
 * mark: moving from collider to timeline:
 * mark: moving from collider to timeline:
 * mark: moving from collider to timeline:
