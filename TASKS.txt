@@ -58,6 +58,7 @@ x mark: hovered vertical line in timeline
 - mark: hovering timeline lines enlightens background
 x mark: right click remove keyframe (if it's not the last one)
 x mark: fix why trying to make keyframe to the left of the most left one pushes it to the right
+x ass
 
 * mark: UNDO
 * mark: min frame cell width (don't forget DPI) + timeline horizontal scrollbar

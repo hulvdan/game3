@@ -18,6 +18,7 @@ from typing import Callable, Generic, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
 import toml
+from bf_lib import imgui_assert as ass
 from bf_typer import command
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
@@ -402,7 +403,7 @@ def gizmo_restrict(
   disable_translation_z: bool = False,
 ):
   global _gizmo_restricted
-  bf.imgui_assert(not _gizmo_restricted)
+  ass(not _gizmo_restricted)
 
   _gizmo_restricted = True
   gizmo.set_axis_mask(*mask)
@@ -461,8 +462,8 @@ class Keyframe(Generic[T]):  ##
   id: int = 0
 
   def validate(self):
-    bf.imgui_assert(self.id > 0)
-    bf.imgui_assert(self.index_timeline >= 0)
+    ass(self.id > 0)
+    ass(self.index_timeline >= 0)
 
   ##
 
@@ -476,8 +477,8 @@ class SelectedKeyframe:  ##
   index_inside_list: int
 
   def validate(self):
-    bf.imgui_assert(self.id > 0)
-    bf.imgui_assert(self.index_timeline >= 0)
+    ass(self.id > 0)
+    ass(self.index_timeline >= 0)
 
   ##
 
@@ -514,7 +515,7 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
     return v
 
   def make_lerp(self, v1: bool, v2: bool, t: float) -> bool:  # noqa: ARG002
-    bf.imgui_assert(0 <= t <= 1)
+    ass(0 <= t <= 1)
     return v1
 
   ##
@@ -534,7 +535,7 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
     return v
 
   def make_lerp(self, v1: float, v2: float, t: float) -> float:
-    bf.imgui_assert(0 <= t <= 1)
+    ass(0 <= t <= 1)
     return bf.lerp(v1, v2, t)
 
   ##
@@ -557,7 +558,7 @@ class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
     return result
 
   def make_lerp(self, v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
-    bf.imgui_assert(0 <= t <= 1)
+    ass(0 <= t <= 1)
     return lerp_Matrix16(v1, v2, t)
 
   ##
@@ -567,7 +568,7 @@ class ColliderBaseMeta(type):  ##
   def __init__(cls, name, bases, namespace):
     super().__init__(name, bases, namespace)
     is_base = name == "ColliderBase"
-    bf.imgui_assert(is_base or (ColliderBase in bases))
+    ass(is_base or (ColliderBase in bases))
     if is_base:
       return
 
@@ -587,11 +588,11 @@ class ColliderBaseMeta(type):  ##
         continue
       if field_name.startswith(prefix):
         field_name_wo_prefix = field_name.removeprefix(prefix)
-        bf.imgui_assert(isinstance(field_type, KeyframeType))
-        bf.imgui_assert(field_name_wo_prefix in cls.keyframe_fields)
+        ass(isinstance(field_type, KeyframeType))
+        ass(field_name_wo_prefix in cls.keyframe_fields)
 
     for f in cls.keyframe_fields:
-      bf.imgui_assert(f"{prefix}{f}" in namespace)
+      ass(f"{prefix}{f}" in namespace)
 
   ##
 
@@ -606,7 +607,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   __next_keyframe_id: int = 1
 
   def __new__(cls, *_args, **_kwargs):
-    bf.imgui_assert(cls is not ColliderBase)
+    ass(cls is not ColliderBase)
     return super().__new__(cls)
 
   def _next_keyframe_id(self) -> int:
@@ -615,7 +616,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     return result
 
   def get_keyframes(self, field_name: str) -> list[Keyframe]:
-    bf.imgui_assert(field_name in self.keyframe_fields)
+    ass(field_name in self.keyframe_fields)
     return getattr(self, field_name)
 
   def get_keyframe_type(self, field_name: str) -> KeyframeType:
@@ -648,10 +649,10 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   def make_default_keyframe_at(self, field: str, index_timeline: int) -> None:
     frames = self.get_keyframes(field)
     for fr in frames:
-      bf.imgui_assert(fr.index_timeline != index_timeline)
+      ass(fr.index_timeline != index_timeline)
     insert_index, value = self.make_keyframe_value_at(field, index_timeline)
     frames.insert(insert_index, Keyframe(index_timeline, value, self._next_keyframe_id()))
-    bf.imgui_assert(frames == sorted(frames, key=lambda x: x.index_timeline))
+    ass(frames == sorted(frames, key=lambda x: x.index_timeline))
 
   def select_keyframe(
     self,
@@ -676,14 +677,14 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   def validate(self):
     for frames in (self.get_keyframes(x) for x in self.keyframe_fields):
       for i in range(len(frames) - 1):
-        bf.imgui_assert(
+        ass(
           frames[i].index_timeline < frames[i + 1].index_timeline,
           ("Keyframes must be sorted by `index`"),
         )
 
   @classmethod
   def make(cls) -> Self:
-    bf.imgui_assert(cls is not ColliderBase)
+    ass(cls is not ColliderBase)
     result = cls(*[[] for _ in range(len(cls.keyframe_fields))])
     for f in cls.keyframe_fields:
       result.make_default_keyframe_at(f, 0)
@@ -752,18 +753,18 @@ class Attack:  ##
     return self.ref_selected_collider
 
   def validate(self):
-    bf.imgui_assert(self.name)
-    bf.imgui_assert(self.duration_frames > 0)
-    bf.imgui_assert(self.timeline_at >= 0)
-    bf.imgui_assert(self.timeline_at <= self.duration_frames)
-    bf.imgui_assert(self.timeline_started_playing_at >= 0)
-    bf.imgui_assert(self.timeline_started_playing_at <= self.duration_frames)
+    ass(self.name)
+    ass(self.duration_frames > 0)
+    ass(self.timeline_at >= 0)
+    ass(self.timeline_at <= self.duration_frames)
+    ass(self.timeline_started_playing_at >= 0)
+    ass(self.timeline_started_playing_at <= self.duration_frames)
 
     for c in self.colliders:
       for frames in (c.get_keyframes(x) for x in c.keyframe_fields):
         for fr in frames:
-          bf.imgui_assert(fr.index_timeline >= 0)
-          bf.imgui_assert(fr.index_timeline < self.duration_frames)
+          ass(fr.index_timeline >= 0)
+          ass(fr.index_timeline < self.duration_frames)
 
   ##
 
@@ -774,8 +775,8 @@ class Creature:  ##
   attacks: list[Attack]
 
   def validate(self):
-    bf.imgui_assert(self.name)
-    bf.imgui_assert(bf.are_unique(x.name for x in self.attacks))
+    ass(self.name)
+    ass(bf.are_unique(x.name for x in self.attacks))
 
   ##
 
@@ -945,7 +946,7 @@ def _panel_attack_inspector() -> None:  ##
 def _panel_visualizer() -> None:
   atk = g.ref_selected_attack
   if atk is None:
-    bf.imgui_assert(g.ref_selected_attack_creature is None)
+    ass(g.ref_selected_attack_creature is None)
     return
 
   ## Setup
@@ -1028,12 +1029,12 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
-    bf.imgui_assert(segments >= 8)
-    bf.imgui_assert(radius > 0)
-    bf.imgui_assert(isinstance(p, vec3))
-    bf.imgui_assert(glm.dot(plane[1], plane[0]) < 0.00001)
+    ass(segments >= 8)
+    ass(radius > 0)
+    ass(isinstance(p, vec3))
+    ass(glm.dot(plane[1], plane[0]) < 0.00001)
     normal = glm.cross(plane[0], plane[1])
-    bf.imgui_assert(abs(glm.length(normal) - 1) < 0.00001)
+    ass(abs(glm.length(normal) - 1) < 0.00001)
     m = glm.rotate(2.0 * pi / segments, normal)
     cur = glm.cross(normal, vec3_forward) * radius
     for _ in range(segments):
@@ -1051,14 +1052,14 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
-    bf.imgui_assert(segments >= 8)
-    bf.imgui_assert(spread >= 0)
-    bf.imgui_assert(radius > 0)
-    bf.imgui_assert(isinstance(p, vec3))
-    bf.imgui_assert(segments % 2 == 0)
-    bf.imgui_assert(glm.dot(plane[0], plane[1]) < 0.00001)
+    ass(segments >= 8)
+    ass(spread >= 0)
+    ass(radius > 0)
+    ass(isinstance(p, vec3))
+    ass(segments % 2 == 0)
+    ass(glm.dot(plane[0], plane[1]) < 0.00001)
     normal = glm.cross(plane[1], plane[0])
-    bf.imgui_assert(abs(glm.length(normal) - 1) < 0.00001)
+    ass(abs(glm.length(normal) - 1) < 0.00001)
     m = glm.rotate(2.0 * pi / segments, normal)
 
     plane_axis = vec4(plane[0], 0)  # type: ignore
@@ -1113,7 +1114,7 @@ def _panel_visualizer() -> None:
     match c.type:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
-          raise bf.imgui_assert(0)
+          raise ass(0)
 
         m = _to_mat4(c.make_keyframe_value_at("tr", atk.timeline_at)[1])
         center = vec3(m * vec4(0, 0, 0, 1))
@@ -1122,7 +1123,7 @@ def _panel_visualizer() -> None:
 
       case ColliderType.CAPSULE:
         if not isinstance(c, ColliderCapsule):
-          raise bf.imgui_assert(0)
+          raise ass(0)
 
         m = _to_mat4(c.make_keyframe_value_at("tr", atk.timeline_at)[1])
         center = vec3(m * vec4(0, 0, 0, 1))
@@ -1133,7 +1134,7 @@ def _panel_visualizer() -> None:
         draw_capsule(center, radius, spread, angle, color)
 
       case _:
-        bf.imgui_assert(0)
+        ass(0)
 
   if im.is_key_pressed(im.Key.t) or im.is_key_pressed(im.Key._1):
     vis.gizmo_mode = GizmoMode.TRANSLATE
@@ -1161,7 +1162,7 @@ def _panel_visualizer() -> None:
     match c.type:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
-          raise bf.imgui_assert(0)
+          raise ass(0)
         center = _get_closest_keyframe(c.get_keyframes("tr"), atk.timeline_at)[1].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
@@ -1175,7 +1176,7 @@ def _panel_visualizer() -> None:
 
       case ColliderType.CAPSULE:
         if not isinstance(c, ColliderCapsule):
-          raise bf.imgui_assert(0)
+          raise ass(0)
         center = _get_closest_keyframe(c.get_keyframes("tr"), atk.timeline_at)[1].value
         match vis.gizmo_mode:
           case GizmoMode.TRANSLATE:
@@ -1230,8 +1231,8 @@ imgui_timeline_line_out = ImguiTimelineLineOut(ImVec2(), ImVec2())
 
 
 def imgui_timeline_line(indices_width: int, rows: int, color: int) -> None:  ##
-  bf.imgui_assert(indices_width >= 1)
-  bf.imgui_assert(rows >= 1)
+  ass(indices_width >= 1)
+  ass(rows >= 1)
 
   out = imgui_timeline_line_out
   out.pos_top_left = im.get_cursor_screen_pos()
@@ -1277,7 +1278,7 @@ def _panel_timeline() -> None:  ##
   if not atk:
     imgui_draw_cross()
     return
-  bf.imgui_assert(atk.duration_frames > 0)
+  ass(atk.duration_frames > 0)
   c = atk.get_visualization_collider()
 
   io = im.get_io()
@@ -1450,7 +1451,7 @@ def _panel_timeline() -> None:  ##
           hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
 
   if not lines_top_left:
-    raise bf.imgui_assert(0)
+    raise ass(0)
 
   for i in range(atk.duration_frames):
     posx = lines_top_left.x + i * imgui_timeline_line_out.width / atk.duration_frames
@@ -1573,7 +1574,7 @@ def _panel_collider_inspector() -> None:  ##
     return
 
   current_frame = min(int(atk.timeline_at + 0.5), atk.duration_frames - 1)
-  bf.imgui_assert(current_frame >= 0)
+  ass(current_frame >= 0)
 
   def field_keyframe_index(field_name: str) -> int:
     return _get_closest_keyframe(getattr(c, field_name), atk.timeline_at)[0]
@@ -1686,7 +1687,7 @@ def _panel_collider_inspector() -> None:  ##
           frames[index_f].value = _inspector_components(frames[index_f].value)
 
         case _:
-          raise bf.imgui_assert(0)
+          raise ass(0)
 
     im.end_table()
 
@@ -1720,8 +1721,8 @@ def _post_new_frame() -> None:  ##
       if k := c.keyframe_to_remove:
         field_name, index_inside_list = k
         keyframes = c.get_keyframes(field_name)
-        bf.imgui_assert(len(keyframes) > 1)
-        bf.imgui_assert(0 <= index_inside_list < len(keyframes))
+        ass(len(keyframes) > 1)
+        ass(0 <= index_inside_list < len(keyframes))
         del keyframes[index_inside_list]
         c.keyframe_to_remove = None
 
@@ -1746,11 +1747,11 @@ def test_success():  ##
   c = ColliderCapsule.make()
   c.radius[0].index_timeline = 10
   c.make_default_keyframe_at("radius", 5)
-  bf.imgui_assert(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
   c.make_default_keyframe_at("radius", 15)
-  bf.imgui_assert(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
   c.make_default_keyframe_at("radius", 9)
-  bf.imgui_assert(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
   c.make_default_keyframe_at("radius", 11)
-  bf.imgui_assert(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
   ##
