@@ -51,8 +51,8 @@ x mark: fix crash: selecting spread -> creating circle collider -> choosing it -
   and (playhead is EXACTLY at transform keyframe position)
 x mark: correctly show transform gizmo
 x mark: unified colors
+x mark: is_active keyframes
 
-* mark: is_active keyframes
 * mark: is_active keyframes W/O metaclass
 * mark:
 * mark: draw both transform gizmos?

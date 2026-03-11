@@ -512,7 +512,7 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
     return v
 
   def make_lerp(self, v1: bool, v2: bool, t: float) -> bool:  # noqa: ARG002
-    return v1 or v2
+    return v1
 
   ##
 
@@ -632,9 +632,9 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     frame_index = -1
     for fr in frames:
       frame_index += 1
-      if fr.index_timeline < index_timeline:
+      if fr.index_timeline <= index_timeline:
         left_list_index = frame_index
-      if fr.index_timeline >= index_timeline:
+      if fr.index_timeline > index_timeline:
         right_list_index = frame_index
         break
 
@@ -1096,6 +1096,7 @@ def _panel_visualizer() -> None:
   ## Actual logic
   sel_col = atk.ref_selected_collider
   hov_col = atk.ref_hovered_collider
+  visual_collider = atk.get_visualization_collider()
   for c in atk.colliders:
     color_ = COLOR_YELLOW
     if c is sel_col:
@@ -1107,6 +1108,13 @@ def _panel_visualizer() -> None:
       fade_ = c is not hov_col
     if fade_:
       color_ = imgui_fade_replace(color_, 0.25)
+
+    is_active = c.make_keyframe_value_at("is_active", atk.timeline_at)[1]
+    if not is_active:
+      if c is not visual_collider:
+        continue
+      color_ = imgui_fade_multiply(color_, 0.25)
+
     color = imgui_color_to_u32(color_)
 
     match c.type:
