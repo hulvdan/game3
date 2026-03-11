@@ -549,31 +549,34 @@ class ColliderBaseMeta(type):  ##
     if is_base:
       return
 
-    cls.list_frame_fields = []
+    cls.keyframe_fields = []
+
     for field_name, field_type in cls.__annotations__.items():
       origin = t.get_origin(field_type)
       args = t.get_args(field_type)
 
       if (origin in (list, t.List)) and args:  # noqa: UP006
         if t.get_origin(args[0]) is Keyframe:
-          cls.list_frame_fields.append(field_name)
+          cls.keyframe_fields.append(field_name)
 
-    cls._keyframe_values = {}
     prefix = "_keyframe_"
-    for field_name, field_value in namespace.items():
+    for field_name, field_type in namespace.items():
       if field_name == "_keyframe_values":
         continue
       if field_name.startswith(prefix):
-        bf.imgui_assert(isinstance(field_value, KeyframeType))
-        cls._keyframe_values[field_name.removeprefix(prefix)] = field_value
+        field_name_wo_prefix = field_name.removeprefix(prefix)
+        bf.imgui_assert(isinstance(field_type, KeyframeType))
+        bf.imgui_assert(field_name_wo_prefix in cls.keyframe_fields)
+
+    for f in cls.keyframe_fields:
+      bf.imgui_assert(f"{prefix}{f}" in namespace)
 
   ##
 
 
 class ColliderBase(metaclass=ColliderBaseMeta):  ##
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
-  list_frame_fields: t.ClassVar[list[str]]
-  _keyframe_values: t.ClassVar[dict[str, KeyframeType]]
+  keyframe_fields: t.ClassVar[list[str]]
 
   selected_keyframe: SelectedKeyframe | None = None
   __next_keyframe_id: int = 1
@@ -587,37 +590,44 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     self.__next_keyframe_id += 1
     return result
 
+  def get_keyframes(self, field_name: str) -> list[Keyframe]:
+    bf.imgui_assert(field_name in self.keyframe_fields)
+    return getattr(self, field_name)
+
+  def get_keyframe_type(self, field_name: str) -> KeyframeType:
+    return getattr(self, f"_keyframe_{field_name}")
+
   def make_keyframe_value_at(
     self, field: str, index_timeline: float
   ) -> tuple[int, t.Any]:
-    bf.imgui_assert(field in self.list_frame_fields)
-    bf.imgui_assert(field in self._keyframe_values)
+    bf.imgui_assert(field in self.keyframe_fields)
 
-    keyframes = t.cast("list[Keyframe]", getattr(self, field))
-    factory = self._keyframe_values[field]
+    frames = self.get_keyframes(field)
+    keyframe_type = self.get_keyframe_type(field)
 
     insert_index = 0
-    if not keyframes:
-      return (0, factory.make_default())
+    if not frames:
+      return (0, keyframe_type.make_default())
 
     left_list_index = 0
     right_list_index = 0
-    for i, fr in enumerate(keyframes):
-      fr = t.cast("Keyframe", fr)
+    frame_index = -1
+    for fr in frames:
+      frame_index += 1
       if fr.index_timeline < index_timeline:
-        left_list_index = i
+        left_list_index = frame_index
       if fr.index_timeline > index_timeline:
-        right_list_index = i
+        right_list_index = frame_index
         break
 
-    left = keyframes[left_list_index]
+    left = frames[left_list_index]
     insert_index = left_list_index + 1
     if right_list_index:
       bf.imgui_assert(right_list_index > left_list_index)
-      right = keyframes[right_list_index]
+      right = frames[right_list_index]
       return (
         insert_index,
-        factory.make_lerp(
+        keyframe_type.make_lerp(
           left.value,
           right.value,
           (index_timeline - left.index_timeline)
@@ -625,29 +635,26 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
         ),
       )
 
-    return (len(keyframes), factory.make_copy(left.value))
+    return (len(frames), keyframe_type.make_copy(left.value))
 
   def make_default_keyframe_at(self, field: str, index_timeline: int) -> None:
     insert_index, value = self.make_keyframe_value_at(field, index_timeline)
-    keyframes = t.cast("list[Keyframe]", getattr(self, field))
-    keyframes.insert(
-      insert_index, Keyframe(index_timeline, value, self._next_keyframe_id())
-    )
+    frames = self.get_keyframes(field)
+    frames.insert(insert_index, Keyframe(index_timeline, value, self._next_keyframe_id()))
 
   def validate(self):
-    for f in self.list_frame_fields:
-      keyframes = t.cast("list[Keyframe]", getattr(self, f))
-      for i in range(len(keyframes) - 1):
+    for frames in (self.get_keyframes(x) for x in self.keyframe_fields):
+      for i in range(len(frames) - 1):
         bf.imgui_assert(
-          keyframes[i].index_timeline < keyframes[i + 1].index_timeline,
+          frames[i].index_timeline < frames[i + 1].index_timeline,
           ("Keyframes must be sorted by `index`"),
         )
 
   @classmethod
   def make(cls) -> Self:
     bf.imgui_assert(cls is not ColliderBase)
-    result = cls(*[[] for _ in range(len(cls.list_frame_fields))])
-    for f in cls.list_frame_fields:
+    result = cls(*[[] for _ in range(len(cls.keyframe_fields))])
+    for f in cls.keyframe_fields:
       result.make_default_keyframe_at(f, 0)
     return result
 
@@ -710,9 +717,8 @@ class Attack:  ##
     bf.imgui_assert(self.timeline_started_playing_at <= self.duration_frames)
 
     for c in self.colliders:
-      for f in c.list_frame_fields:
-        keyframes = t.cast("list[Keyframe]", getattr(c, f))
-        for fr in keyframes:
+      for frames in (c.get_keyframes(x) for x in c.keyframe_fields):
+        for fr in frames:
           bf.imgui_assert(fr.index_timeline >= 0)
           bf.imgui_assert(fr.index_timeline < self.duration_frames)
 
@@ -850,9 +856,8 @@ def _panel_attack_inspector() -> None:  ##
   im.same_line()
   min_attack_frames = 1
   for c in atk.colliders:
-    for f in c.list_frame_fields:
-      for frame in getattr(c, f):
-        frame = t.cast("Keyframe[t.Any]", frame)
+    for frames in (c.get_keyframes(x) for x in c.keyframe_fields):
+      for frame in frames:
         min_attack_frames = max(min_attack_frames, frame.index_timeline + 1)
   im.set_next_item_width(im.get_content_region_avail()[0])
   changed, frames = im.slider_int(
@@ -1315,17 +1320,13 @@ def _panel_timeline() -> None:  ##
   were_dragging_keyframe_this_frame = False
   created_keyframe_this_frame = False
 
-  for field_name, keyframes in (
+  for field_name, frames in (
     ("", None),
-    *((x, getattr(c, x)) for x in c.list_frame_fields),
+    *((x, c.get_keyframes(x)) for x in c.keyframe_fields),
   ):
-    keyframes = t.cast("list[Keyframe]", keyframes)
-
     line_spanning_rows = 1
     if field_name:
-      line_spanning_rows = t.cast(
-        "KeyframeType", getattr(c, f"_keyframe_{field_name}")
-      ).line_spanning_rows
+      line_spanning_rows = c.get_keyframe_type(field_name).line_spanning_rows
 
     line_color = COLOR_APP_TIMELINE_DEFAULT_LINE_U32
     if field_name:
@@ -1340,7 +1341,7 @@ def _panel_timeline() -> None:  ##
       lines_top_left = imgui_timeline_line_out.pos_top_left
     lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
 
-    if keyframes is None:
+    if frames is None:
       if im.is_mouse_down(0) and (
         imgui_timeline_line_out.hovered or g.timeline.dragging_playhead
       ):
@@ -1352,8 +1353,8 @@ def _panel_timeline() -> None:  ##
     else:
       # Keyframe lines
       fr_index = -1
-      closest_index = _get_closest_keyframe(keyframes, atk.timeline_at)[0]
-      for fr in keyframes:
+      closest_index = _get_closest_keyframe(frames, atk.timeline_at)[0]
+      for fr in frames:
         fr_index += 1
         key = _keyframe_id(field_name, fr.id)
         is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
@@ -1376,9 +1377,9 @@ def _panel_timeline() -> None:  ##
           min_left = 0
           max_right = atk.duration_frames - 1
           if fr_index > 0:
-            min_left = keyframes[fr_index - 1].index_timeline + 1
-          if fr_index < len(keyframes) - 1:
-            max_right = keyframes[fr_index + 1].index_timeline - 1
+            min_left = frames[fr_index - 1].index_timeline + 1
+          if fr_index < len(frames) - 1:
+            max_right = frames[fr_index + 1].index_timeline - 1
 
           fr.index_timeline = bf.clamp(
             imgui_timeline_line_out.hovered_index_half_cell_offset, min_left, max_right
@@ -1389,7 +1390,7 @@ def _panel_timeline() -> None:  ##
           if imgui_timeline_line_out.double_clicked:
             create_index = imgui_timeline_line_out.hovered_index_half_cell_offset
             can_create_keyframe = True
-            for frrr in keyframes:
+            for frrr in frames:
               if frrr.index_timeline == create_index:
                 can_create_keyframe = False
                 break
@@ -1494,15 +1495,15 @@ def _inspector_value(
 def _select_keyframe(
   field_name: str, index_inside_list: int, *, update_timeline_playhead: bool = True
 ) -> None:  ##
-  bf.imgui_assert(g.ref_selected_attack)
-  atk = t.cast("Attack", g.ref_selected_attack)
+  if not g.ref_selected_attack:
+    raise bf.imgui_assert(0)
+  atk = g.ref_selected_attack
   c = atk.ref_selected_collider
   if not c:
-    bf.imgui_assert(0)
-  c = t.cast("ColliderBase", c)
+    raise bf.imgui_assert(0)
 
-  keyframes = t.cast("list[Keyframe]", getattr(c, field_name))
-  fr = keyframes[index_inside_list]
+  frames = c.get_keyframes(field_name)
+  fr = frames[index_inside_list]
 
   c.selected_keyframe = SelectedKeyframe(
     id=fr.id,
@@ -1558,20 +1559,20 @@ def _panel_collider_inspector() -> None:  ##
       vertical_off_field = c.selected_keyframe.field
 
     field_index = -1
-    for f in c.list_frame_fields:
+    for f in c.keyframe_fields:
       field_index += 1
 
       vertical_off = 0
       if f == vertical_off_field:
         for disabled, key, voff in (
           ((field_index <= 0), im.Key.w, -1),
-          ((field_index >= len(c.list_frame_fields) - 1), im.Key.s, 1),
+          ((field_index >= len(c.keyframe_fields) - 1), im.Key.s, 1),
         ):
           if (not disabled) and im.is_key_pressed(key):
             vertical_off = voff
 
-      keyframe_type = t.cast("KeyframeType", getattr(c, f"_keyframe_{f}"))
-      keyframes = t.cast("list[Keyframe]", getattr(c, f))
+      frames = c.get_keyframes(f)
+      keyframe_type = c.get_keyframe_type(f)
 
       im.table_next_row()
       im.table_set_column_index(0)
@@ -1586,7 +1587,7 @@ def _panel_collider_inspector() -> None:  ##
       )
 
       if vertical_off and (c.selected_keyframe is not None):
-        new_field_to_select = c.list_frame_fields[field_index + vertical_off]
+        new_field_to_select = c.keyframe_fields[field_index + vertical_off]
         _select_keyframe(
           new_field_to_select,
           _get_closest_keyframe(
@@ -1594,7 +1595,7 @@ def _panel_collider_inspector() -> None:  ##
           )[0],
         )
 
-      if not len(keyframes):
+      if not len(frames):
         bf.imgui_begin_disabled()
       if index_f <= 0:
         bf.imgui_begin_disabled()
@@ -1609,7 +1610,7 @@ def _panel_collider_inspector() -> None:  ##
       if index_f == 0:
         bf.imgui_end_disabled()
       im.same_line()
-      if index_f >= len(keyframes) - 1:
+      if index_f >= len(frames) - 1:
         bf.imgui_begin_disabled()
       if im.button(bf.imgui_id(">", f)) or (
         (not bf.imgui_is_disabled())
@@ -1620,9 +1621,9 @@ def _panel_collider_inspector() -> None:  ##
         _select_keyframe(f, index_f + 1)
       if field_is_the_same_as_of_selected_keyframe:
         im.set_item_tooltip("Key: D")
-      if index_f >= len(keyframes) - 1:
+      if index_f >= len(frames) - 1:
         bf.imgui_end_disabled()
-      if not len(keyframes):
+      if not len(frames):
         bf.imgui_end_disabled()
 
       im.table_set_column_index(2)
@@ -1631,15 +1632,15 @@ def _panel_collider_inspector() -> None:  ##
         case KeyframeTypeFloat():
           _inspector_value(
             bf.imgui_id("", f"slider_{f}"),
-            lambda: keyframes[index_f].value,
-            lambda x: setattr(keyframes[index_f], "value", x),
+            lambda: frames[index_f].value,
+            lambda x: setattr(frames[index_f], "value", x),
             keyframe_type.min,
             keyframe_type.max,
             keyframe_type.step,
           )
 
         case KeyframeTypeTr():
-          keyframes[index_f].value = _inspector_components(keyframes[index_f].value)
+          frames[index_f].value = _inspector_components(frames[index_f].value)
 
         case _:
           raise bf.imgui_assert(0)
