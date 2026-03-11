@@ -37,9 +37,10 @@ x mark: x2 tr timeline height
 x mark: fix spread setting
 x mark: highlight timeline lines
 x mark: correct idling
+x mark: W/S buttons for changing keyframes vertically: closest dist
 
-* mark: W/S buttons for changing keyframes vertically
-* mark: on each line select specific keyframe?
+* mark: on each line show closest keyframe data in collider?
+* mark:
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y stepx stepy
 * mark:
 * mark:

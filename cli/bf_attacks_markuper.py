@@ -442,13 +442,13 @@ def _to_mat4(m: Matrix16) -> mat4:
 
 @dataclass(slots=True)
 class Keyframe(Generic[T]):  ##
-  timeline_index: int
+  index_timeline: int
   value: T
   id: int = 0
 
   def validate(self):
     bf.imgui_assert(self.id > 0)
-    bf.imgui_assert(self.timeline_index >= 0)
+    bf.imgui_assert(self.index_timeline >= 0)
 
   ##
 
@@ -458,12 +458,12 @@ class SelectedKeyframe:  ##
   id: int
   key: str  # e.g. "keyframe_radius_0"
   field: str  # e.g. "radius" / "spread"
-  timeline_cell_index: int
+  index_timeline: int
   index_inside_list: int
 
   def validate(self):
     bf.imgui_assert(self.id > 0)
-    bf.imgui_assert(self.timeline_cell_index >= 0)
+    bf.imgui_assert(self.index_timeline >= 0)
 
   ##
 
@@ -582,7 +582,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     self.__next_keyframe_id += 1
     return result
 
-  def make_default_keyframe_at(self, field: str, timeline_index: int) -> None:
+  def make_default_keyframe_at(self, field: str, index_timeline: int) -> None:
     bf.imgui_assert(field in self.list_frame_fields)
     bf.imgui_assert(field in self._keyframe_values)
 
@@ -598,9 +598,9 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
       right_list_index = 0
       for i, fr in enumerate(keyframes):
         fr = t.cast("Keyframe", fr)
-        if fr.timeline_index < timeline_index:
+        if fr.index_timeline < index_timeline:
           left_list_index = i
-        if fr.timeline_index > timeline_index:
+        if fr.index_timeline > index_timeline:
           right_list_index = i
           break
       left = keyframes[left_list_index]
@@ -611,13 +611,13 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
         value = factory.make_lerp(
           left.value,
           right.value,
-          (timeline_index - left.timeline_index)
-          / (right.timeline_index - left.timeline_index),
+          (index_timeline - left.index_timeline)
+          / (right.index_timeline - left.index_timeline),
         )
       else:
         value = factory.make_copy(left.value)
     keyframes.insert(
-      insert_index, Keyframe(timeline_index, value, self._next_keyframe_id())
+      insert_index, Keyframe(index_timeline, value, self._next_keyframe_id())
     )
 
   def validate(self):
@@ -625,7 +625,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
       keyframes = t.cast("list[Keyframe]", getattr(self, f))
       for i in range(len(keyframes) - 1):
         bf.imgui_assert(
-          keyframes[i].timeline_index < keyframes[i + 1].timeline_index,
+          keyframes[i].index_timeline < keyframes[i + 1].index_timeline,
           ("Keyframes must be sorted by `index`"),
         )
 
@@ -699,8 +699,8 @@ class Attack:  ##
       for f in c.list_frame_fields:
         keyframes = t.cast("list[Keyframe]", getattr(c, f))
         for fr in keyframes:
-          bf.imgui_assert(fr.timeline_index >= 0)
-          bf.imgui_assert(fr.timeline_index < self.duration_frames)
+          bf.imgui_assert(fr.index_timeline >= 0)
+          bf.imgui_assert(fr.index_timeline < self.duration_frames)
 
   ##
 
@@ -839,7 +839,7 @@ def _panel_attack_inspector() -> None:  ##
     for f in c.list_frame_fields:
       for frame in getattr(c, f):
         frame = t.cast("Keyframe[t.Any]", frame)
-        min_attack_frames = max(min_attack_frames, frame.timeline_index + 1)
+        min_attack_frames = max(min_attack_frames, frame.index_timeline + 1)
   im.set_next_item_width(im.get_content_region_avail()[0])
   changed, frames = im.slider_int(
     bf.imgui_id("", "attack_duration_frames"),
@@ -1052,15 +1052,15 @@ def _panel_visualizer() -> None:
         r = c.radius[-1]
         for i in range(len(c.radius)):
           v = c.radius[i]
-          if v.timeline_index <= atk.timeline_at:
+          if v.index_timeline <= atk.timeline_at:
             l = v
-          if v.timeline_index >= atk.timeline_at:
+          if v.index_timeline >= atk.timeline_at:
             r = v
             break
         t = 0
-        bf.imgui_assert(r.timeline_index >= l.timeline_index)
-        if r.timeline_index != l.timeline_index:
-          t = (atk.timeline_at - l.timeline_index) / (r.timeline_index - l.timeline_index)
+        bf.imgui_assert(r.index_timeline >= l.index_timeline)
+        if r.index_timeline != l.index_timeline:
+          t = (atk.timeline_at - l.index_timeline) / (r.index_timeline - l.index_timeline)
         radius = bf.lerp(l.value, r.value, t)
 
         draw_circle(center, radius * scale, color)
@@ -1079,15 +1079,15 @@ def _panel_visualizer() -> None:
         r = c.radius[-1]
         for i in range(len(c.radius)):
           v = c.radius[i]
-          if v.timeline_index <= atk.timeline_at:
+          if v.index_timeline <= atk.timeline_at:
             l = v
-          if v.timeline_index >= atk.timeline_at:
+          if v.index_timeline >= atk.timeline_at:
             r = v
             break
         t = 0
-        bf.imgui_assert(r.timeline_index >= l.timeline_index)
-        if r.timeline_index != l.timeline_index:
-          t = (atk.timeline_at - l.timeline_index) / (r.timeline_index - l.timeline_index)
+        bf.imgui_assert(r.index_timeline >= l.index_timeline)
+        if r.index_timeline != l.index_timeline:
+          t = (atk.timeline_at - l.index_timeline) / (r.index_timeline - l.index_timeline)
         radius = bf.lerp(l.value, r.value, t)
 
         draw_capsule(center, radius, c.spread[0].value, angle, color)
@@ -1244,13 +1244,13 @@ def _panel_timeline() -> None:  ##
   io = im.get_io()
 
   if tim.is_playing:
-    bf.imgui_set_idling(False)
     atk.timeline_at += im.get_io().delta_time * FPS
     if atk.timeline_at > atk.duration_frames:
       atk.timeline_at -= atk.duration_frames
   else:
-    bf.imgui_set_idling(True)
     atk.timeline_at = min(atk.timeline_at, atk.duration_frames)
+
+  bf.imgui_set_idling(not tim.is_playing)
 
   draw = im.get_window_draw_list()
 
@@ -1363,7 +1363,7 @@ def _panel_timeline() -> None:  ##
           key,
           imgui_timeline_line_out.pos_top_left
           + ImVec2(
-            fr.timeline_index * imgui_timeline_line_out.width_per_index,
+            fr.index_timeline * imgui_timeline_line_out.width_per_index,
             imgui_timeline_line_out.height / 2,
           ),
           selected=is_selected,
@@ -1377,21 +1377,21 @@ def _panel_timeline() -> None:  ##
           min_left = 0
           max_right = atk.duration_frames - 1
           if fr_index > 0:
-            min_left = keyframes[fr_index - 1].timeline_index + 1
+            min_left = keyframes[fr_index - 1].index_timeline + 1
           if fr_index < len(keyframes) - 1:
-            max_right = keyframes[fr_index + 1].timeline_index - 1
+            max_right = keyframes[fr_index + 1].index_timeline - 1
 
-          fr.timeline_index = bf.clamp(
+          fr.index_timeline = bf.clamp(
             imgui_timeline_line_out.hovered_index_half_cell_offset, min_left, max_right
           )
-          atk.timeline_at = fr.timeline_index
+          atk.timeline_at = fr.index_timeline
 
         if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
           if imgui_timeline_line_out.double_clicked:
             create_index = imgui_timeline_line_out.hovered_index_half_cell_offset
             can_create_keyframe = True
             for frrr in keyframes:
-              if frrr.timeline_index == create_index:
+              if frrr.index_timeline == create_index:
                 can_create_keyframe = False
                 break
 
@@ -1507,10 +1507,17 @@ def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
     id=fr.id,
     key=_keyframe_id(field_name, fr.id),
     field=field_name,
-    timeline_cell_index=fr.timeline_index,
+    index_timeline=fr.index_timeline,
     index_inside_list=index_inside_list,
   )
-  atk.timeline_at = fr.timeline_index
+  atk.timeline_at = fr.index_timeline
+  ##
+
+
+def _get_closest_keyframe(
+  keyframes: list[Keyframe[T]], to: int = 0
+) -> tuple[int, Keyframe[T]]:  ##
+  return min(enumerate(keyframes), key=lambda x: abs(x[1].index_timeline - to))
   ##
 
 
@@ -1539,12 +1546,31 @@ def _panel_collider_inspector() -> None:  ##
   im.dummy((1, im.get_text_line_height()))
   im.dummy((1, im.get_text_line_height_with_spacing()))
 
+  if g.timeline.is_playing:
+    im.begin_disabled()
+
   if im.begin_table("collider_table", 3):
     im.table_setup_column("", im.TableColumnFlags_.width_fixed)
     im.table_setup_column("", im.TableColumnFlags_.width_fixed)
     im.table_setup_column("", im.TableColumnFlags_.width_stretch)
 
+    vertical_off_field = None
+    if c.selected_keyframe:
+      vertical_off_field = c.selected_keyframe.field
+
+    field_index = -1
     for f in c.list_frame_fields:
+      field_index += 1
+
+      vertical_off = 0
+      if f == vertical_off_field:
+        for disabled, key, voff in (
+          ((field_index <= 0), im.Key.w, -1),
+          ((field_index >= len(c.list_frame_fields) - 1), im.Key.s, 1),
+        ):
+          if (not disabled) and im.is_key_pressed(key):
+            vertical_off = voff
+
       keyframe_type = t.cast("KeyframeType", getattr(c, f"_keyframe_{f}"))
       keyframes = t.cast("list[Keyframe]", getattr(c, f))
 
@@ -1559,6 +1585,15 @@ def _panel_collider_inspector() -> None:  ##
       field_is_the_same_as_of_selected_keyframe = c.selected_keyframe and (
         c.selected_keyframe.field == f
       )
+
+      if vertical_off and (c.selected_keyframe is not None):
+        new_field_to_select = c.list_frame_fields[field_index + vertical_off]
+        _select_keyframe(
+          new_field_to_select,
+          _get_closest_keyframe(
+            getattr(c, new_field_to_select), c.selected_keyframe.index_timeline
+          )[0],
+        )
 
       if not len(keyframes):
         bf.imgui_begin_disabled()
@@ -1612,5 +1647,8 @@ def _panel_collider_inspector() -> None:  ##
           raise bf.imgui_assert(0)
 
     im.end_table()
+
+  if g.timeline.is_playing:
+    im.end_disabled()
 
   ##
