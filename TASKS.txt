@@ -32,12 +32,6 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-- find pomatez alternative
-x mark: create new keyframe with double click
-x mark: fix: clicking on "transform" keyframe crash (tr_position / tr_position_and_rotation)
-x mark: collider inspector: make good widths (slider spans only available width)
-x mark: fix crash upon changing tr keyframe
-x mark: tooltips
 
 * mark: moving from collider to timeline: draw fields in timeline
 * mark: moving from collider to timeline:
