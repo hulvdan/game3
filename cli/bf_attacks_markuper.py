@@ -1255,12 +1255,19 @@ def _panel_timeline() -> None:  ##
   draw = im.get_window_draw_list()
 
   keyframe_colors = (
-    im.get_color_u32(im.Col_.button),
-    im.get_color_u32(im.Col_.button_hovered),
-    im.get_color_u32(im.Col_.button_active),
+    COLOR_LIGHT_BLUE_U32,
+    COLOR_WHITE_FADED_U32,
+    COLOR_RED_U32,
+    COLOR_WHITE_U32,
+    # im.get_color_u32(im.Col_.button),
+    # im.get_color_u32(im.Col_.button_hovered),
+    # im.get_color_u32(im.Col_.button_active),
+    # im.get_color_u32(im.Col_.plot_lines),
   )
 
-  def imgui_keyframe(key: str, pos: ImVec2, selected: bool = False) -> bool:
+  def imgui_keyframe(
+    key: str, pos: ImVec2, selected: bool = False, closest: bool = False
+  ) -> bool:
     remembered_pos = im.get_cursor_screen_pos()
 
     scale = im.get_window_dpi_scale() * im.get_frame_height() / 24
@@ -1269,15 +1276,14 @@ def _panel_timeline() -> None:  ##
     im.set_cursor_screen_pos(pos - half)
     im.invisible_button(key, half * 2)
 
-    color_index = 0
-    if im.is_item_hovered():
-      color_index = 1
-    if selected:
-      color_index = 2
-
+    if selected or im.is_item_hovered():
+      draw.add_quad_filled(
+        *(pos + x * scale * 1.5 for x in _keyframe_quad_points),
+        col=keyframe_colors[3] if selected else keyframe_colors[1],
+      )
     draw.add_quad_filled(
       *(pos + x * scale for x in _keyframe_quad_points),
-      col=keyframe_colors[color_index],
+      col=keyframe_colors[2 if closest else 0],
     )
 
     im.set_cursor_screen_pos(remembered_pos)
@@ -1355,6 +1361,7 @@ def _panel_timeline() -> None:  ##
     else:
       # Keyframe lines
       fr_index = -1
+      closest_index = _get_closest_keyframe(keyframes, atk.timeline_at)[0]
       for fr in keyframes:
         fr_index += 1
         key = _keyframe_id(field_name, fr.id)
@@ -1367,6 +1374,7 @@ def _panel_timeline() -> None:  ##
             imgui_timeline_line_out.height / 2,
           ),
           selected=is_selected,
+          closest=closest_index == fr_index,
         )
         if im.is_item_hovered() and im.is_mouse_clicked(0):
           _select_keyframe(field_name, fr_index)
@@ -1627,15 +1635,14 @@ def _panel_collider_inspector() -> None:  ##
 
       match keyframe_type:
         case KeyframeTypeFloat():
-          with bf.imgui_colorify_inputs(HUE_GREEN):
-            _inspector_value(
-              bf.imgui_id("", f"slider_{f}"),
-              lambda: keyframes[index_f].value,
-              lambda x: setattr(keyframes[index_f], "value", x),
-              keyframe_type.min,
-              keyframe_type.max,
-              keyframe_type.step,
-            )
+          _inspector_value(
+            bf.imgui_id("", f"slider_{f}"),
+            lambda: keyframes[index_f].value,
+            lambda x: setattr(keyframes[index_f], "value", x),
+            keyframe_type.min,
+            keyframe_type.max,
+            keyframe_type.step,
+          )
 
         case KeyframeTypeTr():
           keyframes[index_f].value = _inspector_components(keyframes[index_f].value)
