@@ -123,9 +123,9 @@ def imgui_color_to_u32(v: im.ImColor) -> int:
 #   ('WHITE',      0,     0.0, 1.0),
 #   ('GRAY',       0,     0.0, 0.5),
 #   ('BLACK',      0,     0.0, 0.0),
-#   ('APP_TIMELINE_DEFAULT_LINE',  0.0, 0.0, 0.1),
-#   ('APP_TIMELINE_SELECTED_LINE', 0.0, 0.0, 0.2),
-#   ('APP_TIMELINE_TIMELINE_LINE', 0.0, 0.4, 0.3),
+#   ('APP_TIMELINE_DEFAULT_LINE',  4 / 7, 0.0, 0.1),
+#   ('APP_TIMELINE_SELECTED_LINE', 4 / 7, 0.0, 0.2),
+#   ('APP_TIMELINE_TIMELINE_LINE', 4 / 7, 0.4, 0.3),
 # ]:
 #   print(f"HUE_{name} = {h:.3f}")
 #   print(f"COLOR_{name} = imgui_color_hsva({h:.3f}, {s:.3f}, {v:.3f})")
@@ -183,8 +183,8 @@ COLOR_BLACK = imgui_color_hsva(0.000, 0.000, 0.000)
 COLOR_BLACK_FADED = imgui_fade_replace(COLOR_BLACK, 0.25)
 COLOR_BLACK_U32 = imgui_color_to_u32(COLOR_BLACK)
 COLOR_BLACK_FADED_U32 = imgui_color_to_u32(COLOR_BLACK_FADED)
-HUE_APP_TIMELINE_DEFAULT_LINE = 0.000
-COLOR_APP_TIMELINE_DEFAULT_LINE = imgui_color_hsva(0.000, 0.000, 0.100)
+HUE_APP_TIMELINE_DEFAULT_LINE = 0.571
+COLOR_APP_TIMELINE_DEFAULT_LINE = imgui_color_hsva(0.571, 0.000, 0.100)
 COLOR_APP_TIMELINE_DEFAULT_LINE_FADED = imgui_fade_replace(
   COLOR_APP_TIMELINE_DEFAULT_LINE, 0.25
 )
@@ -192,8 +192,8 @@ COLOR_APP_TIMELINE_DEFAULT_LINE_U32 = imgui_color_to_u32(COLOR_APP_TIMELINE_DEFA
 COLOR_APP_TIMELINE_DEFAULT_LINE_FADED_U32 = imgui_color_to_u32(
   COLOR_APP_TIMELINE_DEFAULT_LINE_FADED
 )
-HUE_APP_TIMELINE_SELECTED_LINE = 0.000
-COLOR_APP_TIMELINE_SELECTED_LINE = imgui_color_hsva(0.000, 0.000, 0.200)
+HUE_APP_TIMELINE_SELECTED_LINE = 0.571
+COLOR_APP_TIMELINE_SELECTED_LINE = imgui_color_hsva(0.571, 0.000, 0.200)
 COLOR_APP_TIMELINE_SELECTED_LINE_FADED = imgui_fade_replace(
   COLOR_APP_TIMELINE_SELECTED_LINE, 0.25
 )
@@ -203,8 +203,8 @@ COLOR_APP_TIMELINE_SELECTED_LINE_U32 = imgui_color_to_u32(
 COLOR_APP_TIMELINE_SELECTED_LINE_FADED_U32 = imgui_color_to_u32(
   COLOR_APP_TIMELINE_SELECTED_LINE_FADED
 )
-HUE_APP_TIMELINE_TIMELINE_LINE = 0.000
-COLOR_APP_TIMELINE_TIMELINE_LINE = imgui_color_hsva(0.000, 0.400, 0.300)
+HUE_APP_TIMELINE_TIMELINE_LINE = 0.571
+COLOR_APP_TIMELINE_TIMELINE_LINE = imgui_color_hsva(0.571, 0.400, 0.300)
 COLOR_APP_TIMELINE_TIMELINE_LINE_FADED = imgui_fade_replace(
   COLOR_APP_TIMELINE_TIMELINE_LINE, 0.25
 )
@@ -502,6 +502,22 @@ class KeyframeType(t.Protocol[T]):  ##
 
 
 @dataclass
+class KeyframeTypeBool(KeyframeType[bool]):  ##
+  default: bool
+
+  def make_default(self) -> bool:
+    return self.default
+
+  def make_copy(self, v: bool) -> bool:
+    return v
+
+  def make_lerp(self, v1: bool, v2: bool, t: float) -> bool:  # noqa: ARG002
+    return v1 or v2
+
+  ##
+
+
+@dataclass
 class KeyframeTypeFloat(KeyframeType[float]):  ##
   default: float
   min: float
@@ -687,9 +703,11 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
 class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
+  is_active: list[Keyframe[bool]]
   radius: list[Keyframe[float]]
   tr: list[Keyframe[Matrix16]]
 
+  _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
   _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
     0.5, MIN_RADIUS, MAX_RADIUS, STEP_TRANSLATE
   )
@@ -703,10 +721,12 @@ class ColliderCapsule(ColliderBase):  ##
   MAX_SPREAD: t.ClassVar[float] = 10.0
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
+  is_active: list[Keyframe[bool]]
   tr: list[Keyframe[Matrix16]]
   radius: list[Keyframe[float]]
   spread: list[Keyframe[float]]
 
+  _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
   _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
     0.5, MIN_RADIUS, MAX_RADIUS, STEP_TRANSLATE
   )
@@ -902,14 +922,13 @@ def _panel_attack_inspector() -> None:  ##
     atk.timeline_at = min(atk.timeline_at, frames)
     atk.timeline_started_playing_at = min(atk.timeline_started_playing_at, frames)
 
-  with bf.imgui_colorify_inputs(HUE_GREEN):
-    if im.button("+circle"):
-      atk.colliders.append(ColliderCircle.make())
-      atk.collider_to_select = atk.colliders[-1]
-    im.same_line()
-    if im.button("+capsule"):
-      atk.colliders.append(ColliderCapsule.make())
-      atk.collider_to_select = atk.colliders[-1]
+  if im.button("+circle"):
+    atk.colliders.append(ColliderCircle.make())
+    atk.collider_to_select = atk.colliders[-1]
+  im.same_line()
+  if im.button("+capsule"):
+    atk.colliders.append(ColliderCapsule.make())
+    atk.collider_to_select = atk.colliders[-1]
 
   i = -1
   for collider in atk.colliders:
@@ -1273,14 +1292,10 @@ def _panel_timeline() -> None:  ##
   draw = im.get_window_draw_list()
 
   keyframe_colors = (
-    COLOR_LIGHT_BLUE_U32,
-    COLOR_WHITE_FADED_U32,
-    COLOR_RED_U32,
-    COLOR_WHITE_U32,
-    # im.get_color_u32(im.Col_.button),
-    # im.get_color_u32(im.Col_.button_hovered),
-    # im.get_color_u32(im.Col_.button_active),
-    # im.get_color_u32(im.Col_.plot_lines),
+    im.get_color_u32(im.Col_.text),
+    im.get_color_u32(im.Col_.plot_lines),
+    im.get_color_u32(im.Col_.button_active),
+    im.get_color_u32(im.Col_.text),
   )
 
   def imgui_keyframe(
@@ -1316,19 +1331,18 @@ def _panel_timeline() -> None:  ##
     atk.timeline_started_playing_at = 0
   im.set_item_tooltip("Key: 0 / ^")
 
-  with bf.imgui_colorify_inputs(HUE_RED if tim.is_playing else HUE_GREEN):
-    im.same_line()
-    if (
-      im.button("⏸" if tim.is_playing else "▶")
-      or im.is_key_pressed(im.Key.space)
-      or im.is_key_pressed(im.Key.enter)
-    ):
-      tim.is_playing = not tim.is_playing
-      if tim.is_playing:
-        atk.timeline_started_playing_at = atk.timeline_at
-      elif im.is_key_pressed(im.Key.space):
-        atk.timeline_at = atk.timeline_started_playing_at
-    im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
+  im.same_line()
+  if (
+    im.button("⏸" if tim.is_playing else "▶")
+    or im.is_key_pressed(im.Key.space)
+    or im.is_key_pressed(im.Key.enter)
+  ):
+    tim.is_playing = not tim.is_playing
+    if tim.is_playing:
+      atk.timeline_started_playing_at = atk.timeline_at
+    elif im.is_key_pressed(im.Key.space):
+      atk.timeline_at = atk.timeline_started_playing_at
+  im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
 
   im.same_line()
   if im.button(">>") or (im.is_key_pressed(im.Key._4) and io.key_shift):
@@ -1350,12 +1364,12 @@ def _panel_timeline() -> None:  ##
     if field_name:
       line_spanning_rows = c.get_keyframe_type(field_name).line_spanning_rows
 
-    line_color = COLOR_APP_TIMELINE_DEFAULT_LINE_U32
+    line_color = im.get_color_u32(im.Col_.frame_bg)
     if field_name:
       if c.selected_keyframe and (field_name == c.selected_keyframe.field):
-        line_color = COLOR_APP_TIMELINE_SELECTED_LINE_U32
+        line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
     else:
-      line_color = COLOR_APP_TIMELINE_TIMELINE_LINE_U32
+      line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
 
     imgui_timeline_line(atk.duration_frames, line_spanning_rows, line_color)
 
@@ -1423,12 +1437,13 @@ def _panel_timeline() -> None:  ##
 
   if not lines_top_left:
     raise bf.imgui_assert(0)
+
   for i in range(atk.duration_frames):
     posx = lines_top_left.x + i * imgui_timeline_line_out.width / atk.duration_frames
     draw.add_line(
       ImVec2(posx, lines_top_left.y),
       ImVec2(posx, lines_bottom_right.y),
-      COLOR_GRAY_FADED_U32,
+      im.get_color_u32(im.Col_.border),
     )
 
   playhead_top = lines_top_left + ImVec2(
@@ -1440,10 +1455,13 @@ def _panel_timeline() -> None:  ##
     playhead_top + ImVec2(0, line_height / 2),
     playhead_top + ImVec2(line_height / 4, 0),
     playhead_top + ImVec2(-line_height / 4, 0),
-    COLOR_RED_U32,
+    im.get_color_u32(im.Col_.button_active),
   )
   draw.add_line(
-    playhead_top, playhead_bottom, COLOR_RED_U32, 2 * im.get_window_dpi_scale()
+    playhead_top,
+    playhead_bottom,
+    im.get_color_u32(im.Col_.button_active),
+    2 * im.get_window_dpi_scale(),
   )
 
   if not were_dragging_keyframe_this_frame:
@@ -1468,7 +1486,7 @@ def _inspector_components(m: Matrix16) -> Matrix16:  ##
     comps.rotation.values[index] = value
     m = gizmo.recompose_matrix_from_components(comps)
 
-  _inspector_value(
+  _inspector_slider_float(
     bf.imgui_id("", "TrX"),
     lambda: comps.translation.values[0],
     partial(tr_setter, 0),
@@ -1476,7 +1494,7 @@ def _inspector_components(m: Matrix16) -> Matrix16:  ##
     MAX_OFFSET,
     STEP_TRANSLATE,
   )
-  _inspector_value(
+  _inspector_slider_float(
     bf.imgui_id("", "TrZ"),
     lambda: comps.translation.values[2],
     partial(tr_setter, 2),
@@ -1499,7 +1517,16 @@ def _inspector_components(m: Matrix16) -> Matrix16:  ##
   ##
 
 
-def _inspector_value(
+def _inspector_checkbox(
+  label: str, getter: Callable[[], bool], setter: Callable[[bool], None]
+) -> None:  ##
+  changed, value = im.checkbox(label, getter())
+  if changed:
+    setter(value)
+  ##
+
+
+def _inspector_slider_float(
   label: str,
   getter: Callable[[], float],
   setter: Callable[[float], None],
@@ -1508,9 +1535,9 @@ def _inspector_value(
   step: float,
 ) -> None:  ##
   im.set_next_item_width(im.get_content_region_avail()[0])
-  changed, spread = im.slider_float(label, getter(), vmin, vmax)
+  changed, value = im.slider_float(label, getter(), vmin, vmax)
   if changed:
-    setter(bf.clamp(round(spread / step) * step, vmin, vmax))
+    setter(bf.clamp(round(value / step) * step, vmin, vmax))
   ##
 
 
@@ -1624,8 +1651,15 @@ def _panel_collider_inspector() -> None:  ##
       im.table_set_column_index(2)
 
       match keyframe_type:
+        case KeyframeTypeBool():
+          _inspector_checkbox(
+            bf.imgui_id("", f"checkbox_{f}"),
+            lambda: frames[index_f].value,
+            lambda x: setattr(frames[index_f], "value", x),
+          )
+
         case KeyframeTypeFloat():
-          _inspector_value(
+          _inspector_slider_float(
             bf.imgui_id("", f"slider_{f}"),
             lambda: frames[index_f].value,
             lambda x: setattr(frames[index_f], "value", x),
