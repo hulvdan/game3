@@ -256,6 +256,17 @@ def identity_matrix() ->  Matrix16:
     0.0, 0.0, 0.0, 1.0])
 # fmt: on
 
+
+def lerp_Matrix16(v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
+  c1 = gizmo.decompose_matrix_to_components(v1)
+  c2 = gizmo.decompose_matrix_to_components(v2)
+  c = gizmo.MatrixComponents()
+  c.translation.values[:] = c1.translation.values * (1 - t) + c2.translation.values * t
+  c.rotation.values[:] = c1.rotation.values
+  c.scale.values[:] = c1.scale.values
+  return gizmo.recompose_matrix_from_components(c)
+
+
 vec2_zero = vec2()
 vec2_one = vec2(1, 1)
 vec2_up = vec2(0, 1)
@@ -525,13 +536,7 @@ class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
     return result
 
   def make_lerp(self, v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
-    c1 = gizmo.decompose_matrix_to_components(v1)
-    c2 = gizmo.decompose_matrix_to_components(v2)
-    c = gizmo.MatrixComponents()
-    c.translation.values[:] = c1.translation.values * t + c2.translation.values * (1 - t)
-    c.rotation.values[:] = c1.rotation.values
-    c.scale.values[:] = c1.scale.values
-    return gizmo.recompose_matrix_from_components(c)
+    return lerp_Matrix16(v1, v2, t)
 
   ##
 
@@ -582,40 +587,49 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     self.__next_keyframe_id += 1
     return result
 
-  def make_default_keyframe_at(self, field: str, index_timeline: int) -> None:
+  def make_keyframe_value_at(
+    self, field: str, index_timeline: float
+  ) -> tuple[int, t.Any]:
     bf.imgui_assert(field in self.list_frame_fields)
     bf.imgui_assert(field in self._keyframe_values)
 
     keyframes = t.cast("list[Keyframe]", getattr(self, field))
     factory = self._keyframe_values[field]
 
-    value: t.Any
     insert_index = 0
     if not keyframes:
-      value = factory.make_default()
-    else:
-      left_list_index = 0
-      right_list_index = 0
-      for i, fr in enumerate(keyframes):
-        fr = t.cast("Keyframe", fr)
-        if fr.index_timeline < index_timeline:
-          left_list_index = i
-        if fr.index_timeline > index_timeline:
-          right_list_index = i
-          break
-      left = keyframes[left_list_index]
-      insert_index = left_list_index + 1
-      if right_list_index:
-        bf.imgui_assert(right_list_index > left_list_index)
-        right = keyframes[right_list_index]
-        value = factory.make_lerp(
+      return (0, factory.make_default())
+
+    left_list_index = 0
+    right_list_index = 0
+    for i, fr in enumerate(keyframes):
+      fr = t.cast("Keyframe", fr)
+      if fr.index_timeline < index_timeline:
+        left_list_index = i
+      if fr.index_timeline > index_timeline:
+        right_list_index = i
+        break
+
+    left = keyframes[left_list_index]
+    insert_index = left_list_index + 1
+    if right_list_index:
+      bf.imgui_assert(right_list_index > left_list_index)
+      right = keyframes[right_list_index]
+      return (
+        insert_index,
+        factory.make_lerp(
           left.value,
           right.value,
           (index_timeline - left.index_timeline)
           / (right.index_timeline - left.index_timeline),
-        )
-      else:
-        value = factory.make_copy(left.value)
+        ),
+      )
+
+    return (len(keyframes), factory.make_copy(left.value))
+
+  def make_default_keyframe_at(self, field: str, index_timeline: int) -> None:
+    insert_index, value = self.make_keyframe_value_at(field, index_timeline)
+    keyframes = t.cast("list[Keyframe]", getattr(self, field))
     keyframes.insert(
       insert_index, Keyframe(index_timeline, value, self._next_keyframe_id())
     )
@@ -1044,53 +1058,23 @@ def _panel_visualizer() -> None:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
           raise bf.imgui_assert(0)
-        m = _to_mat4(c.tr[0].value)
+
+        m = _to_mat4(c.make_keyframe_value_at("tr", atk.timeline_at)[1])
         center = vec3(m * vec4(0, 0, 0, 1))
-        scale = glm.length(m * vec4(1, 0, 0, 0))
-
-        l = c.radius[0]
-        r = c.radius[-1]
-        for i in range(len(c.radius)):
-          v = c.radius[i]
-          if v.index_timeline <= atk.timeline_at:
-            l = v
-          if v.index_timeline >= atk.timeline_at:
-            r = v
-            break
-        t = 0
-        bf.imgui_assert(r.index_timeline >= l.index_timeline)
-        if r.index_timeline != l.index_timeline:
-          t = (atk.timeline_at - l.index_timeline) / (r.index_timeline - l.index_timeline)
-        radius = bf.lerp(l.value, r.value, t)
-
-        draw_circle(center, radius * scale, color)
+        radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
+        draw_circle(center, radius, color)
 
       case ColliderType.CAPSULE:
         if not isinstance(c, ColliderCapsule):
           raise bf.imgui_assert(0)
-        m = _to_mat4(c.tr[0].value)
+
+        m = _to_mat4(c.make_keyframe_value_at("tr", atk.timeline_at)[1])
         center = vec3(m * vec4(0, 0, 0, 1))
         r_vec = vec3(m * vec4(0.5, 0, 0, 0))
         angle = -math.atan2(r_vec.z, r_vec.x)
-
-        r = glm.length(r_vec)
-
-        l = c.radius[0]
-        r = c.radius[-1]
-        for i in range(len(c.radius)):
-          v = c.radius[i]
-          if v.index_timeline <= atk.timeline_at:
-            l = v
-          if v.index_timeline >= atk.timeline_at:
-            r = v
-            break
-        t = 0
-        bf.imgui_assert(r.index_timeline >= l.index_timeline)
-        if r.index_timeline != l.index_timeline:
-          t = (atk.timeline_at - l.index_timeline) / (r.index_timeline - l.index_timeline)
-        radius = bf.lerp(l.value, r.value, t)
-
-        draw_capsule(center, radius, c.spread[0].value, angle, color)
+        radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
+        spread = c.make_keyframe_value_at("spread", atk.timeline_at)[1]
+        draw_capsule(center, radius, spread, angle, color)
 
       case _:
         bf.imgui_assert(0)

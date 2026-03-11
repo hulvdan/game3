@@ -41,10 +41,9 @@ x mark: W/S buttons for changing keyframes vertically: closest dist
 x mark: on each line show closest keyframe data in collider?
 x mark: highlight closest timeline keyframes
 x mark: selected keyframe is always the one closest to playhead
+x mark: make `tr` and `spread` keyframes affect visualizer
 
-* mark: make `tr` keyframes actually move collider in visualizer
-* mark: make `spread` keyframes actually lerp in visualizer
-* mark:
+* mark: fix selecting (clicking on) other tr keyframe resets position to 0,0
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y stepx stepy
 * mark:
 * mark:
