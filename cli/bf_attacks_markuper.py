@@ -1515,7 +1515,7 @@ def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
 
 
 def _get_closest_keyframe(
-  keyframes: list[Keyframe[T]], to: int = 0
+  keyframes: list[Keyframe[T]], to: float = 0
 ) -> tuple[int, Keyframe[T]]:  ##
   return min(enumerate(keyframes), key=lambda x: abs(x[1].index_timeline - to))
   ##
@@ -1533,14 +1533,11 @@ def _panel_collider_inspector() -> None:  ##
     imgui_draw_cross()
     return
 
-  current_frame = min(int(atk.timeline_at), atk.duration_frames - 1)
+  current_frame = min(int(atk.timeline_at + 0.5), atk.duration_frames - 1)
   bf.imgui_assert(current_frame >= 0)
 
   def field_keyframe_index(field_name: str) -> int:
-    keyframe = c.selected_keyframe
-    if not keyframe or (keyframe.field != field_name):
-      return 0
-    return keyframe.index_inside_list
+    return _get_closest_keyframe(getattr(c, field_name), atk.timeline_at)[0]
 
   # im.dummy((1, im.get_frame_height()))
   im.dummy((1, im.get_text_line_height()))
