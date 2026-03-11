@@ -40,6 +40,7 @@ x mark: correct idling
 x mark: W/S buttons for changing keyframes vertically: closest dist
 x mark: on each line show closest keyframe data in collider?
 x mark: highlight closest timeline keyframes
+x mark: selected keyframe is always the one closest to playhead
 
 * mark: make `tr` keyframes actually move collider in visualizer
 * mark: make `spread` keyframes actually lerp in visualizer

@@ -1250,6 +1250,13 @@ def _panel_timeline() -> None:  ##
   else:
     atk.timeline_at = min(atk.timeline_at, atk.duration_frames)
 
+  if sel_key := c.selected_keyframe:
+    _select_keyframe(
+      sel_key.field,
+      _get_closest_keyframe(getattr(c, sel_key.field), atk.timeline_at)[0],
+      update_timeline_playhead=False,
+    )
+
   bf.imgui_set_idling(not tim.is_playing)
 
   draw = im.get_window_draw_list()
@@ -1500,7 +1507,9 @@ def _inspector_value(
   ##
 
 
-def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
+def _select_keyframe(
+  field_name: str, index_inside_list: int, *, update_timeline_playhead: bool = True
+) -> None:  ##
   bf.imgui_assert(g.ref_selected_attack)
   atk = t.cast("Attack", g.ref_selected_attack)
   c = atk.ref_selected_collider
@@ -1518,7 +1527,8 @@ def _select_keyframe(field_name: str, index_inside_list: int) -> None:  ##
     index_timeline=fr.index_timeline,
     index_inside_list=index_inside_list,
   )
-  atk.timeline_at = fr.index_timeline
+  if update_timeline_playhead:
+    atk.timeline_at = fr.index_timeline
   ##
 
 
