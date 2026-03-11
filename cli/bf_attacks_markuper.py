@@ -1282,9 +1282,6 @@ def _panel_timeline() -> None:  ##
     return
   bf.imgui_assert(atk.duration_frames > 0)
   c = atk.get_visualization_collider()
-  if not c:
-    imgui_draw_cross()
-    return
 
   io = im.get_io()
 
@@ -1366,14 +1363,14 @@ def _panel_timeline() -> None:  ##
 
   for field_name, frames in (
     ("", None),
-    *((x, c.get_keyframes(x)) for x in c.keyframe_fields),
+    *(((x, c.get_keyframes(x)) for x in c.keyframe_fields) if c else ()),
   ):
     line_spanning_rows = 1
-    if field_name:
+    if c and field_name:
       line_spanning_rows = c.get_keyframe_type(field_name).line_spanning_rows
 
     line_color = im.get_color_u32(im.Col_.frame_bg)
-    if field_name:
+    if c and field_name:
       if c.selected_keyframe and (field_name == c.selected_keyframe.field):
         line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
     else:
@@ -1394,7 +1391,7 @@ def _panel_timeline() -> None:  ##
       elif not im.is_mouse_down(0):
         g.timeline.dragging_playhead = False
 
-    else:
+    elif c:
       # Keyframe lines
       fr_index = -1
       closest_index = _get_closest_keyframe(frames, atk.timeline_at)[0]

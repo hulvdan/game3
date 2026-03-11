@@ -52,9 +52,9 @@ x mark: fix crash: selecting spread -> creating circle collider -> choosing it -
 x mark: correctly show transform gizmo
 x mark: unified colors
 x mark: is_active keyframes
+x mark: draw timeline playhead even when no collider is selected
 
 * mark: is_active keyframes W/O metaclass
-* mark:
 * mark: draw both transform gizmos?
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y step_x step_y
 * mark: don't use matrix16 in collider
