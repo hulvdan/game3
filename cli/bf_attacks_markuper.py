@@ -444,6 +444,8 @@ class ColliderType(IntEnum):  ##
 
 @t.runtime_checkable
 class KeyframeType(t.Protocol[T]):  ##
+  line_spanning_rows: t.ClassVar[int] = 1
+
   def make_default(self) -> T: ...
 
   def make_copy(self, v: T) -> T: ...
@@ -472,13 +474,15 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
   ##
 
 
+@dataclass
 class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
-  def __init__(self, default: Matrix16 | None = None):
-    self._default = default if default else identity_matrix()
+  line_spanning_rows: t.ClassVar[int] = 2
+
+  default: Matrix16 = field(default_factory=identity_matrix)
 
   def make_default(self) -> Matrix16:
     result = Matrix16()
-    result.values[:] = self._default.values[:]
+    result.values[:] = self.default.values[:]
     return result
 
   def make_copy(self, v: Matrix16) -> Matrix16:
@@ -1151,12 +1155,15 @@ class ImguiTimelineLineOut:
 imgui_timeline_line_out = ImguiTimelineLineOut(ImVec2(), ImVec2())
 
 
-def imgui_timeline_line(indices_width: int) -> None:  ##
+def imgui_timeline_line(indices_width: int, rows: int = 1) -> None:  ##
+  bf.imgui_assert(indices_width >= 1)
+  bf.imgui_assert(rows >= 1)
+
   out = imgui_timeline_line_out
   out.pos_top_left = im.get_cursor_screen_pos()
   out.width = max(1, im.get_content_region_avail().x)
   out.width_per_index = out.width / indices_width
-  out.height = im.get_frame_height()
+  out.height = im.get_frame_height() * rows
   out.pos_bottom_right = out.pos_top_left + ImVec2(out.width, out.height)
 
   draw = im.get_window_draw_list()
@@ -1285,7 +1292,13 @@ def _panel_timeline() -> None:  ##
   ):
     keyframes = t.cast("list[Keyframe]", keyframes)
 
-    imgui_timeline_line(atk.duration_frames)
+    line_spanning_rows = 1
+    if field_name:
+      line_spanning_rows = t.cast(
+        "KeyframeType", getattr(c, f"_keyframe_{field_name}")
+      ).line_spanning_rows
+
+    imgui_timeline_line(atk.duration_frames, line_spanning_rows)
 
     if not lines_top_left:
       lines_top_left = imgui_timeline_line_out.pos_top_left
@@ -1483,8 +1496,10 @@ def _panel_collider_inspector() -> None:  ##
       return 0
     return keyframe.index_inside_list
 
-  im.dummy((1, im.get_frame_height()))
-  im.dummy((1, im.get_frame_height()))
+  # im.dummy((1, im.get_frame_height()))
+  # im.dummy((1, im.get_text_line_height_with_spacing()))
+  im.dummy((1, im.get_text_line_height()))
+  im.dummy((1, im.get_text_line_height_with_spacing()))
 
   if im.begin_table("collider_table", 3):
     im.table_setup_column("", im.TableColumnFlags_.width_fixed)
