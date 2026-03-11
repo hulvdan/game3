@@ -153,5 +153,10 @@
     //     "command": "python.runLinting",
     //     "runIn": "vscode"
     // }
-  ]
+  ],
+  "python.testing.pytestArgs": [
+    "cli"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }

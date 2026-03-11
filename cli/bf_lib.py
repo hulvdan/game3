@@ -2,6 +2,7 @@
 import colorsys
 import hashlib
 import math
+import os
 import re
 import socket
 import subprocess
@@ -55,6 +56,10 @@ ColorLike: TypeAlias = tuple[int, int, int, int] | tuple[int, int, int] | str
 
 ConveyorDatum: TypeAlias = tuple[Image.Image, Path]
 ConveyorCallable: TypeAlias = Callable[[Image.Image, Path], ConveyorDatum]
+
+
+def running_pytest() -> bool:
+  return "PYTEST_CURRENT_TEST" in os.environ
 
 
 @dataclass(slots=True)
@@ -149,6 +154,37 @@ AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".aac", ".m4a", ".wma", ".ogg"}
 # ██║   ██║   ██║   ██║██║     ╚════██║
 # ╚██████╔╝   ██║   ██║███████╗███████║
 #  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
+
+
+def iter_neighbors(
+  seq: t.Iterable[T],
+) -> t.Generator[tuple[int, T | None, int, T | None], None, None]:  ##
+  it = iter(seq)
+  prev_i, prev_val = -1, None
+  i = 0
+  for val in it:
+    yield (prev_i, prev_val, i, val)
+    prev_i, prev_val = i, val
+    i += 1
+  yield (prev_i, prev_val, i, None)
+  ##
+
+
+def test_neighbor_iter():  ##
+  assert list(iter_neighbors([])) == [
+    (-1, None, 0, None),
+  ]
+  assert list(iter_neighbors([10])) == [
+    (-1, None, 0, 10),
+    (0, 10, 1, None),
+  ]
+  assert list(iter_neighbors([10, 20, 30])) == [
+    (-1, None, 0, 10),
+    (0, 10, 1, 20),
+    (1, 20, 2, 30),
+    (2, 30, 3, None),
+  ]
+  ##
 
 
 def are_unique(iterable: t.Iterable) -> bool:  ##
@@ -1771,8 +1807,11 @@ def ldtk_load(filepath: Path | str) -> Ldtk:  ##
 
 def imgui_assert(expr, *args) -> Exception:  ##
   if not expr:
-    breakpoint()
-    assert expr, args
+    if running_pytest():
+      assert expr
+    else:
+      breakpoint()
+      assert expr, args
   return ValueError(f"imgui_assert: {expr}, {args}")
   ##
 

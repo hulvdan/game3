@@ -4,10 +4,25 @@
     {
       "label": "2_test",
       "type": "shell",
-      "command": "uv run python cli/bf_cli.py test",
+      "dependsOn": [
+        "test_py",
+        "test_godot"
+      ],
       "icon": {
         "id": "run"
       }
+    },
+    {
+      "label": "test_py",
+      "type": "shell",
+      "command": "uv run pytest",
+      "hide": true
+    },
+    {
+      "label": "test_godot",
+      "type": "shell",
+      "command": "uv run python cli/bf_cli.py test",
+      "hide": true
     },
     {
       "label": "1_gitf",

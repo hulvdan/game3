@@ -514,6 +514,7 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
     return v
 
   def make_lerp(self, v1: bool, v2: bool, t: float) -> bool:  # noqa: ARG002
+    bf.imgui_assert(0 <= t <= 1)
     return v1
 
   ##
@@ -533,6 +534,7 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
     return v
 
   def make_lerp(self, v1: float, v2: float, t: float) -> float:
+    bf.imgui_assert(0 <= t <= 1)
     return bf.lerp(v1, v2, t)
 
   ##
@@ -555,6 +557,7 @@ class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
     return result
 
   def make_lerp(self, v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
+    bf.imgui_assert(0 <= t <= 1)
     return lerp_Matrix16(v1, v2, t)
 
   ##
@@ -621,47 +624,34 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   def make_keyframe_value_at(
     self, field: str, index_timeline: float
   ) -> tuple[int, t.Any]:
-    bf.imgui_assert(field in self.keyframe_fields)
-
     frames = self.get_keyframes(field)
     keyframe_type = self.get_keyframe_type(field)
 
-    insert_index = 0
-    if not frames:
-      return (0, keyframe_type.make_default())
+    for _, left, right_list_index, right in bf.iter_neighbors(frames):
+      if left and right:
+        if left.index_timeline < index_timeline < right.index_timeline:
+          t = (index_timeline - left.index_timeline) / (
+            right.index_timeline - left.index_timeline
+          )
+          return (right_list_index, keyframe_type.make_lerp(left.value, right.value, t))
 
-    left_list_index = 0
-    right_list_index = 0
-    frame_index = -1
-    for fr in frames:
-      frame_index += 1
-      if fr.index_timeline <= index_timeline:
-        left_list_index = frame_index
-      if fr.index_timeline > index_timeline:
-        right_list_index = frame_index
-        break
+      elif left:
+        if left.index_timeline < index_timeline:
+          return (right_list_index, keyframe_type.make_copy(left.value))
 
-    left = frames[left_list_index]
-    insert_index = left_list_index + 1
-    if right_list_index:
-      bf.imgui_assert(right_list_index > left_list_index)
-      right = frames[right_list_index]
-      return (
-        insert_index,
-        keyframe_type.make_lerp(
-          left.value,
-          right.value,
-          (index_timeline - left.index_timeline)
-          / (right.index_timeline - left.index_timeline),
-        ),
-      )
+      elif right:
+        if index_timeline < right.index_timeline:
+          return (right_list_index, keyframe_type.make_copy(right.value))
 
-    return (len(frames), keyframe_type.make_copy(left.value))
+    return (0, keyframe_type.make_default())
 
   def make_default_keyframe_at(self, field: str, index_timeline: int) -> None:
-    insert_index, value = self.make_keyframe_value_at(field, index_timeline)
     frames = self.get_keyframes(field)
+    for fr in frames:
+      bf.imgui_assert(fr.index_timeline != index_timeline)
+    insert_index, value = self.make_keyframe_value_at(field, index_timeline)
     frames.insert(insert_index, Keyframe(index_timeline, value, self._next_keyframe_id()))
+    bf.imgui_assert(frames == sorted(frames, key=lambda x: x.index_timeline))
 
   def select_keyframe(
     self,
@@ -1424,7 +1414,7 @@ def _panel_timeline() -> None:  ##
             tim.dragging_keyframe = key
           if (
             (not tim.dragging_keyframe)
-            and im.is_mouse_clicked(1)
+            and (im.is_mouse_clicked(1) or im.is_key_pressed(im.Key.delete))
             and (len(c.get_keyframes(field_name)) > 1)
           ):
             c.keyframe_to_remove = (field_name, fr_index)
@@ -1749,4 +1739,18 @@ def _post_new_frame() -> None:  ##
           update_timeline_playhead=False,
         )
 
+  ##
+
+
+def test_success():  ##
+  c = ColliderCapsule.make()
+  c.radius[0].index_timeline = 10
+  c.make_default_keyframe_at("radius", 5)
+  bf.imgui_assert(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  c.make_default_keyframe_at("radius", 15)
+  bf.imgui_assert(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  c.make_default_keyframe_at("radius", 9)
+  bf.imgui_assert(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  c.make_default_keyframe_at("radius", 11)
+  bf.imgui_assert(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
   ##
