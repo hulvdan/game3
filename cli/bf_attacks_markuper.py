@@ -599,6 +599,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
 
   selected_keyframe: SelectedKeyframe | None = None
   keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
+  keyframe_to_remove: tuple[str, int] | None = None
   __next_keyframe_id: int = 1
 
   def __new__(cls, *_args, **_kwargs):
@@ -1417,9 +1418,16 @@ def _panel_timeline() -> None:  ##
           selected=is_selected,
           closest=closest_index == fr_index,
         )
-        if im.is_item_hovered() and im.is_mouse_clicked(0):
-          c.select_keyframe(field_name, fr_index)
-          tim.dragging_keyframe = key
+        if im.is_item_hovered():
+          if im.is_mouse_clicked(0):
+            c.select_keyframe(field_name, fr_index)
+            tim.dragging_keyframe = key
+          if (
+            (not tim.dragging_keyframe)
+            and im.is_mouse_clicked(1)
+            and (len(c.get_keyframes(field_name)) > 1)
+          ):
+            c.keyframe_to_remove = (field_name, fr_index)
 
         if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
           were_dragging_keyframe_this_frame = True
@@ -1719,6 +1727,14 @@ def _post_new_frame() -> None:  ##
 
     c = atk.get_visualization_collider()
     if c:
+      if k := c.keyframe_to_remove:
+        field_name, index_inside_list = k
+        keyframes = c.get_keyframes(field_name)
+        bf.imgui_assert(len(keyframes) > 1)
+        bf.imgui_assert(0 <= index_inside_list < len(keyframes))
+        del keyframes[index_inside_list]
+        c.keyframe_to_remove = None
+
       if k := c.keyframe_to_select:
         keyframe, update_timeline = k
         if update_timeline:
