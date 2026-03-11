@@ -1367,6 +1367,8 @@ def _panel_timeline() -> None:  ##
   were_dragging_keyframe_this_frame = False
   created_keyframe_this_frame = False
 
+  hovered_frame_index = -1
+
   for field_name, frames in (
     ("", None),
     *(((x, c.get_keyframes(x)) for x in c.keyframe_fields) if c else ()),
@@ -1446,6 +1448,9 @@ def _panel_timeline() -> None:  ##
               created_keyframe_this_frame = True
               c.make_default_keyframe_at(field_name, create_index)
 
+        if imgui_timeline_line_out.hovered:
+          hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
+
   if not lines_top_left:
     raise bf.imgui_assert(0)
 
@@ -1454,7 +1459,7 @@ def _panel_timeline() -> None:  ##
     draw.add_line(
       ImVec2(posx, lines_top_left.y),
       ImVec2(posx, lines_bottom_right.y),
-      im.get_color_u32(im.Col_.border),
+      im.get_color_u32(im.Col_.text if hovered_frame_index == i else im.Col_.border),
     )
 
   playhead_top = lines_top_left + ImVec2(
