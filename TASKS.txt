@@ -32,35 +32,8 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x mark: timeline is not a table anymore
-x mark: x2 tr timeline height
-x mark: fix spread setting
-x mark: highlight timeline lines
-x mark: correct idling
-x mark: W/S buttons for changing keyframes vertically: closest dist
-x mark: on each line show closest keyframe data in collider?
-x mark: highlight closest timeline keyframes
-x mark: selected keyframe is always the one closest to playhead
-x mark: make `tr` and `spread` keyframes affect visualizer
-x mark: ref getting keyframes w/o cast
-x mark: fix selecting (clicking on) other tr keyframe resets position to 0,0
-x mark: post_new_frame
-x mark: fix WASD
-x mark: fix crash: selecting spread -> creating circle collider -> choosing it -> retuning back
-- mark: show transform gizmo only when (not is_playing)
-  and (playhead is EXACTLY at transform keyframe position)
-x mark: correctly show transform gizmo
-x mark: unified colors
-x mark: is_active keyframes
-x mark: draw timeline playhead even when no collider is selected
-x mark: better timeline colors
-x mark: hovered vertical line in timeline
-- mark: hovering timeline lines enlightens background
-x mark: right click remove keyframe (if it's not the last one)
-x mark: fix why trying to make keyframe to the left of the most left one pushes it to the right
-x ass
-x docs
 
+* devlog name: Жоска Паграмираваю Боевку И Передаю Свой Опыт
 * mark: fix why starting keyframes don't affect visual (moving playhead a bit to the right does the job)
 * mark: UNDO
 * mark: attack gets exported to yaml

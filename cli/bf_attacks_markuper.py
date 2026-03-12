@@ -1746,12 +1746,7 @@ def _post_new_frame() -> None:  ##
 def test_success():  ##
   c = ColliderCapsule.make()
   c.radius[0].index_timeline = 10
-  c.make_default_keyframe_at("radius", 5)
-  ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
-  c.make_default_keyframe_at("radius", 15)
-  ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
-  c.make_default_keyframe_at("radius", 9)
-  ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
-  c.make_default_keyframe_at("radius", 11)
-  ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  for v in (5, 15, 9, 11):
+    c.make_default_keyframe_at("radius", v)
+    ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
   ##
