@@ -44,6 +44,10 @@ MAX_SPREAD: float = 10.0
 
 
 ## Setup
+ColliderID: TypeAlias = int
+KeyframeID: TypeAlias = int
+
+
 def recursive_validate(obj: t.Any) -> None:
   if x := getattr(obj, "validate", None):
     x()
@@ -618,13 +622,13 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
   keyframe_to_remove: tuple[str, int] | None = None
 
-  __next_keyframe_id: int = 1
+  __next_keyframe_id: KeyframeID = 1
 
   def __new__(cls, *_args, **_kwargs):
     ass(cls is not ColliderBase)
     return super().__new__(cls)
 
-  def _next_keyframe_id(self) -> int:
+  def _next_keyframe_id(self) -> KeyframeID:
     result = self.__next_keyframe_id
     self.__next_keyframe_id += 1
     return result
@@ -760,110 +764,133 @@ class ColliderCapsule(ColliderBase):  ##
 
 ## Attack Commands
 class AttackCommand(t.Protocol):
-  def do(self, a: "Attack") -> None: ...
+  atk: "Attack"
 
-  def undo(self, a: "Attack") -> None: ...
+  def do(self) -> None: ...
+
+  def undo(self) -> None: ...
 
 
 # @dataclass(slots=True)
 # @t.final
-# class CommandAttackAlterName(Command):
+# class AttackCommandAlterName(Command):
 #   pass
 #
 #
 # @dataclass(slots=True)
 # @t.final
-# class CommandAttackAlterFrames(Command):
+# class AttackCommandAlterFrames(Command):
 #   pass
+
+
+class AttackCommandCollider(AttackCommand):
+  collider_id: int
+
+  @property
+  def c(self) -> "ColliderBase":
+    return next(c for c in self.atk.colliders if c.id == self.collider_id)
 
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderAlterTr(AttackCommand):
-  collider_index: int
+class AttackCommandKeyframeAdd(AttackCommandCollider):
+  keyframe_field: str
+  keyframe_index_timeline: int
+
+  def do(self) -> None:
+    self.c.make_default_keyframe_at(self.keyframe_field, self.keyframe_index_timeline)
+
+  def undo(self) -> None:
+    frames = self.c.get_keyframes(self.keyframe_field)
+    ass(len(frames) > 1)
+    for i, fr in enumerate(frames):
+      if fr.index_timeline == self.keyframe_index_timeline:
+        del frames[i]
+        return
+    raise ValueError
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandKeyframeMove(AttackCommandCollider):
+  keyframe_field: str
+  keyframe_index_timeline_from: int
+  keyframe_index_timeline_to: int
+
+  def do(self) -> None: ...
+
+  def undo(self) -> None: ...
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandKeyframeRemove(AttackCommandCollider):
+  keyframe_field: str
+  keyframe_index_timeline: int
+
+  def do(self) -> None: ...
+
+  def undo(self) -> None: ...
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandColliderAlterTr(AttackCommandCollider):
   keyframe_index_inside_list: int
   value_old: vec2
   value_new: vec2
 
-  def do(self, a: "Attack") -> None: ...
+  def do(self) -> None: ...
 
-  def undo(self, a: "Attack") -> None: ...
+  def undo(self) -> None: ...
 
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderAlterActive(AttackCommand):
-  collider_index: int
+class AttackCommandColliderAlterActive(AttackCommandCollider):
   keyframe_index_inside_list: int
   value_old: bool
   value_new: bool
 
-  def do(self, a: "Attack") -> None: ...
+  def do(self) -> None: ...
 
-  def undo(self, a: "Attack") -> None: ...
+  def undo(self) -> None: ...
 
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderAlterRotation(AttackCommand):
-  collider_index: int
+class AttackCommandColliderAlterRotation(AttackCommandCollider):
   keyframe_index_inside_list: int
   value_old: float
   value_new: float
 
-  def do(self, a: "Attack") -> None: ...
+  def do(self) -> None: ...
 
-  def undo(self, a: "Attack") -> None: ...
+  def undo(self) -> None: ...
 
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderAlterSpread(AttackCommand):
-  collider_index: int
+class AttackCommandColliderAlterRadius(AttackCommandCollider):
   keyframe_index_inside_list: int
   value_old: float
   value_new: float
 
-  def do(self, a: "Attack") -> None: ...
+  def do(self) -> None: ...
 
-  def undo(self, a: "Attack") -> None: ...
-
-
-@dataclass(slots=True)
-@t.final
-class AttackCommandKeyframeMove(AttackCommand):
-  collider_id: int
-  keyframe_field: str
-  keyframe_timeline_index_from: int
-  keyframe_timeline_index_to: int
-
-  def do(self, a: "Attack") -> None: ...
-
-  def undo(self, a: "Attack") -> None: ...
+  def undo(self) -> None: ...
 
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandKeyframeAdd(AttackCommand):
-  collider_id: int
-  keyframe_field: str
-  keyframe_index_timeline_index: int
+class AttackCommandColliderAlterSpread(AttackCommandCollider):
+  keyframe_index_inside_list: int
+  value_old: float
+  value_new: float
 
-  def do(self, a: "Attack") -> None: ...
+  def do(self) -> None: ...
 
-  def undo(self, a: "Attack") -> None: ...
-
-
-@dataclass(slots=True)
-@t.final
-class AttackCommandKeyframeRemove(AttackCommand):
-  collider_id: int
-  keyframe_field: str
-  keyframe_index_timeline_index: int
-
-  def do(self, a: "Attack") -> None: ...
-
-  def undo(self, a: "Attack") -> None: ...
+  def undo(self) -> None: ...
 
 
 ##
@@ -887,9 +914,9 @@ class Attack:  ##
 
   history: list[AttackCommand] = field(default_factory=list)
 
-  _next_collider_id: int = 1
+  _next_collider_id: ColliderID = 1
 
-  def next_collider_id(self) -> int:
+  def next_collider_id(self) -> ColliderID:
     result = self._next_collider_id
     self._next_collider_id += 1
     return result
@@ -1273,7 +1300,7 @@ def _panel_visualizer() -> None:
     match c.type:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
-          raise ass(0)
+          ass(0)
 
         radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
         draw_circle(center, radius, color)
@@ -1909,13 +1936,11 @@ def _test_make_default_keyframe_at():  ##
 
 def _test_first_keyframe_yields_correct_values():  ##
   c = ColliderCapsule.make(1)
-  comps = gizmo.MatrixComponents()
-  comps.translation.values[0] = random.uniform(-100, 100)
   c.tr[0].value = vec2(random.uniform(-100, 100), random.uniform(-100, 100))
-  c.radius[0].value = random.uniform(-20, 20)
+  c.radius[0].value = random.uniform(0.25, 20)
 
   _, v = c.make_keyframe_value_at("tr", 0)
-  ass(isinstance(v, Matrix16))
+  ass(isinstance(v, vec2))
   ass(v == c.tr[0].value)
 
   _, r = c.make_keyframe_value_at("radius", 0)

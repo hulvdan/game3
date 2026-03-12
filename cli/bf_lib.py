@@ -1821,7 +1821,9 @@ def imgui_assert(expr, *args) -> Exception:  ##
     else:
       breakpoint()
       assert expr, args
-  return ValueError(f"imgui_assert: {expr}, {args}")
+    msg = f"imgui_assert: {expr}, {args}"
+    raise ValueError(msg)
+  return None  # ty:ignore[invalid-return-type]
   ##
 
 
