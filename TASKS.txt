@@ -40,8 +40,21 @@ x mark: vec2 transform + gizmos.manipulate
 x mark: store translation as tuple (float, float)
 x mark: store rotation as float
 x mark: matrix16.ndarray.frombytes(mat4.tobytes)
+x mark: undo: boilerplate
 
-* mark: UNDO
+* mark: undo:a changing radius adds command
+* mark: undo:
+* mark: undo:
+* mark: undo:
+* mark: undo:
+* mark: undo:
+* mark: undo:
+* mark: undo:
+* mark: undo:
+* mark: undo:
+* mark: undo:
+* mark: undo:
+*
 * mark: attack gets exported to yaml
 * mark: attack gets imported from yaml
 *

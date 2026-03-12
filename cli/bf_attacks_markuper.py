@@ -129,9 +129,6 @@ def imgui_color_to_u32(v: im.ImColor) -> int:
 #   ('WHITE',      0,     0.0, 1.0),
 #   ('GRAY',       0,     0.0, 0.5),
 #   ('BLACK',      0,     0.0, 0.0),
-#   ('APP_TIMELINE_DEFAULT_LINE',  4 / 7, 0.0, 0.1),
-#   ('APP_TIMELINE_SELECTED_LINE', 4 / 7, 0.0, 0.2),
-#   ('APP_TIMELINE_TIMELINE_LINE', 4 / 7, 0.4, 0.3),
 # ]:
 #   print(f"HUE_{name} = {h:.3f}")
 #   print(f"COLOR_{name} = imgui_color_hsva({h:.3f}, {s:.3f}, {v:.3f})")
@@ -189,37 +186,6 @@ COLOR_BLACK = imgui_color_hsva(0.000, 0.000, 0.000)
 COLOR_BLACK_FADED = imgui_fade_replace(COLOR_BLACK, 0.25)
 COLOR_BLACK_U32 = imgui_color_to_u32(COLOR_BLACK)
 COLOR_BLACK_FADED_U32 = imgui_color_to_u32(COLOR_BLACK_FADED)
-HUE_APP_TIMELINE_DEFAULT_LINE = 0.571
-COLOR_APP_TIMELINE_DEFAULT_LINE = imgui_color_hsva(0.571, 0.000, 0.100)
-COLOR_APP_TIMELINE_DEFAULT_LINE_FADED = imgui_fade_replace(
-  COLOR_APP_TIMELINE_DEFAULT_LINE, 0.25
-)
-COLOR_APP_TIMELINE_DEFAULT_LINE_U32 = imgui_color_to_u32(COLOR_APP_TIMELINE_DEFAULT_LINE)
-COLOR_APP_TIMELINE_DEFAULT_LINE_FADED_U32 = imgui_color_to_u32(
-  COLOR_APP_TIMELINE_DEFAULT_LINE_FADED
-)
-HUE_APP_TIMELINE_SELECTED_LINE = 0.571
-COLOR_APP_TIMELINE_SELECTED_LINE = imgui_color_hsva(0.571, 0.000, 0.200)
-COLOR_APP_TIMELINE_SELECTED_LINE_FADED = imgui_fade_replace(
-  COLOR_APP_TIMELINE_SELECTED_LINE, 0.25
-)
-COLOR_APP_TIMELINE_SELECTED_LINE_U32 = imgui_color_to_u32(
-  COLOR_APP_TIMELINE_SELECTED_LINE
-)
-COLOR_APP_TIMELINE_SELECTED_LINE_FADED_U32 = imgui_color_to_u32(
-  COLOR_APP_TIMELINE_SELECTED_LINE_FADED
-)
-HUE_APP_TIMELINE_TIMELINE_LINE = 0.571
-COLOR_APP_TIMELINE_TIMELINE_LINE = imgui_color_hsva(0.571, 0.400, 0.300)
-COLOR_APP_TIMELINE_TIMELINE_LINE_FADED = imgui_fade_replace(
-  COLOR_APP_TIMELINE_TIMELINE_LINE, 0.25
-)
-COLOR_APP_TIMELINE_TIMELINE_LINE_U32 = imgui_color_to_u32(
-  COLOR_APP_TIMELINE_TIMELINE_LINE
-)
-COLOR_APP_TIMELINE_TIMELINE_LINE_FADED_U32 = imgui_color_to_u32(
-  COLOR_APP_TIMELINE_TIMELINE_LINE_FADED
-)
 # [[[end]]]
 
 
@@ -317,6 +283,12 @@ async def _background_dump_run_data():
 
 @command
 def tool_attacks_markuper() -> None:
+  atk1 = Attack(
+    name="ROLL_FRONT",
+    duration_frames=60,
+    colliders=[],
+  )
+  atk1.colliders.append(ColliderCapsule.make(atk1.next_collider_id()))
   g.creatures = [
     Creature(
       name="MOB_SPEAR",
@@ -328,19 +300,13 @@ def tool_attacks_markuper() -> None:
     Creature(
       name="BOSS_JAGRAS",
       attacks=[
-        Attack(
-          name="ROLL_FRONT",
-          duration_frames=60,
-          colliders=[
-            ColliderCapsule.make(),
-          ],
-        ),
+        atk1,
         Attack(name="ROLL_SIDE", duration_frames=50),
         Attack(name="JUMP_BACK"),
       ],
     ),
   ]
-  c = ColliderCapsule.make()
+  c = ColliderCapsule.make(g.creatures[0].attacks[0].next_collider_id())
   c.radius.append(Keyframe(40, 5, c._next_keyframe_id()))
   c.radius.append(Keyframe(70, 4, c._next_keyframe_id()))
   g.creatures[0].attacks[0].colliders.append(c)
@@ -502,8 +468,18 @@ class ColliderType(IntEnum):  ##
   ##
 
 
+@unique
+class KeyframeTypeEnum(IntEnum):  ##
+  INVALID = 0
+  BOOL = 1
+  FLOAT = 2
+  VEC2 = 3
+  ##
+
+
 @t.runtime_checkable
 class KeyframeType(t.Protocol[T]):  ##
+  type: t.ClassVar[KeyframeTypeEnum]
   line_spanning_rows: t.ClassVar[int] = 1
 
   def make_default(self) -> T: ...
@@ -516,7 +492,10 @@ class KeyframeType(t.Protocol[T]):  ##
 
 
 @dataclass
+@t.final
 class KeyframeTypeBool(KeyframeType[bool]):  ##
+  type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.BOOL
+
   default: bool
 
   def make_default(self) -> bool:
@@ -534,6 +513,8 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
 
 @dataclass
 class KeyframeTypeFloat(KeyframeType[float]):  ##
+  type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.FLOAT
+
   default: float
   step: float
   step_fast: float
@@ -572,6 +553,8 @@ def _lerp_vec2(v1: vec2, v2: vec2, t: float, step: float | None = None):  ##
 
 @dataclass
 class KeyframeTypeTr(KeyframeType[vec2]):  ##
+  type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.VEC2
+
   line_spanning_rows: t.ClassVar[int] = 2
 
   default: vec2 = field(default_factory=vec2)
@@ -627,12 +610,14 @@ class ColliderBaseMeta(type):  ##
 
 
 class ColliderBase(metaclass=ColliderBaseMeta):  ##
+  id: int = 0
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
   keyframe_fields: t.ClassVar[list[str]]
 
   selected_keyframe: SelectedKeyframe | None = None
   keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
   keyframe_to_remove: tuple[str, int] | None = None
+
   __next_keyframe_id: int = 1
 
   def __new__(cls, *_args, **_kwargs):
@@ -712,6 +697,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     )
 
   def validate(self):
+    ass(self.id > 0)
     for frames in (self.get_keyframes(x) for x in self.keyframe_fields):
       for i in range(len(frames) - 1):
         ass(
@@ -720,9 +706,10 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
         )
 
   @classmethod
-  def make(cls) -> Self:
+  def make(cls, id_: int) -> Self:
     ass(cls is not ColliderBase)
     result = cls(*[[] for _ in range(len(cls.keyframe_fields))])
+    result.id = id_
     for f in cls.keyframe_fields:
       result.make_default_keyframe_at(f, 0)
     return result
@@ -771,6 +758,117 @@ class ColliderCapsule(ColliderBase):  ##
   ##
 
 
+## Attack Commands
+class AttackCommand(t.Protocol):
+  def do(self, a: "Attack") -> None: ...
+
+  def undo(self, a: "Attack") -> None: ...
+
+
+# @dataclass(slots=True)
+# @t.final
+# class CommandAttackAlterName(Command):
+#   pass
+#
+#
+# @dataclass(slots=True)
+# @t.final
+# class CommandAttackAlterFrames(Command):
+#   pass
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandColliderAlterTr(AttackCommand):
+  collider_index: int
+  keyframe_index_inside_list: int
+  value_old: vec2
+  value_new: vec2
+
+  def do(self, a: "Attack") -> None: ...
+
+  def undo(self, a: "Attack") -> None: ...
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandColliderAlterActive(AttackCommand):
+  collider_index: int
+  keyframe_index_inside_list: int
+  value_old: bool
+  value_new: bool
+
+  def do(self, a: "Attack") -> None: ...
+
+  def undo(self, a: "Attack") -> None: ...
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandColliderAlterRotation(AttackCommand):
+  collider_index: int
+  keyframe_index_inside_list: int
+  value_old: float
+  value_new: float
+
+  def do(self, a: "Attack") -> None: ...
+
+  def undo(self, a: "Attack") -> None: ...
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandColliderAlterSpread(AttackCommand):
+  collider_index: int
+  keyframe_index_inside_list: int
+  value_old: float
+  value_new: float
+
+  def do(self, a: "Attack") -> None: ...
+
+  def undo(self, a: "Attack") -> None: ...
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandKeyframeMove(AttackCommand):
+  collider_id: int
+  keyframe_field: str
+  keyframe_timeline_index_from: int
+  keyframe_timeline_index_to: int
+
+  def do(self, a: "Attack") -> None: ...
+
+  def undo(self, a: "Attack") -> None: ...
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandKeyframeAdd(AttackCommand):
+  collider_id: int
+  keyframe_field: str
+  keyframe_index_timeline_index: int
+
+  def do(self, a: "Attack") -> None: ...
+
+  def undo(self, a: "Attack") -> None: ...
+
+
+@dataclass(slots=True)
+@t.final
+class AttackCommandKeyframeRemove(AttackCommand):
+  collider_id: int
+  keyframe_field: str
+  keyframe_index_timeline_index: int
+
+  def do(self, a: "Attack") -> None: ...
+
+  def undo(self, a: "Attack") -> None: ...
+
+
+##
+
+
 @dataclass(slots=True)
 class Attack:  ##
   name: str
@@ -786,6 +884,15 @@ class Attack:  ##
 
   timeline_at: float = 0
   timeline_started_playing_at: float = 0
+
+  history: list[AttackCommand] = field(default_factory=list)
+
+  _next_collider_id: int = 1
+
+  def next_collider_id(self) -> int:
+    result = self._next_collider_id
+    self._next_collider_id += 1
+    return result
 
   def get_visualization_collider(self) -> ColliderBase | None:
     if self.ref_hovered_collider:
@@ -967,11 +1074,11 @@ def _panel_attack_inspector() -> None:  ##
     atk.timeline_started_playing_at = min(atk.timeline_started_playing_at, frames)
 
   if im.button("+circle"):
-    atk.colliders.append(ColliderCircle.make())
+    atk.colliders.append(ColliderCircle.make(atk.next_collider_id()))
     atk.collider_to_select = atk.colliders[-1]
   im.same_line()
   if im.button("+capsule"):
-    atk.colliders.append(ColliderCapsule.make())
+    atk.colliders.append(ColliderCapsule.make(atk.next_collider_id()))
     atk.collider_to_select = atk.colliders[-1]
 
   for i, collider in enumerate(atk.colliders):
@@ -1791,16 +1898,17 @@ def _post_new_frame() -> None:  ##
 
 
 def _test_make_default_keyframe_at():  ##
-  c = ColliderCapsule.make()
+  c = ColliderCapsule.make(1)
   c.radius[0].index_timeline = 10
   for v in (5, 15, 9, 11):
     c.make_default_keyframe_at("radius", v)
     ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  recursive_validate(c)
   ##
 
 
 def _test_first_keyframe_yields_correct_values():  ##
-  c = ColliderCapsule.make()
+  c = ColliderCapsule.make(1)
   comps = gizmo.MatrixComponents()
   comps.translation.values[0] = random.uniform(-100, 100)
   c.tr[0].value = vec2(random.uniform(-100, 100), random.uniform(-100, 100))
@@ -1812,4 +1920,5 @@ def _test_first_keyframe_yields_correct_values():  ##
 
   _, r = c.make_keyframe_value_at("radius", 0)
   ass(r == c.radius[0].value)
+  recursive_validate(c)
   ##
