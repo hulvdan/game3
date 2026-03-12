@@ -475,15 +475,16 @@ class ColliderType(IntEnum):  ##
 
 @unique
 class KeyframeTypeEnum(IntEnum):  ##
-  INVALID = 0
   BOOL = 1
-  FLOAT = 2
-  VEC2 = 3
+  INT = 2
+  FLOAT = 3
+  VEC2 = 4
   ##
 
 
 @t.runtime_checkable
 class KeyframeType(t.Protocol[T]):  ##
+  type_class: t.ClassVar[tuple[type]]
   type: t.ClassVar[KeyframeTypeEnum]
   line_spanning_rows: t.ClassVar[int] = 1
 
@@ -499,6 +500,7 @@ class KeyframeType(t.Protocol[T]):  ##
 @dataclass
 @t.final
 class KeyframeTypeBool(KeyframeType[bool]):  ##
+  type_class: t.ClassVar[tuple[type, ...]] = (bool,)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.BOOL
 
   default: bool
@@ -518,6 +520,7 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
 
 @dataclass
 class KeyframeTypeFloat(KeyframeType[float]):  ##
+  type_class: t.ClassVar[tuple[type, ...]] = (int, float)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.FLOAT
 
   default: float
@@ -558,6 +561,7 @@ def _lerp_vec2(v1: vec2, v2: vec2, t: float, step: float | None = None):  ##
 
 @dataclass
 class KeyframeTypeTr(KeyframeType[vec2]):  ##
+  type_class: t.ClassVar[tuple[type, ...]] = (vec2,)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.VEC2
 
   line_spanning_rows: t.ClassVar[int] = 2
@@ -856,62 +860,27 @@ class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderAlterTr(AttackCommandCollider):
+class AttackCommandColliderAlterField(AttackCommandCollider):
+  keyframe_field: str
   keyframe_index_inside_list: int
-  value_old: vec2
-  value_new: vec2
+  value_old: bool | int | float | vec2
+  value_new: bool | int | float | vec2
 
-  def do(self, atk: "Attack") -> None: ...
+  def do(self, atk: "Attack") -> None:
+    c = self.c(atk)
+    type_class = c.get_keyframe_type(self.keyframe_field).type_class
+    ass(isinstance(self.value_old, type_class))
+    ass(isinstance(self.value_new, type_class))
+    k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
+    k.value = self.value_new
 
-  def undo(self, atk: "Attack") -> None: ...
-
-
-@dataclass(slots=True)
-@t.final
-class AttackCommandColliderAlterActive(AttackCommandCollider):
-  keyframe_index_inside_list: int
-  value_old: bool
-  value_new: bool
-
-  def do(self, atk: "Attack") -> None: ...
-
-  def undo(self, atk: "Attack") -> None: ...
-
-
-@dataclass(slots=True)
-@t.final
-class AttackCommandColliderAlterRotation(AttackCommandCollider):
-  keyframe_index_inside_list: int
-  value_old: float
-  value_new: float
-
-  def do(self, atk: "Attack") -> None: ...
-
-  def undo(self, atk: "Attack") -> None: ...
-
-
-@dataclass(slots=True)
-@t.final
-class AttackCommandColliderAlterRadius(AttackCommandCollider):
-  keyframe_index_inside_list: int
-  value_old: float
-  value_new: float
-
-  def do(self, atk: "Attack") -> None: ...
-
-  def undo(self, atk: "Attack") -> None: ...
-
-
-@dataclass(slots=True)
-@t.final
-class AttackCommandColliderAlterSpread(AttackCommandCollider):
-  keyframe_index_inside_list: int
-  value_old: float
-  value_new: float
-
-  def do(self, atk: "Attack") -> None: ...
-
-  def undo(self, atk: "Attack") -> None: ...
+  def undo(self, atk: "Attack") -> None:
+    c = self.c(atk)
+    type_class = c.get_keyframe_type(self.keyframe_field).type_class
+    ass(isinstance(self.value_old, type_class))
+    ass(isinstance(self.value_new, type_class))
+    k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
+    k.value = self.value_old
 
 
 ##
@@ -1772,8 +1741,8 @@ def _panel_collider_inspector() -> None:  ##
   current_frame = min(int(atk.timeline_at + 0.5), atk.duration_frames - 1)
   ass(current_frame >= 0)
 
-  def field_keyframe_index(field_name: str) -> int:
-    return _get_closest_keyframe(getattr(c, field_name), atk.timeline_at)[0]
+  def closest_keyframe_list_index(field_name: str) -> int:
+    return _get_closest_keyframe(c.get_keyframes(field_name), atk.timeline_at)[0]
 
   # im.dummy((1, im.get_frame_height()))
   im.dummy((1, im.get_text_line_height()))
@@ -1811,7 +1780,7 @@ def _panel_collider_inspector() -> None:  ##
 
       im.table_set_column_index(1)
 
-      index_f = field_keyframe_index(f)
+      index_f = closest_keyframe_list_index(f)
       field_is_the_same_as_of_selected_keyframe = c.selected_keyframe and (
         c.selected_keyframe.field == f
       )
@@ -1870,7 +1839,15 @@ def _panel_collider_inspector() -> None:  ##
           _inspector_input_float(
             bf.imgui_id("", f"slider_{f}"),
             lambda: frames[index_f].value,
-            lambda x: setattr(frames[index_f], "value", x),
+            lambda x: (
+              atk.scheduled_commands.append(
+                AttackCommandColliderAlterField(
+                  c.id, f, index_f, frames[index_f].value, x
+                )
+              )
+              if frames[index_f].value != x
+              else None
+            ),
             keyframe_type.min,
             keyframe_type.max,
             keyframe_type.step,
@@ -1933,9 +1910,10 @@ def _post_new_frame() -> None:  ##
       atk.collider_to_hover = None
 
     # Executing commands.
-    for command in atk.scheduled_commands:
+    if atk.scheduled_commands:
       while atk.history_head + 1 < len(atk.history):
         atk.history.pop()
+    for command in atk.scheduled_commands:
       command.do(atk)
       atk.history_head += 1
       atk.history.append(command)
@@ -1953,7 +1931,7 @@ def _post_new_frame() -> None:  ##
     g.attack_redo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.r)
     if g.attack_redo_scheduled:
       g.attack_redo_scheduled = False
-      if atk.history_head + 1 < len(atk.history):
+      if atk.history_head < len(atk.history) - 1:
         atk.history_head += 1
         atk.history[atk.history_head].do(atk)
 

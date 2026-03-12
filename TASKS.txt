@@ -45,13 +45,13 @@ x wip: mark: commands
 x mark: undo: adding keyframe adds command + ctrlz handling
 x mark: redo
 x mark: undo+redo: KeyframeRemove
+x mark: undo+redo: AlterField: rotation radius spread
 
-* mark: undo+redo: AlterTr
-* mark: undo+redo: AlterRotation
-* mark: undo+redo: AlterRadius
-* mark: undo+redo: AlterSpread
+* mark: undo+redo: AlterField: Tr
+* mark: undo+redo: AlterField: Tr
+  (upon detaching gizmos.manipulate (only when changed))
+*
 * mark: undo+redo: KeyframeMove
-* mark: undo+redo: AlterActive
 * mark: undo+redo:
 * mark: undo+redo:
 * mark: undo+redo:
