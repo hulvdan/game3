@@ -543,7 +543,10 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
 
   def make_lerp(self, v1: float, v2: float, t: float) -> float:
     ass(0 <= t <= 1)
-    return bf.round_to_step(bf.lerp(v1, v2, t), self.step)
+    result = bf.lerp(v1, v2, t)
+    if g.visualizer.round_to_step:
+      result = bf.round_to_step(result, self.step)
+    return result
 
   ##
 
@@ -567,7 +570,9 @@ class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
 
   def make_lerp(self, v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
     ass(0 <= t <= 1)
-    return lerp_Matrix16(v1, v2, t, self.step_translate)
+    return lerp_Matrix16(
+      v1, v2, t, self.step_translate if g.visualizer.round_to_step else None
+    )
 
   ##
 
@@ -646,7 +651,10 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
           t = (index_timeline - left.index_timeline) / (
             right.index_timeline - left.index_timeline
           )
-          return (right_list_index, keyframe_type.make_lerp(left.value, right.value, t))
+          return (
+            right_list_index,
+            keyframe_type.make_lerp(left.value, right.value, t),
+          )
 
       elif left:
         if left.index_timeline < index_timeline:
@@ -662,7 +670,8 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     frames = self.get_keyframes(field)
     for fr in frames:
       ass(fr.index_timeline != index_timeline)
-    insert_index, value = self.make_keyframe_value_at(field, index_timeline)
+    with _override_keyframe_round_to_step(True):
+      insert_index, value = self.make_keyframe_value_at(field, index_timeline)
     frames.insert(insert_index, Keyframe(index_timeline, value, self._next_keyframe_id()))
     ass(frames == sorted(frames, key=lambda x: x.index_timeline))
 
@@ -824,6 +833,7 @@ class State:
     perspective__distance: float = 10
     perspective__view_dirty: bool = False
     gizmo_mode: GizmoMode = GizmoMode.TRANSLATE
+    round_to_step: bool = False
     ##
 
   @dataclass(slots=True)
@@ -878,6 +888,15 @@ class State:
 
 
 g = State()
+
+
+@contextmanager
+def _override_keyframe_round_to_step(v: bool):  ##
+  old = g.visualizer.round_to_step
+  g.visualizer.round_to_step = v
+  yield
+  g.visualizer.round_to_step = old
+  ##
 
 
 def _panel_explorer() -> None:  ##

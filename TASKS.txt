@@ -35,6 +35,7 @@ x clear
 x py better tests
 x f
 x mark: fix why starting keyframes doesn't affect visual (moving playhead a bit to the right does the job)
+x mark: correct steps when creating keyframes
 
 * mark: UNDO
 * mark: attack gets exported to yaml
