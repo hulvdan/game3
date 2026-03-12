@@ -37,17 +37,19 @@ x f
 x mark: fix why starting keyframes doesn't affect visual (moving playhead a bit to the right does the job)
 x mark: correct steps when creating keyframes
 x mark: vec2 transform + gizmos.manipulate
+x mark: store translation as tuple (float, float)
+x mark: store rotation as float
+x mark: matrix16.ndarray.frombytes(mat4.tobytes)
 
-* mark: matrix16.ndarray.frombytes(mat4.tobytes)
-* hulvdan@yandex.ru github
-*
-* mark: store translation as tuple (float, float)
-* mark: store rotation as float
 * mark: UNDO
 * mark: attack gets exported to yaml
 * mark: attack gets imported from yaml
 *
-* devlog name: Жоска Паграмираваю Боевку И Передаю Свой Опыт
+* devlog: hulvdan@yandex.ru github
+* devlog: transfer repo to hulvdan@yandex.ru
+* devlog: remove gmail from contributors?
+* devlog: post: name: Жоско Погромироваю Боевку
+* devlog: post:
 *
 * mark: min frame cell width (don't forget DPI) + timeline horizontal scrollbar
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y step_x step_y

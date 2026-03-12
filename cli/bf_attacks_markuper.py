@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Callable, Generic, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
+import numpy as np
 import toml
 from bf_lib import imgui_assert as ass
 from bf_typer import command
@@ -453,7 +454,9 @@ def _to_vec2(v: ImVec2_Pydantic) -> vec2:
 
 
 def _to_Matrix16(m: mat4) -> Matrix16:
-  return Matrix16(m[0].to_list() + m[1].to_list() + m[2].to_list() + m[3].to_list())
+  result = Matrix16()
+  np.copyto(result.values, np.frombuffer(m.to_bytes(), dtype=np.float32))
+  return result
 
 
 def _to_mat4(m: Matrix16) -> mat4:
@@ -562,9 +565,7 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
 def _lerp_vec2(v1: vec2, v2: vec2, t: float, step: float | None = None):  ##
   result = bf.lerp(v1, v2, t)
   if step is not None:
-    bf.imgui_assert(step > 0)
-    result.x = bf.round_to_step(result.x, step)
-    result.y = bf.round_to_step(result.y, step)
+    result = bf.round_to_step(result, step)
   return result
   ##
 
@@ -1177,7 +1178,7 @@ def _panel_visualizer() -> None:
         radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
         spread = c.make_keyframe_value_at("spread", atk.timeline_at)[1]
         rotation = c.make_keyframe_value_at("rotation", atk.timeline_at)[1]
-        draw_capsule(center, radius, spread, rotation, color)
+        draw_capsule(center, radius, spread, math.radians(rotation), color)
 
       case _:
         ass(0)
