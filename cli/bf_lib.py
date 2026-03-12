@@ -2108,11 +2108,52 @@ def _show_group_gui(group: _DemoGroup) -> None:  ##
 # ██║ ╚═╝ ██║██║  ██║   ██║   ██║  ██║
 # ╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
 
+FLOAT_INF_POS = float("inf")
+FLOAT_INF_NEG = float("-inf")
 
-## def round_to_step(v: float, step: float = 1) -> float
-def round_to_step(v: float, step: float = 1) -> float:
+
+## def round_to_step(v, step: float = 1) -> float
+@t.overload
+def round_to_step(v: float, step: float) -> float: ...
+@t.overload
+def round_to_step(v: vec1, step: float) -> vec1: ...
+@t.overload
+def round_to_step(v: vec2, step: float) -> vec2: ...
+@t.overload
+def round_to_step(v: vec3, step: float) -> vec3: ...
+@t.overload
+def round_to_step(v: vec4, step: float) -> vec4: ...
+
+
+def round_to_step(v, step: float = 1):
   assert step > 0
-  return round(v / step) * step
+  match v:
+    case int():
+      return round(v / step) * step
+    case float():
+      return round(v / step) * step
+    case vec1():
+      return vec1(round(v.x / step) * step)
+    case vec2():
+      return vec2(
+        round(v.x / step) * step,
+        round(v.y / step) * step,
+      )
+    case vec3():
+      return vec3(
+        round(v.x / step) * step,
+        round(v.y / step) * step,
+        round(v.z / step) * step,
+      )
+    case vec4():
+      return vec4(
+        round(v.x / step) * step,
+        round(v.y / step) * step,
+        round(v.z / step) * step,
+        round(v.w / step) * step,
+      )
+    case _:
+      raise TypeError
 
 
 @pytest.mark.parametrize(
@@ -2124,6 +2165,7 @@ def round_to_step(v: float, step: float = 1) -> float:
     (0.24, 0.25, 0.25),
     (0.4, 0.25, 0.5),
     (-0.4, 0.25, -0.5),
+    (vec2(0.2, 0.3), 0.25, vec2(0.25, 0.25)),
   ],
 )
 def _test_round_to_step(v, step, result):

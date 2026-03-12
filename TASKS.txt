@@ -36,7 +36,13 @@ x py better tests
 x f
 x mark: fix why starting keyframes doesn't affect visual (moving playhead a bit to the right does the job)
 x mark: correct steps when creating keyframes
+x mark: vec2 transform + gizmos.manipulate
 
+* mark: matrix16.ndarray.frombytes(mat4.tobytes)
+* hulvdan@yandex.ru github
+*
+* mark: store translation as tuple (float, float)
+* mark: store rotation as float
 * mark: UNDO
 * mark: attack gets exported to yaml
 * mark: attack gets imported from yaml

@@ -35,9 +35,10 @@ MAX_ATTACK_FRAMES_DURATION = 10 * FPS
 STEP_TRANSLATE = 0.25
 STEP_ROTATE = 15
 STEP_SCALE = 0.25
+MAX_OFFSET: float = 10.0
 MIN_RADIUS: float = 0.125
 MAX_RADIUS: float = 5.0
-MAX_OFFSET: float = 10.0
+MAX_SPREAD: float = 10.0
 ##
 
 
@@ -531,19 +532,26 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
 @dataclass
 class KeyframeTypeFloat(KeyframeType[float]):  ##
   default: float
-  min: float
-  max: float
   step: float
+  step_fast: float
+  min: float = bf.FLOAT_INF_NEG
+  max: float = bf.FLOAT_INF_POS
+  fmt: str = "%.3f"
 
   def make_default(self) -> float:
+    bf.imgui_assert(self.min <= self.default <= self.max)
     return self.default
 
   def make_copy(self, v: float) -> float:
+    bf.imgui_assert(self.min <= v <= self.max)
     return v
 
   def make_lerp(self, v1: float, v2: float, t: float) -> float:
     ass(0 <= t <= 1)
     result = bf.lerp(v1, v2, t)
+    bf.imgui_assert(self.min <= v1 <= self.max)
+    bf.imgui_assert(self.min <= v2 <= self.max)
+    bf.imgui_assert(self.min <= result <= self.max)
     if g.visualizer.round_to_step:
       result = bf.round_to_step(result, self.step)
     return result
@@ -551,28 +559,35 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
   ##
 
 
+def _lerp_vec2(v1: vec2, v2: vec2, t: float, step: float | None = None):  ##
+  result = bf.lerp(v1, v2, t)
+  if step is not None:
+    bf.imgui_assert(step > 0)
+    result.x = bf.round_to_step(result.x, step)
+    result.y = bf.round_to_step(result.y, step)
+  return result
+  ##
+
+
 @dataclass
-class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
+class KeyframeTypeTr(KeyframeType[vec2]):  ##
   line_spanning_rows: t.ClassVar[int] = 2
 
-  default: Matrix16 = field(default_factory=identity_matrix)
-  step_translate: float = field(default=STEP_TRANSLATE)
+  default: vec2 = field(default_factory=vec2)
+  step: float = STEP_TRANSLATE
 
-  def make_default(self) -> Matrix16:
-    result = Matrix16()
-    result.values[:] = self.default.values[:]
-    return result
+  def make_default(self) -> vec2:
+    return vec2(self.default)
 
-  def make_copy(self, v: Matrix16) -> Matrix16:
-    result = Matrix16()
-    result.values[:] = v.values[:]
-    return result
+  def make_copy(self, v: vec2) -> vec2:
+    return vec2(v)
 
-  def make_lerp(self, v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
+  def make_lerp(self, v1: vec2, v2: vec2, t: float) -> vec2:
     ass(0 <= t <= 1)
-    return lerp_Matrix16(
-      v1, v2, t, self.step_translate if g.visualizer.round_to_step else None
-    )
+    result = bf.lerp(v1, v2, t)
+    if g.visualizer.round_to_step:
+      result = bf.round_to_step(result, self.step)
+    return result
 
   ##
 
@@ -719,36 +734,39 @@ class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
   is_active: list[Keyframe[bool]]
+  tr: list[Keyframe[vec2]]
   radius: list[Keyframe[float]]
-  tr: list[Keyframe[Matrix16]]
 
   _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
-  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
-    0.5, MIN_RADIUS, MAX_RADIUS, STEP_TRANSLATE
-  )
   _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
+  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
+    0.5, step=STEP_TRANSLATE, step_fast=1, min=MIN_RADIUS, max=MAX_RADIUS, fmt="%.2f"
+  )
 
   ##
 
 
 @dataclass(slots=True)
 class ColliderCapsule(ColliderBase):  ##
-  MAX_SPREAD: t.ClassVar[float] = 10.0
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
   is_active: list[Keyframe[bool]]
-  tr: list[Keyframe[Matrix16]]
+  tr: list[Keyframe[vec2]]
   radius: list[Keyframe[float]]
   spread: list[Keyframe[float]]
+  rotation: list[Keyframe[float]]
 
   _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
+  _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
   _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
-    0.5, MIN_RADIUS, MAX_RADIUS, STEP_TRANSLATE
+    0.5, step=STEP_TRANSLATE, step_fast=1, min=MIN_RADIUS, max=MAX_RADIUS, fmt="%.2f"
   )
   _keyframe_spread: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
-    1, 0, MAX_SPREAD, STEP_TRANSLATE
+    1, step=STEP_TRANSLATE, step_fast=1, min=0, max=MAX_SPREAD, fmt="%.2f"
   )
-  _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
+  _keyframe_rotation: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
+    0, step=STEP_ROTATE, step_fast=90, fmt="%.0f"
+  )
   ##
 
 
@@ -1140,13 +1158,15 @@ def _panel_visualizer() -> None:
 
     color = imgui_color_to_u32(color_)
 
+    c_pos = c.make_keyframe_value_at("tr", atk.timeline_at)[1]
+    m = glm.translate(vec3(c_pos.x, 0, c_pos.y))
+    center = vec3(m * vec4(0, 0, 0, 1))
+
     match c.type:
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
           raise ass(0)
 
-        m = _to_mat4(c.make_keyframe_value_at("tr", atk.timeline_at)[1])
-        center = vec3(m * vec4(0, 0, 0, 1))
         radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
         draw_circle(center, radius, color)
 
@@ -1154,13 +1174,10 @@ def _panel_visualizer() -> None:
         if not isinstance(c, ColliderCapsule):
           raise ass(0)
 
-        m = _to_mat4(c.make_keyframe_value_at("tr", atk.timeline_at)[1])
-        center = vec3(m * vec4(0, 0, 0, 1))
-        r_vec = vec3(m * vec4(0.5, 0, 0, 0))
-        angle = -math.atan2(r_vec.z, r_vec.x)
         radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
         spread = c.make_keyframe_value_at("spread", atk.timeline_at)[1]
-        draw_capsule(center, radius, spread, angle, color)
+        rotation = c.make_keyframe_value_at("rotation", atk.timeline_at)[1]
+        draw_capsule(center, radius, spread, rotation, color)
 
       case _:
         ass(0)
@@ -1173,6 +1190,7 @@ def _panel_visualizer() -> None:
   #   vis.gizmo_mode = GizmoMode.SCALE
 
   if c := atk.ref_selected_collider:
+    delta = Matrix16()
     man_kwargs: dict = {
       "view": vis.camera_view,
       "projection": vis.camera_projection,
@@ -1187,36 +1205,61 @@ def _panel_visualizer() -> None:
         GizmoMode.ROTATE: SNAP_ROTATE,
         GizmoMode.SCALE: SNAP_SCALE,
       }[vis.gizmo_mode],
+      "delta_matrix": delta,
     }
-    match c.type:
-      case ColliderType.CIRCLE:
-        if not isinstance(c, ColliderCircle):
-          raise ass(0)
-        center = _get_closest_keyframe(c.get_keyframes("tr"), atk.timeline_at)[1].value
-        match vis.gizmo_mode:
-          case GizmoMode.TRANSLATE:
-            with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)
-          case GizmoMode.ROTATE:
-            imgui_error_top_bar("Can't use ROTATE on CIRCLE collider")
-          case GizmoMode.SCALE:
-            with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)
 
-      case ColliderType.CAPSULE:
-        if not isinstance(c, ColliderCapsule):
-          raise ass(0)
-        center = _get_closest_keyframe(c.get_keyframes("tr"), atk.timeline_at)[1].value
-        match vis.gizmo_mode:
-          case GizmoMode.TRANSLATE:
-            with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)
-          case GizmoMode.ROTATE:
-            with gizmo_restrict(center, (False, True, False), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)
-          case GizmoMode.SCALE:
-            with gizmo_restrict(center, (False, True, True), disable_translation_y=True):
-              gizmo.manipulate(object_matrix=center, **man_kwargs)
+    frames_tr = c.get_keyframes("tr")
+    tr_closest_index, poss_ = _get_closest_keyframe(frames_tr, atk.timeline_at)
+    tr_pos = poss_.value
+    m = _to_Matrix16(glm.translate(vec3(tr_pos.x, 0, tr_pos.y)))
+    if not isinstance(c, (ColliderCircle, ColliderCapsule)):
+      raise ass(0)
+    with gizmo_restrict(m, (False, True, False), disable_translation_y=True):
+      if gizmo.manipulate(object_matrix=m, **man_kwargs):
+        off3 = _to_mat4(delta) * vec4(0, 0, 0, 1)
+        ass(off3.y == 0)
+        c.tr[tr_closest_index].value += bf.round_to_step(
+          vec2(off3.x, off3.z), STEP_TRANSLATE
+        )
+
+    # match c.type:
+    #   case ColliderType.CIRCLE:
+    #     if not isinstance(c, ColliderCircle):
+    #       raise ass(0)
+    #     match vis.gizmo_mode:
+    #       case GizmoMode.TRANSLATE:
+    #         with gizmo_restrict(m, (False, True, False), disable_translation_y=True):
+    #           if gizmo.manipulate(object_matrix=m, **man_kwargs):
+    #             off3 = _to_mat4(delta) * vec4(0, 0, 0, 1)
+    #             c.tr[tr_closest_index].value += bf.round_to_step(
+    #               vec2(off3.x, off3.z), STEP_TRANSLATE
+    #             )
+    #       # case GizmoMode.ROTATE:
+    #       #   imgui_error_top_bar("Can't use ROTATE on CIRCLE collider")
+    #       # case GizmoMode.SCALE:
+    #       #   with gizmo_restrict(m, (False, True, True), disable_translation_y=True):
+    #       #     gizmo.manipulate(object_matrix=m, **man_kwargs)
+    #
+    #   case ColliderType.CAPSULE:
+    #     if not isinstance(c, ColliderCapsule):
+    #       raise ass(0)
+    #     match vis.gizmo_mode:
+    #       case GizmoMode.TRANSLATE:
+    #         with gizmo_restrict(m, (False, True, False), disable_translation_y=True):
+    #           if gizmo.manipulate(object_matrix=m, **man_kwargs):
+    #             off3 = _to_mat4(delta) * vec4(0, 0, 0, 1)
+    #             c.tr[tr_closest_index].value += bf.round_to_step(
+    #               vec2(off3.x, off3.z), STEP_TRANSLATE
+    #             )
+    #       # case GizmoMode.ROTATE:
+    #       #   with gizmo_restrict(m, (False, True, False), disable_translation_y=True):
+    #       #     gizmo.manipulate(object_matrix=m, **man_kwargs)
+    #       # case GizmoMode.SCALE:
+    #       #   with gizmo_restrict(m, (False, True, True), disable_translation_y=True):
+    #       #     if gizmo.manipulate(object_matrix=m, **man_kwargs):
+    #       #       mm = _to_mat4(delta)
+    #       #       off = bf.round_to_step(vec2(mm * vec4(0, 0, 0, 1)))
+    #       #       c.tr[tr_closest_index].value += off
 
   gizmo_size = 120 * im.get_window_dpi_scale()
   gizmo.view_manipulate(
@@ -1516,50 +1559,6 @@ def _panel_timeline() -> None:  ##
   ##
 
 
-def _inspector_components(m: Matrix16) -> Matrix16:  ##
-  comps = gizmo.decompose_matrix_to_components(m)
-
-  def tr_setter(index, value):
-    nonlocal m
-    comps.translation.values[index] = value
-    m = gizmo.recompose_matrix_from_components(comps)
-
-  def rot_setter(index, value):
-    nonlocal m
-    comps.rotation.values[index] = value
-    m = gizmo.recompose_matrix_from_components(comps)
-
-  _inspector_slider_float(
-    bf.imgui_id("", "TrX"),
-    lambda: comps.translation.values[0],
-    partial(tr_setter, 0),
-    -MAX_OFFSET,
-    MAX_OFFSET,
-    STEP_TRANSLATE,
-  )
-  _inspector_slider_float(
-    bf.imgui_id("", "TrZ"),
-    lambda: comps.translation.values[2],
-    partial(tr_setter, 2),
-    -MAX_OFFSET,
-    MAX_OFFSET,
-    STEP_TRANSLATE,
-  )
-
-  # if rotation:
-  #   _inspector_value(
-  #     "RotY",
-  #     lambda: comps.rotation.values[1],
-  #     partial(rot_setter, 1),
-  #     -180,
-  #     180,
-  #     STEP_ROTATE,
-  #   )
-
-  return m
-  ##
-
-
 def _inspector_checkbox(
   label: str, getter: Callable[[], bool], setter: Callable[[bool], None]
 ) -> None:  ##
@@ -1569,16 +1568,18 @@ def _inspector_checkbox(
   ##
 
 
-def _inspector_slider_float(
+def _inspector_input_float(
   label: str,
   getter: Callable[[], float],
   setter: Callable[[float], None],
   vmin: float,
   vmax: float,
   step: float,
+  step_fast: float,
+  fmt: str,
 ) -> None:  ##
   im.set_next_item_width(im.get_content_region_avail()[0])
-  changed, value = im.slider_float(label, getter(), vmin, vmax)
+  changed, value = im.input_float(label, getter(), step, step_fast, format=fmt)
   if changed:
     setter(bf.clamp(round(value / step) * step, vmin, vmax))
   ##
@@ -1699,17 +1700,38 @@ def _panel_collider_inspector() -> None:  ##
           )
 
         case KeyframeTypeFloat():
-          _inspector_slider_float(
+          _inspector_input_float(
             bf.imgui_id("", f"slider_{f}"),
             lambda: frames[index_f].value,
             lambda x: setattr(frames[index_f], "value", x),
             keyframe_type.min,
             keyframe_type.max,
             keyframe_type.step,
+            keyframe_type.step_fast,
+            keyframe_type.fmt,
           )
 
         case KeyframeTypeTr():
-          frames[index_f].value = _inspector_components(frames[index_f].value)
+          _inspector_input_float(
+            bf.imgui_id("", f"slider_{f}_x"),
+            lambda: frames[index_f].value.x,
+            lambda x: setattr(frames[index_f].value, "x", x),
+            -MAX_OFFSET,
+            MAX_OFFSET,
+            keyframe_type.step,
+            1,
+            "%.2f",
+          )
+          _inspector_input_float(
+            bf.imgui_id("", f"slider_{f}_y"),
+            lambda: frames[index_f].value.y,
+            lambda x: setattr(frames[index_f].value, "y", x),
+            -MAX_OFFSET,
+            MAX_OFFSET,
+            keyframe_type.step,
+            1,
+            "%.2f",
+          )
 
         case _:
           raise ass(0)
@@ -1780,13 +1802,12 @@ def _test_first_keyframe_yields_correct_values():  ##
   c = ColliderCapsule.make()
   comps = gizmo.MatrixComponents()
   comps.translation.values[0] = random.uniform(-100, 100)
-  c.tr[0].value = gizmo.recompose_matrix_from_components(comps)
+  c.tr[0].value = vec2(random.uniform(-100, 100), random.uniform(-100, 100))
   c.radius[0].value = random.uniform(-20, 20)
 
   _, v = c.make_keyframe_value_at("tr", 0)
   ass(isinstance(v, Matrix16))
-  comps_new = gizmo.decompose_matrix_to_components(v)
-  ass(list(comps_new.translation.values) == list(comps.translation.values))
+  ass(v == c.tr[0].value)
 
   _, r = c.make_keyframe_value_at("radius", 0)
   ass(r == c.radius[0].value)
