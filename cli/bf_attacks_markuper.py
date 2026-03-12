@@ -1404,10 +1404,17 @@ def _panel_visualizer() -> None:
       if gizmo.manipulate(object_matrix=m, **man_kwargs):
         off3 = _to_mat4(delta) * vec4(0, 0, 0, 1)
         ass(off3.y == 0)
-        c.tr[tr_closest_index].value += bf.round_to_step(
-          vec2(off3.x, off3.z), STEP_TRANSLATE
+        off = bf.round_to_step(vec2(off3.x, off3.z), STEP_TRANSLATE)
+        atk.scheduled_commands.append(
+          AttackCommandColliderAlterField(
+            g.action_id,
+            c.id,
+            "tr",
+            tr_closest_index,
+            c.tr[tr_closest_index].value,
+            c.tr[tr_closest_index].value + off,
+          )
         )
-
     # match c.type:
     #   case ColliderType.CIRCLE:
     #     if not isinstance(c, ColliderCircle):
@@ -2042,7 +2049,6 @@ def _post_new_frame() -> None:  ##
           case CommandMergeType.MERGED_OKAY:
             atk.history_head -= 1
             atk.history.pop()
-
           case CommandMergeType.MERGED_SHOULD_BE_DESTROYED:
             atk.history_head -= 1
             atk.history.pop()

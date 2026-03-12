@@ -49,25 +49,11 @@ x mark: undo+redo: AlterField: rotation radius spread
 x mark: undo+redo: AlterField: Tr
 x mark: undo+redo: KeyframeMove
 x mark: undo+redo: KeyframeMove: correct merging
+- mark: inline undo slider changes: (based on mouse release counts)
+- mark: undo+redo: AlterField: Tr
+x f
 
-* mark: inline undo slider changes: (based on mouse release counts)
-* mark: undo+redo: AlterField: Tr
-  (upon detaching gizmos.manipulate (only when changed))
-*
-* mark: undo+redo:
-* mark: undo+redo:
-* mark: undo+redo:
-* mark: undo+redo:
-* mark: undo+redo:
-* mark: undo+redo:
-* mark: undo+redo:
-* mark: undo+redo:
-* mark: undo+redo:
-*
-* mark: undo+redo: set selected keyframe AFTER applying commands
-*
-* mark: attack gets exported to yaml
-* mark: attack gets imported from yaml
+* mark: yaml serialization + persistence
 *
 * devlog: hulvdan@yandex.ru github
 * devlog: transfer repo to hulvdan@yandex.ru
