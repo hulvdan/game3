@@ -42,8 +42,9 @@ x mark: store rotation as float
 x mark: matrix16.ndarray.frombytes(mat4.tobytes)
 x mark: undo: boilerplate
 x wip: mark: commands
+x mark: undo: adding keyframe adds command + ctrlz handling
 
-* mark: undo: adding keyframe adds command
+* mark: redo
 * mark: undo: can undo keyframe adding
 *
 * mark: undo: changing radius adds command

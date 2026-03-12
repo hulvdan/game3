@@ -8,6 +8,7 @@ import tempfile
 import threading
 import traceback
 import typing as t
+from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass, field, fields, is_dataclass
 from datetime import datetime
@@ -763,12 +764,13 @@ class ColliderCapsule(ColliderBase):  ##
 
 
 ## Attack Commands
-class AttackCommand(t.Protocol):
-  atk: "Attack"
+@dataclass(slots=True)
+class AttackCommand(ABC):
+  @abstractmethod
+  def do(self, atk: "Attack") -> None: ...
 
-  def do(self) -> None: ...
-
-  def undo(self) -> None: ...
+  @abstractmethod
+  def undo(self, atk: "Attack") -> None: ...
 
 
 # @dataclass(slots=True)
@@ -783,25 +785,27 @@ class AttackCommand(t.Protocol):
 #   pass
 
 
+@dataclass(slots=True)
 class AttackCommandCollider(AttackCommand):
-  collider_id: int
+  collider_id: ColliderID
 
-  @property
-  def c(self) -> "ColliderBase":
-    return next(c for c in self.atk.colliders if c.id == self.collider_id)
+  def c(self, atk: "Attack") -> "ColliderBase":
+    return next(c for c in atk.colliders if c.id == self.collider_id)
 
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandKeyframeAdd(AttackCommandCollider):
+class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
   keyframe_field: str
   keyframe_index_timeline: int
 
-  def do(self) -> None:
-    self.c.make_default_keyframe_at(self.keyframe_field, self.keyframe_index_timeline)
+  def do(self, atk: "Attack") -> None:
+    self.c(atk).make_default_keyframe_at(
+      self.keyframe_field, self.keyframe_index_timeline
+    )
 
-  def undo(self) -> None:
-    frames = self.c.get_keyframes(self.keyframe_field)
+  def undo(self, atk: "Attack") -> None:
+    frames = self.c(atk).get_keyframes(self.keyframe_field)
     ass(len(frames) > 1)
     for i, fr in enumerate(frames):
       if fr.index_timeline == self.keyframe_index_timeline:
@@ -812,25 +816,25 @@ class AttackCommandKeyframeAdd(AttackCommandCollider):
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandKeyframeMove(AttackCommandCollider):
+class AttackCommandColliderKeyframeMove(AttackCommandCollider):
   keyframe_field: str
   keyframe_index_timeline_from: int
   keyframe_index_timeline_to: int
 
-  def do(self) -> None: ...
+  def do(self, atk: "Attack") -> None: ...
 
-  def undo(self) -> None: ...
+  def undo(self, atk: "Attack") -> None: ...
 
 
 @dataclass(slots=True)
 @t.final
-class AttackCommandKeyframeRemove(AttackCommandCollider):
+class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
   keyframe_field: str
   keyframe_index_timeline: int
 
-  def do(self) -> None: ...
+  def do(self, atk: "Attack") -> None: ...
 
-  def undo(self) -> None: ...
+  def undo(self, atk: "Attack") -> None: ...
 
 
 @dataclass(slots=True)
@@ -840,9 +844,9 @@ class AttackCommandColliderAlterTr(AttackCommandCollider):
   value_old: vec2
   value_new: vec2
 
-  def do(self) -> None: ...
+  def do(self, atk: "Attack") -> None: ...
 
-  def undo(self) -> None: ...
+  def undo(self, atk: "Attack") -> None: ...
 
 
 @dataclass(slots=True)
@@ -852,9 +856,9 @@ class AttackCommandColliderAlterActive(AttackCommandCollider):
   value_old: bool
   value_new: bool
 
-  def do(self) -> None: ...
+  def do(self, atk: "Attack") -> None: ...
 
-  def undo(self) -> None: ...
+  def undo(self, atk: "Attack") -> None: ...
 
 
 @dataclass(slots=True)
@@ -864,9 +868,9 @@ class AttackCommandColliderAlterRotation(AttackCommandCollider):
   value_old: float
   value_new: float
 
-  def do(self) -> None: ...
+  def do(self, atk: "Attack") -> None: ...
 
-  def undo(self) -> None: ...
+  def undo(self, atk: "Attack") -> None: ...
 
 
 @dataclass(slots=True)
@@ -876,9 +880,9 @@ class AttackCommandColliderAlterRadius(AttackCommandCollider):
   value_old: float
   value_new: float
 
-  def do(self) -> None: ...
+  def do(self, atk: "Attack") -> None: ...
 
-  def undo(self) -> None: ...
+  def undo(self, atk: "Attack") -> None: ...
 
 
 @dataclass(slots=True)
@@ -888,9 +892,9 @@ class AttackCommandColliderAlterSpread(AttackCommandCollider):
   value_old: float
   value_new: float
 
-  def do(self) -> None: ...
+  def do(self, atk: "Attack") -> None: ...
 
-  def undo(self) -> None: ...
+  def undo(self, atk: "Attack") -> None: ...
 
 
 ##
@@ -913,6 +917,7 @@ class Attack:  ##
   timeline_started_playing_at: float = 0
 
   history: list[AttackCommand] = field(default_factory=list)
+  scheduled_commands: list[AttackCommand] = field(default_factory=list)
 
   _next_collider_id: ColliderID = 1
 
@@ -1009,6 +1014,8 @@ class State:
   attack_to_select: Attack | None = None
   ref_selected_attack_creature: Creature | None = None
   ref_selected_attack: Attack | None = None
+
+  attack_undo_scheduled: bool = False
 
   scheduled_dump: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(0))
 
@@ -1642,16 +1649,16 @@ def _panel_timeline() -> None:  ##
 
         if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
           if imgui_timeline_line_out.double_clicked:
-            create_index = imgui_timeline_line_out.hovered_index_half_cell_offset
-            can_create_keyframe = True
-            for frrr in frames:
-              if frrr.index_timeline == create_index:
-                can_create_keyframe = False
-                break
-
-            if can_create_keyframe:
+            idx = imgui_timeline_line_out.hovered_index_half_cell_offset
+            if not any(x.index_timeline == idx for x in frames):
               created_keyframe_this_frame = True
-              c.make_default_keyframe_at(field_name, create_index)
+              atk.scheduled_commands.append(
+                AttackCommandColliderKeyframeAdd(
+                  collider_id=c.id,
+                  keyframe_field=field_name,
+                  keyframe_index_timeline=idx,
+                )
+              )
 
         if imgui_timeline_line_out.hovered:
           hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
@@ -1880,6 +1887,8 @@ def _panel_collider_inspector() -> None:  ##
 
 
 def _post_new_frame() -> None:  ##
+  io = im.get_io()
+
   if g.attack_to_select:
     g.ref_selected_attack = g.attack_to_select
     g.attack_to_select = None
@@ -1897,6 +1906,18 @@ def _post_new_frame() -> None:  ##
     if atk.collider_to_hover:
       atk.ref_hovered_collider = atk.collider_to_hover
       atk.collider_to_hover = None
+
+    for command in atk.scheduled_commands:
+      command.do(atk)
+      atk.history.append(command)
+    atk.scheduled_commands.clear()
+    if io.key_ctrl and im.is_key_pressed(im.Key.z):
+      g.attack_undo_scheduled = True
+    if g.attack_undo_scheduled:
+      g.attack_undo_scheduled = False
+      if atk.history:
+        last = atk.history.pop()
+        last.undo(atk)
 
     if c := atk.get_visualization_collider():
       if c.keyframe_to_remove:
