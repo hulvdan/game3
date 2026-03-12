@@ -48,8 +48,8 @@ x mark: undo+redo: KeyframeRemove
 x mark: undo+redo: AlterField: rotation radius spread
 x mark: undo+redo: AlterField: Tr
 x mark: undo+redo: KeyframeMove
+x mark: undo+redo: KeyframeMove: correct merging
 
-* mark: undo+redo: KeyframeMove: correct merging
 * mark: inline undo slider changes: (based on mouse release counts)
 * mark: undo+redo: AlterField: Tr
   (upon detaching gizmos.manipulate (only when changed))

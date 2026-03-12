@@ -2004,7 +2004,7 @@ def _show_status() -> None:  ##
 def _post_new_frame() -> None:  ##
   io = im.get_io()
 
-  if any(im.is_mouse_clicked(x) for x in range(3)):
+  if any((im.is_mouse_clicked(x) or im.is_mouse_released(x)) for x in range(3)):
     g.action_id = uuid4()
 
   if g.attack_to_select:
@@ -2042,10 +2042,13 @@ def _post_new_frame() -> None:  ##
           case CommandMergeType.MERGED_OKAY:
             atk.history_head -= 1
             atk.history.pop()
+
           case CommandMergeType.MERGED_SHOULD_BE_DESTROYED:
-            atk.history_head -= 2
+            atk.history_head -= 1
             atk.history.pop()
-            atk.history.pop()
+            if h_latest.merge_id != g.action_id:
+              atk.history_head -= 1
+              atk.history.pop()
     atk.scheduled_commands.clear()
 
     # Handling undo.
