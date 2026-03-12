@@ -33,6 +33,7 @@ PLAN
 ============================================================
 x clear
 x py better tests
+x f
 
 * mark: fix why starting keyframes doesn't affect visual (moving playhead a bit to the right does the job)
 * mark: UNDO
