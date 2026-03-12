@@ -170,7 +170,7 @@ def iter_neighbors(
   ##
 
 
-def test_neighbor_iter():  ##
+def _test_neighbor_iter():  ##
   assert list(iter_neighbors([])) == [
     (-1, None, 0, None),
   ]
@@ -201,7 +201,7 @@ def replace_double_newlines(string: str) -> str:
   return re.sub(REPLACING_NEWLINES_PATTERN, "\n", string)
 
 
-def test_replace_double_spaces():  ##
+def _test_replace_double_spaces():  ##
   assert replace_double_spaces("") == ""
   assert replace_double_spaces(" ") == " "
   assert replace_double_spaces("  ") == " "
@@ -212,7 +212,7 @@ def test_replace_double_spaces():  ##
   ##
 
 
-def test_replace_double_newlines():  ##
+def _test_replace_double_newlines():  ##
   assert replace_double_newlines("") == ""
   assert replace_double_newlines(" ") == " "
   assert replace_double_newlines("  ") == "  "
@@ -289,7 +289,7 @@ def only_one_is_not_none(values: Iterator | list | tuple) -> bool:  ##
   ##
 
 
-def test_only_one_is_not_none() -> None:  ##
+def _test_only_one_is_not_none() -> None:  ##
   assert only_one_is_not_none([2, None, None])
   assert only_one_is_not_none([2])
   assert not only_one_is_not_none([])
@@ -849,6 +849,14 @@ def hash32_file_utf8(filepath) -> int:  ##
   ##
 
 
+def _test_hash32():  ##
+  test_value = hash32("test")
+  assert test_value == 0xAFD071E5, test_value
+  test_value = hash32("test")  # Checking that it's stable.
+  assert test_value == 0xAFD071E5, test_value
+  ##
+
+
 # !banner: banners
 # ██████╗  █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗ ███████╗
 # ██╔══██╗██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗██╔════╝
@@ -916,7 +924,7 @@ def bannerify(lines: list[str]) -> str:  ##
   ##
 
 
-def test_bannerify():  ##
+def _test_bannerify():  ##
   assert bannerify([]) == ""
   assert bannerify(["a"]) == "a\n"
   assert bannerify(["a", " b"]) == "a\n b\n"

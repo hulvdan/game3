@@ -1,6 +1,7 @@
 ## Imports
 import asyncio
 import math
+import random
 import shutil
 import sys
 import tempfile
@@ -628,6 +629,10 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
     frames = self.get_keyframes(field)
     keyframe_type = self.get_keyframe_type(field)
 
+    for i, fr in enumerate(frames):
+      if abs(fr.index_timeline - index_timeline) < 0.001:
+        return (i, keyframe_type.make_copy(fr.value))
+
     for _, left, right_list_index, right in bf.iter_neighbors(frames):
       if left and right:
         if left.index_timeline < index_timeline < right.index_timeline:
@@ -924,9 +929,7 @@ def _panel_attack_inspector() -> None:  ##
     atk.colliders.append(ColliderCapsule.make())
     atk.collider_to_select = atk.colliders[-1]
 
-  i = -1
-  for collider in atk.colliders:
-    i += 1
+  for i, collider in enumerate(atk.colliders):
     flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
     if atk.ref_selected_collider is collider:
       flags |= im.TreeNodeFlags_.selected
@@ -1393,10 +1396,8 @@ def _panel_timeline() -> None:  ##
 
     elif c:
       # Keyframe lines
-      fr_index = -1
       closest_index = _get_closest_keyframe(frames, atk.timeline_at)[0]
-      for fr in frames:
-        fr_index += 1
+      for fr_index, fr in enumerate(frames):
         key = _keyframe_id(field_name, fr.id)
         is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
         imgui_keyframe(
@@ -1595,10 +1596,7 @@ def _panel_collider_inspector() -> None:  ##
     if c.selected_keyframe:
       vertical_off_field = c.selected_keyframe.field
 
-    field_index = -1
-    for f in c.keyframe_fields:
-      field_index += 1
-
+    for field_index, f in enumerate(c.keyframe_fields):
       vertical_off = 0
       if f == vertical_off_field:
         for disabled, key, voff in (
@@ -1716,18 +1714,17 @@ def _post_new_frame() -> None:  ##
       atk.ref_hovered_collider = atk.collider_to_hover
       atk.collider_to_hover = None
 
-    c = atk.get_visualization_collider()
-    if c:
-      if k := c.keyframe_to_remove:
-        field_name, index_inside_list = k
+    if c := atk.get_visualization_collider():
+      if c.keyframe_to_remove:
+        field_name, index_inside_list = c.keyframe_to_remove
         keyframes = c.get_keyframes(field_name)
         ass(len(keyframes) > 1)
         ass(0 <= index_inside_list < len(keyframes))
         del keyframes[index_inside_list]
         c.keyframe_to_remove = None
 
-      if k := c.keyframe_to_select:
-        keyframe, update_timeline = k
+      if c.keyframe_to_select:
+        keyframe, update_timeline = c.keyframe_to_select
         if update_timeline:
           atk.timeline_at = keyframe.index_timeline
         c.selected_keyframe = keyframe
@@ -1743,10 +1740,27 @@ def _post_new_frame() -> None:  ##
   ##
 
 
-def test_success():  ##
+def _test_make_default_keyframe_at():  ##
   c = ColliderCapsule.make()
   c.radius[0].index_timeline = 10
   for v in (5, 15, 9, 11):
     c.make_default_keyframe_at("radius", v)
     ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
+  ##
+
+
+def _test_first_keyframe_yields_correct_values():  ##
+  c = ColliderCapsule.make()
+  comps = gizmo.MatrixComponents()
+  comps.translation.values[0] = random.uniform(-100, 100)
+  c.tr[0].value = gizmo.recompose_matrix_from_components(comps)
+  c.radius[0].value = random.uniform(-20, 20)
+
+  _, v = c.make_keyframe_value_at("tr", 0)
+  ass(isinstance(v, Matrix16))
+  comps_new = gizmo.decompose_matrix_to_components(v)
+  ass(list(comps_new.translation.values) == list(comps.translation.values))
+
+  _, r = c.make_keyframe_value_at("radius", 0)
+  ass(r == c.radius[0].value)
   ##

@@ -69,13 +69,13 @@ bf.game_settings.colors = [  ##
 ]  ##
 
 
-context: list = []
-context_errors: list = []
+_context: list = []
+_context_errors: list = []
 
 
-def format_context() -> str:  ##
+def _format_context() -> str:  ##
   value = ""
-  for i, err in enumerate(context_errors):
+  for i, err in enumerate(_context_errors):
     value += "Error {}. {}".format(i + 1, " / ".join(str(x) for x in err["context"]))
     if args := err.get("args"):
       value += " {}".format(args)
@@ -90,15 +90,15 @@ def process_glib(*args, **kwargs) -> None:  ##
     _process_glib(*args, **kwargs)
   except Exception:
     value = "DEBUG INFO\n"
-    value += "context " + str(context) + "\n"
+    value += "context " + str(_context) + "\n"
     value += "context_errors:\n"
-    value += format_context()
+    value += _format_context()
     print(value)
     raise
   ##
 
 
-def outer_transpose_pos(
+def _outer_transpose_pos(
   object_pos: tuple[int, int] | tuple[float, float],
   object_size: tuple[int, int],
   level_size: tuple[int, int],
@@ -112,16 +112,16 @@ def outer_transpose_pos(
   ##
 
 
-def test_outer_transpose_pos() -> None:  ##
-  assert outer_transpose_pos((0, 0), (1, 1), (3, 2)) == (1, 0)
-  assert outer_transpose_pos((2, 1), (1, 1), (3, 2)) == (0, 2)
-  assert outer_transpose_pos((0, 0), (2, 2), (4, 3)) == (1, 0)
-  assert outer_transpose_pos((2, 1), (2, 2), (4, 3)) == (0, 2)
+def _test_outer_transpose_pos() -> None:  ##
+  assert _outer_transpose_pos((0, 0), (1, 1), (3, 2)) == (1, 0)
+  assert _outer_transpose_pos((2, 1), (1, 1), (3, 2)) == (0, 2)
+  assert _outer_transpose_pos((0, 0), (2, 2), (4, 3)) == (1, 0)
+  assert _outer_transpose_pos((2, 1), (2, 2), (4, 3)) == (0, 2)
   ##
 
 
 def _process_glib(genline, glib) -> None:
-  test_outer_transpose_pos()
+  _test_outer_transpose_pos()
 
   # def enumerate_table(field: str): ##
   #     scoped_processing_args[0] = field
@@ -187,7 +187,7 @@ def _process_glib(genline, glib) -> None:
       ) -> tuple[int, int] | tuple[float, float]:
         outer_size = level.size
         for _ in range(rotation_index):
-          value = outer_transpose_pos(value, size, outer_size)
+          value = _outer_transpose_pos(value, size, outer_size)
           size = (size[1], size[0])
           outer_size = (outer_size[1], outer_size[0])
         if rotation_index // 2:
@@ -269,18 +269,18 @@ def _process_glib(genline, glib) -> None:
       "source": "{}:{}: {}: {}".format(
         frame_.filename, frame.f_lineno, frame_.code_context[0].strip(), expr
       ),
-      "context": context[:],
+      "context": _context[:],
     }
     if args:
       err["args"] = list(args)
-    context_errors.append(err)
+    _context_errors.append(err)
     ##
 
   @contextmanager
   def push(value: str | int) -> Generator[None, None, None]:  ##
-    context.append(value)
+    _context.append(value)
     yield
-    context.pop()
+    _context.pop()
 
   ##
 
@@ -318,14 +318,14 @@ def _process_glib(genline, glib) -> None:
     if "stops_tracking_at" not in x:
       x["stops_tracking_at"] = x["duration"]
     if is_player:
-      assert "stamina_cost" in x, context
+      assert "stamina_cost" in x, _context
     with push("tags"):
       validate_tags(x.get("tags", []), "attack")
     if melee := x.get("melee"):
       if polygon := melee.get("polygon"):
-        assert polygon["angle_degrees"] < 180, context
+        assert polygon["angle_degrees"] < 180, _context
       if not is_player:
-        assert "damage_stamina" in melee, context
+        assert "damage_stamina" in melee, _context
     ##
 
   def mirror_sign(value, setter) -> None:  ##
@@ -383,7 +383,7 @@ def _process_glib(genline, glib) -> None:
           need_to_have_damage_stamina.append(x["type"])
         validate_tags(x.get("tags", []), "projectile")
   assert not need_to_have_damage_stamina, (
-    context,
+    _context,
     "projectiles need to have damage_stamina",
     need_to_have_damage_stamina,
   )
@@ -407,7 +407,7 @@ def _process_glib(genline, glib) -> None:
     p = prog_type_2_prog[progression_type]
     p["pos"] = bf.as_dict(entity.pos)
   assert not required_to_specify_progression_types, (
-    f"{context} The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
+    f"{_context} The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
   )
   glib["progression_size"] = bf.as_dict(level_progression.size)
   ##
@@ -540,8 +540,8 @@ def _process_glib(genline, glib) -> None:
   ##
 
   ## Context errors
-  if context_errors:
-    assert 0, format_context()
+  if _context_errors:
+    assert 0, _format_context()
   ##
 
 

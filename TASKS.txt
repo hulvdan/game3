@@ -32,12 +32,14 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x py better tests
 
-* devlog name: Жоска Паграмираваю Боевку И Передаю Свой Опыт
-* mark: fix why starting keyframes don't affect visual (moving playhead a bit to the right does the job)
+* mark: fix why starting keyframes doesn't affect visual (moving playhead a bit to the right does the job)
 * mark: UNDO
 * mark: attack gets exported to yaml
 * mark: attack gets imported from yaml
+*
+* devlog name: Жоска Паграмираваю Боевку И Передаю Свой Опыт
 *
 * mark: min frame cell width (don't forget DPI) + timeline horizontal scrollbar
 * mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y step_x step_y

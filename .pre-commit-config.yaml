@@ -8,15 +8,24 @@ repos:
     rev: v1.10.0
     hooks:
       - id: python-no-eval
+        name: 'Prohibited: "nocheckin"'
         entry: "nocheckin"
         language: pygrep
         files: ^(?!.pre-commit-config).*\.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
         exclude: ^addons/.*$
         types: []
       - id: python-no-eval
+        name: 'Prohibited: "assert". Use "ass"'
         entry: "^[ ]*assert"
         language: pygrep
         files: ^.*bf_attacks_markuper\.py$
+        types: []
+      - id: python-no-eval
+        name: 'Prohibited: "def test_". Use "def _test_"'
+        entry: "def test_"
+        language: pygrep
+        files: ^.*\.py$
+        exclude: ^addons/.*$
         types: []
   - repo: https://github.com/google/yamlfmt
     rev: v0.21.0

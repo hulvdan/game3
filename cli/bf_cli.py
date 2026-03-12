@@ -398,11 +398,6 @@ def gitf():  ##
 
 
 def main() -> None:  ##
-  test_value = bf.hash32("test")
-  assert test_value == 0xAFD071E5, test_value
-  test_value = bf.hash32("test")  # Checking that it's stable.
-  assert test_value == 0xAFD071E5, test_value
-
   # Исполняем файл относительно корня проекта.
   os.chdir(bf.PROJECT_DIR)
 

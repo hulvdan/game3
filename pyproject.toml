@@ -126,11 +126,10 @@ ignore = [
 ]
 
 [tool.pytest.ini_options]
-addopts = ["-ra"]
 pythonpath = "cli"
 testpaths = ["cli"]
 python_files = ["*.py"]
-python_functions = ["test_*"]
+python_functions = ["test_*", "_test_*"]
 python_classes = ["Test*"]
 
 [tool.ty.environment]
