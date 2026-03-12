@@ -44,21 +44,25 @@ x mark: undo: boilerplate
 x wip: mark: commands
 x mark: undo: adding keyframe adds command + ctrlz handling
 x mark: redo
+x mark: undo+redo: KeyframeRemove
 
-* mark: undo: can undo keyframe adding
+* mark: undo+redo: AlterTr
+* mark: undo+redo: AlterRotation
+* mark: undo+redo: AlterRadius
+* mark: undo+redo: AlterSpread
+* mark: undo+redo: KeyframeMove
+* mark: undo+redo: AlterActive
+* mark: undo+redo:
+* mark: undo+redo:
+* mark: undo+redo:
+* mark: undo+redo:
+* mark: undo+redo:
+* mark: undo+redo:
+* mark: undo+redo:
+* mark: undo+redo:
+* mark: undo+redo:
 *
-* mark: undo: changing radius adds command
-* mark: undo: set selected keyframe AFTER applying commands
-* mark: undo:
-* mark: undo:
-* mark: undo:
-* mark: undo:
-* mark: undo:
-* mark: undo:
-* mark: undo:
-* mark: undo:
-* mark: undo:
-* mark: undo:
+* mark: undo+redo: set selected keyframe AFTER applying commands
 *
 * mark: attack gets exported to yaml
 * mark: attack gets imported from yaml

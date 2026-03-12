@@ -621,7 +621,6 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
 
   selected_keyframe: SelectedKeyframe | None = None
   keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
-  keyframe_to_remove: tuple[str, int] | None = None
 
   __next_keyframe_id: KeyframeID = 1
 
@@ -672,14 +671,18 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
 
     return (0, keyframe_type.make_default())
 
-  def make_default_keyframe_at(self, field: str, index_timeline: int) -> None:
+  def make_default_keyframe_at(
+    self, field: str, index_timeline: int
+  ) -> tuple[int, Keyframe]:
     frames = self.get_keyframes(field)
     for fr in frames:
       ass(fr.index_timeline != index_timeline)
     with _override_keyframe_round_to_step(True):
       insert_index, value = self.make_keyframe_value_at(field, index_timeline)
-    frames.insert(insert_index, Keyframe(index_timeline, value, self._next_keyframe_id()))
+    k = Keyframe(index_timeline, value, self._next_keyframe_id())
+    frames.insert(insert_index, k)
     ass(frames == sorted(frames, key=lambda x: x.index_timeline))
+    return (insert_index, k)
 
   def select_keyframe(
     self,
@@ -803,6 +806,7 @@ class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
     self.c(atk).make_default_keyframe_at(
       self.keyframe_field, self.keyframe_index_timeline
     )
+    atk.timeline_at = self.keyframe_index_timeline
 
   def undo(self, atk: "Attack") -> None:
     frames = self.c(atk).get_keyframes(self.keyframe_field)
@@ -831,10 +835,23 @@ class AttackCommandColliderKeyframeMove(AttackCommandCollider):
 class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
   keyframe_field: str
   keyframe_index_timeline: int
+  keyframe_value: bool | float | vec2
 
-  def do(self, atk: "Attack") -> None: ...
+  def do(self, atk: "Attack") -> None:
+    frames = self.c(atk).get_keyframes(self.keyframe_field)
+    ass(len(frames) > 1)
+    for i, k in enumerate(frames):
+      if k.index_timeline == self.keyframe_index_timeline:
+        del frames[i]
+        return
+    ass(0)
 
-  def undo(self, atk: "Attack") -> None: ...
+  def undo(self, atk: "Attack") -> None:
+    _, k = self.c(atk).make_default_keyframe_at(
+      self.keyframe_field, self.keyframe_index_timeline
+    )
+    k.value = self.keyframe_value
+    atk.timeline_at = self.keyframe_index_timeline
 
 
 @dataclass(slots=True)
@@ -1631,9 +1648,15 @@ def _panel_timeline() -> None:  ##
           if (
             (not tim.dragging_keyframe)
             and (im.is_mouse_clicked(1) or im.is_key_pressed(im.Key.delete))
-            and (len(c.get_keyframes(field_name)) > 1)
+            and (len(frames := c.get_keyframes(field_name)) > 1)
           ):
-            c.keyframe_to_remove = (field_name, fr_index)
+            hov = imgui_timeline_line_out.hovered_index_half_cell_offset
+            for k in frames:
+              if k.index_timeline == hov:
+                atk.scheduled_commands.append(
+                  AttackCommandColliderKeyframeRemove(c.id, field_name, hov, k.value)
+                )
+                break
 
         if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
           were_dragging_keyframe_this_frame = True
@@ -1935,14 +1958,6 @@ def _post_new_frame() -> None:  ##
         atk.history[atk.history_head].do(atk)
 
     if c := atk.get_visualization_collider():
-      if c.keyframe_to_remove:
-        field_name, index_inside_list = c.keyframe_to_remove
-        keyframes = c.get_keyframes(field_name)
-        ass(len(keyframes) > 1)
-        ass(0 <= index_inside_list < len(keyframes))
-        del keyframes[index_inside_list]
-        c.keyframe_to_remove = None
-
       if c.keyframe_to_select:
         keyframe, update_timeline = c.keyframe_to_select
         if update_timeline:
