@@ -1,5 +1,6 @@
 ## Imports
 import os
+import shlex
 import shutil
 import zipfile
 from collections import Counter
@@ -390,7 +391,7 @@ def gitf():  ##
       continue
   for x in (
     "git add -A",
-    ["git", "commit", "-m", message],
+    ["git", "commit", "-m", shlex.quote(message)],
     "git push",
   ):
     bf.run_command(x)  # type: ignore
