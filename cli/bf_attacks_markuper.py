@@ -261,11 +261,17 @@ def identity_matrix() ->  Matrix16:
 # fmt: on
 
 
-def lerp_Matrix16(v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
+def lerp_Matrix16(
+  v1: Matrix16, v2: Matrix16, t: float, step_translate: float | None = None
+) -> Matrix16:
   c1 = gizmo.decompose_matrix_to_components(v1)
   c2 = gizmo.decompose_matrix_to_components(v2)
   c = gizmo.MatrixComponents()
   c.translation.values[:] = c1.translation.values * (1 - t) + c2.translation.values * t
+  if step_translate is not None:
+    ass(step_translate > 0)
+    for i in range(3):
+      c.translation.values[i] = bf.round_to_step(c.translation.values[i], step_translate)
   c.rotation.values[:] = c1.rotation.values
   c.scale.values[:] = c1.scale.values
   return gizmo.recompose_matrix_from_components(c)
@@ -537,7 +543,7 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
 
   def make_lerp(self, v1: float, v2: float, t: float) -> float:
     ass(0 <= t <= 1)
-    return bf.lerp(v1, v2, t)
+    return bf.round_to_step(bf.lerp(v1, v2, t), self.step)
 
   ##
 
@@ -547,6 +553,7 @@ class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
   line_spanning_rows: t.ClassVar[int] = 2
 
   default: Matrix16 = field(default_factory=identity_matrix)
+  step_translate: float = field(default=STEP_TRANSLATE)
 
   def make_default(self) -> Matrix16:
     result = Matrix16()
@@ -560,7 +567,7 @@ class KeyframeTypeTr(KeyframeType[Matrix16]):  ##
 
   def make_lerp(self, v1: Matrix16, v2: Matrix16, t: float) -> Matrix16:
     ass(0 <= t <= 1)
-    return lerp_Matrix16(v1, v2, t)
+    return lerp_Matrix16(v1, v2, t, self.step_translate)
 
   ##
 
@@ -1215,7 +1222,7 @@ def _keyframe_id(field_name: str, id_: int) -> str:  ##
 
 
 @dataclass(slots=True)
-class ImguiTimelineLineOut:
+class ImguiTimelineLineOut:  ##
   pos_top_left: ImVec2
   pos_bottom_right: ImVec2
   width: float = 0
@@ -1228,6 +1235,7 @@ class ImguiTimelineLineOut:
   hovered_index: int = -1
   hovered_indexf: float = -1
   hovered_index_half_cell_offset: int = -1
+  ##
 
 
 imgui_timeline_line_out = ImguiTimelineLineOut(ImVec2(), ImVec2())

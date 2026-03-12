@@ -22,6 +22,7 @@ import fnvhash
 import numpy as np
 import pydantic_core
 import pyfiglet
+import pytest
 from bf_typer import log
 from imgui_bundle import hello_imgui, immapp
 from imgui_bundle import imgui as im
@@ -2106,6 +2107,30 @@ def _show_group_gui(group: _DemoGroup) -> None:  ##
 # ██║╚██╔╝██║██╔══██║   ██║   ██╔══██║
 # ██║ ╚═╝ ██║██║  ██║   ██║   ██║  ██║
 # ╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
+
+
+## def round_to_step(v: float, step: float = 1) -> float
+def round_to_step(v: float, step: float = 1) -> float:
+  assert step > 0
+  return round(v / step) * step
+
+
+@pytest.mark.parametrize(
+  ("v", "step", "result"),
+  [
+    (1, 1, 1),
+    (0.25, 0.25, 0.25),
+    (0.26, 0.25, 0.25),
+    (0.24, 0.25, 0.25),
+    (0.4, 0.25, 0.5),
+    (-0.4, 0.25, -0.5),
+  ],
+)
+def _test_round_to_step(v, step, result):
+  assert round_to_step(v, step) == result
+
+
+##
 
 
 ## def clamp(v, vmin, vmax)
