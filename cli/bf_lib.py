@@ -1849,6 +1849,7 @@ def show_imgui(
   setup_imgui_style: hello_imgui.VoidFunction | None = None,
   post_new_frame: hello_imgui.VoidFunction | None = None,
   before_exit: hello_imgui.VoidFunction | None = None,
+  show_status: hello_imgui.VoidFunction | None = None,
 ) -> t.Coroutine[None, None, None]:  ##
   print(
     f"For information, demos sources are available in {demo_utils.demos_assets_folder()}"
@@ -1977,6 +1978,8 @@ def show_imgui(
     _, im.get_style().font_scale_main = im.slider_float(
       "Font scale", im.get_style().font_scale_main, 0.5, 2
     )
+    if show_status:
+      show_status()
 
   runner_params.callbacks.show_status = show_edit_font_scale_in_status_bar
 

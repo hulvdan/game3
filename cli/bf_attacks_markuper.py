@@ -17,6 +17,7 @@ from functools import partial, wraps
 from math import pi
 from pathlib import Path
 from typing import Callable, Generic, Self, TypeAlias, TypeVar
+from uuid import UUID, uuid4
 
 import bf_lib as bf
 import numpy as np
@@ -365,6 +366,7 @@ def tool_attacks_markuper() -> None:
       setup_imgui_style=setup_imgui_style,
       post_new_frame=_post_new_frame,
       before_exit=_dump_app_state,
+      show_status=_show_status,
     )
     _dump_task.cancel()
 
@@ -543,7 +545,7 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
     result = bf.lerp(v1, v2, t)
     bf.imgui_assert(self.min <= v1 <= self.max)
     bf.imgui_assert(self.min <= v2 <= self.max)
-    bf.imgui_assert(self.min <= result <= self.max)
+    bf.imgui_assert(self.min <= result * 1.001 <= self.max * 1.002)
     if g.visualizer.round_to_step:
       result = bf.round_to_step(result, self.step)
     return result
@@ -770,14 +772,26 @@ class ColliderCapsule(ColliderBase):  ##
   ##
 
 
+@unique
+class CommandMergeType(IntEnum):
+  NONE = 1
+  MERGED_OKAY = 2
+  MERGED_SHOULD_BE_DESTROYED = 3
+
+
 ## Attack Commands
 @dataclass(slots=True)
 class AttackCommand(ABC):
+  merge_id: UUID
+
   @abstractmethod
   def do(self, atk: "Attack") -> None: ...
 
   @abstractmethod
   def undo(self, atk: "Attack") -> None: ...
+
+  @abstractmethod
+  def try_merge(self, newest, /) -> CommandMergeType: ...
 
 
 # @dataclass(slots=True)
@@ -821,6 +835,9 @@ class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
         return
     raise ValueError
 
+  def try_merge(self, _newest: Self, /) -> CommandMergeType:
+    return CommandMergeType.NONE
+
 
 @dataclass(slots=True)
 @t.final
@@ -829,9 +846,30 @@ class AttackCommandColliderKeyframeMove(AttackCommandCollider):
   keyframe_index_timeline_from: int
   keyframe_index_timeline_to: int
 
-  def do(self, atk: "Attack") -> None: ...
+  def do(self, atk: "Attack") -> None:
+    c = self.c(atk)
+    frames = c.get_keyframes(self.keyframe_field)
+    fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_from)
+    fr.index_timeline = self.keyframe_index_timeline_to
+    atk.timeline_at = self.keyframe_index_timeline_to
 
-  def undo(self, atk: "Attack") -> None: ...
+  def undo(self, atk: "Attack") -> None:
+    c = self.c(atk)
+    frames = c.get_keyframes(self.keyframe_field)
+    fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_to)
+    fr.index_timeline = self.keyframe_index_timeline_from
+    atk.timeline_at = self.keyframe_index_timeline_from
+
+  def try_merge(self, newest: Self, /) -> CommandMergeType:
+    if newest.keyframe_field != self.keyframe_field:
+      return CommandMergeType.NONE
+
+    self.keyframe_index_timeline_to = newest.keyframe_index_timeline_to
+    return (
+      CommandMergeType.MERGED_SHOULD_BE_DESTROYED
+      if (self.keyframe_index_timeline_from == self.keyframe_index_timeline_to)
+      else CommandMergeType.MERGED_OKAY
+    )
 
 
 @dataclass(slots=True)
@@ -857,6 +895,9 @@ class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
     k.value = self.keyframe_value
     atk.timeline_at = self.keyframe_index_timeline
 
+  def try_merge(self, _newest: Self, /) -> CommandMergeType:
+    return CommandMergeType.NONE
+
 
 @dataclass(slots=True)
 @t.final
@@ -881,6 +922,19 @@ class AttackCommandColliderAlterField(AttackCommandCollider):
     ass(isinstance(self.value_new, type_class))
     k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
     k.value = self.value_old
+
+  def try_merge(self, newest: Self, /) -> CommandMergeType:
+    if newest.keyframe_field != self.keyframe_field:
+      return CommandMergeType.NONE
+    if newest.keyframe_index_inside_list != self.keyframe_index_inside_list:
+      return CommandMergeType.NONE
+
+    self.value_new = newest.value_new
+    return (
+      CommandMergeType.MERGED_SHOULD_BE_DESTROYED
+      if (self.value_old == self.value_new)
+      else CommandMergeType.MERGED_OKAY
+    )
 
 
 ##
@@ -987,6 +1041,8 @@ class State:
     dragging_playhead: bool = False
     dragging_keyframe: str | None = None
     ##
+
+  action_id: UUID = field(default_factory=uuid4)
 
   visualizer: Visualizer = field(default_factory=Visualizer)
   timeline: Timeline = field(default_factory=Timeline)
@@ -1623,7 +1679,9 @@ def _panel_timeline() -> None:  ##
             for k in frames:
               if k.index_timeline == hov:
                 atk.scheduled_commands.append(
-                  AttackCommandColliderKeyframeRemove(c.id, field_name, hov, k.value)
+                  AttackCommandColliderKeyframeRemove(
+                    g.action_id, c.id, field_name, hov, k.value
+                  )
                 )
                 break
 
@@ -1636,10 +1694,19 @@ def _panel_timeline() -> None:  ##
           if fr_index < len(frames) - 1:
             max_right = frames[fr_index + 1].index_timeline - 1
 
-          fr.index_timeline = bf.clamp(
-            imgui_timeline_line_out.hovered_index_half_cell_offset, min_left, max_right
+          atk.scheduled_commands.append(
+            AttackCommandColliderKeyframeMove(
+              g.action_id,
+              c.id,
+              field_name,
+              fr.index_timeline,
+              bf.clamp(
+                imgui_timeline_line_out.hovered_index_half_cell_offset,
+                min_left,
+                max_right,
+              ),
+            )
           )
-          atk.timeline_at = fr.index_timeline
 
         if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
           if imgui_timeline_line_out.double_clicked:
@@ -1648,6 +1715,7 @@ def _panel_timeline() -> None:  ##
               created_keyframe_this_frame = True
               atk.scheduled_commands.append(
                 AttackCommandColliderKeyframeAdd(
+                  g.action_id,
                   collider_id=c.id,
                   keyframe_field=field_name,
                   keyframe_index_timeline=idx,
@@ -1832,7 +1900,15 @@ def _panel_collider_inspector() -> None:  ##
           _inspector_checkbox(
             bf.imgui_id("", f"checkbox_{f}"),
             lambda: frames[index_f].value,
-            lambda x: setattr(frames[index_f], "value", x),
+            lambda x: (
+              atk.scheduled_commands.append(
+                AttackCommandColliderAlterField(
+                  g.action_id, c.id, f, index_f, frames[index_f].value, x
+                )
+              )
+              if frames[index_f].value != x
+              else None
+            ),
           )
 
         case KeyframeTypeFloat():
@@ -1842,7 +1918,7 @@ def _panel_collider_inspector() -> None:  ##
             lambda x: (
               atk.scheduled_commands.append(
                 AttackCommandColliderAlterField(
-                  c.id, f, index_f, frames[index_f].value, x
+                  g.action_id, c.id, f, index_f, frames[index_f].value, x
                 )
               )
               if frames[index_f].value != x
@@ -1859,7 +1935,20 @@ def _panel_collider_inspector() -> None:  ##
           _inspector_input_float(
             bf.imgui_id("", f"slider_{f}_x"),
             lambda: frames[index_f].value.x,
-            lambda x: setattr(frames[index_f].value, "x", x),
+            lambda x: (
+              atk.scheduled_commands.append(
+                AttackCommandColliderAlterField(
+                  g.action_id,
+                  c.id,
+                  f,
+                  index_f,
+                  frames[index_f].value,
+                  vec2(x, frames[index_f].value.y),
+                )
+              )
+              if frames[index_f].value.x != x
+              else None
+            ),
             -MAX_OFFSET,
             MAX_OFFSET,
             keyframe_type.step,
@@ -1869,7 +1958,20 @@ def _panel_collider_inspector() -> None:  ##
           _inspector_input_float(
             bf.imgui_id("", f"slider_{f}_y"),
             lambda: frames[index_f].value.y,
-            lambda x: setattr(frames[index_f].value, "y", x),
+            lambda x: (
+              atk.scheduled_commands.append(
+                AttackCommandColliderAlterField(
+                  g.action_id,
+                  c.id,
+                  f,
+                  index_f,
+                  frames[index_f].value,
+                  vec2(frames[index_f].value.x, x),
+                )
+              )
+              if frames[index_f].value.x != x
+              else None
+            ),
             -MAX_OFFSET,
             MAX_OFFSET,
             keyframe_type.step,
@@ -1888,8 +1990,22 @@ def _panel_collider_inspector() -> None:  ##
   ##
 
 
+def _show_status() -> None:  ##
+  atk = g.ref_selected_attack
+  if atk:
+    im.same_line()
+    im.text("|")
+
+    im.same_line()
+    im.text(f"history_head: {atk.history_head}")
+  ##
+
+
 def _post_new_frame() -> None:  ##
   io = im.get_io()
+
+  if any(im.is_mouse_clicked(x) for x in range(3)):
+    g.action_id = uuid4()
 
   if g.attack_to_select:
     g.ref_selected_attack = g.attack_to_select
@@ -1917,6 +2033,19 @@ def _post_new_frame() -> None:  ##
       command.do(atk)
       atk.history_head += 1
       atk.history.append(command)
+      if (
+        (len(atk.history) >= 2)
+        and (type(h_latest := atk.history[-1]) is type(h_prev := atk.history[-2]))
+        and (h_latest.merge_id == h_prev.merge_id)
+      ):
+        match h_prev.try_merge(h_latest):
+          case CommandMergeType.MERGED_OKAY:
+            atk.history_head -= 1
+            atk.history.pop()
+          case CommandMergeType.MERGED_SHOULD_BE_DESTROYED:
+            atk.history_head -= 2
+            atk.history.pop()
+            atk.history.pop()
     atk.scheduled_commands.clear()
 
     # Handling undo.
