@@ -916,6 +916,7 @@ class Attack:  ##
   timeline_at: float = 0
   timeline_started_playing_at: float = 0
 
+  history_head: int = -1
   history: list[AttackCommand] = field(default_factory=list)
   scheduled_commands: list[AttackCommand] = field(default_factory=list)
 
@@ -1016,6 +1017,7 @@ class State:
   ref_selected_attack: Attack | None = None
 
   attack_undo_scheduled: bool = False
+  attack_redo_scheduled: bool = False
 
   scheduled_dump: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(0))
 
@@ -1907,17 +1909,30 @@ def _post_new_frame() -> None:  ##
       atk.ref_hovered_collider = atk.collider_to_hover
       atk.collider_to_hover = None
 
+    # Executing commands.
     for command in atk.scheduled_commands:
+      while atk.history_head + 1 < len(atk.history):
+        atk.history.pop()
       command.do(atk)
+      atk.history_head += 1
       atk.history.append(command)
     atk.scheduled_commands.clear()
-    if io.key_ctrl and im.is_key_pressed(im.Key.z):
-      g.attack_undo_scheduled = True
+
+    # Handling undo.
+    g.attack_undo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.z)
     if g.attack_undo_scheduled:
       g.attack_undo_scheduled = False
-      if atk.history:
-        last = atk.history.pop()
-        last.undo(atk)
+      if atk.history_head >= 0:
+        atk.history[atk.history_head].undo(atk)
+        atk.history_head -= 1
+
+    # Handling redo.
+    g.attack_redo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.r)
+    if g.attack_redo_scheduled:
+      g.attack_redo_scheduled = False
+      if atk.history_head + 1 < len(atk.history):
+        atk.history_head += 1
+        atk.history[atk.history_head].do(atk)
 
     if c := atk.get_visualization_collider():
       if c.keyframe_to_remove:

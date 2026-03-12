@@ -43,8 +43,8 @@ x mark: matrix16.ndarray.frombytes(mat4.tobytes)
 x mark: undo: boilerplate
 x wip: mark: commands
 x mark: undo: adding keyframe adds command + ctrlz handling
+x mark: redo
 
-* mark: redo
 * mark: undo: can undo keyframe adding
 *
 * mark: undo: changing radius adds command
