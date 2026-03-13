@@ -32,26 +32,10 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x py better tests
-x f
-x mark: fix why starting keyframes doesn't affect visual (moving playhead a bit to the right does the job)
-x mark: correct steps when creating keyframes
-x mark: vec2 transform + gizmos.manipulate
-x mark: store translation as tuple (float, float)
-x mark: store rotation as float
-x mark: matrix16.ndarray.frombytes(mat4.tobytes)
-x mark: undo: boilerplate
-x wip: mark: commands
-x mark: undo: adding keyframe adds command + ctrlz handling
-x mark: redo
-x mark: undo+redo: KeyframeRemove
-x mark: undo+redo: AlterField: rotation radius spread
-x mark: undo+redo: AlterField: Tr
-x mark: undo+redo: KeyframeMove
-x mark: undo+redo: KeyframeMove: correct merging
-- mark: inline undo slider changes: (based on mouse release counts)
-- mark: undo+redo: AlterField: Tr
-x f
+x created second github acc
+x moved some repos to it
+x replaced owner
+x docs
 
 * mark: yaml serialization + persistence
 *
