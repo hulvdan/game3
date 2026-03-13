@@ -9,22 +9,19 @@ import threading
 import traceback
 import typing as t
 from abc import ABC, abstractmethod
-from collections import defaultdict
 from contextlib import contextmanager
+from dataclasses import dataclass, field, fields, is_dataclass
 from datetime import datetime
 from enum import IntEnum, unique
 from functools import partial, wraps
 from math import pi
 from pathlib import Path
 from typing import Callable, Generic, Self, TypeAlias, TypeVar
+from uuid import UUID, uuid4
 
-import attr
-import attrs
 import bf_lib as bf
 import numpy as np
 import toml
-import yaml
-from attrs import field
 from bf_lib import imgui_assert as ass
 from bf_typer import command
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
@@ -35,34 +32,7 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
-
-# def vec_converter(cls):
-#   def convert(v):
-#     if isinstance(v, (list, tuple, set)):
-#       return cls(*v)
-#     return v
-
-#   return convert
-
-
-# def ddict(factory):
-#   def convert(v):
-#     if isinstance(v, dict):
-#       return defaultdict(factory, v)
-#     return v
-
-#   return convert
-
-META_EXPORT = {"export": True}
-
-
-def export_filter(attr, _value):
-  return attr.metadata.get("export", False)
-
-
 ## Consts
-
-
 FPS = 30
 MAX_ATTACK_FRAMES_DURATION = 10 * FPS
 STEP_TRANSLATE = 0.25
@@ -84,15 +54,15 @@ def recursive_validate(obj: t.Any) -> None:
   if x := getattr(obj, "validate", None):
     x()
 
-  if attr.has(obj):
-    for f in attr.fields(obj.__class__):
+  if is_dataclass(obj):
+    for f in fields(obj):
       recursive_validate(getattr(obj, f.name))
 
   elif isinstance(obj, (list, tuple, set)):
     for item in obj:
       recursive_validate(item)
 
-  elif isinstance(obj, (dict, defaultdict)):
+  elif isinstance(obj, dict):
     for item in obj.values():
       recursive_validate(item)
 
@@ -469,7 +439,7 @@ def _to_mat4(m: Matrix16) -> mat4:
 ##
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 class Keyframe(Generic[T]):  ##
   index_timeline: int
   value: T
@@ -482,7 +452,7 @@ class Keyframe(Generic[T]):  ##
   ##
 
 
-@attrs.define(slots=True, frozen=True)
+@dataclass(slots=True, frozen=True)
 class SelectedKeyframe:  ##
   id: int
   key: str  # e.g. "keyframe_radius_0"
@@ -529,7 +499,7 @@ class KeyframeType(t.Protocol[T]):  ##
   ##
 
 
-@attrs.define(slots=True)
+@dataclass
 @t.final
 class KeyframeTypeBool(KeyframeType[bool]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (bool,)
@@ -550,8 +520,7 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
   ##
 
 
-@attrs.define(slots=True)
-@t.final
+@dataclass
 class KeyframeTypeFloat(KeyframeType[float]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (int, float)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.FLOAT
@@ -592,15 +561,14 @@ def _lerp_vec2(v1: vec2, v2: vec2, t: float, step: float | None = None):  ##
   ##
 
 
-@attrs.define(slots=True)
-@t.final
+@dataclass
 class KeyframeTypeTr(KeyframeType[vec2]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (vec2,)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.VEC2
 
   line_spanning_rows: t.ClassVar[int] = 2
 
-  default: vec2 = field(factory=vec2)
+  default: vec2 = field(default_factory=vec2)
   step: float = STEP_TRANSLATE
 
   def make_default(self) -> vec2:
@@ -653,14 +621,14 @@ class ColliderBaseMeta(type):  ##
 
 
 class ColliderBase(metaclass=ColliderBaseMeta):  ##
+  id: int = 0
   type: t.ClassVar[ColliderType] = ColliderType.INVALID
   keyframe_fields: t.ClassVar[list[str]]
 
-  id: int = field(default=0, metadata=META_EXPORT)
-  __next_keyframe_id: KeyframeID = field(default=1, metadata=META_EXPORT)
-
   selected_keyframe: SelectedKeyframe | None = None
   keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
+
+  __next_keyframe_id: KeyframeID = 1
 
   def __new__(cls, *_args, **_kwargs):
     ass(cls is not ColliderBase)
@@ -763,14 +731,13 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   ##
 
 
-@attrs.define(slots=True)
-@t.final
+@dataclass(slots=True)
 class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
-  is_active: list[Keyframe[bool]] = field(metadata=META_EXPORT)
-  tr: list[Keyframe[vec2]] = field(metadata=META_EXPORT)
-  radius: list[Keyframe[float]] = field(metadata=META_EXPORT)
+  is_active: list[Keyframe[bool]]
+  tr: list[Keyframe[vec2]]
+  radius: list[Keyframe[float]]
 
   _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
   _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
@@ -781,16 +748,15 @@ class ColliderCircle(ColliderBase):  ##
   ##
 
 
-@attrs.define(slots=True)
-@t.final
+@dataclass(slots=True)
 class ColliderCapsule(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
-  is_active: list[Keyframe[bool]] = field(metadata=META_EXPORT)
-  tr: list[Keyframe[vec2]] = field(metadata=META_EXPORT)
-  radius: list[Keyframe[float]] = field(metadata=META_EXPORT)
-  spread: list[Keyframe[float]] = field(metadata=META_EXPORT)
-  rotation: list[Keyframe[float]] = field(metadata=META_EXPORT)
+  is_active: list[Keyframe[bool]]
+  tr: list[Keyframe[vec2]]
+  radius: list[Keyframe[float]]
+  spread: list[Keyframe[float]]
+  rotation: list[Keyframe[float]]
 
   _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
   _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
@@ -814,9 +780,9 @@ class CommandMergeType(IntEnum):
 
 
 ## Attack Commands
-@attrs.define(slots=True)
+@dataclass(slots=True)
 class AttackCommand(ABC):
-  merge_id: int = field(metadata=META_EXPORT)
+  merge_id: UUID
 
   @abstractmethod
   def do(self, atk: "Attack") -> None: ...
@@ -828,31 +794,31 @@ class AttackCommand(ABC):
   def try_merge(self, newest, /) -> CommandMergeType: ...
 
 
-# @attrs.define(slots=True)
+# @dataclass(slots=True)
 # @t.final
 # class AttackCommandAlterName(Command):
 #   pass
 #
 #
-# @attrs.define(slots=True)
+# @dataclass(slots=True)
 # @t.final
 # class AttackCommandAlterFrames(Command):
 #   pass
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 class AttackCommandCollider(AttackCommand):
-  collider_id: ColliderID = field(metadata=META_EXPORT)
+  collider_id: ColliderID
 
   def c(self, atk: "Attack") -> "ColliderBase":
     return next(c for c in atk.colliders if c.id == self.collider_id)
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
-  keyframe_field: str = field(metadata=META_EXPORT)
-  keyframe_index_timeline: int = field(metadata=META_EXPORT)
+  keyframe_field: str
+  keyframe_index_timeline: int
 
   def do(self, atk: "Attack") -> None:
     self.c(atk).make_default_keyframe_at(
@@ -873,12 +839,12 @@ class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
     return CommandMergeType.NONE
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeMove(AttackCommandCollider):
-  keyframe_field: str = field(metadata=META_EXPORT)
-  keyframe_index_timeline_from: int = field(metadata=META_EXPORT)
-  keyframe_index_timeline_to: int = field(metadata=META_EXPORT)
+  keyframe_field: str
+  keyframe_index_timeline_from: int
+  keyframe_index_timeline_to: int
 
   def do(self, atk: "Attack") -> None:
     c = self.c(atk)
@@ -906,12 +872,12 @@ class AttackCommandColliderKeyframeMove(AttackCommandCollider):
     )
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
-  keyframe_field: str = field(metadata=META_EXPORT)
-  keyframe_index_timeline: int = field(metadata=META_EXPORT)
-  keyframe_value: bool | float | vec2 = field(metadata=META_EXPORT)
+  keyframe_field: str
+  keyframe_index_timeline: int
+  keyframe_value: bool | float | vec2
 
   def do(self, atk: "Attack") -> None:
     frames = self.c(atk).get_keyframes(self.keyframe_field)
@@ -933,13 +899,13 @@ class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
     return CommandMergeType.NONE
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 @t.final
 class AttackCommandColliderAlterField(AttackCommandCollider):
-  keyframe_field: str = field(metadata=META_EXPORT)
-  keyframe_index_inside_list: int = field(metadata=META_EXPORT)
-  value_old: bool | int | float | vec2 = field(metadata=META_EXPORT)
-  value_new: bool | int | float | vec2 = field(metadata=META_EXPORT)
+  keyframe_field: str
+  keyframe_index_inside_list: int
+  value_old: bool | int | float | vec2
+  value_new: bool | int | float | vec2
 
   def do(self, atk: "Attack") -> None:
     c = self.c(atk)
@@ -974,23 +940,27 @@ class AttackCommandColliderAlterField(AttackCommandCollider):
 ##
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 class Attack:  ##
-  name: str = field(metadata=META_EXPORT)
-  duration_frames: int = field(default=90, metadata=META_EXPORT)
-  colliders: list[ColliderBase] = field(factory=list, metadata=META_EXPORT)
-  timeline_at: float = field(default=0, metadata=META_EXPORT)
-  history_head: int = field(default=-1, metadata=META_EXPORT)
-  history: list[AttackCommand] = field(factory=list)
-  _next_collider_id: ColliderID = field(default=1, metadata=META_EXPORT)
+  name: str
+
+  duration_frames: int = 90
+  colliders: list[ColliderBase] = field(default_factory=list)
 
   collider_deselection_scheduled: bool = False
   collider_to_select: ColliderBase | None = None
   collider_to_hover: ColliderBase | None = None
   ref_selected_collider: ColliderBase | None = None
   ref_hovered_collider: ColliderBase | None = None
-  timeline_started_playing_at: float = field(default=0)
-  scheduled_commands: list[AttackCommand] = field(factory=list)
+
+  timeline_at: float = 0
+  timeline_started_playing_at: float = 0
+
+  history_head: int = -1
+  history: list[AttackCommand] = field(default_factory=list)
+  scheduled_commands: list[AttackCommand] = field(default_factory=list)
+
+  _next_collider_id: ColliderID = 1
 
   def next_collider_id(self) -> ColliderID:
     result = self._next_collider_id
@@ -1019,7 +989,7 @@ class Attack:  ##
   ##
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 class Creature:  ##
   name: str
   attacks: list[Attack]
@@ -1047,13 +1017,13 @@ class AppSaveState(BaseModel):  ##
   ##
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 class State:
-  @attrs.define(slots=True)
+  @dataclass(slots=True)
   class Visualizer:  ##
     first_frame: bool = True
-    camera_view: Matrix16 = field(factory=Matrix16)
-    camera_projection: Matrix16 = field(factory=Matrix16)
+    camera_view: Matrix16 = field(default_factory=Matrix16)
+    camera_projection: Matrix16 = field(default_factory=Matrix16)
     fov: float = 27.0
     is_perspective: bool = True
     ortho__view_width: float = 10.0
@@ -1065,19 +1035,19 @@ class State:
     round_to_step: bool = False
     ##
 
-  @attrs.define(slots=True)
+  @dataclass(slots=True)
   class Timeline:  ##
     is_playing: bool = False
     dragging_playhead: bool = False
     dragging_keyframe: str | None = None
     ##
 
-  action_id: int = 1
+  action_id: UUID = field(default_factory=uuid4)
 
-  visualizer: Visualizer = field(factory=Visualizer)
-  timeline: Timeline = field(factory=Timeline)
+  visualizer: Visualizer = field(default_factory=Visualizer)
+  timeline: Timeline = field(default_factory=Timeline)
 
-  creatures: list[Creature] = field(factory=list)
+  creatures: list[Creature] = field(default_factory=list)
 
   exiting: bool = False
   count: int = 0
@@ -1091,7 +1061,7 @@ class State:
   attack_undo_scheduled: bool = False
   attack_redo_scheduled: bool = False
 
-  scheduled_dump: asyncio.Semaphore = field(factory=lambda: asyncio.Semaphore(0))
+  scheduled_dump: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(0))
 
   def dump(self) -> AppSaveState:  ##
     vis = self.visualizer
@@ -1506,7 +1476,7 @@ def _keyframe_id(field_name: str, id_: int) -> str:  ##
   ##
 
 
-@attrs.define(slots=True)
+@dataclass(slots=True)
 class ImguiTimelineLineOut:  ##
   pos_top_left: ImVec2
   pos_bottom_right: ImVec2
@@ -2042,7 +2012,7 @@ def _post_new_frame() -> None:  ##
   io = im.get_io()
 
   if any((im.is_mouse_clicked(x) or im.is_mouse_released(x)) for x in range(3)):
-    g.action_id += 1
+    g.action_id = uuid4()
 
   if g.attack_to_select:
     g.ref_selected_attack = g.attack_to_select
@@ -2085,16 +2055,6 @@ def _post_new_frame() -> None:  ##
             if h_latest.merge_id != g.action_id:
               atk.history_head -= 1
               atk.history.pop()
-    if atk.scheduled_commands:
-      out_filepath = bf.ASSETS_DIR / "attacks" / f"{atk.name}.yaml"
-      bf.recursive_mkdir(out_filepath.parent)
-      with open(out_filepath, "w", encoding="utf-8", newline="\n") as out_file:
-        yaml.dump(
-          attrs.asdict(atk, recurse=True, filter=export_filter),
-          out_file,
-          indent=2,
-          line_break="\n",
-        )
     atk.scheduled_commands.clear()
 
     # Handling undo.
