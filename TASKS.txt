@@ -36,6 +36,7 @@ x created second github acc
 x moved some repos to it
 x replaced owner
 x docs
+x hulvdan.github.io: translated + updated
 
 * mark: yaml serialization + persistence
 *
