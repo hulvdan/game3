@@ -45,14 +45,12 @@ uv run pre-commit install --install-hooks
 ```
 
 <!-- [[[cog
-import os, glob
 from pathlib import Path
-
-for filepath in [x for x in os.listdir("docs") if str(x).endswith(".png")]:
-  print(f"![](docs/{filepath})")
+for filepath in reversed(list(Path("docs").glob("*.png"))):
+  print(f"![](docs/{filepath.name})")
 cog]]] -->
-![](docs/1.png)
-![](docs/2.png)
-![](docs/3.png)
 ![](docs/4.png)
+![](docs/3.png)
+![](docs/2.png)
+![](docs/1.png)
 <!-- [[[end]]] -->
