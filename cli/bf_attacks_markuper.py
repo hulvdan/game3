@@ -33,15 +33,27 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
+PRE_BUILD_DATA_REMOVEME = 1
+
 T = t.TypeVar("T")
+Variant: TypeAlias = t.Any
 
 
 @dataclass(slots=True)
 class DataclassSerializer:  ##
   _PRIMITIVES: t.ClassVar[tuple[type, ...]] = (bool, int, float, str)
+  _PRIMITIVES_AND_COLLECTIONS_EXCEPT_DICT: t.ClassVar[tuple[type, ...]] = (
+    *_PRIMITIVES,
+    set,
+    tuple,
+    list,
+  )
 
-  DeserializeFunc: TypeAlias = t.Callable[[t.Any], t.Any]
-  SerializeFunc: TypeAlias = t.Callable[[t.Any], t.Any]
+  DeserializeFunc: TypeAlias = t.Callable[[t.Any, type], t.Any]
+  SerializeFunc: TypeAlias = t.Callable[[t.Any, type], t.Any]
+
+  VariantSerializationFunc: TypeAlias = t.Callable[[t.Any], t.Any]
+  VariantDeserializationFunc: TypeAlias = t.Callable[[t.Any], t.Any]
 
   _type_registry: dict[type, tuple[SerializeFunc, DeserializeFunc]] = field(
     default_factory=dict
@@ -53,47 +65,110 @@ class DataclassSerializer:  ##
     ass(type_ not in self._type_registry)
     self._type_registry[type_] = (serialize, deserialize)
 
-  def serialize(self, v: t.Any) -> t.Any:
+  def serialize(self, v: t.Any, as_: t.Any) -> t.Any:
     if pair := self._type_registry.get(type(v)):
-      return pair[0](v)
+      return pair[0](v, as_)
     for type_, pair in self._type_registry.items():
       if isinstance(v, type_):
-        return pair[0](v)
-    return self.serialize_default(v)
+        return pair[0](v, as_)
+    return self.serialize_default(v, as_)
 
-  def serialize_default(self, v: t.Any) -> t.Any:
+  def serialize_default(self, v: t.Any, as_: t.Any) -> t.Any:
     if is_dataclass(v):
       result = {}
       ass(hasattr(v, "_export_fields"))
       for f in getattr(v, "_export_fields", []):
         value = getattr(v, f)
-        result[f] = self.serialize(value)
+        result[f] = self.serialize(value, v.__dataclass_fields__[f].type)
       return result
     elif isinstance(v, (list, tuple, set)):
-      return [self.serialize(item) for item in v]
+      return [self.serialize(item, as_) for item in v]
     elif isinstance(v, dict):
-      return {key: self.serialize(value) for key, value in v.items()}
+      return {key: self.serialize(value, as_) for key, value in v.items()}
     else:
       ass(type(v) in self._PRIMITIVES)
       return v
 
-  def deserialize(self, v: t.Any, into: type) -> t.Any:
-    if into is tuple:
-      ass(type(v) is tuple)
-      return (self.deserialize(x, t.Any) for x in v)
-    elif into is list:
-      ass(type(v) is list)
-      return [self.deserialize(x, t.Any) for x in v]
-    elif into is set:
-      ass(type(v) is set)
-      return {self.deserialize(x, t.Any) for x in v}
+  def deserialize_default(self, v: t.Any, as_: type) -> t.Any:
+    ass(as_ is not t.Any)
+    if is_dataclass(as_):
+      ass(type(v) is dict)
+      ff = {x.name: x for x in fields(as_)}
+      result = as_(**{k: self.deserialize(v, ff[k].type) for k, v in v.items()})
+      # ass(hasattr(into, "_export_fields"))
+      # for f in getattr(into, "_export_fields", []):
+      #   value = getattr(into, f)
+      #   result[f] = self.deserialize(value, )
+      return result
+    for container in (tuple, list, set):
+      if (as_ is container) or (t.get_origin(as_) is container):
+        ass(type(v) is container)
+        args = t.get_args(as_)
+        ass(len(args) == 1)
+        return container(self.deserialize(x, args[0]) for x in v)
     ass(type(v) in self._PRIMITIVES)
     return v
+
+  def deserialize(self, v: t.Any, into: t.Any) -> t.Any:
+    if pair := self._type_registry.get(into):
+      return pair[1](v, into)
+    if type(v) in self._PRIMITIVES_AND_COLLECTIONS_EXCEPT_DICT:
+      return self.deserialize_default(v, into)
+    for type_, pair in self._type_registry.items():
+      if origin := t.get_origin(into):
+        if isinstance(type_, origin):
+          return pair[1](v, into)
+      elif isinstance(type_, into):
+        return pair[1](v, into)
+    if type(v) is dict:
+      return self.deserialize_default(v, into)
+    raise ass(0)
+
+  def _variant_serialize(self, value: t.Any):
+    code, serialize = self._variant_ser_types[type(value)]
+    return {"vtype": code, "value": serialize(value)}
+
+  def _variant_deserialize(self, value: t.Any):
+    code, serialize = self._variant_ser_types[type(value)]
+    return {"vtype": code, "value": serialize(value)}
+
+  _variant_serialize_primitive = lambda x: x
+  _variant_deserialize_primitive = lambda x: x
+
+  _variant_ser_types: t.ClassVar[dict[type, tuple[str, VariantSerializationFunc]]] = {
+    bool: ("bool", _variant_serialize_primitive),
+    int: ("int", _variant_serialize_primitive),
+    float: ("float", _variant_serialize_primitive),
+    str: ("str", _variant_serialize_primitive),
+  }
+  _variant_deser_types: t.ClassVar[dict[str, tuple[type, VariantDeserializationFunc]]] = {
+    "bool": (bool, _variant_deserialize_primitive),
+    "int": (int, _variant_deserialize_primitive),
+    "float": (float, _variant_deserialize_primitive),
+    "str": (str, _variant_deserialize_primitive),
+  }
+
+  def register_variant_type(
+    self,
+    code: str,
+    type_: type[T],
+    serialize: VariantSerializationFunc,
+    deserialize: VariantDeserializationFunc,
+  ) -> None:
+    ass(code not in self._variant_ser_types)
+    ass(type_ not in self._variant_deser_types)
+    for v in self._variant_ser_types:
+      ass(v is not type_)
+    for v in self._variant_deser_types:
+      ass(v != code)
+    self._variant_ser_types[type_] = (code, serialize)
+    self._variant_deser_types[code] = (type_, deserialize)
 
   ##
 
 
 ## Consts
+ATTACKS_DIR = bf.ASSETS_DIR / "attacks"
 FPS = 30
 MAX_ATTACK_FRAMES_DURATION = 10 * FPS
 STEP_TRANSLATE = 0.25
@@ -355,63 +430,75 @@ _serializer = DataclassSerializer()
 def tool_attacks_markuper() -> None:
   _serializer.register(
     vec1,
-    lambda x: [x.x],
-    lambda x: vec1(x[0]),
+    lambda x, _: [x.x],
+    lambda x, _: vec1(x[0]),
   )
   _serializer.register(
     vec2,
-    lambda x: [x.x, x.y],
-    lambda x: vec2(x[0], x[1]),
+    lambda x, _: [x.x, x.y],
+    lambda x, _: vec2(x[0], x[1]),
   )
   _serializer.register(
     vec3,
-    lambda x: [x.x, x.y, x.z],
-    lambda x: vec3(x[0], x[1], x[2]),
+    lambda x, _: [x.x, x.y, x.z],
+    lambda x, _: vec3(x[0], x[1], x[2]),
   )
   _serializer.register(
     vec4,
-    lambda x: [x.x, x.y, x.z, x.w],
-    lambda x: vec4(x[0], x[1], x[2], x[3]),
+    lambda x, _: [x.x, x.y, x.z, x.w],
+    lambda x, _: vec4(x[0], x[1], x[2], x[3]),
   )
 
-  def serialize_collider(v: ColliderBase):
-    result = _serializer.serialize_default(v)
+  def serialize_collider(v: ColliderBase, as_: type):
+    ass(issubclass(type(v), as_))
+    result = _serializer.serialize_default(v, as_)
     result["type"] = v.type.name
     return result
 
-  def deserialize_collider(v) -> ColliderBase:
+  def deserialize_collider(v, into) -> ColliderBase:
+    ass(into is ColliderBase)
     return v
 
   _serializer.register(ColliderBase, serialize_collider, deserialize_collider)
 
-  atk1 = Attack(
-    name="ROLL_FRONT",
-    duration_frames=60,
-    colliders=[],
-  )
-  atk1.colliders.append(ColliderCapsule.make(atk1.next_collider_id()))
-  g.creatures = [
-    Creature(
-      name="MOB_SPEAR",
-      attacks=[
-        Attack(name="DASH", duration_frames=90),
-        Attack(name="SWING"),
-      ],
-    ),
-    Creature(
-      name="BOSS_JAGRAS",
-      attacks=[
-        atk1,
-        Attack(name="ROLL_SIDE", duration_frames=50),
-        Attack(name="JUMP_BACK"),
-      ],
-    ),
-  ]
-  c = ColliderCapsule.make(g.creatures[0].attacks[0].next_collider_id())
-  c.radius.append(Keyframe(40, 5, c._next_keyframe_id()))
-  c.radius.append(Keyframe(70, 4, c._next_keyframe_id()))
-  g.creatures[0].attacks[0].colliders.append(c)
-  g.creatures[0].attacks[0].timeline_at = 2
+  if PRE_BUILD_DATA_REMOVEME:
+    atk1 = Attack(
+      name="ROLL_FRONT",
+      duration_frames=60,
+      colliders=[],
+    )
+    atk1.colliders.append(ColliderCapsule.make(atk1.next_collider_id()))
+    g.creatures = [
+      Creature(
+        name="MOB_SPEAR",
+        attacks=[
+          Attack(name="DASH", duration_frames=90),
+          Attack(name="SWING"),
+        ],
+      ),
+      Creature(
+        name="BOSS_JAGRAS",
+        attacks=[
+          atk1,
+          Attack(name="ROLL_SIDE", duration_frames=50),
+          Attack(name="JUMP_BACK"),
+        ],
+      ),
+    ]
+    c = ColliderCapsule.make(g.creatures[0].attacks[0].next_collider_id())
+    c.radius.append(Keyframe(40, 5, c._next_keyframe_id()))
+    c.radius.append(Keyframe(70, 4, c._next_keyframe_id()))
+    g.creatures[0].attacks[0].colliders.append(c)
+    g.creatures[0].attacks[0].timeline_at = 2
+
+  else:
+    for folder in (x for x in ATTACKS_DIR.iterdir() if x.is_dir()):
+      creature = Creature(name=folder.name, attacks=[])
+      g.creatures.append(creature)
+      for attack_filepath in folder.glob("*.yaml"):
+        yaml_content = yaml.safe_load(attack_filepath.read_text(encoding="utf-8"))
+        attack = _serializer.deserialize(yaml_content, Attack)
+        creature.attacks.append(attack)
 
   recursive_validate(g)
 
@@ -833,6 +920,7 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
 
 
 @dataclass(slots=True)
+@t.final
 class ColliderCircle(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
 
@@ -856,6 +944,7 @@ class ColliderCircle(ColliderBase):  ##
 
 
 @dataclass(slots=True)
+@t.final
 class ColliderCapsule(ColliderBase):  ##
   type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
 
@@ -924,7 +1013,15 @@ class AttackCommand(ABC):
 # class AttackCommandAlterFrames(Command):
 #   pass
 
+_commands: dict[str, type] = {}
 
+
+def register_command(cls):
+  _commands[cls.__name__] = cls
+  return cls
+
+
+@register_command
 @dataclass(slots=True)
 class AttackCommandCollider(AttackCommand):
   collider_id: ColliderID
@@ -938,6 +1035,7 @@ class AttackCommandCollider(AttackCommand):
     return next(c for c in atk.colliders if c.id == self.collider_id)
 
 
+@register_command
 @dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
@@ -969,6 +1067,7 @@ class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
     return CommandMergeType.NONE
 
 
+@register_command
 @dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeMove(AttackCommandCollider):
@@ -1009,12 +1108,13 @@ class AttackCommandColliderKeyframeMove(AttackCommandCollider):
     )
 
 
+@register_command
 @dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
   keyframe_field: str
   keyframe_index_timeline: int
-  keyframe_value: bool | float | vec2
+  keyframe_value: Variant
 
   _export_fields = [
     *AttackCommandCollider._export_fields,
@@ -1043,13 +1143,14 @@ class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
     return CommandMergeType.NONE
 
 
+@register_command
 @dataclass(slots=True)
 @t.final
 class AttackCommandColliderAlterField(AttackCommandCollider):
   keyframe_field: str
   keyframe_index_inside_list: int
-  value_old: bool | int | float | vec2
-  value_new: bool | int | float | vec2
+  value_old: Variant
+  value_new: Variant
 
   _export_fields = [
     *AttackCommandCollider._export_fields,
@@ -2228,7 +2329,7 @@ def _post_new_frame() -> None:  ##
       )
       bf.recursive_mkdir(out_filepath.parent)
       with open(out_filepath, "w", encoding="utf-8", newline="\n") as out_file:
-        yaml.dump(_serializer.serialize(atk), out_file, indent=2, line_break="\n")
+        yaml.dump(_serializer.serialize(atk, Attack), out_file, indent=2, line_break="\n")
     atk.scheduled_commands.clear()
 
     # Handling undo.
