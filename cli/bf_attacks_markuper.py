@@ -17,13 +17,14 @@ from functools import partial, wraps
 from math import pi
 from pathlib import Path
 from typing import Callable, Generic, Self, TypeAlias, TypeVar
-from uuid import UUID, uuid4
 
 import bf_lib as bf
 import numpy as np
 import toml
+import yaml
 from bf_lib import imgui_assert as ass
 from bf_typer import command
+from glm import vec1
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
@@ -31,6 +32,35 @@ from pyglm import glm
 from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
+
+
+def dc_serialize(obj):
+  if is_dataclass(obj):
+    result = {}
+    ass(hasattr(obj, "_export_fields"))
+    for f in getattr(obj, "_export_fields", []):
+      value = getattr(obj, f)
+      result[f] = dc_serialize(value)
+    return result
+  elif isinstance(obj, vec1):
+    return [obj.x]
+  elif isinstance(obj, vec2):
+    return [obj.x, obj.y]
+  elif isinstance(obj, vec3):
+    return [obj.x, obj.y, obj.z]
+  elif isinstance(obj, vec4):
+    return [obj.x, obj.y, obj.z, obj.w]
+  elif isinstance(obj, list):
+    return [dc_serialize(item) for item in obj]
+  elif isinstance(obj, tuple):
+    return tuple(dc_serialize(item) for item in obj)
+  elif isinstance(obj, set):
+    return {dc_serialize(item) for item in obj}
+  elif isinstance(obj, dict):
+    return {key: dc_serialize(value) for key, value in obj.items()}
+  else:
+    return obj  # primitive types
+
 
 ## Consts
 FPS = 30
@@ -445,6 +475,12 @@ class Keyframe(Generic[T]):  ##
   value: T
   id: int = 0
 
+  _export_fields = [
+    "index_timeline",
+    "value",
+    "id",
+  ]
+
   def validate(self):
     ass(self.id > 0)
     ass(self.index_timeline >= 0)
@@ -745,6 +781,12 @@ class ColliderCircle(ColliderBase):  ##
     0.5, step=STEP_TRANSLATE, step_fast=1, min=MIN_RADIUS, max=MAX_RADIUS, fmt="%.2f"
   )
 
+  _export_fields = [
+    "is_active",
+    "tr",
+    "radius",
+  ]
+
   ##
 
 
@@ -769,6 +811,14 @@ class ColliderCapsule(ColliderBase):  ##
   _keyframe_rotation: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
     0, step=STEP_ROTATE, step_fast=90, fmt="%.0f"
   )
+
+  _export_fields = [
+    "is_active",
+    "tr",
+    "radius",
+    "spread",
+    "rotation",
+  ]
   ##
 
 
@@ -782,7 +832,11 @@ class CommandMergeType(IntEnum):
 ## Attack Commands
 @dataclass(slots=True)
 class AttackCommand(ABC):
-  merge_id: UUID
+  merge_id: int
+
+  _export_fields = [
+    "merge_id",
+  ]
 
   @abstractmethod
   def do(self, atk: "Attack") -> None: ...
@@ -810,6 +864,11 @@ class AttackCommand(ABC):
 class AttackCommandCollider(AttackCommand):
   collider_id: ColliderID
 
+  _export_fields = [
+    *AttackCommand._export_fields,
+    "collider_id",
+  ]
+
   def c(self, atk: "Attack") -> "ColliderBase":
     return next(c for c in atk.colliders if c.id == self.collider_id)
 
@@ -819,6 +878,12 @@ class AttackCommandCollider(AttackCommand):
 class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
   keyframe_field: str
   keyframe_index_timeline: int
+
+  _export_fields = [
+    *AttackCommandCollider._export_fields,
+    "keyframe_field",
+    "keyframe_index_timeline",
+  ]
 
   def do(self, atk: "Attack") -> None:
     self.c(atk).make_default_keyframe_at(
@@ -845,6 +910,13 @@ class AttackCommandColliderKeyframeMove(AttackCommandCollider):
   keyframe_field: str
   keyframe_index_timeline_from: int
   keyframe_index_timeline_to: int
+
+  _export_fields = [
+    *AttackCommandCollider._export_fields,
+    "keyframe_field",
+    "keyframe_index_timeline_from",
+    "keyframe_index_timeline_to",
+  ]
 
   def do(self, atk: "Attack") -> None:
     c = self.c(atk)
@@ -879,6 +951,13 @@ class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
   keyframe_index_timeline: int
   keyframe_value: bool | float | vec2
 
+  _export_fields = [
+    *AttackCommandCollider._export_fields,
+    "keyframe_field",
+    "keyframe_index_timeline",
+    "keyframe_value",
+  ]
+
   def do(self, atk: "Attack") -> None:
     frames = self.c(atk).get_keyframes(self.keyframe_field)
     ass(len(frames) > 1)
@@ -906,6 +985,14 @@ class AttackCommandColliderAlterField(AttackCommandCollider):
   keyframe_index_inside_list: int
   value_old: bool | int | float | vec2
   value_new: bool | int | float | vec2
+
+  _export_fields = [
+    *AttackCommandCollider._export_fields,
+    "keyframe_field",
+    "keyframe_index_inside_list",
+    "value_old",
+    "value_new",
+  ]
 
   def do(self, atk: "Attack") -> None:
     c = self.c(atk)
@@ -961,6 +1048,16 @@ class Attack:  ##
   scheduled_commands: list[AttackCommand] = field(default_factory=list)
 
   _next_collider_id: ColliderID = 1
+
+  _export_fields = [
+    "name",
+    "duration_frames",
+    "colliders",
+    "timeline_at",
+    "history_head",
+    "history",
+    "_next_collider_id",
+  ]
 
   def next_collider_id(self) -> ColliderID:
     result = self._next_collider_id
@@ -1042,7 +1139,7 @@ class State:
     dragging_keyframe: str | None = None
     ##
 
-  action_id: UUID = field(default_factory=uuid4)
+  action_id: int = 1
 
   visualizer: Visualizer = field(default_factory=Visualizer)
   timeline: Timeline = field(default_factory=Timeline)
@@ -1976,7 +2073,7 @@ def _panel_collider_inspector() -> None:  ##
                   vec2(frames[index_f].value.x, x),
                 )
               )
-              if frames[index_f].value.x != x
+              if frames[index_f].value.y != x
               else None
             ),
             -MAX_OFFSET,
@@ -2012,7 +2109,7 @@ def _post_new_frame() -> None:  ##
   io = im.get_io()
 
   if any((im.is_mouse_clicked(x) or im.is_mouse_released(x)) for x in range(3)):
-    g.action_id = uuid4()
+    g.action_id += 1
 
   if g.attack_to_select:
     g.ref_selected_attack = g.attack_to_select
@@ -2055,6 +2152,11 @@ def _post_new_frame() -> None:  ##
             if h_latest.merge_id != g.action_id:
               atk.history_head -= 1
               atk.history.pop()
+    if atk.scheduled_commands:
+      out_filepath = bf.ASSETS_DIR / "attacks" / f"{atk.name}.yaml"
+      bf.recursive_mkdir(out_filepath.parent)
+      with open(out_filepath, "w", encoding="utf-8", newline="\n") as out_file:
+        yaml.dump(dc_serialize(atk), out_file, indent=2, line_break="\n")
     atk.scheduled_commands.clear()
 
     # Handling undo.

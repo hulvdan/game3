@@ -32,13 +32,13 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x created second github acc
-x moved some repos to it
-x replaced owner
-x docs
-x hulvdan.github.io: translated + updated
+x mark: yaml serialization: looks ok
 
-* mark: yaml serialization + persistence
+* mark: yaml deserialization: ability to register custom serialize/deserialize
+* mark: yaml deserialization:
+* mark: yaml deserialization:
+* mark: yaml deserialization:
+* mark: yaml deserialization:
 *
 * devlog: hulvdan@yandex.ru github
 * devlog: transfer repo to hulvdan@yandex.ru
