@@ -33,6 +33,7 @@ PLAN
 ============================================================
 x clear
 x mark: yaml serialization: looks ok
+x docs screenshots
 
 * mark: yaml deserialization: ability to register custom serialize/deserialize
 * mark: yaml deserialization:

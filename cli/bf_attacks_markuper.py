@@ -33,33 +33,58 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
+T = t.TypeVar("T")
 
-def dc_serialize(obj):
-  if is_dataclass(obj):
-    result = {}
-    ass(hasattr(obj, "_export_fields"))
-    for f in getattr(obj, "_export_fields", []):
-      value = getattr(obj, f)
-      result[f] = dc_serialize(value)
-    return result
-  elif isinstance(obj, vec1):
-    return [obj.x]
-  elif isinstance(obj, vec2):
-    return [obj.x, obj.y]
-  elif isinstance(obj, vec3):
-    return [obj.x, obj.y, obj.z]
-  elif isinstance(obj, vec4):
-    return [obj.x, obj.y, obj.z, obj.w]
-  elif isinstance(obj, list):
-    return [dc_serialize(item) for item in obj]
-  elif isinstance(obj, tuple):
-    return tuple(dc_serialize(item) for item in obj)
-  elif isinstance(obj, set):
-    return {dc_serialize(item) for item in obj}
-  elif isinstance(obj, dict):
-    return {key: dc_serialize(value) for key, value in obj.items()}
-  else:
-    return obj  # primitive types
+
+@dataclass(slots=True)
+class DataclassSerializer:  ##
+  _PRIMITIVES: t.ClassVar[tuple[type, ...]] = (bool, int, float, str)
+
+  DeserializeFunc: TypeAlias = t.Callable[[t.Any], t.Any]
+  SerializeFunc: TypeAlias = t.Callable[[t.Any], t.Any]
+
+  _type_registry: dict[type, tuple[SerializeFunc, DeserializeFunc]] = field(
+    default_factory=dict
+  )
+
+  def register(
+    self, type_: type[T], serialize: SerializeFunc, deserialize: DeserializeFunc
+  ) -> None:
+    ass(type_ not in self._type_registry)
+    self._type_registry[type_] = (serialize, deserialize)
+
+  def serialize(self, v: t.Any) -> t.Any:
+    if pair := self._type_registry.get(type(v)):
+      return pair[0](v)
+    if is_dataclass(v):
+      result = {}
+      ass(hasattr(v, "_export_fields"))
+      for f in getattr(v, "_export_fields", []):
+        value = getattr(v, f)
+        result[f] = self.serialize(value)
+      return result
+    elif isinstance(v, (list, tuple, set)):
+      return [self.serialize(item) for item in v]
+    elif isinstance(v, dict):
+      return {key: self.serialize(value) for key, value in v.items()}
+    else:
+      ass(type(v) in self._PRIMITIVES)
+      return v
+
+  def deserialize(self, v: t.Any, into: type) -> t.Any:
+    if into is tuple:
+      ass(type(v) is tuple)
+      return (self.deserialize(x, t.Any) for x in v)
+    elif into is list:
+      ass(type(v) is list)
+      return [self.deserialize(x, t.Any) for x in v]
+    elif into is set:
+      ass(type(v) is set)
+      return {self.deserialize(x, t.Any) for x in v}
+    ass(type(v) in self._PRIMITIVES)
+    return v
+
+  ##
 
 
 ## Consts
@@ -317,8 +342,32 @@ async def _background_dump_run_data():
     _dump_app_state()
 
 
+_serializer = DataclassSerializer()
+
+
 @command
 def tool_attacks_markuper() -> None:
+  _serializer.register(
+    vec1,
+    lambda x: [x.x],
+    lambda x: vec1(x[0]),
+  )
+  _serializer.register(
+    vec2,
+    lambda x: [x.x, x.y],
+    lambda x: vec2(x[0], x[1]),
+  )
+  _serializer.register(
+    vec3,
+    lambda x: [x.x, x.y, x.z],
+    lambda x: vec3(x[0], x[1], x[2]),
+  )
+  _serializer.register(
+    vec4,
+    lambda x: [x.x, x.y, x.z, x.w],
+    lambda x: vec4(x[0], x[1], x[2], x[3]),
+  )
+
   atk1 = Attack(
     name="ROLL_FRONT",
     duration_frames=60,
@@ -2156,7 +2205,7 @@ def _post_new_frame() -> None:  ##
       out_filepath = bf.ASSETS_DIR / "attacks" / f"{atk.name}.yaml"
       bf.recursive_mkdir(out_filepath.parent)
       with open(out_filepath, "w", encoding="utf-8", newline="\n") as out_file:
-        yaml.dump(dc_serialize(atk), out_file, indent=2, line_break="\n")
+        yaml.dump(_serializer.serialize(atk), out_file, indent=2, line_break="\n")
     atk.scheduled_commands.clear()
 
     # Handling undo.

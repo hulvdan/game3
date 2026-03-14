@@ -43,3 +43,16 @@ uv run pre-commit install --install-hooks
     -> renamed it into `template` in github desktop
 # * Open Godot -> Project Settings -> Change name
 ```
+
+<!-- [[[cog
+import os, glob
+from pathlib import Path
+
+for filepath in [x for x in os.listdir("docs") if str(x).endswith(".png")]:
+  print(f"![](docs/{filepath})")
+cog]]] -->
+![](docs/1.png)
+![](docs/2.png)
+![](docs/3.png)
+![](docs/4.png)
+<!-- [[[end]]] -->

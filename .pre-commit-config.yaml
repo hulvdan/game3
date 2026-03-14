@@ -126,6 +126,14 @@ repos:
         require_serial: true
         files: \.(yml|yaml|yamlfmt|yamllint)$
         stages: [pre-commit, pre-merge-commit, manual]
+      - id: cog-readme
+        name: cog-readme
+        entry: uv run cog -n utf-8 -U -r -P --markers="[[[cog cog]]] [[[end]]]" README.md
+        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        require_serial: true
+        pass_filenames: false
+        always_run: true
+        language: system
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
     rev: v3.6.1
     hooks:

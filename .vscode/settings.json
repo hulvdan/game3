@@ -61,6 +61,10 @@
       {
         "match": ".pyi?$",
         "cmd": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix"
+      },
+      {
+        "match": ".md$",
+        "cmd": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file}"
       }
       // {
       //     // Match scss files except names start with `_`.
