@@ -56,6 +56,12 @@ class DataclassSerializer:  ##
   def serialize(self, v: t.Any) -> t.Any:
     if pair := self._type_registry.get(type(v)):
       return pair[0](v)
+    for type_, pair in self._type_registry.items():
+      if isinstance(v, type_):
+        return pair[0](v)
+    return self.serialize_default(v)
+
+  def serialize_default(self, v: t.Any) -> t.Any:
     if is_dataclass(v):
       result = {}
       ass(hasattr(v, "_export_fields"))
@@ -367,6 +373,16 @@ def tool_attacks_markuper() -> None:
     lambda x: [x.x, x.y, x.z, x.w],
     lambda x: vec4(x[0], x[1], x[2], x[3]),
   )
+
+  def serialize_collider(v: ColliderBase):
+    result = _serializer.serialize_default(v)
+    result["type"] = v.type.name
+    return result
+
+  def deserialize_collider(v) -> ColliderBase:
+    return v
+
+  _serializer.register(ColliderBase, serialize_collider, deserialize_collider)
 
   atk1 = Attack(
     name="ROLL_FRONT",
@@ -2202,7 +2218,14 @@ def _post_new_frame() -> None:  ##
               atk.history_head -= 1
               atk.history.pop()
     if atk.scheduled_commands:
-      out_filepath = bf.ASSETS_DIR / "attacks" / f"{atk.name}.yaml"
+      if not g.ref_selected_attack_creature:
+        raise ass(0)
+      out_filepath = (
+        bf.ASSETS_DIR
+        / "attacks"
+        / g.ref_selected_attack_creature.name
+        / f"{atk.name}.yaml"
+      )
       bf.recursive_mkdir(out_filepath.parent)
       with open(out_filepath, "w", encoding="utf-8", newline="\n") as out_file:
         yaml.dump(_serializer.serialize(atk), out_file, indent=2, line_break="\n")

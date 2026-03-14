@@ -1,0 +1,46 @@
+_next_collider_id: 2
+colliders:
+  - is_active:
+      - id: 1
+        index_timeline: 0
+        value: true
+    radius:
+      - id: 3
+        index_timeline: 0
+        value: 0.5
+      - id: 6
+        index_timeline: 38
+        value: 5
+      - id: 7
+        index_timeline: 70
+        value: 4
+    rotation:
+      - id: 5
+        index_timeline: 0
+        value: 0
+    spread:
+      - id: 4
+        index_timeline: 0
+        value: 1
+    tr:
+      - id: 2
+        index_timeline: 0
+        value:
+          - 0.0
+          - 0.0
+    type: CAPSULE
+duration_frames: 90
+history:
+  - collider_id: 1
+    keyframe_field: radius
+    keyframe_index_timeline_from: 40
+    keyframe_index_timeline_to: 40
+    merge_id: 2
+  - collider_id: 1
+    keyframe_field: radius
+    keyframe_index_timeline_from: 40
+    keyframe_index_timeline_to: 38
+    merge_id: 3
+history_head: 1
+name: DASH
+timeline_at: 38
