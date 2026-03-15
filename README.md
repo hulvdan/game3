@@ -49,6 +49,10 @@ from pathlib import Path
 for filepath in reversed(list(Path("docs").glob("*.png"))):
   print(f"![](docs/{filepath.name})")
 cog]]] -->
+![](docs/8.png)
+![](docs/7.png)
+![](docs/6.png)
+![](docs/5.png)
 ![](docs/4.png)
 ![](docs/3.png)
 ![](docs/2.png)
