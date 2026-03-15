@@ -1,0 +1,105 @@
+_next_collider_id: 3
+colliders:
+  - '@': CAPSULE
+    is_active:
+      - id: 1
+        index_timeline: 0
+        value: true
+    radius:
+      - id: 3
+        index_timeline: 0
+        value: 0.5
+      - id: 6
+        index_timeline: 43
+        value: 5
+      - id: 7
+        index_timeline: 70
+        value: 0.25
+    rotation:
+      - id: 5
+        index_timeline: 0
+        value: 0
+    spread:
+      - id: 4
+        index_timeline: 0
+        value: 3.5
+    tr:
+      - id: 2
+        index_timeline: 0
+        value:
+          - 0.0
+          - 0.0
+  - '@': CIRCLE
+    is_active:
+      - id: 1
+        index_timeline: 0
+        value: true
+      - id: 5
+        index_timeline: 19
+        value: false
+      - id: 4
+        index_timeline: 35
+        value: true
+    radius:
+      - id: 3
+        index_timeline: 0
+        value: 2.0
+    tr:
+      - id: 2
+        index_timeline: 0
+        value:
+          - 1.0
+          - 1.75
+duration_frames: 90
+history:
+  - merge_id: 2
+  - merge_id: 8
+  - merge_id: 12
+  - merge_id: 14
+  - merge_id: 16
+  - merge_id: 18
+  - merge_id: 20
+  - merge_id: 22
+  - merge_id: 24
+  - merge_id: 26
+  - merge_id: 33
+  - merge_id: 40
+  - merge_id: 42
+  - merge_id: 44
+  - merge_id: 46
+  - merge_id: 48
+  - merge_id: 50
+  - merge_id: 54
+  - merge_id: 56
+  - merge_id: 58
+  - merge_id: 60
+  - merge_id: 62
+  - merge_id: 64
+  - merge_id: 66
+  - merge_id: 68
+  - merge_id: 70
+  - merge_id: 72
+  - merge_id: 74
+  - merge_id: 76
+  - merge_id: 78
+  - merge_id: 80
+  - merge_id: 82
+  - merge_id: 84
+  - merge_id: 86
+  - merge_id: 88
+  - merge_id: 90
+  - merge_id: 92
+  - merge_id: 94
+  - merge_id: 96
+  - merge_id: 98
+  - merge_id: 100
+  - merge_id: 102
+  - merge_id: 110
+  - merge_id: 122
+  - merge_id: 126
+  - merge_id: 134
+  - merge_id: 136
+  - merge_id: 138
+history_head: 47
+name: DASH
+timeline_at: 71.70043415340086

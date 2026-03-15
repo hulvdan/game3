@@ -41,7 +41,13 @@ x mark: bf_lib deserialization works
 x mark: bf_lib ser/deser _export_fields
 x mark: bf_lib abstract serialization works
 x mark: bf_lib abstract deserialization works
+x mark: remove colliderbase metaclass
+x mark: serialization works
 
+* mark: serialize+deserialize undo commands
+* mark:
+*
+*
 * mark: bf_lib ser/deser dict[str, Any]
 *
 * mark: history: attack collider add

@@ -19,6 +19,7 @@ from types import ModuleType
 from typing import (
   Any,
   Callable,
+  Generic,
   Iterator,
   Sequence,
   TypeAlias,
@@ -359,9 +360,16 @@ class DataclassSerializer:
         continue
       if (export_fields is not None) and (field_name not in export_fields):
         continue
-      result[field_name] = self.serialize_root(
-        getattr(value, field_name), field_instance.type
-      )
+
+      # Handling `T` of generics
+      to = field_instance.type
+      for i, param in enumerate(getattr(value, "__parameters__", ())):
+        if param is to:
+          to = t.get_args(as_)[i]
+          break
+
+      result[field_name] = self.serialize_root(getattr(value, field_name), to)
+
     return result
     ##
 
@@ -375,15 +383,23 @@ class DataclassSerializer:
 
   def deserialize(self, value, as_) -> Any:  ##
     assert type(value) is dict
-    fields_ = (x for x in fields(as_) if x.name in value)
+    as__ = t.get_origin(as_) or as_
+    fields_ = (x for x in fields(as__) if x.name in value)
     if (export_fields := getattr(as_, self.export_fields_field, None)) is not None:
       fields_ = (x for x in fields_ if x.name in export_fields)
-    return as_(
-      **{
-        field.name: self.deserialize_root(value[field.name], field.type)
-        for field in fields_
-      }
-    )
+    parameters = getattr(t.get_origin(as_), "__parameters__", ())
+
+    values = {}
+    for x in fields_:
+      # Handling `T` of generics
+      to = x.type
+      for param, arg in zip(parameters, t.get_args(as_), strict=True):
+        if param is to:
+          to = arg
+          break
+      values[x.name] = self.deserialize_root(value[x.name], to)
+
+    return as_(**values)
     ##
 
   ## Protected
@@ -490,6 +506,11 @@ def _test_serializer():  ##
   COLLIDER_REGISTRY: dict[str, type[ColliderBase]] = {}
 
   @dataclass
+  class Keyframe(Generic[T]):
+    index: int
+    value: T
+
+  @dataclass
   @t.final
   class ColliderCircle(ColliderBase):
     @classmethod
@@ -534,6 +555,8 @@ def _test_serializer():  ##
     collider_any: Any = None
     none_any: Any = None
 
+    frame: Keyframe[float] = field(default_factory=lambda: Keyframe(0, 1.1))
+
     _export_fields: t.ClassVar[list[str]] = [
       "primitive",
       "list_of_primitives",
@@ -546,6 +569,7 @@ def _test_serializer():  ##
       "collider",
       "collider_any",
       "none_any",
+      "frame",
     ]
 
   expected_serialized = {
@@ -576,17 +600,21 @@ def _test_serializer():  ##
     "collider": {"@": "CIRCLE", "base_value": 1, "radius": 1},
     "collider_any": {"%": "ColliderCircle", "value": {"base_value": 6, "radius": 7}},
     "none_any": {"%": "None", "value": None},
+    "frame": {"index": 0, "value": 1.1},
   }
   expected_deserialized = Attack(
     primitive=1,
     not_exported=2,
     colliders=[ColliderCircle(1, 5), ColliderCapsule(2, 3, 4, 5)],
+    colliders_any=[ColliderCircle(1, 5), ColliderCapsule(2, 3, 4, 5)],
+    collider=ColliderCircle(1, 1),
     collider_any=ColliderCircle(6, 7),
   )
 
   ser = DataclassSerializer()
   ser.register(vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
   ser.register(vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
+  ser.register(Keyframe, ser.serialize, ser.deserialize)
 
   def collider_serialize(x: ColliderBase, as_) -> Any:
     assert isinstance(x, ColliderBase)

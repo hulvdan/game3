@@ -134,6 +134,14 @@ repos:
         pass_filenames: false
         always_run: true
         language: system
+      - id: pytest-bf_lib
+        name: pytest-bf_lib
+        entry: uv run pytest cli/bf_lib.py
+        language: system
+        require_serial: true
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit, pre-merge-commit, manual]
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
     rev: v3.6.1
     hooks:

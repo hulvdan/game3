@@ -16,7 +16,7 @@ from enum import IntEnum, unique
 from functools import partial, wraps
 from math import pi
 from pathlib import Path
-from typing import Callable, Generic, Self, TypeAlias, TypeVar
+from typing import Any, Callable, ClassVar, Generic, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
 import numpy as np
@@ -33,7 +33,7 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
-PRE_BUILD_DATA_REMOVEME = 1
+PRE_BUILD_DATA_REMOVEME = 0
 
 T = t.TypeVar("T")
 Variant: TypeAlias = t.Any
@@ -300,20 +300,24 @@ _serializer = bf.DataclassSerializer()
 
 @command
 def tool_attacks_markuper() -> None:
-  _serializer.register(vec1, lambda x, _: [x.x], lambda x, _: vec1(*x))
-  _serializer.register(vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
-  _serializer.register(vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
-  _serializer.register(vec4, lambda x, _: [x.x, x.y, x.z, x.w], lambda x, _: vec4(*x))
+  ser = _serializer
+  ser.register(vec1, lambda x, _: [x.x], lambda x, _: vec1(*x))
+  ser.register(vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
+  ser.register(vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
+  ser.register(vec4, lambda x, _: [x.x, x.y, x.z, x.w], lambda x, _: vec4(*x))
 
-  # def serialize_collider(v: ColliderBase, as_: type):
-  #   ass(issubclass(type(v), as_))
-  #   result = _serializer.serialize(v, as_)
-  #   result["type"] = v.type.name
-  #   return result
-  # def deserialize_collider(v, into) -> ColliderBase:
-  #   ass(into is ColliderBase)
-  #   return v
-  # _serializer.register("collider", ColliderBase, serialize_collider, deserialize_collider)
+  def collider_serialize(x: ColliderBase, as_) -> Any:
+    ass(isinstance(x, ColliderBase))
+    ass(as_ is ColliderBase)
+    return {"@": x.type().name, **ser.serialize_root(x, type(x))}
+
+  def collider_deserialize(x: dict, as_) -> ColliderBase:
+    ass(as_ is ColliderBase)
+    return COLLIDER_REGISTRY[x["@"]](**{k: v for k, v in x.items() if k != "@"})
+
+  ser.register(ColliderBase, collider_serialize, collider_deserialize)
+  for tt in COLLIDER_REGISTRY.values():
+    ser.register(tt, ser.serialize, ser.deserialize)
 
   if PRE_BUILD_DATA_REMOVEME:
     atk1 = Attack(
@@ -351,8 +355,9 @@ def tool_attacks_markuper() -> None:
       g.creatures.append(creature)
       for attack_filepath in folder.glob("*.yaml"):
         yaml_content = yaml.safe_load(attack_filepath.read_text(encoding="utf-8"))
-        attack = _serializer.deserialize(yaml_content, Attack)
-        creature.attacks.append(attack)
+        if yaml_content:
+          attack = _serializer.deserialize_root(yaml_content, Attack)
+          creature.attacks.append(attack)
 
   recursive_validate(g)
 
@@ -400,7 +405,7 @@ def tool_attacks_markuper() -> None:
         bf.ImGuiPanel("Logs", hello_imgui.log_gui),
       ],
       setup_imgui_style=setup_imgui_style,
-      post_new_frame=_post_new_frame,
+      post_new_frame=enable_debug(_post_new_frame),
       before_exit=_dump_app_state,
       show_status=_show_status,
     )
@@ -575,19 +580,19 @@ class KeyframeTypeFloat(KeyframeType[float]):  ##
   fmt: str = "%.3f"
 
   def make_default(self) -> float:
-    bf.imgui_assert(self.min <= self.default <= self.max)
+    ass(self.min <= self.default <= self.max)
     return self.default
 
   def make_copy(self, v: float) -> float:
-    bf.imgui_assert(self.min <= v <= self.max)
+    ass(self.min <= v <= self.max)
     return v
 
   def make_lerp(self, v1: float, v2: float, t: float) -> float:
     ass(0 <= t <= 1)
     result = bf.lerp(v1, v2, t)
-    bf.imgui_assert(self.min <= v1 <= self.max)
-    bf.imgui_assert(self.min <= v2 <= self.max)
-    bf.imgui_assert(self.min <= result * 1.001 <= self.max * 1.002)
+    ass(self.min <= v1 <= self.max)
+    ass(self.min <= v2 <= self.max)
+    ass(self.min <= result * 1.001 <= self.max * 1.002)
     if g.visualizer.round_to_step:
       result = bf.round_to_step(result, self.step)
     return result
@@ -629,56 +634,28 @@ class KeyframeTypeTr(KeyframeType[vec2]):  ##
   ##
 
 
-class ColliderBaseMeta(type):  ##
-  def __init__(cls, name, bases, namespace):
-    super().__init__(name, bases, namespace)
-    is_base = name == "ColliderBase"
-    ass(is_base or (ColliderBase in bases))
-    if is_base:
-      return
+@dataclass(slots=True)
+class ColliderBase(ABC):  ##
+  @classmethod
+  @abstractmethod
+  def type(cls) -> ColliderType: ...
 
-    cls.keyframe_fields = []
-
-    for field_name, field_type in cls.__annotations__.items():
-      origin = t.get_origin(field_type)
-      args = t.get_args(field_type)
-
-      if (origin in (list, t.List)) and args:  # noqa: UP006
-        if t.get_origin(args[0]) is Keyframe:
-          cls.keyframe_fields.append(field_name)
-
-    prefix = "_keyframe_"
-    for field_name, field_type in namespace.items():
-      if field_name == "_keyframe_values":
-        continue
-      if field_name.startswith(prefix):
-        field_name_wo_prefix = field_name.removeprefix(prefix)
-        ass(isinstance(field_type, KeyframeType))
-        ass(field_name_wo_prefix in cls.keyframe_fields)
-
-    for f in cls.keyframe_fields:
-      ass(f"{prefix}{f}" in namespace)
-
-  ##
-
-
-class ColliderBase(metaclass=ColliderBaseMeta):  ##
-  id: int = 0
-  type: t.ClassVar[ColliderType] = ColliderType.INVALID
   keyframe_fields: t.ClassVar[list[str]]
+
+  id: int = 0
 
   selected_keyframe: SelectedKeyframe | None = None
   keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
 
-  __next_keyframe_id: KeyframeID = 1
+  _next_keyframe_id_value: KeyframeID = 1
 
   def __new__(cls, *_args, **_kwargs):
     ass(cls is not ColliderBase)
     return super().__new__(cls)
 
   def _next_keyframe_id(self) -> KeyframeID:
-    result = self.__next_keyframe_id
-    self.__next_keyframe_id += 1
+    result = self._next_keyframe_id_value
+    self._next_keyframe_id_value += 1
     return result
 
   def get_keyframes(self, field_name: str) -> list[Keyframe]:
@@ -764,23 +741,61 @@ class ColliderBase(metaclass=ColliderBaseMeta):  ##
   @classmethod
   def make(cls, id_: int) -> Self:
     ass(cls is not ColliderBase)
-    result = cls(*[[] for _ in range(len(cls.keyframe_fields))])
-    result.id = id_
+    result = cls(
+      id=id_,
+      selected_keyframe=None,
+      keyframe_to_select=None,
+      _next_keyframe_id_value=1,
+      **{x: [] for x in cls.keyframe_fields},
+    )
     for f in cls.keyframe_fields:
       result.make_default_keyframe_at(f, 0)
     return result
 
+  def __init_subclass__(cls, **kwargs):
+    super().__init_subclass__(**kwargs)
+    if cls.type().name in COLLIDER_REGISTRY:
+      ass(cls.keyframe_fields)
+      return
+
+    COLLIDER_REGISTRY[cls.type().name] = cls
+    cls.keyframe_fields = []
+
+    prefix = "_keyframe_"
+
+    for field_name, field_type in cls.__annotations__.items():
+      origin = t.get_origin(field_type)
+      args = t.get_args(field_type)
+
+      if (origin in (list, t.List)) and args:  # noqa: UP006
+        if t.get_origin(args[0]) is Keyframe:
+          ass(field_name not in cls.keyframe_fields)
+          cls.keyframe_fields.append(field_name)
+          ass(f"{prefix}{field_name}" in cls.__annotations__)
+
+    for field_name, field_type in cls.__annotations__.items():
+      if field_name.startswith(prefix):
+        field_name_wo_prefix = field_name.removeprefix(prefix)
+        ass(t.get_origin(field_type) is ClassVar)
+        ass(t.get_args(field_type)[0] is KeyframeType)
+        ass(field_name_wo_prefix in cls.keyframe_fields)
+
   ##
+
+
+COLLIDER_REGISTRY: dict[str, type[ColliderBase]] = {}
 
 
 @dataclass(slots=True)
 @t.final
 class ColliderCircle(ColliderBase):  ##
-  type: t.ClassVar[ColliderType] = ColliderType.CIRCLE
+  @classmethod
+  def type(cls) -> ColliderType:
+    return ColliderType.CIRCLE
 
-  is_active: list[Keyframe[bool]]
-  tr: list[Keyframe[vec2]]
-  radius: list[Keyframe[float]]
+  is_active: list[Keyframe[bool]] = field(default_factory=list)
+  tr: list[Keyframe[vec2]] = field(default_factory=list)
+  radius: list[Keyframe[float]] = field(default_factory=list)
 
   _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
   _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
@@ -800,13 +815,15 @@ class ColliderCircle(ColliderBase):  ##
 @dataclass(slots=True)
 @t.final
 class ColliderCapsule(ColliderBase):  ##
-  type: t.ClassVar[ColliderType] = ColliderType.CAPSULE
+  @classmethod
+  def type(cls) -> ColliderType:
+    return ColliderType.CAPSULE
 
-  is_active: list[Keyframe[bool]]
-  tr: list[Keyframe[vec2]]
-  radius: list[Keyframe[float]]
-  spread: list[Keyframe[float]]
-  rotation: list[Keyframe[float]]
+  is_active: list[Keyframe[bool]] = field(default_factory=list)
+  tr: list[Keyframe[vec2]] = field(default_factory=list)
+  radius: list[Keyframe[float]] = field(default_factory=list)
+  spread: list[Keyframe[float]] = field(default_factory=list)
+  rotation: list[Keyframe[float]] = field(default_factory=list)
 
   _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
   _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
@@ -1280,7 +1297,7 @@ def _panel_attack_inspector() -> None:  ##
     flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
     if atk.ref_selected_collider is collider:
       flags |= im.TreeNodeFlags_.selected
-    if im.tree_node_ex(f"{i} {collider.type.name}", flags):
+    if im.tree_node_ex(f"{i} {collider.type().name}", flags):
       if im.is_item_hovered():
         atk.collider_to_hover = collider
       if im.is_item_clicked():
@@ -1465,7 +1482,7 @@ def _panel_visualizer() -> None:
     m = glm.translate(vec3(c_pos.x, 0, c_pos.y))
     center = vec3(m * vec4(0, 0, 0, 1))
 
-    match c.type:
+    match c.type():
       case ColliderType.CIRCLE:
         if not isinstance(c, ColliderCircle):
           ass(0)
@@ -1532,7 +1549,7 @@ def _panel_visualizer() -> None:
             c.tr[tr_closest_index].value + off,
           )
         )
-    # match c.type:
+    # match c.type():
     #   case ColliderType.CIRCLE:
     #     if not isinstance(c, ColliderCircle):
     #       raise ass(0)
