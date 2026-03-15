@@ -8,14 +8,23 @@ import socket
 import subprocess
 import sys
 import typing as t
+from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass, field, fields, is_dataclass
 from datetime import datetime
-from enum import Enum
+from enum import Enum, IntEnum, unique
 from functools import partial
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Callable, Iterator, Sequence, TypeAlias, TypedDict, TypeVar
+from typing import (
+  Any,
+  Callable,
+  Iterator,
+  Sequence,
+  TypeAlias,
+  TypedDict,
+  TypeVar,
+)
 
 import cv2
 import fnvhash
@@ -320,9 +329,8 @@ class DataclassSerializer:
 
   export_fields_field: str = "_export_fields"
 
-  def register(
-    self, code: str, type_: type[T], serialize: SerFunc, deserialize: DeserFunc
-  ) -> None:  ##
+  def register(self, type_: type, serialize: SerFunc, deserialize: DeserFunc) -> None:  ##
+    code = type_.__name__
     assert code not in self._variant_ser_types
     assert type_ not in self._variant_deser_types
     for v in self._variant_ser_types:
@@ -336,9 +344,14 @@ class DataclassSerializer:
   def serialize(self, value, as_=None) -> Any:  ##
     if as_ is None:
       as_ = type(value)
-    if not is_dataclass(value):
-      return self._variant_ser_types[t.get_origin(as_) or as_][1](value, as_)
+    tt = t.get_origin(as_) or as_
+    is_dc = is_dataclass(value)
+    if (not is_dc) or (is_dc and (tt in self._variant_ser_types)):
+      return self._variant_ser_types[tt][1](value, as_)
+    return self.serialize_dataclass_helper(value, as_)
+    ##
 
+  def serialize_dataclass_helper(self, value, as_) -> Any:  ##
     result = {}
     export_fields = getattr(as_, self.export_fields_field, None)
     for field_name, field_instance in value.__dataclass_fields__.items():
@@ -364,9 +377,7 @@ class DataclassSerializer:
 
   ## Protected
 
-  class _VariantSerialized(TypedDict):
-    vtype: str
-    value: Any
+  _VariantSerialized = TypedDict("_VariantSerialized", {"%": str, "value": Any})
 
   _variant_ser_types: dict[type, tuple[str, SerFunc]] = field(default_factory=dict)
   _variant_deser_types: dict[str, tuple[type, DeserFunc]] = field(default_factory=dict)
@@ -374,11 +385,11 @@ class DataclassSerializer:
   def _serialize_variant(self, value, as_) -> _VariantSerialized:
     assert as_ == Any
     code, serialize = self._variant_ser_types[type(value)]
-    return {"vtype": code, "value": serialize(value, type(value))}
+    return {"%": code, "value": serialize(value, type(value))}
 
   def _deserialize_variant(self, value: _VariantSerialized, as_) -> Any:
     assert as_ == Any
-    type_, deserialize = self._variant_deser_types[value["vtype"]]
+    type_, deserialize = self._variant_deser_types[value["%"]]
     return deserialize(value["value"], type_)
 
   def _serialize_primitive(self, v, _as):
@@ -419,6 +430,7 @@ class DataclassSerializer:
 
   def __post_init__(self) -> None:
     self._variant_ser_types = {
+      type(None): ("None", self._serialize_primitive),
       bool: ("bool", self._serialize_primitive),
       int: ("int", self._serialize_primitive),
       float: ("float", self._serialize_primitive),
@@ -430,6 +442,7 @@ class DataclassSerializer:
       # "dict": _serialize_dict,
     }
     self._variant_deser_types = {
+      "None": (type(None), self._deserialize_primitive),
       "bool": (bool, self._deserialize_primitive),
       "int": (int, self._deserialize_primitive),
       "float": (float, self._deserialize_primitive),
@@ -445,17 +458,53 @@ class DataclassSerializer:
 
 
 def _test_serializer():  ##
-  ser = DataclassSerializer()
-  ser.register("vec2", vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
-  ser.register("vec3", vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
+  @unique
+  class TestColliderType(IntEnum):
+    CIRCLE = 1
+    CAPSULE = 2
 
-  @dataclass(slots=True)
+  @dataclass
+  class TestColliderBase(ABC):
+    @classmethod
+    @abstractmethod
+    def type(cls) -> TestColliderType: ...
+
+    base_value: int
+
+    def __init_subclass__(cls, **kwargs):
+      super().__init_subclass__(**kwargs)
+      assert cls.type().name not in COLLIDER_REGISTRY
+      COLLIDER_REGISTRY[cls.type().name] = cls
+
+  COLLIDER_REGISTRY: dict[str, type[TestColliderBase]] = {}
+
+  @dataclass
+  @t.final
+  class TestColliderCircle(TestColliderBase):
+    @classmethod
+    def type(cls) -> TestColliderType:
+      return TestColliderType.CIRCLE
+
+    radius: float
+
+  @dataclass
+  @t.final
+  class TestColliderCapsule(TestColliderBase):
+    @classmethod
+    def type(cls) -> TestColliderType:
+      return TestColliderType.CAPSULE
+
+    radius: float
+    spread: float
+    rotation: float
+
+  @dataclass
   class TestInner:
     pos: vec2 = field(default_factory=lambda: vec2(1, 2))
     variant: Any = field(default_factory=lambda: vec2(1, 2))
     variants: list[Any] = field(default_factory=lambda: [vec2(1, 2), vec3(3, 4, 5)])
 
-  @dataclass(slots=True)
+  @dataclass
   class TestAttack:
     primitive: int = 0
     list_of_primitives: list[int] = field(default_factory=lambda: [1, 2, 3, 4])
@@ -468,6 +517,9 @@ def _test_serializer():  ##
     )
     inner_dataclass: TestInner = field(default_factory=TestInner)
     not_exported: int = 1
+    colliders: list[TestColliderBase] = field(default_factory=list)
+    collider_any: Any = None
+    none_any: Any = None
 
     _export_fields: t.ClassVar[list[str]] = [
       "primitive",
@@ -476,6 +528,9 @@ def _test_serializer():  ##
       "indefinite_tuple_of_primitives",
       "closed_tuple_of_primitives",
       "inner_dataclass",
+      "colliders",
+      "collider_any",
+      "none_any",
     ]
 
   expected_serialized = {
@@ -486,15 +541,45 @@ def _test_serializer():  ##
     "closed_tuple_of_primitives": [1, 2.0],
     "inner_dataclass": {
       "pos": [1.0, 2.0],
-      "variant": {"vtype": "vec2", "value": [1.0, 2.0]},
+      "variant": {"%": "vec2", "value": [1.0, 2.0]},
       "variants": [
-        {"vtype": "vec2", "value": [1.0, 2.0]},
-        {"vtype": "vec3", "value": [3.0, 4.0, 5.0]},
+        {"%": "vec2", "value": [1.0, 2.0]},
+        {"%": "vec3", "value": [3.0, 4.0, 5.0]},
       ],
     },
+    "colliders": [
+      {"@": "CIRCLE", "base_value": 1, "radius": 5},
+      {"@": "CAPSULE", "base_value": 2, "radius": 3, "spread": 4, "rotation": 5},
+    ],
+    "collider_any": {"%": "TestColliderCircle", "value": {"base_value": 6, "radius": 7}},
+    "none_any": {"%": "None", "value": None},
   }
-  expected_deserialized = TestAttack(primitive=1, not_exported=2)
-  assert ser.serialize(expected_deserialized) == expected_serialized
+  expected_deserialized = TestAttack(
+    primitive=1,
+    not_exported=2,
+    colliders=[TestColliderCircle(1, 5), TestColliderCapsule(2, 3, 4, 5)],
+    collider_any=TestColliderCircle(6, 7),
+  )
+
+  ser = DataclassSerializer()
+  ser.register(vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
+  ser.register(vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
+
+  def collider_serialize(x: TestColliderBase, as_) -> Any:
+    assert isinstance(x, TestColliderBase)
+    assert as_ is TestColliderBase
+    return {"@": x.type().name, **ser.serialize(x, type(x))}
+
+  def collider_deserialize(x: dict, as_) -> TestColliderBase:
+    assert as_ is TestColliderBase
+    return COLLIDER_REGISTRY[x["@"]](**{k: v for k, v in x.items() if k != "@"})
+
+  ser.register(TestColliderBase, collider_serialize, collider_deserialize)
+  for tt in COLLIDER_REGISTRY.values():
+    ser.register(tt, ser.serialize_dataclass_helper, ser.deserialize)
+
+  actual_serialized = ser.serialize(expected_deserialized)
+  assert actual_serialized == expected_serialized
   expected_deserialized.not_exported = 1
   actual_deserialized = ser.deserialize(expected_serialized, TestAttack)
   assert actual_deserialized == expected_deserialized

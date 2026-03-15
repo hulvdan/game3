@@ -300,30 +300,10 @@ _serializer = bf.DataclassSerializer()
 
 @command
 def tool_attacks_markuper() -> None:
-  _serializer.register(
-    "vec1",
-    vec1,
-    lambda x, _: [x.x],
-    lambda x, _: vec1(x[0]),
-  )
-  _serializer.register(
-    "vec2",
-    vec2,
-    lambda x, _: [x.x, x.y],
-    lambda x, _: vec2(x[0], x[1]),
-  )
-  _serializer.register(
-    "vec3",
-    vec3,
-    lambda x, _: [x.x, x.y, x.z],
-    lambda x, _: vec3(x[0], x[1], x[2]),
-  )
-  _serializer.register(
-    "vec4",
-    vec4,
-    lambda x, _: [x.x, x.y, x.z, x.w],
-    lambda x, _: vec4(x[0], x[1], x[2], x[3]),
-  )
+  _serializer.register(vec1, lambda x, _: [x.x], lambda x, _: vec1(*x))
+  _serializer.register(vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
+  _serializer.register(vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
+  _serializer.register(vec4, lambda x, _: [x.x, x.y, x.z, x.w], lambda x, _: vec4(*x))
 
   # def serialize_collider(v: ColliderBase, as_: type):
   #   ass(issubclass(type(v), as_))
