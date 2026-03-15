@@ -40,8 +40,8 @@ x mark: bf_lib serialization works
 x mark: bf_lib deserialization works
 x mark: bf_lib ser/deser _export_fields
 x mark: bf_lib abstract serialization works
+x mark: bf_lib abstract deserialization works
 
-* mark: bf_lib abstract deserialization works
 * mark: bf_lib ser/deser dict[str, Any]
 *
 * mark: history: attack collider add

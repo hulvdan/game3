@@ -2183,7 +2183,9 @@ def _post_new_frame() -> None:  ##
       )
       bf.recursive_mkdir(out_filepath.parent)
       with open(out_filepath, "w", encoding="utf-8", newline="\n") as out_file:
-        yaml.dump(_serializer.serialize(atk, Attack), out_file, indent=2, line_break="\n")
+        yaml.dump(
+          _serializer.serialize_root(atk, Attack), out_file, indent=2, line_break="\n"
+        )
     atk.scheduled_commands.clear()
 
     # Handling undo.
