@@ -39,134 +39,6 @@ T = t.TypeVar("T")
 Variant: TypeAlias = t.Any
 
 
-@dataclass(slots=True)
-class DataclassSerializer:  ##
-  _PRIMITIVES: t.ClassVar[tuple[type, ...]] = (bool, int, float, str)
-  _PRIMITIVES_AND_COLLECTIONS_EXCEPT_DICT: t.ClassVar[tuple[type, ...]] = (
-    *_PRIMITIVES,
-    set,
-    tuple,
-    list,
-  )
-
-  DeserializeFunc: TypeAlias = t.Callable[[t.Any, type], t.Any]
-  SerializeFunc: TypeAlias = t.Callable[[t.Any, type], t.Any]
-
-  VariantSerializationFunc: TypeAlias = t.Callable[[t.Any], t.Any]
-  VariantDeserializationFunc: TypeAlias = t.Callable[[t.Any], t.Any]
-
-  _type_registry: dict[type, tuple[SerializeFunc, DeserializeFunc]] = field(
-    default_factory=dict
-  )
-
-  def register(
-    self, type_: type[T], serialize: SerializeFunc, deserialize: DeserializeFunc
-  ) -> None:
-    ass(type_ not in self._type_registry)
-    self._type_registry[type_] = (serialize, deserialize)
-
-  def serialize(self, v: t.Any, as_: t.Any) -> t.Any:
-    if pair := self._type_registry.get(type(v)):
-      return pair[0](v, as_)
-    for type_, pair in self._type_registry.items():
-      if isinstance(v, type_):
-        return pair[0](v, as_)
-    return self.serialize_default(v, as_)
-
-  def serialize_default(self, v: t.Any, as_: t.Any) -> t.Any:
-    if is_dataclass(v):
-      result = {}
-      ass(hasattr(v, "_export_fields"))
-      for f in getattr(v, "_export_fields", []):
-        value = getattr(v, f)
-        result[f] = self.serialize(value, v.__dataclass_fields__[f].type)
-      return result
-    elif isinstance(v, (list, tuple, set)):
-      return [self.serialize(item, as_) for item in v]
-    elif isinstance(v, dict):
-      return {key: self.serialize(value, as_) for key, value in v.items()}
-    else:
-      ass(type(v) in self._PRIMITIVES)
-      return v
-
-  def deserialize_default(self, v: t.Any, as_: type) -> t.Any:
-    ass(as_ is not t.Any)
-    if is_dataclass(as_):
-      ass(type(v) is dict)
-      ff = {x.name: x for x in fields(as_)}
-      result = as_(**{k: self.deserialize(v, ff[k].type) for k, v in v.items()})
-      # ass(hasattr(into, "_export_fields"))
-      # for f in getattr(into, "_export_fields", []):
-      #   value = getattr(into, f)
-      #   result[f] = self.deserialize(value, )
-      return result
-    for container in (tuple, list, set):
-      if (as_ is container) or (t.get_origin(as_) is container):
-        ass(type(v) is container)
-        args = t.get_args(as_)
-        ass(len(args) == 1)
-        return container(self.deserialize(x, args[0]) for x in v)
-    ass(type(v) in self._PRIMITIVES)
-    return v
-
-  def deserialize(self, v: t.Any, into: t.Any) -> t.Any:
-    if pair := self._type_registry.get(into):
-      return pair[1](v, into)
-    if type(v) in self._PRIMITIVES_AND_COLLECTIONS_EXCEPT_DICT:
-      return self.deserialize_default(v, into)
-    for type_, pair in self._type_registry.items():
-      if origin := t.get_origin(into):
-        if isinstance(type_, origin):
-          return pair[1](v, into)
-      elif isinstance(type_, into):
-        return pair[1](v, into)
-    if type(v) is dict:
-      return self.deserialize_default(v, into)
-    raise ass(0)
-
-  def _variant_serialize(self, value: t.Any):
-    code, serialize = self._variant_ser_types[type(value)]
-    return {"vtype": code, "value": serialize(value)}
-
-  def _variant_deserialize(self, value: t.Any):
-    code, serialize = self._variant_ser_types[type(value)]
-    return {"vtype": code, "value": serialize(value)}
-
-  _variant_serialize_primitive = lambda x: x
-  _variant_deserialize_primitive = lambda x: x
-
-  _variant_ser_types: t.ClassVar[dict[type, tuple[str, VariantSerializationFunc]]] = {
-    bool: ("bool", _variant_serialize_primitive),
-    int: ("int", _variant_serialize_primitive),
-    float: ("float", _variant_serialize_primitive),
-    str: ("str", _variant_serialize_primitive),
-  }
-  _variant_deser_types: t.ClassVar[dict[str, tuple[type, VariantDeserializationFunc]]] = {
-    "bool": (bool, _variant_deserialize_primitive),
-    "int": (int, _variant_deserialize_primitive),
-    "float": (float, _variant_deserialize_primitive),
-    "str": (str, _variant_deserialize_primitive),
-  }
-
-  def register_variant_type(
-    self,
-    code: str,
-    type_: type[T],
-    serialize: VariantSerializationFunc,
-    deserialize: VariantDeserializationFunc,
-  ) -> None:
-    ass(code not in self._variant_ser_types)
-    ass(type_ not in self._variant_deser_types)
-    for v in self._variant_ser_types:
-      ass(v is not type_)
-    for v in self._variant_deser_types:
-      ass(v != code)
-    self._variant_ser_types[type_] = (code, serialize)
-    self._variant_deser_types[code] = (type_, deserialize)
-
-  ##
-
-
 ## Consts
 ATTACKS_DIR = bf.ASSETS_DIR / "attacks"
 FPS = 30
@@ -423,43 +295,45 @@ async def _background_dump_run_data():
     _dump_app_state()
 
 
-_serializer = DataclassSerializer()
+_serializer = bf.DataclassSerializer()
 
 
 @command
 def tool_attacks_markuper() -> None:
   _serializer.register(
+    "vec1",
     vec1,
     lambda x, _: [x.x],
     lambda x, _: vec1(x[0]),
   )
   _serializer.register(
+    "vec2",
     vec2,
     lambda x, _: [x.x, x.y],
     lambda x, _: vec2(x[0], x[1]),
   )
   _serializer.register(
+    "vec3",
     vec3,
     lambda x, _: [x.x, x.y, x.z],
     lambda x, _: vec3(x[0], x[1], x[2]),
   )
   _serializer.register(
+    "vec4",
     vec4,
     lambda x, _: [x.x, x.y, x.z, x.w],
     lambda x, _: vec4(x[0], x[1], x[2], x[3]),
   )
 
-  def serialize_collider(v: ColliderBase, as_: type):
-    ass(issubclass(type(v), as_))
-    result = _serializer.serialize_default(v, as_)
-    result["type"] = v.type.name
-    return result
-
-  def deserialize_collider(v, into) -> ColliderBase:
-    ass(into is ColliderBase)
-    return v
-
-  _serializer.register(ColliderBase, serialize_collider, deserialize_collider)
+  # def serialize_collider(v: ColliderBase, as_: type):
+  #   ass(issubclass(type(v), as_))
+  #   result = _serializer.serialize(v, as_)
+  #   result["type"] = v.type.name
+  #   return result
+  # def deserialize_collider(v, into) -> ColliderBase:
+  #   ass(into is ColliderBase)
+  #   return v
+  # _serializer.register("collider", ColliderBase, serialize_collider, deserialize_collider)
 
   if PRE_BUILD_DATA_REMOVEME:
     atk1 = Attack(

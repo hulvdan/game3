@@ -25,121 +25,125 @@
     "*.ldtk": "json",
     ".prettierrc": "json"
   },
-  "emeraldwalk.runonsave": {
-    "commands": [
-      {
-        "match": ".json$",
-        "cmd": "prettier -w ${file}"
-      },
-      {
-        "match": ".(yml|yaml|yamlfmt|yamllint)$",
-        "cmd": "yamlfmt ${file}"
-      },
-      {
-        "match": "localization.csv$",
-        "cmd": "uv run python cli/bf_cli.py godot_reimport_localization",
-        "runningStatusMessage": "Localizing..."
-      },
-      {
-        "match": "glib.yaml$",
-        "cmd": "uv run python cli/bf_cli.py codegen windows debug",
-        "runningStatusMessage": "glibbing..."
-      },
-      {
-        "match": ".proto$",
-        "cmd": "proto-renumber -replace ${file} && buf format -w ${file}"
-      },
-      {
-        "match": "glib.proto$",
-        "cmd": "uv run python cli/bf_cli.py codegen windows debug",
-        "runningStatusMessage": "glibbing..."
-      },
-      {
-        "match": ".gd$",
-        "cmd": "uv run gdscript-formatter --reorder-code ${file}"
-      },
-      {
-        "match": ".pyi?$",
-        "cmd": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix"
-      },
-      {
-        "match": ".md$",
-        "cmd": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file}"
-      }
-      // {
-      //     // Match scss files except names start with `_`.
-      //     "match": ".*\\.scss$",
-      //     "notMatch": "[\\\\\\/]_[^\\\\\\/]*\\.scss$",
-      //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
-      //     "runningStatusMessage": "Compiling ${fileBasename}",
-      //     "finishStatusMessage": "${fileBasename} compiled"
-      // },
-      // {
-      //     // Match less files except names start with `_`.
-      //     "globMatch": "**/[^_]*.less",
-      //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
-      //     "runIn": "terminal"
-      // },
-      // {
-      //     // Match any python files by language id.
-      //     "languages": [
-      //         "python"
-      //     ],
-      //     "command": "python.runLinting",
-      //     "runIn": "vscode"
-      // }
-    ]
-  },
+  // "emeraldwalk.runonsave": {
+  //   "commands": [
+  //     {
+  //       "match": ".json$",
+  //       "cmd": "prettier -w ${file}"
+  //     },
+  //     {
+  //       "match": ".(yml|yaml|yamlfmt|yamllint)$",
+  //       "cmd": "yamlfmt ${file}"
+  //     },
+  //     {
+  //       "match": "localization.csv$",
+  //       "cmd": "uv run python cli/bf_cli.py godot_reimport_localization",
+  //       "runningStatusMessage": "Localizing..."
+  //     },
+  //     {
+  //       "match": "glib.yaml$",
+  //       "cmd": "uv run python cli/bf_cli.py codegen windows debug",
+  //       "runningStatusMessage": "glibbing..."
+  //     },
+  //     {
+  //       "match": ".proto$",
+  //       "cmd": "proto-renumber -replace ${file} && buf format -w ${file}"
+  //     },
+  //     {
+  //       "match": "glib.proto$",
+  //       "cmd": "uv run python cli/bf_cli.py codegen windows debug",
+  //       "runningStatusMessage": "glibbing..."
+  //     },
+  //     {
+  //       "match": ".gd$",
+  //       "cmd": "uv run gdscript-formatter --reorder-code ${file}"
+  //     },
+  //     {
+  //       "match": ".pyi?$",
+  //       "cmd": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix"
+  //     },
+  //     // {
+  //     //   "match": ".py?$",
+  //     //   "cmd": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix"
+  //     // },
+  //     {
+  //       "match": ".md$",
+  //       "cmd": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file}"
+  //     }
+  //     // {
+  //     //     // Match scss files except names start with `_`.
+  //     //     "match": ".*\\.scss$",
+  //     //     "notMatch": "[\\\\\\/]_[^\\\\\\/]*\\.scss$",
+  //     //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
+  //     //     "runningStatusMessage": "Compiling ${fileBasename}",
+  //     //     "finishStatusMessage": "${fileBasename} compiled"
+  //     // },
+  //     // {
+  //     //     // Match less files except names start with `_`.
+  //     //     "globMatch": "**/[^_]*.less",
+  //     //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
+  //     //     "runIn": "terminal"
+  //     // },
+  //     // {
+  //     //     // Match any python files by language id.
+  //     //     "languages": [
+  //     //         "python"
+  //     //     ],
+  //     //     "command": "python.runLinting",
+  //     //     "runIn": "vscode"
+  //     // }
+  //   ]
+  // },
   "runOnSave.commands": [
     {
       "match": ".json$",
-      "command": "prettier -w ${file}",
-      "runIn": "backend"
+      "command": "prettier -w ${file}"
     },
     {
       "match": ".(yml|yaml|yamlfmt|yamllint)$",
-      "command": "yamlfmt ${file}",
-      "runIn": "backend"
+      "command": "yamlfmt ${file}"
     },
     {
       "match": "localization.csv$",
       "command": "uv run python cli/bf_cli.py godot_reimport_localization",
-      "runIn": "backend",
       "runningStatusMessage": "Localizing..."
     },
     {
       "match": "glib.yaml$",
       "command": "uv run python cli/bf_cli.py codegen windows debug",
-      "runIn": "backend",
       "runningStatusMessage": "glibbing..."
     },
     {
       "match": ".proto$",
-      "command": "proto-renumber -replace ${file} && buf format -w ${file}",
-      "runIn": "backend"
+      "command": "proto-renumber -replace ${file} && buf format -w ${file}"
     },
     {
       "match": "glib.proto$",
       "command": "uv run python cli/bf_cli.py codegen windows debug",
-      "runIn": "backend",
       "runningStatusMessage": "glibbing..."
     },
     {
       "match": ".gd$",
-      "command": "uv run gdscript-formatter --reorder-code ${file}",
-      "runIn": "backend"
+      "command": "uv run gdscript-formatter --reorder-code ${file}"
     },
     {
-      "match": ".py$",
-      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix",
-      "runIn": "backend"
+      "match": ".pyi?$",
+      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix"
+    },
+    {
+      "match": ".py?$",
+      "command": "testing.runCurrentFile",
+      "runIn": "vscode"
+    },
+    {
+      "match": ".md$",
+      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file}"
     }
     // {
     //     // Match scss files except names start with `_`.
     //     "match": ".*\\.scss$",
     //     "notMatch": "[\\\\\\/]_[^\\\\\\/]*\\.scss$",
     //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
-    //     "runIn": "backend",
     //     "runningStatusMessage": "Compiling ${fileBasename}",
     //     "finishStatusMessage": "${fileBasename} compiled"
     // },
@@ -158,6 +162,74 @@
     //     "runIn": "vscode"
     // }
   ],
+  // "runOnSave.commands": [
+  //   {
+  //     "match": ".json$",
+  //     "command": "prettier -w ${file}",
+  //     "runIn": "backend"
+  //   },
+  //   {
+  //     "match": ".(yml|yaml|yamlfmt|yamllint)$",
+  //     "command": "yamlfmt ${file}",
+  //     "runIn": "backend"
+  //   },
+  //   {
+  //     "match": "localization.csv$",
+  //     "command": "uv run python cli/bf_cli.py godot_reimport_localization",
+  //     "runIn": "backend",
+  //     "runningStatusMessage": "Localizing..."
+  //   },
+  //   {
+  //     "match": "glib.yaml$",
+  //     "command": "uv run python cli/bf_cli.py codegen windows debug",
+  //     "runIn": "backend",
+  //     "runningStatusMessage": "glibbing..."
+  //   },
+  //   {
+  //     "match": ".proto$",
+  //     "command": "proto-renumber -replace ${file} && buf format -w ${file}",
+  //     "runIn": "backend"
+  //   },
+  //   {
+  //     "match": "glib.proto$",
+  //     "command": "uv run python cli/bf_cli.py codegen windows debug",
+  //     "runIn": "backend",
+  //     "runningStatusMessage": "glibbing..."
+  //   },
+  //   {
+  //     "match": ".gd$",
+  //     "command": "uv run gdscript-formatter --reorder-code ${file}",
+  //     "runIn": "backend"
+  //   },
+  //   {
+  //     "match": ".py$",
+  //     "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix",
+  //     "runIn": "backend"
+  //   }
+  //   // {
+  //   //     // Match scss files except names start with `_`.
+  //   //     "match": ".*\\.scss$",
+  //   //     "notMatch": "[\\\\\\/]_[^\\\\\\/]*\\.scss$",
+  //   //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
+  //   //     "runIn": "backend",
+  //   //     "runningStatusMessage": "Compiling ${fileBasename}",
+  //   //     "finishStatusMessage": "${fileBasename} compiled"
+  //   // },
+  //   // {
+  //   //     // Match less files except names start with `_`.
+  //   //     "globMatch": "**/[^_]*.less",
+  //   //     "command": "node-sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
+  //   //     "runIn": "terminal"
+  //   // },
+  //   // {
+  //   //     // Match any python files by language id.
+  //   //     "languages": [
+  //   //         "python"
+  //   //     ],
+  //   //     "command": "python.runLinting",
+  //   //     "runIn": "vscode"
+  //   // }
+  // ],
   "python.testing.pytestArgs": [
     "cli"
   ],

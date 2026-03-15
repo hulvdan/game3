@@ -36,6 +36,7 @@ x mark: yaml serialization: looks ok
 x docs screenshots
 x mark: yaml deserialization: ability to register custom serialize/deserialize
 x mark: yaml serialization: store collider type
+x mark: serialization works
 
 * mark: history: attack collider add
 * mark: history: attack collider rename
