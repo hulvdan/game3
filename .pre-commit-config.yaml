@@ -54,7 +54,7 @@ repos:
       - id: gdscript-formatter
         name: gdscript-formatter
         entry: gdscript-formatter --reorder-code
-        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        stages: [pre-commit, pre-merge-commit, manual]
         require_serial: true
         always_run: true
         language: system
@@ -66,7 +66,7 @@ repos:
         language: system
         require_serial: true
         files: \.(json|ldtk)$
-        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        stages: [pre-commit, pre-merge-commit, manual]
         exclude: ^addons/.*$
       - id: proto-renumber
         name: proto-renumber
@@ -75,7 +75,7 @@ repos:
         require_serial: true
         always_run: true
         pass_filenames: false
-        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        stages: [pre-commit, pre-merge-commit, manual]
       - id: buf-format
         name: buf format
         entry: buf format -w src
@@ -83,28 +83,28 @@ repos:
         require_serial: true
         always_run: true
         pass_filenames: false
-        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        stages: [pre-commit, pre-merge-commit, manual]
       - id: ruff-format
         name: ruff format
         entry: uv run ruff format
         language: system
         require_serial: true
         files: \.py$
-        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        stages: [pre-commit, pre-merge-commit, manual]
       - id: ruff-check
         name: ruff check
         entry: uv run ruff check --output-format=concise
         language: system
         require_serial: true
         files: \.py$
-        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        stages: [pre-commit, pre-merge-commit, manual]
       - id: ty-check
         name: ty check
         entry: ty check cli --output-format=concise --no-progress
         language: system
         require_serial: true
         files: \.py$
-        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        stages: [pre-commit, pre-merge-commit, manual]
       - id: tombi-format
         name: tombi format
         entry: uvx tombi format
@@ -129,7 +129,7 @@ repos:
       - id: cog-readme
         name: cog-readme
         entry: uv run cog -n utf-8 -U -r -P --markers="[[[cog cog]]] [[[end]]]" README.md
-        stages: [pre-commit, pre-merge-commit, pre-push, manual]
+        stages: [pre-commit, pre-merge-commit, manual]
         require_serial: true
         pass_filenames: false
         always_run: true
