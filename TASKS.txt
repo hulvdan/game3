@@ -38,8 +38,11 @@ x mark: yaml deserialization: ability to register custom serialize/deserialize
 x mark: yaml serialization: store collider type
 x mark: bf_lib serialization works
 x mark: bf_lib deserialization works
+x mark: bf_lib ser/deser _export_fields
 
 * mark: bf_lib abstract serialization / deserialization works
+* mark: bf_lib ser/deser dict[str, Any]
+*
 * mark: history: attack collider add
 * mark: history: attack collider rename
 * mark: history: attack collider remove

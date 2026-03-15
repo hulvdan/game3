@@ -9,7 +9,7 @@ import subprocess
 import sys
 import typing as t
 from contextlib import contextmanager
-from dataclasses import dataclass, field, is_dataclass
+from dataclasses import dataclass, field, fields, is_dataclass
 from datetime import datetime
 from enum import Enum
 from functools import partial
@@ -318,6 +318,8 @@ class DataclassSerializer:
   SerFunc: TypeAlias = Callable[[Any, Any], Any]
   DeserFunc: TypeAlias = Callable[[Any, Any], Any]
 
+  export_fields_field: str = "_export_fields"
+
   def register(
     self, code: str, type_: type[T], serialize: SerFunc, deserialize: DeserFunc
   ) -> None:  ##
@@ -338,7 +340,12 @@ class DataclassSerializer:
       return self._variant_ser_types[t.get_origin(as_) or as_][1](value, as_)
 
     result = {}
+    export_fields = getattr(as_, self.export_fields_field, None)
     for field_name, field_instance in value.__dataclass_fields__.items():
+      if t.get_origin(field_instance.type) == t.ClassVar:
+        continue
+      if (export_fields is not None) and (field_name not in export_fields):
+        continue
       result[field_name] = self.serialize(getattr(value, field_name), field_instance.type)
     return result
     ##
@@ -346,11 +353,12 @@ class DataclassSerializer:
   def deserialize(self, value, as_) -> Any:  ##
     if not is_dataclass(as_):
       return self._variant_deser_types[as_.__name__][1](value, as_)
+    assert type(value) is dict
+    fields_ = (x for x in fields(as_) if x.name in value)
+    if (export_fields := getattr(as_, self.export_fields_field, None)) is not None:
+      fields_ = (x for x in fields_ if x.name in export_fields)
     return as_(
-      **{
-        field_name: self.deserialize(value.get(field_name), field_instance.type)
-        for field_name, field_instance in as_.__dataclass_fields__.items()
-      }
+      **{field.name: self.deserialize(value[field.name], field.type) for field in fields_}
     )
     ##
 
@@ -459,6 +467,16 @@ def _test_serializer():  ##
       default_factory=lambda: (1, 2.0)
     )
     inner_dataclass: TestInner = field(default_factory=TestInner)
+    not_exported: int = 1
+
+    _export_fields: t.ClassVar[list[str]] = [
+      "primitive",
+      "list_of_primitives",
+      "set_of_primitives",
+      "indefinite_tuple_of_primitives",
+      "closed_tuple_of_primitives",
+      "inner_dataclass",
+    ]
 
   expected_serialized = {
     "primitive": 1,
@@ -475,9 +493,11 @@ def _test_serializer():  ##
       ],
     },
   }
-  expected_deserialized = TestAttack(primitive=1)
+  expected_deserialized = TestAttack(primitive=1, not_exported=2)
   assert ser.serialize(expected_deserialized) == expected_serialized
-  assert ser.deserialize(expected_serialized, TestAttack) == expected_deserialized
+  expected_deserialized.not_exported = 1
+  actual_deserialized = ser.deserialize(expected_serialized, TestAttack)
+  assert actual_deserialized == expected_deserialized
   ##
 
 
