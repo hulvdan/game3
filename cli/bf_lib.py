@@ -529,6 +529,8 @@ def _test_serializer():  ##
     inner_dataclass: Inner = field(default_factory=Inner)
     not_exported: int = 1
     colliders: list[ColliderBase] = field(default_factory=list)
+    colliders_any: list[Any] = field(default_factory=list)
+    collider: ColliderBase = field(default_factory=lambda: ColliderCircle(1, 1))
     collider_any: Any = None
     none_any: Any = None
 
@@ -540,6 +542,8 @@ def _test_serializer():  ##
       "closed_tuple_of_primitives",
       "inner_dataclass",
       "colliders",
+      "colliders_any",
+      "collider",
       "collider_any",
       "none_any",
     ]
@@ -562,6 +566,14 @@ def _test_serializer():  ##
       {"@": "CIRCLE", "base_value": 1, "radius": 5},
       {"@": "CAPSULE", "base_value": 2, "radius": 3, "spread": 4, "rotation": 5},
     ],
+    "colliders_any": [
+      {"%": "ColliderCircle", "value": {"base_value": 1, "radius": 5}},
+      {
+        "%": "ColliderCapsule",
+        "value": {"base_value": 2, "radius": 3, "spread": 4, "rotation": 5},
+      },
+    ],
+    "collider": {"@": "CIRCLE", "base_value": 1, "radius": 1},
     "collider_any": {"%": "ColliderCircle", "value": {"base_value": 6, "radius": 7}},
     "none_any": {"%": "None", "value": None},
   }
