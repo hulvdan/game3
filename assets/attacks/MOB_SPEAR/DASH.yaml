@@ -1,6 +1,6 @@
 _next_collider_id: 3
 colliders:
-  - '@': CAPSULE
+  - __type: CAPSULE
     is_active:
       - id: 1
         index_timeline: 0

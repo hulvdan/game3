@@ -587,8 +587,8 @@ def _test_serializer():  ##
       ],
     },
     "colliders": [
-      {"@": "CIRCLE", "base_value": 1, "radius": 5},
-      {"@": "CAPSULE", "base_value": 2, "radius": 3, "spread": 4, "rotation": 5},
+      {"type": "CIRCLE", "base_value": 1, "radius": 5},
+      {"type": "CAPSULE", "base_value": 2, "radius": 3, "spread": 4, "rotation": 5},
     ],
     "colliders_any": [
       {"%": "ColliderCircle", "value": {"base_value": 1, "radius": 5}},
@@ -597,7 +597,7 @@ def _test_serializer():  ##
         "value": {"base_value": 2, "radius": 3, "spread": 4, "rotation": 5},
       },
     ],
-    "collider": {"@": "CIRCLE", "base_value": 1, "radius": 1},
+    "collider": {"type": "CIRCLE", "base_value": 1, "radius": 1},
     "collider_any": {"%": "ColliderCircle", "value": {"base_value": 6, "radius": 7}},
     "none_any": {"%": "None", "value": None},
     "frame": {"index": 0, "value": 1.1},
@@ -619,11 +619,11 @@ def _test_serializer():  ##
   def collider_serialize(x: ColliderBase, as_) -> Any:
     assert isinstance(x, ColliderBase)
     assert as_ is ColliderBase
-    return {"@": x.type().name, **ser.serialize_root(x, type(x))}
+    return {"type": x.type().name, **ser.serialize_root(x, type(x))}
 
   def collider_deserialize(x: dict, as_) -> ColliderBase:
     assert as_ is ColliderBase
-    return COLLIDER_REGISTRY[x["@"]](**{k: v for k, v in x.items() if k != "@"})
+    return COLLIDER_REGISTRY[x["type"]](**{k: v for k, v in x.items() if k != "type"})
 
   ser.register(ColliderBase, collider_serialize, collider_deserialize)
   for tt in COLLIDER_REGISTRY.values():

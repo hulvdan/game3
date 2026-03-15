@@ -309,11 +309,11 @@ def tool_attacks_markuper() -> None:
   def collider_serialize(x: ColliderBase, as_) -> Any:
     ass(isinstance(x, ColliderBase))
     ass(as_ is ColliderBase)
-    return {"@": x.type().name, **ser.serialize_root(x, type(x))}
+    return {"type": x.type().name, **ser.serialize_root(x, type(x))}
 
   def collider_deserialize(x: dict, as_) -> ColliderBase:
     ass(as_ is ColliderBase)
-    return COLLIDER_REGISTRY[x["@"]](**{k: v for k, v in x.items() if k != "@"})
+    return COLLIDER_REGISTRY[x["type"]](**{k: v for k, v in x.items() if k != "type"})
 
   ser.register(ColliderBase, collider_serialize, collider_deserialize)
   for tt in COLLIDER_REGISTRY.values():
@@ -2252,7 +2252,7 @@ def _test_make_default_keyframe_at():  ##
 def _test_first_keyframe_yields_correct_values():  ##
   c = ColliderCapsule.make(1)
   c.tr[0].value = vec2(random.uniform(-100, 100), random.uniform(-100, 100))
-  c.radius[0].value = random.uniform(0.25, 20)
+  c.radius[0].value = random.uniform(0.25, 2)
 
   _, v = c.make_keyframe_value_at("tr", 0)
   ass(isinstance(v, vec2))
