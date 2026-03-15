@@ -15,7 +15,7 @@ from enum import Enum
 from functools import partial
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Callable, Iterator, Sequence, TypeAlias, TypeVar
+from typing import Any, Callable, Iterator, Sequence, TypeAlias, TypedDict, TypeVar
 
 import cv2
 import fnvhash
@@ -313,25 +313,13 @@ def get_local_ip() -> str:  ##
   ##
 
 
-_serialize_primitive = lambda x, _: x
-_deserialize_primitive = lambda x, _: x
-
-
 @dataclass(slots=True)
 class DataclassSerializer:
-  SerializationFunc: TypeAlias = t.Callable[[t.Any, t.Any], t.Any]
-  DeserializationFunc: TypeAlias = t.Callable[[t.Any, t.Any], t.Any]
-
-  class VariantSerialized(t.TypedDict):
-    vtype: str
-    value: t.Any
+  SerFunc: TypeAlias = Callable[[Any, Any], Any]
+  DeserFunc: TypeAlias = Callable[[Any, Any], Any]
 
   def register(
-    self,
-    code: str,
-    type_: type[T],
-    serialize: SerializationFunc,
-    deserialize: DeserializationFunc,
+    self, code: str, type_: type[T], serialize: SerFunc, deserialize: DeserFunc
   ) -> None:  ##
     assert code not in self._variant_ser_types
     assert type_ not in self._variant_deser_types
@@ -343,7 +331,7 @@ class DataclassSerializer:
     self._variant_deser_types[code] = (type_, deserialize)
     ##
 
-  def serialize(self, value, as_=None) -> t.Any:  ##
+  def serialize(self, value, as_=None) -> Any:  ##
     if as_ is None:
       as_ = type(value)
     if not is_dataclass(value):
@@ -355,38 +343,49 @@ class DataclassSerializer:
     return result
     ##
 
-  def deserialize(self, value, as_) -> t.Any:  ##
+  def deserialize(self, value, as_) -> Any:  ##
     if not is_dataclass(as_):
-      return self._variant_deser_types[as_][1](value, as_)
-    # result = as_()
-    return value
-
+      return self._variant_deser_types[as_.__name__][1](value, as_)
+    return as_(
+      **{
+        field_name: self.deserialize(value.get(field_name), field_instance.type)
+        for field_name, field_instance in as_.__dataclass_fields__.items()
+      }
+    )
     ##
 
   ## Protected
-  _variant_ser_types: dict[type, tuple[str, SerializationFunc]] = field(
-    default_factory=dict
-  )
-  _variant_deser_types: dict[str, tuple[type, DeserializationFunc]] = field(
-    default_factory=dict
-  )
 
-  def _serialize_variant(self, value: t.Any, _) -> VariantSerialized:
+  class _VariantSerialized(TypedDict):
+    vtype: str
+    value: Any
+
+  _variant_ser_types: dict[type, tuple[str, SerFunc]] = field(default_factory=dict)
+  _variant_deser_types: dict[str, tuple[type, DeserFunc]] = field(default_factory=dict)
+
+  def _serialize_variant(self, value, as_) -> _VariantSerialized:
+    assert as_ == Any
     code, serialize = self._variant_ser_types[type(value)]
     return {"vtype": code, "value": serialize(value, type(value))}
 
-  def _deserialize_variant(self, value: VariantSerialized, as_) -> t.Any:
+  def _deserialize_variant(self, value: _VariantSerialized, as_) -> Any:
     assert as_ == Any
     type_, deserialize = self._variant_deser_types[value["vtype"]]
-    return deserialize(value, type_)
+    return deserialize(value["value"], type_)
+
+  def _serialize_primitive(self, v, _as):
+    return v
+
+  def _deserialize_primitive(self, v, _as):
+    return v
 
   def _serialize_list(self, v: list, as_) -> list:
     tt = t.get_args(as_)[0]
     return [self.serialize(x, tt) for x in v]
 
-  def _serialize_set(self, v: set, as_) -> list:
+  def _deserialize_list(self, v: list, as_) -> list:
     tt = t.get_args(as_)[0]
-    return [self.serialize(x, tt) for x in v]
+    return [self.deserialize(x, tt) for x in v]
 
   def _serialize_tuple(self, v: tuple, as_) -> list:
     args = t.get_args(as_)
@@ -395,14 +394,6 @@ class DataclassSerializer:
         return [self.serialize(x, args[0]) for x in v]
     return [self.serialize(x, args[i]) for i, x in enumerate(v)]
 
-  def _deserialize_list(self, v: list, as_) -> list:
-    tt = t.get_args(as_)[0]
-    return [self.deserialize(x, tt) for x in v]
-
-  def _deserialize_set(self, v: list, as_) -> set:
-    tt = t.get_args(as_)[0]
-    return {self.deserialize(x, tt) for x in v}
-
   def _deserialize_tuple(self, v: list, as_) -> tuple:
     args = t.get_args(as_)
     if len(args) >= 2:
@@ -410,27 +401,35 @@ class DataclassSerializer:
         return tuple(self.deserialize(x, args[0]) for x in v)
     return tuple(self.deserialize(x, args[i]) for i, x in enumerate(v))
 
+  def _serialize_set(self, v: set, as_) -> list:
+    tt = t.get_args(as_)[0]
+    return [self.serialize(x, tt) for x in v]
+
+  def _deserialize_set(self, v: list, as_) -> set:
+    tt = t.get_args(as_)[0]
+    return {self.deserialize(x, tt) for x in v}
+
   def __post_init__(self) -> None:
     self._variant_ser_types = {
-      bool: ("bool", _serialize_primitive),
-      int: ("int", _serialize_primitive),
-      float: ("float", _serialize_primitive),
-      str: ("str", _serialize_primitive),
+      bool: ("bool", self._serialize_primitive),
+      int: ("int", self._serialize_primitive),
+      float: ("float", self._serialize_primitive),
+      str: ("str", self._serialize_primitive),
       list: ("list", self._serialize_list),
       tuple: ("tuple", self._serialize_tuple),
       set: ("set", self._serialize_set),
-      Any: ("variant", self._serialize_variant),
+      Any: ("Any", self._serialize_variant),
       # "dict": _serialize_dict,
     }
     self._variant_deser_types = {
-      "bool": (bool, _deserialize_primitive),
-      "int": (int, _deserialize_primitive),
-      "float": (float, _deserialize_primitive),
-      "str": (str, _deserialize_primitive),
+      "bool": (bool, self._deserialize_primitive),
+      "int": (int, self._deserialize_primitive),
+      "float": (float, self._deserialize_primitive),
+      "str": (str, self._deserialize_primitive),
       "list": (list, self._deserialize_list),
       "tuple": (tuple, self._deserialize_tuple),
       "set": (set, self._deserialize_set),
-      "variant": (Any, self._deserialize_variant),
+      "Any": (Any, self._deserialize_variant),
       # "dict": _deserialize_dict,
     }
 
@@ -440,7 +439,7 @@ class DataclassSerializer:
 def _test_serializer():  ##
   ser = DataclassSerializer()
   ser.register("vec2", vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
-  ser.register("vec3", vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec2(*x))
+  ser.register("vec3", vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
 
   @dataclass(slots=True)
   class TestInner:
@@ -478,7 +477,7 @@ def _test_serializer():  ##
   }
   expected_deserialized = TestAttack(primitive=1)
   assert ser.serialize(expected_deserialized) == expected_serialized
-  # assert ser.deserialize(expected_serialized, TestAttack) == expected_deserialized
+  assert ser.deserialize(expected_serialized, TestAttack) == expected_deserialized
   ##
 
 
