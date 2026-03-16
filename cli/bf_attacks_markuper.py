@@ -26,8 +26,6 @@ import toml
 import yaml
 from bf_lib import imgui_assert as ass
 from bf_typer import command
-
-# from glib_pb2 import GAttack, GAttackMelee, GCollider
 from glm import vec1
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im

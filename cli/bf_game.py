@@ -316,7 +316,7 @@ def _process_glib(genline, glib) -> None:
   def validate_attack(x: dict, is_player: bool) -> None:  ##
     x.get("projectiles_spawns", []).sort(key=lambda x: x["at"])
     if "stops_tracking_at" not in x:
-      x["stops_tracking_at"] = x["duration"]
+      x["stops_tracking_at"] = x["duration_frames"]
     if is_player:
       assert "stamina_cost" in x, _context
     with push("tags"):

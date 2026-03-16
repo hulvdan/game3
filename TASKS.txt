@@ -43,60 +43,24 @@ x not exporting history
 x mark: validate that hierarchy can be serialized
 x prepare for proto
 x creating python pb2.py
+x upd
 
-* mark: history: attack collider add
-* mark: history: attack collider rename
-* mark: history: attack collider remove
-*
-* mark: new collider for sword slash
-*
-* mark: history: attack frames change
-* mark: history:
-*
-* mark: yaml deserialization: can add attack
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
 *
 * devlog: post: name: Жоско Погромироваю Боевку
 * devlog: post:
 * devlog: post:
 * devlog: post:
 *
-* mark: min frame cell width (don't forget DPI) + timeline horizontal scrollbar
-* mark: add buttons: rotation +-15* +-90* to collider, +- 1x 1y step_x step_y
-* mark: don't use matrix16 in collider
-* mark: capsule angle keyframes
-* mark:
-* mark: keyframe selection on `tr` works incorrectly
-* mark:
-* mark:
-* mark: can set easing mode for radius keyframe transitions (default is linear)
-* mark:
-* mark:
-* mark: truly clamp im.slider* returned values (because while editing it returns unclamped values)
-* mark: delete keyframe (1 - through keyframe inspector? 2 - rmb?)
-* mark: hovering over timeline lines highlights line as yellow
-  (so that it's easy to correctly place keyframes)
-* mark: fixed
-* mark:
-* mark:
-* mark: show selected keyframe data
-* mark: drag keyframe to move it
 *
 * LATER
-  * mark: bf_lib ser/deser dict[str, Any]
-  * mark: is_active keyframes W/O metaclass
-  * mark: timeline 0.25 0.5 0.75 1 ... show time mark every line
-  * mark: draw both transform gizmos?
-  * mark: disable idling when playing
-  * mark: Reaper-like keybindings
-  * mark: correct docks placement
-  * mark: show capsule info: rotation
-  * mark: timeline: capsule rotation is not in matrix
-  * mark: timeline: zoom (support min + max)
-  * mark: timeline: scroll
-  * mark: attack inspector: GAttackConditionValue
-  * mark: attack inspector: colliders with keyframe animations
-  * mark: LEFT COLUMN with hierarchy list (or just 2 listboxes).
-    1st one has mob select + add + rename + delete (WITH SHIT TON A LOT OF CONFIRM) buttons.
   * Docking Splits
     runner_params.docking_params.docking_splits = [hello_imgui.DockingSplit(
       initial_dock_="MainDockSpace",
@@ -108,18 +72,6 @@ x creating python pb2.py
       hello_imgui.DockableWindow(label_="Editor", dock_space_name_="EditorDock"),
       hello_imgui.DockableWindow(label_="Gizmo", dock_space_name_="MainDockSpace"),
     ]
-  * mark: MOB_TYPE / ATTACK_NAME / COLLIDERS ON TIMELINE
-  * mark: lines have different background colors
-  * mark: frame columns
-  * mark: WHAT DO I NEED FOR JAGRAS???
-    * mark: circle pos
-    * mark: circle radius
-    * mark: circle pos keyframe easing
-    * mark: can specidy another circle
-  * mark: column width zoom
-  * mark: show keyframe as circle
-  * mark: can select scale keyframe
-  * mark: can change scale value on specific keyframe
 *
 * jagras: attacks: swing with segments
 * jagras: attacks: spit

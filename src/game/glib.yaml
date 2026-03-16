@@ -232,7 +232,7 @@ attack_conditions: ##
 abilities:
   - type: HOOK ##
     attack:
-      duration: 0.9
+      duration_frames: 24
       projectile_type: HOOK
       projectile_spawns:
         - at: 0.2
@@ -242,7 +242,7 @@ abilities:
         ##
   - type: KAZUHA ##
     attack:
-      duration: 0.2
+      duration_frames: 6
       projectile_type: AREA_KAZUHA
       projectile_spawns:
         - at: 0.1
@@ -259,7 +259,7 @@ creatures:
     speed: 4
     collider_size: 0.64
     attacks:
-      # - duration: 0.3
+      # - duration_frames: 9
       #   stamina_cost:
       #     flat: 0
       #     rally: 0
@@ -274,7 +274,7 @@ creatures:
       #       angle_degrees: 90
       #       anchor_x: 0.5
       #     evade_flags: *evade_flags_default
-      # - duration: 0.2
+      # - duration_frames: 6
       #   projectile_type: AREA_SPEEDUP
       #   projectile_spawns:
       #     - at: 0.1
@@ -284,7 +284,7 @@ creatures:
       #   stamina_cost:
       #     flat: 25
       #     rally: 5
-      - duration: 0.25
+      - duration_frames: 8
         projectile_type: ARROW
         projectile_spawns:
           - at: 0.1
@@ -296,7 +296,7 @@ creatures:
             distance: -0.2
             dur: 0.4
             pow: 1
-      - duration: 0.25
+      - duration_frames: 8
         projectile_type: ARROW
         projectile_spawns:
           - at: 0.1
@@ -308,7 +308,7 @@ creatures:
             distance: -0.1
             dur: 0.4
             pow: 1
-      - duration: 0.4
+      - duration_frames: 12
         projectile_type: ARROW
         projectile_spawns:
           - at: 0.15
@@ -329,7 +329,7 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration: 0.8
+      - duration_frames: 24
         projectile_type: BOMB
         projectile_spawns:
           - at: 0.5
@@ -345,7 +345,7 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration: 2
+      - duration_frames: 60
         projectile_type: BALL
         projectile_spawns:
           - at: 0.5
@@ -363,7 +363,7 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration: 1
+      - duration_frames: 30
         projectile_type: HOMING
         projectile_spawns:
           - at: 0.5
@@ -384,7 +384,7 @@ creatures:
     speed: 0.8
     collider_size: 0.64
     attacks:
-      - duration: 1.3
+      - duration_frames: 39
         projectile_type: HOMING
         projectile_spawns:
           - at: 0.8
@@ -400,7 +400,7 @@ creatures:
     speed: 0.8
     collider_size: 0.64
     attacks:
-      - duration: 1.3
+      - duration_frames: 39
         projectile_type: STAR_HIVE
         projectile_spawns:
           - at: 0.8
@@ -416,7 +416,7 @@ creatures:
     speed: 0.8
     collider_size: 0.64
     attacks:
-      - duration: 1.0
+      - duration_frames: 30
         projectile_type: STAR_HIVE_INSIDE
         projectile_spawns:
           - at: 0.5
@@ -432,7 +432,7 @@ creatures:
     speed: 0.8
     collider_size: 0.64
     attacks:
-      - duration: 1.0
+      - duration_frames: 30
         projectile_type: BOMB_BLOCKABLE
         projectile_spawns:
           - at: 0.5
@@ -448,7 +448,7 @@ creatures:
     speed: 1
     collider_size: 0.64
     attacks:
-      - duration: 0.8
+      - duration_frames: 24
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
@@ -478,7 +478,7 @@ creatures:
     speed: 1
     collider_size: 0.64
     attacks:
-      - duration: 1.2
+      - duration_frames: 36
         cooldown_min: 1.5
         cooldown_max: 2.2
         projectile_type: BLINK
@@ -494,7 +494,7 @@ creatures:
     speed: 1
     collider_size: 0.64
     attacks:
-      - duration: 0.8
+      - duration_frames: 24
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
@@ -528,7 +528,7 @@ creatures:
     speed: 1
     collider_size: 0.64
     attacks:
-      - duration: 0.8
+      - duration_frames: 24
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
@@ -561,7 +561,7 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration: 3
+      - duration_frames: 90
         projectile_type: SUMMON
         projectile_spawns:
           - at: 0.5
@@ -578,7 +578,7 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration: 0.8
+      - duration_frames: 24
         projectile_type: AREA_SLOWDOWN
         projectile_spawns:
           - at: 0.5
@@ -597,7 +597,7 @@ creatures:
     rotation_speed: 0.5
     mass: 4
     attacks:
-      - duration: 2.8
+      - duration_frames: 90
         cooldown_min: 3.0
         cooldown_max: 5.0
         stops_tracking_at: 0.4
@@ -610,7 +610,7 @@ creatures:
           attackcondition_type: CAPSULE_CONTAINED
           distance_max: 4
           capsule__radius: 0.4
-      - duration: 2.8
+      - duration_frames: 90
         cooldown_min: 3.0
         cooldown_max: 5.0
         stops_tracking_at: 0.0
