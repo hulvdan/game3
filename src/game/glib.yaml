@@ -266,13 +266,6 @@ creatures:
       #   stops_tracking_at: 0.1
       #   melee:
       #     damage: 10
-      #     starts_at: 0.1
-      #     ends_at: 0.2
-      #     polygon:
-      #       distance_min: 0.5
-      #       distance_max: 2
-      #       angle_degrees: 90
-      #       anchor_x: 0.5
       #     evade_flags: *evade_flags_default
       # - duration_frames: 6
       #   projectile_type: AREA_SPEEDUP
@@ -453,10 +446,6 @@ creatures:
         cooldown_max: 2.2
         melee:
           damage: 10
-          starts_at: 0.5
-          ends_at: 0.6
-          circle:
-            radius: 1.5
           evade_flags: *evade_flags_default
           damage_stamina: 20
         stops_tracking_at: 0.2
@@ -499,13 +488,6 @@ creatures:
         cooldown_max: 2.2
         melee:
           damage: 10
-          starts_at: 0.5
-          ends_at: 0.6
-          polygon:
-            distance_min: 0.5
-            distance_max: 2
-            angle_degrees: 90
-            anchor_x: 0.5
           evade_flags: *evade_flags_default
           damage_stamina: 20
         stops_tracking_at: 0.2
@@ -533,12 +515,6 @@ creatures:
         cooldown_max: 2.2
         melee:
           damage: 10
-          starts_at: 0.5
-          ends_at: 1.1
-          polygon:
-            distance_max: 2
-            angle_degrees: 20
-            anchor_x: 0.5
           evade_flags: *evade_flags_default
           damage_stamina: 20
         stops_tracking_at: 0.3

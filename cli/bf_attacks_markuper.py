@@ -24,9 +24,12 @@ import bf_lib as bf
 import numpy as np
 import toml
 import yaml
+from bf_glib import load_glib
 from bf_lib import imgui_assert as ass
 from bf_typer import command
+from glib_pb2 import Lib
 from glm import vec1
+from google.protobuf.json_format import ParseDict
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
@@ -301,6 +304,9 @@ _serializer = bf.DataclassSerializer()
 
 @command
 def tool_attacks_markuper() -> None:
+  glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug)
+  g.glib = ParseDict(glib, Lib)
+
   ser = _serializer
   ser.register(vec1, (lambda x, _: [x.x], lambda x, _: vec1(*x), None))
   ser.register(vec2, (lambda x, _: [x.x, x.y], lambda x, _: vec2(*x), None))
@@ -1232,6 +1238,8 @@ class State:
   visualizer: Visualizer = field(default_factory=Visualizer)
   timeline: Timeline = field(default_factory=Timeline)
   explorer: Explorer = field(default_factory=Explorer)
+
+  glib: Lib = None  # ty:ignore[invalid-assignment]
 
   creatures: list[Creature] = field(default_factory=list)
 

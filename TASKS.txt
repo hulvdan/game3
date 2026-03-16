@@ -44,8 +44,8 @@ x mark: validate that hierarchy can be serialized
 x prepare for proto
 x creating python pb2.py
 x upd
+x mark: loading gamelib
 
-* mark:
 * mark:
 * mark:
 * mark:

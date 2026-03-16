@@ -242,14 +242,6 @@ class GKeyframeV4(_message.Message):
     value: GV4
     def __init__(self, index: _Optional[int] = ..., value: _Optional[_Union[GV4, _Mapping]] = ...) -> None: ...
 
-class GKeyframeFloat(_message.Message):
-    __slots__ = ("index", "value")
-    INDEX_FIELD_NUMBER: _ClassVar[int]
-    VALUE_FIELD_NUMBER: _ClassVar[int]
-    index: int
-    value: float
-    def __init__(self, index: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
-
 class GKeyframeBool(_message.Message):
     __slots__ = ("index", "value")
     INDEX_FIELD_NUMBER: _ClassVar[int]
@@ -257,6 +249,22 @@ class GKeyframeBool(_message.Message):
     index: int
     value: bool
     def __init__(self, index: _Optional[int] = ..., value: _Optional[bool] = ...) -> None: ...
+
+class GKeyframeInt32(_message.Message):
+    __slots__ = ("index", "value")
+    INDEX_FIELD_NUMBER: _ClassVar[int]
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    index: int
+    value: int
+    def __init__(self, index: _Optional[int] = ..., value: _Optional[int] = ...) -> None: ...
+
+class GKeyframeFloat(_message.Message):
+    __slots__ = ("index", "value")
+    INDEX_FIELD_NUMBER: _ClassVar[int]
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    index: int
+    value: float
+    def __init__(self, index: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
 
 class GCollider(_message.Message):
     __slots__ = ("type", "pos", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "polygon__distance_min", "polygon__distance_max", "polygon__angle", "polygon__anchor_x")

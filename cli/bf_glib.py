@@ -103,16 +103,14 @@ def regenerate_python_glib_proto() -> None:  ##
   ##
 
 
-@timing
-def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
+def load_glib(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> dict:  ##
   bf.run_command("uv run yamllint src/game/glib.yaml -s -f parsable")
   with open("src/game/glib.yaml", encoding="utf-8") as glib_file:
     glib = yaml.safe_load(glib_file)
     glib.pop("_anchors", None)
 
-  ## Codegen glib.gd + glib.binpb + glib itself
-  temp_glib_path = Path(".temp/glib.gd")
-  temp_glib_path.unlink(missing_ok=True)
+  temp_glibgd_path = Path(".temp/glib.gd")
+  temp_glibgd_path.unlink(missing_ok=True)
   bf.run_command("""
     godot
     --headless
@@ -120,7 +118,7 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
     --input=src/game/glib.proto
     --output=.temp/glib.gd
   """)
-  assert temp_glib_path.exists(), "Failed to generate glib.gd from glib.proto!"
+  assert temp_glibgd_path.exists(), "Failed to generate glib.gd from glib.proto!"
 
   with Path("src/codegen/nolint/glib.gd").open(
     "w", encoding="utf-8", newline="\n"
@@ -164,7 +162,7 @@ func _physics_process(_dt: float) -> void:
 
 """)
 
-    codegen_file.write(Path(".temp/glib.gd").read_text(encoding="utf-8"))
+    codegen_file.write(bf.read_text(".temp/glib.gd"))
 
     def genline(value):
       codegen_file.write(value)
@@ -175,15 +173,21 @@ func _physics_process(_dt: float) -> void:
       func(genline, glib)
 
   bf.run_command("gdscript-formatter src/codegen/nolint/glib.gd")
-  ##
 
   degrees_to_radians_recursive_transform(glib)
+  return glib
+  ##
+
+
+@timing
+def do_generate(platform: bf.BuildPlatform, build_type: bf.BuildType) -> None:
+  glib = load_glib(platform, build_type)
 
   ## Validating no invalid fields specified in glib
-  spec = importlib.util.spec_from_file_location("glib_pb2", "bf_cli/glib_pb2.py")
-  assert spec
-  glib_pb2 = importlib.util.module_from_spec(spec)
-  json_format.Parse(json.dumps(glib), glib_pb2.Lib())
+  import glib_pb2  # noqa: PLC0415
+
+  importlib.reload(glib_pb2)
+  json_format.ParseDict(glib, glib_pb2.Lib())
   ##
 
   ## Dumping glib + converting to binary
