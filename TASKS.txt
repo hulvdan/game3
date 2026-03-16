@@ -41,6 +41,7 @@ x mark: deser attacks works
 - devlog: transfer repo to hulvdan@yandex.ru
 x not exporting history
 x mark: validate that hierarchy can be serialized
+x prepare for proto
 
 * mark: history: attack collider add
 * mark: history: attack collider rename

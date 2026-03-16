@@ -454,7 +454,7 @@ class DataclassSerializer:
       fields_ = (x for x in fields_ if x.name in export_fields)
     parameters = getattr(t.get_origin(as_), "__parameters__", ())
 
-    values = {}
+    value_ = {**value}
     for x in fields_:
       # Handling `T` of generics
       to = x.type
@@ -462,9 +462,9 @@ class DataclassSerializer:
         if param is to:
           to = arg
           break
-      values[x.name] = self.deserialize_root(value[x.name], to)
+      value_[x.name] = self.deserialize_root(value[x.name], to)
 
-    return as_(**values)
+    return as_(**value_)
     ##
 
   ## Protected

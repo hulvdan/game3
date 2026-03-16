@@ -18,8 +18,7 @@ from functools import partial, wraps
 from math import pi
 from pathlib import Path
 from typing import Any, Callable, ClassVar, Generic, Self, TypeAlias, TypeVar
-from uuid import UUID, uuid4
-from glib_pb2 import GAttack, GCollider, GAttackMelee
+from uuid import UUID
 
 import bf_lib as bf
 import numpy as np
@@ -396,9 +395,9 @@ def tool_attacks_markuper() -> None:
         if attack_filepath.name == "_.yaml":
           continue
         yaml_content = yaml.safe_load(bf.read_text(attack_filepath))
-        if yaml_content:
-          attack = _serializer.deserialize_root(yaml_content, Attack)
-          creature.attacks.append(attack)
+        yaml_content["id"] = Attack.get_id_from_file_name(attack_filepath.stem)
+        attack = _serializer.deserialize_root(yaml_content, Attack)
+        creature.attacks.append(attack)
 
   recursive_validate(g)
 
@@ -1147,11 +1146,15 @@ class Attack:  ##
 
   @classmethod
   def get_file_name_wo_ext(cls, id_: UUID, attack_name: str) -> str:
-    return f"{attack_name}_{id_}"
+    return f"{attack_name}__{id_}"
 
   @property
   def file_name_wo_ext(self) -> str:
     return self.get_file_name_wo_ext(self.id, self.name)
+
+  @classmethod
+  def get_id_from_file_name(cls, name: str) -> UUID:
+    return UUID(name.rsplit("__", 1)[-1])
 
   ##
 
@@ -1168,7 +1171,7 @@ class Creature:  ##
 
   @classmethod
   def get_folder_name(cls, id_: UUID, creature_name: str) -> str:
-    return f"{creature_name}_{id_}"
+    return f"{creature_name}__{id_}"
 
   @property
   def folder_name(self):
@@ -1591,11 +1594,12 @@ def _panel_visualizer() -> None:
         atk.scheduled_commands.append(
           CommandAttackColliderAlterField(
             merge_id=g.action_id,
-            c.id,
-            "tr",
-            tr_closest_index,
-            c.tr[tr_closest_index].value,
-            c.tr[tr_closest_index].value + off,
+            atk=atk,
+            collider_id=c.id,
+            keyframe_field="tr",
+            keyframe_index_inside_list=tr_closest_index,
+            value_old=c.tr[tr_closest_index].value,
+            value_new=c.tr[tr_closest_index].value + off,
           )
         )
     # match c.type():
@@ -1870,7 +1874,12 @@ def _panel_timeline() -> None:  ##
               if k.index_timeline == hov:
                 atk.scheduled_commands.append(
                   CommandAttackColliderKeyframeRemove(
-                    g.action_id, c.id, field_name, hov, k.value
+                    merge_id=g.action_id,
+                    atk=atk,
+                    collider_id=c.id,
+                    keyframe_field=field_name,
+                    keyframe_index_timeline=hov,
+                    keyframe_value=k.value,
                   )
                 )
                 break
@@ -1886,11 +1895,12 @@ def _panel_timeline() -> None:  ##
 
           atk.scheduled_commands.append(
             CommandAttackColliderKeyframeMove(
-              g.action_id,
-              c.id,
-              field_name,
-              fr.index_timeline,
-              bf.clamp(
+              merge_id=g.action_id,
+              atk=atk,
+              collider_id=c.id,
+              keyframe_field=field_name,
+              keyframe_index_timeline_from=fr.index_timeline,
+              keyframe_index_timeline_to=bf.clamp(
                 imgui_timeline_line_out.hovered_index_half_cell_offset,
                 min_left,
                 max_right,
@@ -1905,7 +1915,8 @@ def _panel_timeline() -> None:  ##
               created_keyframe_this_frame = True
               atk.scheduled_commands.append(
                 CommandAttackColliderKeyframeAdd(
-                  g.action_id,
+                  merge_id=g.action_id,
+                  atk=atk,
                   collider_id=c.id,
                   keyframe_field=field_name,
                   keyframe_index_timeline=idx,
@@ -2093,7 +2104,13 @@ def _panel_collider_inspector() -> None:  ##
             lambda x: (
               atk.scheduled_commands.append(
                 CommandAttackColliderAlterField(
-                  g.action_id, c.id, f, index_f, frames[index_f].value, x
+                  merge_id=g.action_id,
+                  atk=atk,
+                  collider_id=c.id,
+                  keyframe_field=f,
+                  keyframe_index_inside_list=index_f,
+                  value_old=frames[index_f].value,
+                  value_new=x,
                 )
               )
               if frames[index_f].value != x
@@ -2108,7 +2125,13 @@ def _panel_collider_inspector() -> None:  ##
             lambda x: (
               atk.scheduled_commands.append(
                 CommandAttackColliderAlterField(
-                  g.action_id, c.id, f, index_f, frames[index_f].value, x
+                  merge_id=g.action_id,
+                  atk=atk,
+                  collider_id=c.id,
+                  keyframe_field=f,
+                  keyframe_index_inside_list=index_f,
+                  value_old=frames[index_f].value,
+                  value_new=x,
                 )
               )
               if frames[index_f].value != x
@@ -2128,12 +2151,13 @@ def _panel_collider_inspector() -> None:  ##
             lambda x: (
               atk.scheduled_commands.append(
                 CommandAttackColliderAlterField(
-                  g.action_id,
-                  c.id,
-                  f,
-                  index_f,
-                  frames[index_f].value,
-                  vec2(x, frames[index_f].value.y),
+                  merge_id=g.action_id,
+                  atk=atk,
+                  collider_id=c.id,
+                  keyframe_field=f,
+                  keyframe_index_inside_list=index_f,
+                  value_old=frames[index_f].value,
+                  value_new=vec2(x, frames[index_f].value.y),
                 )
               )
               if frames[index_f].value.x != x
@@ -2151,12 +2175,13 @@ def _panel_collider_inspector() -> None:  ##
             lambda x: (
               atk.scheduled_commands.append(
                 CommandAttackColliderAlterField(
-                  g.action_id,
-                  c.id,
-                  f,
-                  index_f,
-                  frames[index_f].value,
-                  vec2(frames[index_f].value.x, x),
+                  merge_id=g.action_id,
+                  atk=atk,
+                  collider_id=c.id,
+                  keyframe_field=f,
+                  keyframe_index_inside_list=index_f,
+                  value_old=frames[index_f].value,
+                  value_new=vec2(frames[index_f].value.x, x),
                 )
               )
               if frames[index_f].value.y != x
@@ -2220,7 +2245,7 @@ def _post_new_frame() -> None:  ##
       while atk.history_head + 1 < len(atk.history):
         atk.history.pop()
     for command in atk.scheduled_commands:
-      command.do(atk)
+      command.do()
       atk.history_head += 1
       atk.history.append(command)
       if (
@@ -2256,7 +2281,7 @@ def _post_new_frame() -> None:  ##
     if g.attack_undo_scheduled:
       g.attack_undo_scheduled = False
       if atk.history_head >= 0:
-        atk.history[atk.history_head].undo(atk)
+        atk.history[atk.history_head].undo()
         atk.history_head -= 1
 
     # Handling redo.
@@ -2265,7 +2290,7 @@ def _post_new_frame() -> None:  ##
       g.attack_redo_scheduled = False
       if atk.history_head < len(atk.history) - 1:
         atk.history_head += 1
-        atk.history[atk.history_head].do(atk)
+        atk.history[atk.history_head].do()
 
     if c := atk.get_visualization_collider():
       if c.keyframe_to_select:
@@ -2308,4 +2333,3 @@ def _test_first_keyframe_yields_correct_values():  ##
   ass(r == c.radius[0].value)
   recursive_validate(c)
   ##
-
