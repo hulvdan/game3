@@ -19,6 +19,7 @@ from math import pi
 from pathlib import Path
 from typing import Any, Callable, ClassVar, Generic, Self, TypeAlias, TypeVar
 from uuid import UUID, uuid4
+from glib_pb2 import GAttack, GCollider, GAttackMelee
 
 import bf_lib as bf
 import numpy as np
@@ -911,7 +912,7 @@ class Command(ABC):
   @abstractmethod
   def undo(self) -> None: ...
 
-  def try_merge(self, _newest: Self, /) -> CommandMergeType:
+  def try_merge(self, _newest, /) -> CommandMergeType:
     return CommandMergeType.NONE
 
   def __init_subclass__(cls, **kwargs):
@@ -948,134 +949,6 @@ class Command(ABC):
 COMMAND_REGISTRY: dict[str, type[Command]] = {}
 
 
-def _creature_create(c: "Creature") -> None:
-  g.creatures.append(c)
-  pname = f"{c.name}_{c.id}"
-  bf.recursive_mkdir(ATTACKS_DIR / pname)
-  with bf.sane_writable_file(ATTACKS_DIR / pname / "_.yaml") as out_file:
-    yaml.dump(_serializer.serialize_root(c), out_file)
-
-
-@dataclass(slots=True)
-@t.final
-class CommandCreatureAdd(Command):
-  creature_id: UUID
-
-  def do(self) -> None:
-    _creature_create(Creature(id=self.creature_id))
-
-  def undo(self) -> None:
-    c = next(x for x in g.creatures if x.id == self.creature_id)
-    shutil.rmtree(ATTACKS_DIR / f"{c.name}_{c.id}", ignore_errors=True)
-
-
-@dataclass(slots=True)
-@t.final
-class CommandCreatureRemove(Command):
-  creature: "Creature"
-
-  def do(self) -> None:
-    shutil.rmtree(
-      ATTACKS_DIR / f"{self.creature.name}_{self.creature.id}", ignore_errors=True
-    )
-
-  def undo(self) -> None:
-    _creature_create(self.creature)
-
-
-@dataclass(slots=True)
-class CommandCreature(Command):
-  creature_id: UUID
-
-  @property
-  def _creature(self) -> "Creature":
-    return next(x for x in g.creatures if x.id == self.creature_id)
-
-
-@dataclass(slots=True)
-@t.final
-class CommandCreatureAlterName(CommandCreature):
-  name_old: str
-  name_new: str
-
-  def do(self) -> None:
-    c = self._creature
-    ass(self.name_old == c.name)
-    folder_old = Creature.get_folder_name(c.id, c.name)
-    c.name = self.name_new
-    folder_new = Creature.get_folder_name(c.id, c.name)
-    shutil.move(ATTACKS_DIR / folder_old, ATTACKS_DIR / folder_new)
-
-  def undo(self) -> None:
-    c = self._creature
-    ass(self.name_old == c.name)
-    folder_new = Creature.get_folder_name(c.id, c.name)
-    c.name = self.name_old
-    folder_old = Creature.get_folder_name(c.id, c.name)
-    shutil.move(ATTACKS_DIR / folder_new, ATTACKS_DIR / folder_old)
-
-
-# assert CommandCreatureAlterName._export_fields == [
-#   "merge_id",
-#   "creature_id",
-#   "name_old",
-#   "name_new",
-# ]
-
-
-@dataclass(slots=True)
-@t.final
-class CommandCreatureAttackAdd(CommandCreature):
-  attack_id: UUID
-
-  def do(self) -> None:
-    c = self._creature
-    atk = Attack(id=self.attack_id)
-    c.attacks.append(atk)
-    with bf.sane_writable_file(
-      ATTACKS_DIR
-      / c.get_folder_name(c.id, c.name)
-      / "{}.yaml".format(atk.get_file_name_wo_ext(atk.id, atk.name))
-    ) as out_file:
-      yaml.dump(_serializer.serialize_root(atk), out_file)
-
-  def undo(self) -> None:
-    c = next(x for x in g.creatures if x.id == self.creature_id)
-    for i, x in enumerate(c.attacks):
-      if x.id == self.attack_id:
-        Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(x.file_name_wo_ext)).unlink(
-          missing_ok=True
-        )
-        del c.attacks[i]
-        return
-    ass(0)
-
-
-@dataclass(slots=True)
-@t.final
-class CommandCreatureAttackRemove(CommandCreature):
-  attack: "Attack"
-
-  def do(self) -> None:
-    c = self._creature
-    for i, x in enumerate(c.attacks):
-      if x.id == self.attack.id:
-        Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(x.file_name_wo_ext)).unlink(
-          missing_ok=True
-        )
-        del c.attacks[i]
-        return
-    ass(0)
-
-  def undo(self) -> None:
-    c = self._creature
-    c.attacks.append(self.attack)
-    with bf.sane_readable_file(
-      Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(self.attack.file_name_wo_ext))
-    ) as out_file:
-      yaml.dump(_serializer.serialize_root(self.attack), out_file)
-
-
 @dataclass(slots=True)
 class CommandAttack(Command):
   atk: "Attack"
@@ -1083,34 +956,9 @@ class CommandAttack(Command):
   _export_fields = []
 
 
-@dataclass(slots=True)
-@t.final
-class CommandAttackAlterName(CommandAttack):
-  name_old: str
-  name_new: str
-
-  def do(self) -> None:
-    for i, x in enumerate(c.attacks):
-      if x.id == self.atk.id:
-        Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(x.file_name_wo_ext)).unlink(
-          missing_ok=True
-        )
-        del c.attacks[i]
-        return
-    ass(0)
-
-  def undo(self) -> None:
-    c = self._creature
-    c.attacks.append(self.attack)
-    with bf.sane_readable_file(
-      Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(self.attack.file_name_wo_ext))
-    ) as out_file:
-      yaml.dump(_serializer.serialize_root(self.attack), out_file)
-
-
 # @dataclass(slots=True)
 # @t.final
-# class AttackCommandAlterFrames(Command):
+# class CommandAttackAlterFrames(Command):
 #   pass
 
 
@@ -1372,7 +1220,8 @@ class State:
 
   @dataclass(slots=True)
   class Explorer:  ##
-    scheduled_commands: list[Command] = field(default_factory=list)
+    pass
+    # scheduled_commands: list[Command] = field(default_factory=list)
     ##
 
   action_id: int = 1
@@ -1438,10 +1287,6 @@ def _override_keyframe_round_to_step(v: bool):  ##
 
 
 def _panel_explorer() -> None:  ##
-  if im.button("+creature"):
-    g.explorer.scheduled_commands.append(
-      CommandCreatureAdd(merge_id=g.action_id, creature_id=uuid4())
-    )
   for creature in g.creatures:
     creature_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
     if creature is g.ref_selected_attack_creature:
@@ -1461,13 +1306,6 @@ def _panel_explorer() -> None:  ##
             g.ref_selected_attack = attack
             g.schedule_dump()
           im.tree_pop()
-      if im.begin_popup_context_item("aboba"):
-        activated, _ = im.menu_item("Create Attack", "", False)
-        if activated:
-          g.explorer_scheduled_commands.append(
-            CommandCreatureAdd(merge_id=g.action_id, creature_id=uuid4())
-          )
-        im.end_popup()
       im.tree_pop()
   ##
 
@@ -1752,7 +1590,7 @@ def _panel_visualizer() -> None:
         off = bf.round_to_step(vec2(off3.x, off3.z), STEP_TRANSLATE)
         atk.scheduled_commands.append(
           CommandAttackColliderAlterField(
-            g.action_id,
+            merge_id=g.action_id,
             c.id,
             "tr",
             tr_closest_index,
@@ -2470,3 +2308,4 @@ def _test_first_keyframe_yields_correct_values():  ##
   ass(r == c.radius[0].value)
   recursive_validate(c)
   ##
+

@@ -127,6 +127,21 @@
           }
         ]
       }
+    },
+    {
+      "label": "regenerate_python_glib_proto",
+      "type": "shell",
+      "command": "uv run python cli/bf_cli.py regenerate_python_glib_proto",
+      "hide": true
+    },
+    {
+      "label": "tool_attacks_markuper",
+      "type": "shell",
+      "dependsOn": [
+        "regenerate_python_glib_proto",
+        "5_lint"
+      ]
+      // "hide": true
     }
   ]
 }

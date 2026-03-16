@@ -59,7 +59,7 @@
         "tool_attacks_markuper"
       ],
       "console": "integratedTerminal",
-      "preLaunchTask": "5_lint",
+      "preLaunchTask": "tool_attacks_markuper",
       "justMyCode": false
     }
   ]

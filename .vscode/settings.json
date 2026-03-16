@@ -4,7 +4,6 @@
     "**/*.translation": true,
     "**/*.tscn*.tmp": true,
     "**/*.uid": true,
-    "**/*_pb2.py": true,
     ".godot/": true,
     // ".venv/": true,
     "node_modules": true,

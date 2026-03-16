@@ -9,7 +9,11 @@ import bf_lib as bf
 import bf_swatch
 import colornames
 from bf_game import *  # noqa
-from bf_glib import do_generate, get_sounds_that_reaper_would_export
+from bf_glib import (
+  do_generate,
+  get_sounds_that_reaper_would_export,
+  regenerate_python_glib_proto,
+)
 from bf_typer import app, command, global_timing_manager_instance, timing
 
 ##
@@ -208,6 +212,7 @@ def profiles() -> None:  ##
 
 @command
 def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
+  regenerate_python_glib_proto()
   do_generate(platform, build_type)
   do_activate_godot_ahk()
   ##
@@ -215,6 +220,7 @@ def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
 
 @command
 def codegen_and_lint(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
+  regenerate_python_glib_proto()
   do_generate(platform, build_type)
   do_godot_lint()
   do_godot_check_errors()
@@ -226,6 +232,7 @@ def codegen_and_lint(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
 def build(
   target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType
 ):  ##
+  regenerate_python_glib_proto()
   do_generate(platform, build_type)
   do_godot_lint()
   do_godot_check_errors()
@@ -250,6 +257,7 @@ def build(
 def run():  ##
   platform = bf.BuildPlatform.Win
   build_type = bf.BuildType.Debug
+  regenerate_python_glib_proto()
   do_generate(platform, build_type)
   do_godot_lint()
   do_godot_check_errors()
@@ -261,6 +269,7 @@ def run():  ##
 def test():  ##
   platform = bf.BuildPlatform.Win
   build_type = bf.BuildType.Debug
+  regenerate_python_glib_proto()
   do_generate(platform, build_type)
   do_godot_lint()
   do_godot_check_errors()
@@ -365,6 +374,9 @@ def proto_renumber():  ##
   for f in Path("src").rglob("*.proto"):
     bf.run_command(["proto-renumber", "-replace", f])
   ##
+
+
+command(regenerate_python_glib_proto)
 
 
 @command

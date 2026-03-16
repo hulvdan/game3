@@ -1,4 +1,6 @@
 ## Imports
+import importlib
+import importlib.util
 import json
 from math import radians
 from pathlib import Path
@@ -82,6 +84,21 @@ def do_audio(_platform: bf.BuildPlatform) -> None:  ##
 #     ##
 
 
+def regenerate_python_glib_proto() -> None:  ##
+  Path("cli/glib_pb2.py").unlink(missing_ok=True)
+  bf.run_command(r"""
+    .\cli\protoc.exe
+    --python_out=cli
+    --pyi_out=cli
+    --proto_path=src/game
+    src/game/glib.proto
+  """)
+  assert Path("cli/glib_pb2.py").exists(), (
+    "Failed to generate glib_pb2.py from glib.proto!"
+  )
+  ##
+
+
 @timing
 def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
   bf.run_command("uv run yamllint src/game/glib.yaml -s -f parsable")
@@ -93,23 +110,13 @@ def do_generate(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> None:
   temp_glib_path = Path(".temp/glib.gd")
   temp_glib_path.unlink(missing_ok=True)
   bf.run_command("""
-        godot
-        --headless
-        -s addons/protobuf/protobuf_cmdln.gd
-        --input=src/game/glib.proto
-        --output=.temp/glib.gd
-    """)
+    godot
+    --headless
+    -s addons/protobuf/protobuf_cmdln.gd
+    --input=src/game/glib.proto
+    --output=.temp/glib.gd
+  """)
   assert temp_glib_path.exists(), "Failed to generate glib.gd from glib.proto!"
-  Path("src/game/glib_pb2.py").unlink(missing_ok=True)
-  bf.run_command(r"""
-        .\cli\protoc.exe
-        --python_out=cli
-        --proto_path=src/game
-        src/game/glib.proto
-    """)
-  assert Path("cli/glib_pb2.py").exists(), (
-    "Failed to generate glib_pb2.py from glib.proto!"
-  )
 
   with Path("src/codegen/nolint/glib.gd").open(
     "w", encoding="utf-8", newline="\n"
@@ -168,21 +175,23 @@ func _physics_process(_dt: float) -> void:
 
   degrees_to_radians_recursive_transform(glib)
 
+  ## Validating no invalid fields specified in glib
+  spec = importlib.util.spec_from_file_location("glib_pb2", "bf_cli/glib_pb2.py")
+  assert spec
+  glib_pb2 = importlib.util.module_from_spec(spec)
+  json_format.Parse(json.dumps(glib), glib_pb2.Lib())
+  ##
+
+  ## Dumping glib + converting to binary
   out_path = Path(".temp") / "glib.json"
   bf.recursive_mkdir(out_path.parent)
   with open(out_path, "w", encoding="utf-8") as out_file:
     json.dump(glib, out_file, indent=2)
 
-  ## Validating no invalid fields specified in glib.
-  import glib_pb2  # noqa: PLC0415
-
-  lib = glib_pb2.Lib()  # type: ignore
-  json_format.Parse(json.dumps(glib), lib)
-  ##
-
   bf.run_command(
     rf"buf convert src/game/glib.proto --type=Lib --from={out_path} --to=assets/glib.binpb --validate"
   )
+  ##
 
 
 def degrees_to_radians_recursive_transform(gamelib_recursed) -> None:  ##
