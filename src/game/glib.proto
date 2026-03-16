@@ -233,23 +233,24 @@ message GAttackConditionValue {
 }
 
 message GAttack {
-  int32 duration_frames = 1;
-  float cooldown_min = 2;
-  float cooldown_max = 3;
+  string debug_name = 1;
+  int32 duration_frames = 2;
+  float cooldown_min = 3;
+  float cooldown_max = 4;
 
-  float movement_scale = 4;
-  GStaminaCost stamina_cost = 5;
+  float movement_scale = 5;
+  GStaminaCost stamina_cost = 6;
 
-  float stops_tracking_at = 6;
+  float stops_tracking_at = 7;
 
-  int32 projectile_type = 7;
-  repeated GProjectileSpawn projectile_spawns = 8;
+  int32 projectile_type = 8;
+  repeated GProjectileSpawn projectile_spawns = 9;
 
-  GAttackMelee melee = 9;
-  repeated GTagValue tags = 10;
-  repeated GImpulseData impulses = 11;
+  GAttackMelee melee = 10;
+  repeated GTagValue tags = 11;
+  repeated GImpulseData impulses = 12;
 
-  GAttackConditionValue condition = 12;
+  GAttackConditionValue condition = 13;
 }
 
 message GAbility {

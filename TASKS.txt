@@ -32,23 +32,10 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x mark: bf_lib test serialize+deserialize commands hierarchy is supported
-x mark: serialize undo commands
-x mark: deser fix registry must load dicts as dataclasses
-x mark: deser attacks works
-- devlog: remove gmail from contributors?
-- devlog: hulvdan@yandex.ru github
-- devlog: transfer repo to hulvdan@yandex.ru
-x not exporting history
-x mark: validate that hierarchy can be serialized
-x prepare for proto
-x creating python pb2.py
-x upd
-x mark: loading gamelib
 
-* mark:
-* mark:
-* mark:
+* mark: all attacks must have codename (for explorer panel)
+* mark: save attack to yaml file
+* mark: glib codegen: load attack data from yaml
 * mark:
 * mark:
 * mark:

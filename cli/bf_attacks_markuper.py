@@ -27,7 +27,7 @@ import yaml
 from bf_glib import load_glib
 from bf_lib import imgui_assert as ass
 from bf_typer import command
-from glib_pb2 import Lib
+from glib_pb2 import GAttack, GCreature, Lib
 from glm import vec1
 from google.protobuf.json_format import ParseDict
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
@@ -305,7 +305,7 @@ _serializer = bf.DataclassSerializer()
 @command
 def tool_attacks_markuper() -> None:
   glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug)
-  g.glib = ParseDict(glib, Lib)
+  g.glib = ParseDict(glib, Lib())
 
   ser = _serializer
   ser.register(vec1, (lambda x, _: [x.x], lambda x, _: vec1(*x), None))
@@ -1248,9 +1248,9 @@ class State:
 
   frame: int = 0
 
-  attack_to_select: Attack | None = None
-  ref_selected_attack_creature: Creature | None = None
-  ref_selected_attack: Attack | None = None
+  attack_to_select: GAttack | None = None
+  ref_selected_attack_creature: GCreature | None = None
+  ref_selected_attack: GAttack | None = None
 
   attack_undo_scheduled: bool = False
   attack_redo_scheduled: bool = False
@@ -1262,11 +1262,11 @@ class State:
     return AppSaveState(
       font_scale_main=im.get_style().font_scale_main,
       creature=(
-        self.ref_selected_attack_creature.name
+        self.ref_selected_attack_creature.debug_name
         if self.ref_selected_attack_creature
         else None
       ),
-      attack=self.ref_selected_attack.name if self.ref_selected_attack else None,
+      attack=self.ref_selected_attack.debug_name if self.ref_selected_attack else None,
       visualizer__gizmo_mode=vis.gizmo_mode,
     )
     ##
@@ -1298,7 +1298,8 @@ def _override_keyframe_round_to_step(v: bool):  ##
 
 
 def _panel_explorer() -> None:  ##
-  for creature in g.creatures:
+  for creature in g.glib.creatures:
+    # for creature in g.creatures:
     creature_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
     if creature is g.ref_selected_attack_creature:
       creature_flags |= im.TreeNodeFlags_.selected
