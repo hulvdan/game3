@@ -1,5 +1,6 @@
 ## Imports
 import asyncio
+import inspect
 import math
 import random
 import shutil
@@ -33,7 +34,7 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
-PRE_BUILD_DATA_REMOVEME = 1
+PRE_BUILD_DATA_REMOVEME = 0
 
 T = t.TypeVar("T")
 Variant: TypeAlias = t.Any
@@ -313,44 +314,40 @@ def tool_attacks_markuper() -> None:
 
   def collider_deserialize(x: dict, as_) -> ColliderBase:
     ass(as_ is ColliderBase)
-    return COLLIDER_REGISTRY[x["type"]](**{k: v for k, v in x.items() if k != "type"})
+    class_ = COLLIDER_REGISTRY[x["type"]]
+    return class_(
+      **{
+        k: ser.deserialize_root(v, class_.__dataclass_fields__[k].type)
+        for k, v in x.items()
+        if k != "type"
+      }
+    )
 
   ser.register(ColliderBase, collider_serialize, collider_deserialize)
   for tt in COLLIDER_REGISTRY.values():
-    ser.register(tt, ser.serialize, ser.deserialize)
+    ser.register(tt)
 
   def attack_command_serialize(x, as_) -> Any:
     ass(isinstance(x, AttackCommand))
     ass(as_ is AttackCommand)
-    return {"_type": type(x).__name__, **ser.serialize_root(x, type(x))}
+    return {"_type": x.type(), **ser.serialize_root(x, type(x))}
 
   def attack_command_deserialize(x, as_) -> Any:
     ass(as_ is AttackCommand)
-    return ATTACK_COMMAND_COLLIDER_REGISTRY[x["_type"]](
-      **{k: v for k, v in x.items() if k != "_type"}
-    )
-
-  def attack_command_collider_serialize(x, as_) -> Any:
-    ass(isinstance(x, AttackCommand))
-    ass(isinstance(x, AttackCommandCollider))
-    ass(as_ is AttackCommandCollider)
-    return {"_ctype": type(x).__name__, **ser.serialize_root(x, type(x))}
-
-  def attack_command_collider_deserialize(x, as_) -> Any:
-    ass(as_ is AttackCommand)
-    ass(as_ is AttackCommandCollider)
-    return ATTACK_COMMAND_COLLIDER_REGISTRY[x["_collider_type"]](
-      **{k: v for k, v in x.items() if k != "_collider_type"}
+    class_ = ATTACK_COMMAND_REGISTRY[x["_type"]]
+    return class_(
+      **{
+        k: ser.deserialize_root(v, class_.__dataclass_fields__[k].type)
+        for k, v in x.items()
+        if k != "_type"
+      }
     )
 
   ser.register(AttackCommand, attack_command_serialize, attack_command_deserialize)
-  ser.register(
-    AttackCommandCollider,
-    attack_command_collider_serialize,
-    attack_command_collider_deserialize,
-  )
-  for tt in ATTACK_COMMAND_COLLIDER_REGISTRY.values():
-    ser.register(tt, ser.serialize, ser.deserialize)
+  for tt in ATTACK_COMMAND_REGISTRY.values():
+    ser.register(tt)
+
+  ser.register(Keyframe)
 
   if PRE_BUILD_DATA_REMOVEME:
     atk1 = Attack(
@@ -673,14 +670,27 @@ class ColliderBase(ABC):  ##
   @abstractmethod
   def type(cls) -> ColliderType: ...
 
-  keyframe_fields: t.ClassVar[list[str]]
-
   id: int = 0
 
   selected_keyframe: SelectedKeyframe | None = None
   keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
 
   _next_keyframe_id_value: KeyframeID = 1
+
+  is_active: list[Keyframe[bool]] = field(default_factory=list)
+  tr: list[Keyframe[vec2]] = field(default_factory=list)
+
+  _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
+  _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
+
+  _export_fields: t.ClassVar[list[str]] = [
+    "id",
+    "is_active",
+    "tr",
+    "_next_keyframe_id_value",
+  ]
+
+  keyframe_fields: t.ClassVar[list[str]]
 
   def __new__(cls, *_args, **_kwargs):
     ass(cls is not ColliderBase)
@@ -787,8 +797,7 @@ class ColliderBase(ABC):  ##
 
   def __init_subclass__(cls, **kwargs):
     super().__init_subclass__(**kwargs)
-    if cls.type().name in COLLIDER_REGISTRY:
-      ass(cls.keyframe_fields)
+    if inspect.isabstract(cls):
       return
 
     COLLIDER_REGISTRY[cls.type().name] = cls
@@ -796,7 +805,8 @@ class ColliderBase(ABC):  ##
 
     prefix = "_keyframe_"
 
-    for field_name, field_type in cls.__annotations__.items():
+    for field_name, field_instance in cls.__dataclass_fields__.items():
+      field_type = field_instance.type
       origin = t.get_origin(field_type)
       args = t.get_args(field_type)
 
@@ -804,9 +814,10 @@ class ColliderBase(ABC):  ##
         if t.get_origin(args[0]) is Keyframe:
           ass(field_name not in cls.keyframe_fields)
           cls.keyframe_fields.append(field_name)
-          ass(f"{prefix}{field_name}" in cls.__annotations__)
+          ass(f"{prefix}{field_name}" in cls.__dataclass_fields__)
 
-    for field_name, field_type in cls.__annotations__.items():
+    for field_name, field_instance in cls.__dataclass_fields__.items():
+      field_type = field_instance.type
       if field_name.startswith(prefix):
         field_name_wo_prefix = field_name.removeprefix(prefix)
         ass(t.get_origin(field_type) is ClassVar)
@@ -826,19 +837,14 @@ class ColliderCircle(ColliderBase):  ##
   def type(cls) -> ColliderType:
     return ColliderType.CIRCLE
 
-  is_active: list[Keyframe[bool]] = field(default_factory=list)
-  tr: list[Keyframe[vec2]] = field(default_factory=list)
   radius: list[Keyframe[float]] = field(default_factory=list)
 
-  _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
-  _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
   _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
     0.5, step=STEP_TRANSLATE, step_fast=1, min=MIN_RADIUS, max=MAX_RADIUS, fmt="%.2f"
   )
 
-  _export_fields = [
-    "is_active",
-    "tr",
+  _export_fields: t.ClassVar[list[str]] = [
+    *ColliderBase._export_fields,
     "radius",
   ]
 
@@ -852,14 +858,10 @@ class ColliderCapsule(ColliderBase):  ##
   def type(cls) -> ColliderType:
     return ColliderType.CAPSULE
 
-  is_active: list[Keyframe[bool]] = field(default_factory=list)
-  tr: list[Keyframe[vec2]] = field(default_factory=list)
   radius: list[Keyframe[float]] = field(default_factory=list)
   spread: list[Keyframe[float]] = field(default_factory=list)
   rotation: list[Keyframe[float]] = field(default_factory=list)
 
-  _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
-  _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
   _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
     0.5, step=STEP_TRANSLATE, step_fast=1, min=MIN_RADIUS, max=MAX_RADIUS, fmt="%.2f"
   )
@@ -870,9 +872,8 @@ class ColliderCapsule(ColliderBase):  ##
     0, step=STEP_ROTATE, step_fast=90, fmt="%.0f"
   )
 
-  _export_fields = [
-    "is_active",
-    "tr",
+  _export_fields: t.ClassVar[list[str]] = [
+    *ColliderBase._export_fields,
     "radius",
     "spread",
     "rotation",
@@ -890,11 +891,11 @@ class CommandMergeType(IntEnum):
 ## Attack Commands
 @dataclass(slots=True)
 class AttackCommand(ABC):
-  merge_id: int
+  @classmethod
+  @abstractmethod
+  def type(cls) -> str: ...
 
-  _export_fields = [
-    "merge_id",
-  ]
+  merge_id: int
 
   @abstractmethod
   def do(self, atk: "Attack") -> None: ...
@@ -907,9 +908,9 @@ class AttackCommand(ABC):
 
   def __init_subclass__(cls, **kwargs):
     super().__init_subclass__(**kwargs)
-    if cls.__name__ in ATTACK_COMMAND_REGISTRY:
-      return
-    ATTACK_COMMAND_REGISTRY[cls.__name__] = cls
+    if not inspect.isabstract(cls):
+      if cls.type() not in ATTACK_COMMAND_REGISTRY:
+        ATTACK_COMMAND_REGISTRY[cls.type()] = cls
 
 
 ATTACK_COMMAND_REGISTRY: dict[str, type[AttackCommand]] = {}
@@ -938,19 +939,8 @@ def register_command(cls):
 class AttackCommandCollider(AttackCommand):
   collider_id: ColliderID
 
-  _export_fields = [
-    *AttackCommand._export_fields,
-    "collider_id",
-  ]
-
   def c(self, atk: "Attack") -> "ColliderBase":
     return next(c for c in atk.colliders if c.id == self.collider_id)
-
-  def __init_subclass__(cls, **kwargs):
-    super().__init_subclass__(**kwargs)
-    if cls.__name__ in ATTACK_COMMAND_COLLIDER_REGISTRY:
-      return
-    ATTACK_COMMAND_REGISTRY[cls.__name__] = cls
 
 
 ATTACK_COMMAND_COLLIDER_REGISTRY: dict[str, type[AttackCommandCollider]] = {}
@@ -960,14 +950,12 @@ ATTACK_COMMAND_COLLIDER_REGISTRY: dict[str, type[AttackCommandCollider]] = {}
 @dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
+  @classmethod
+  def type(cls) -> str:
+    return "attack_collider_keyframe_add"
+
   keyframe_field: str
   keyframe_index_timeline: int
-
-  _export_fields = [
-    *AttackCommandCollider._export_fields,
-    "keyframe_field",
-    "keyframe_index_timeline",
-  ]
 
   def do(self, atk: "Attack") -> None:
     self.c(atk).make_default_keyframe_at(
@@ -992,16 +980,13 @@ class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
 @dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeMove(AttackCommandCollider):
+  @classmethod
+  def type(cls) -> str:
+    return "attack_collider_keyframe_move"
+
   keyframe_field: str
   keyframe_index_timeline_from: int
   keyframe_index_timeline_to: int
-
-  _export_fields = [
-    *AttackCommandCollider._export_fields,
-    "keyframe_field",
-    "keyframe_index_timeline_from",
-    "keyframe_index_timeline_to",
-  ]
 
   def do(self, atk: "Attack") -> None:
     c = self.c(atk)
@@ -1033,16 +1018,13 @@ class AttackCommandColliderKeyframeMove(AttackCommandCollider):
 @dataclass(slots=True)
 @t.final
 class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
+  @classmethod
+  def type(cls) -> str:
+    return "attack_collider_keyframe_remove"
+
   keyframe_field: str
   keyframe_index_timeline: int
   keyframe_value: Variant
-
-  _export_fields = [
-    *AttackCommandCollider._export_fields,
-    "keyframe_field",
-    "keyframe_index_timeline",
-    "keyframe_value",
-  ]
 
   def do(self, atk: "Attack") -> None:
     frames = self.c(atk).get_keyframes(self.keyframe_field)
@@ -1068,18 +1050,14 @@ class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
 @dataclass(slots=True)
 @t.final
 class AttackCommandColliderAlterField(AttackCommandCollider):
+  @classmethod
+  def type(cls) -> str:
+    return "attack_collider_alter_field"
+
   keyframe_field: str
   keyframe_index_inside_list: int
   value_old: Variant
   value_new: Variant
-
-  _export_fields = [
-    *AttackCommandCollider._export_fields,
-    "keyframe_field",
-    "keyframe_index_inside_list",
-    "value_old",
-    "value_new",
-  ]
 
   def do(self, atk: "Attack") -> None:
     c = self.c(atk)

@@ -330,7 +330,12 @@ class DataclassSerializer:
 
   export_fields_field: str = "_export_fields"
 
-  def register(self, type_: type, serialize: SerFunc, deserialize: DeserFunc) -> None:  ##
+  def register(
+    self,
+    type_: type,
+    serialize: SerFunc | None = None,
+    deserialize: DeserFunc | None = None,
+  ) -> None:  ##
     code = type_.__name__
     assert code not in self._variant_ser_types
     assert type_ not in self._variant_deser_types
@@ -338,8 +343,8 @@ class DataclassSerializer:
       assert v is not type_
     for v in self._variant_deser_types:
       assert v != code
-    self._variant_ser_types[type_] = (code, serialize)
-    self._variant_deser_types[code] = (type_, deserialize)
+    self._variant_ser_types[type_] = (code, serialize or self.serialize)
+    self._variant_deser_types[code] = (type_, deserialize or self.deserialize)
     ##
 
   def serialize_root(self, value, as_=None) -> Any:  ##
@@ -513,6 +518,11 @@ def _test_serializer():  ##
 
     command_leaf: int = 3
 
+  @dataclass
+  class Keyframe(Generic[T]):
+    index: int
+    value: T
+
   @unique
   class ColliderType(IntEnum):
     CIRCLE = 1
@@ -526,17 +536,14 @@ def _test_serializer():  ##
 
     base_value: int
 
+    frames: list[Keyframe[float]]
+
     def __init_subclass__(cls, **kwargs):
       super().__init_subclass__(**kwargs)
       assert cls.type().name not in COLLIDER_REGISTRY
       COLLIDER_REGISTRY[cls.type().name] = cls
 
   COLLIDER_REGISTRY: dict[str, type[ColliderBase]] = {}
-
-  @dataclass
-  class Keyframe(Generic[T]):
-    index: int
-    value: T
 
   @dataclass
   @t.final
@@ -579,11 +586,14 @@ def _test_serializer():  ##
     not_exported: int = 1
     colliders: list[ColliderBase] = field(default_factory=list)
     colliders_any: list[Any] = field(default_factory=list)
-    collider: ColliderBase = field(default_factory=lambda: ColliderCircle(1, 1))
+    collider: ColliderBase = field(default_factory=lambda: ColliderCircle(1, [], 1))
     collider_any: Any = None
     none_any: Any = None
 
     frame: Keyframe[float] = field(default_factory=lambda: Keyframe(0, 1.1))
+    frames: list[Keyframe[float]] = field(
+      default_factory=lambda: [Keyframe(0, 1.1), Keyframe(0, 2.2)]
+    )
     command: CommandBase = field(default_factory=CommandLeaf)
     command_leaf: CommandLeaf = field(default_factory=CommandLeaf)
 
@@ -600,6 +610,7 @@ def _test_serializer():  ##
       "collider_any",
       "none_any",
       "frame",
+      "frames",
       "command",
       "command_leaf",
     ]
@@ -619,20 +630,36 @@ def _test_serializer():  ##
       ],
     },
     "colliders": [
-      {"type": "CIRCLE", "base_value": 1, "radius": 5},
-      {"type": "CAPSULE", "base_value": 2, "radius": 3, "spread": 4, "rotation": 5},
-    ],
-    "colliders_any": [
-      {"%": "ColliderCircle", "value": {"base_value": 1, "radius": 5}},
+      {"type": "CIRCLE", "base_value": 1, "radius": 5, "frames": []},
       {
-        "%": "ColliderCapsule",
-        "value": {"base_value": 2, "radius": 3, "spread": 4, "rotation": 5},
+        "type": "CAPSULE",
+        "base_value": 2,
+        "radius": 3,
+        "spread": 4,
+        "rotation": 5,
+        "frames": [],
       },
     ],
-    "collider": {"type": "CIRCLE", "base_value": 1, "radius": 1},
-    "collider_any": {"%": "ColliderCircle", "value": {"base_value": 6, "radius": 7}},
+    "colliders_any": [
+      {"%": "ColliderCircle", "value": {"base_value": 1, "radius": 5, "frames": []}},
+      {
+        "%": "ColliderCapsule",
+        "value": {"base_value": 2, "radius": 3, "spread": 4, "rotation": 5, "frames": []},
+      },
+    ],
+    "collider": {
+      "type": "CIRCLE",
+      "base_value": 1,
+      "radius": 1,
+      "frames": [{"index": 0, "value": 1}],
+    },
+    "collider_any": {
+      "%": "ColliderCircle",
+      "value": {"base_value": 6, "radius": 7, "frames": []},
+    },
     "none_any": {"%": "None", "value": None},
     "frame": {"index": 0, "value": 1.1},
+    "frames": [{"index": 0, "value": 1.1}, {"index": 0, "value": 2.2}],
     "command": {
       "type": "CommandLeaf",
       "command_base": 1,
@@ -644,16 +671,16 @@ def _test_serializer():  ##
   expected_deserialized = Attack(
     primitive=1,
     not_exported=2,
-    colliders=[ColliderCircle(1, 5), ColliderCapsule(2, 3, 4, 5)],
-    colliders_any=[ColliderCircle(1, 5), ColliderCapsule(2, 3, 4, 5)],
-    collider=ColliderCircle(1, 1),
-    collider_any=ColliderCircle(6, 7),
+    colliders=[ColliderCircle(1, [], 5), ColliderCapsule(2, [], 3, 4, 5)],
+    colliders_any=[ColliderCircle(1, [], 5), ColliderCapsule(2, [], 3, 4, 5)],
+    collider=ColliderCircle(1, [Keyframe(0, 1)], 1),
+    collider_any=ColliderCircle(6, [], 7),
   )
 
   ser = DataclassSerializer()
   ser.register(vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
   ser.register(vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
-  ser.register(Keyframe, ser.serialize, ser.deserialize)
+  ser.register(Keyframe)
 
   def collider_serialize(x: ColliderBase, as_) -> Any:
     assert isinstance(x, ColliderBase)
@@ -662,11 +689,18 @@ def _test_serializer():  ##
 
   def collider_deserialize(x: dict, as_) -> ColliderBase:
     assert as_ is ColliderBase
-    return COLLIDER_REGISTRY[x["type"]](**{k: v for k, v in x.items() if k != "type"})
+    class_ = COLLIDER_REGISTRY[x["type"]]
+    return class_(
+      **{
+        k: ser.deserialize_root(v, class_.__dataclass_fields__[k].type)
+        for k, v in x.items()
+        if k != "type"
+      }
+    )
 
   ser.register(ColliderBase, collider_serialize, collider_deserialize)
   for tt in COLLIDER_REGISTRY.values():
-    ser.register(tt, ser.serialize, ser.deserialize)
+    ser.register(tt)
 
   def command_serialize(x, as_):
     assert isinstance(x, CommandBase)
@@ -678,7 +712,7 @@ def _test_serializer():  ##
     return COMMAND_REGISTRY[x["type"]](**{k: v for k, v in x.items() if k != "type"})
 
   ser.register(CommandBase, command_serialize, command_deserialize)
-  ser.register(CommandLeaf, ser.serialize, ser.deserialize)
+  ser.register(CommandLeaf)
 
   actual_serialized = ser.serialize_root(expected_deserialized)
   assert actual_serialized == expected_serialized
