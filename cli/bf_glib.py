@@ -2,6 +2,8 @@
 import importlib
 import importlib.util
 import json
+import shutil
+import tempfile
 from math import radians
 from pathlib import Path
 
@@ -85,17 +87,19 @@ def do_audio(_platform: bf.BuildPlatform) -> None:  ##
 
 
 def regenerate_python_glib_proto() -> None:  ##
-  Path("cli/glib_pb2.py").unlink(missing_ok=True)
-  bf.run_command(r"""
-    .\cli\protoc.exe
-    --python_out=cli
-    --pyi_out=cli
-    --proto_path=src/game
-    src/game/glib.proto
-  """)
-  assert Path("cli/glib_pb2.py").exists(), (
-    "Failed to generate glib_pb2.py from glib.proto!"
-  )
+  with tempfile.TemporaryDirectory() as temp_dir:
+    bf.run_command(rf"""
+      .\cli\protoc.exe
+      --python_out={temp_dir}
+      --pyi_out={temp_dir}
+      --proto_path=src/game
+      src/game/glib.proto
+    """)
+    assert Path(f"{temp_dir}/glib_pb2.py").exists(), (
+      "Failed to generate glib_pb2.py from glib.proto!"
+    )
+    shutil.move(Path(temp_dir) / "glib_pb2.py", Path("cli") / "glib_pb2.py")
+    shutil.move(Path(temp_dir) / "glib_pb2.pyi", Path("cli") / "glib_pb2.pyi")
   ##
 
 

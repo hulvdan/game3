@@ -228,7 +228,7 @@ message GAttackConditionValue {
 }
 
 message GAttack {
-  float duration = 1;
+  int32 duration_frames = 1;
   float cooldown_min = 2;
   float cooldown_max = 3;
 

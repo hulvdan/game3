@@ -42,6 +42,7 @@ x mark: deser attacks works
 x not exporting history
 x mark: validate that hierarchy can be serialized
 x prepare for proto
+x creating python pb2.py
 
 * mark: history: attack collider add
 * mark: history: attack collider rename
