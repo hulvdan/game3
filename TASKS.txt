@@ -32,6 +32,7 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x mark: bf_lib test serialize+deserialize commands hierarchy is supported
 
 * mark: serialize+deserialize undo commands
 * mark:

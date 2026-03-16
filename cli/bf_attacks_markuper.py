@@ -33,7 +33,7 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
-PRE_BUILD_DATA_REMOVEME = 0
+PRE_BUILD_DATA_REMOVEME = 1
 
 T = t.TypeVar("T")
 Variant: TypeAlias = t.Any
@@ -317,6 +317,39 @@ def tool_attacks_markuper() -> None:
 
   ser.register(ColliderBase, collider_serialize, collider_deserialize)
   for tt in COLLIDER_REGISTRY.values():
+    ser.register(tt, ser.serialize, ser.deserialize)
+
+  def attack_command_serialize(x, as_) -> Any:
+    ass(isinstance(x, AttackCommand))
+    ass(as_ is AttackCommand)
+    return {"_type": type(x).__name__, **ser.serialize_root(x, type(x))}
+
+  def attack_command_deserialize(x, as_) -> Any:
+    ass(as_ is AttackCommand)
+    return ATTACK_COMMAND_COLLIDER_REGISTRY[x["_type"]](
+      **{k: v for k, v in x.items() if k != "_type"}
+    )
+
+  def attack_command_collider_serialize(x, as_) -> Any:
+    ass(isinstance(x, AttackCommand))
+    ass(isinstance(x, AttackCommandCollider))
+    ass(as_ is AttackCommandCollider)
+    return {"_ctype": type(x).__name__, **ser.serialize_root(x, type(x))}
+
+  def attack_command_collider_deserialize(x, as_) -> Any:
+    ass(as_ is AttackCommand)
+    ass(as_ is AttackCommandCollider)
+    return ATTACK_COMMAND_COLLIDER_REGISTRY[x["_collider_type"]](
+      **{k: v for k, v in x.items() if k != "_collider_type"}
+    )
+
+  ser.register(AttackCommand, attack_command_serialize, attack_command_deserialize)
+  ser.register(
+    AttackCommandCollider,
+    attack_command_collider_serialize,
+    attack_command_collider_deserialize,
+  )
+  for tt in ATTACK_COMMAND_COLLIDER_REGISTRY.values():
     ser.register(tt, ser.serialize, ser.deserialize)
 
   if PRE_BUILD_DATA_REMOVEME:
@@ -872,6 +905,14 @@ class AttackCommand(ABC):
   @abstractmethod
   def try_merge(self, newest, /) -> CommandMergeType: ...
 
+  def __init_subclass__(cls, **kwargs):
+    super().__init_subclass__(**kwargs)
+    if cls.__name__ in ATTACK_COMMAND_REGISTRY:
+      return
+    ATTACK_COMMAND_REGISTRY[cls.__name__] = cls
+
+
+ATTACK_COMMAND_REGISTRY: dict[str, type[AttackCommand]] = {}
 
 # @dataclass(slots=True)
 # @t.final
@@ -904,6 +945,15 @@ class AttackCommandCollider(AttackCommand):
 
   def c(self, atk: "Attack") -> "ColliderBase":
     return next(c for c in atk.colliders if c.id == self.collider_id)
+
+  def __init_subclass__(cls, **kwargs):
+    super().__init_subclass__(**kwargs)
+    if cls.__name__ in ATTACK_COMMAND_COLLIDER_REGISTRY:
+      return
+    ATTACK_COMMAND_REGISTRY[cls.__name__] = cls
+
+
+ATTACK_COMMAND_COLLIDER_REGISTRY: dict[str, type[AttackCommandCollider]] = {}
 
 
 @register_command

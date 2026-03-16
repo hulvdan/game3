@@ -61,11 +61,11 @@
       "match": ".pyi?$",
       "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix"
     },
-    // {
-    //   "match": ".py?$",
-    //   "command": "testing.runCurrentFile",
-    //   "runIn": "vscode"
-    // },
+    {
+      "match": "bf_lib.py$",
+      "command": "testing.runCurrentFile",
+      "runIn": "vscode"
+    },
     {
       "match": ".md$",
       "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file}"

@@ -485,6 +485,34 @@ class DataclassSerializer:
 
 
 def _test_serializer():  ##
+  @dataclass
+  class CommandBase(ABC):
+    @classmethod
+    @abstractmethod
+    def type(cls) -> int: ...
+
+    command_base: int = 1
+
+    def __init_subclass__(cls, **kwargs):
+      super().__init_subclass__(**kwargs)
+      if cls.__name__ not in COMMAND_REGISTRY:
+        COMMAND_REGISTRY[cls.__name__] = cls
+
+  COMMAND_REGISTRY: dict[str, type[CommandBase]] = {}
+
+  @dataclass
+  class CommandMiddle(CommandBase):
+    command_middle: int = 2
+
+  @dataclass
+  @t.final
+  class CommandLeaf(CommandMiddle):
+    @classmethod
+    def type(cls) -> int:
+      return 4
+
+    command_leaf: int = 3
+
   @unique
   class ColliderType(IntEnum):
     CIRCLE = 1
@@ -556,6 +584,8 @@ def _test_serializer():  ##
     none_any: Any = None
 
     frame: Keyframe[float] = field(default_factory=lambda: Keyframe(0, 1.1))
+    command: CommandBase = field(default_factory=CommandLeaf)
+    command_leaf: CommandLeaf = field(default_factory=CommandLeaf)
 
     _export_fields: t.ClassVar[list[str]] = [
       "primitive",
@@ -570,6 +600,8 @@ def _test_serializer():  ##
       "collider_any",
       "none_any",
       "frame",
+      "command",
+      "command_leaf",
     ]
 
   expected_serialized = {
@@ -601,6 +633,13 @@ def _test_serializer():  ##
     "collider_any": {"%": "ColliderCircle", "value": {"base_value": 6, "radius": 7}},
     "none_any": {"%": "None", "value": None},
     "frame": {"index": 0, "value": 1.1},
+    "command": {
+      "type": "CommandLeaf",
+      "command_base": 1,
+      "command_middle": 2,
+      "command_leaf": 3,
+    },
+    "command_leaf": {"command_base": 1, "command_middle": 2, "command_leaf": 3},
   }
   expected_deserialized = Attack(
     primitive=1,
@@ -628,6 +667,18 @@ def _test_serializer():  ##
   ser.register(ColliderBase, collider_serialize, collider_deserialize)
   for tt in COLLIDER_REGISTRY.values():
     ser.register(tt, ser.serialize, ser.deserialize)
+
+  def command_serialize(x, as_):
+    assert isinstance(x, CommandBase)
+    assert as_ is CommandBase
+    return {"type": type(x).__name__, **ser.serialize_root(x, type(x))}
+
+  def command_deserialize(x, as_):
+    assert as_ is CommandBase
+    return COMMAND_REGISTRY[x["type"]](**{k: v for k, v in x.items() if k != "type"})
+
+  ser.register(CommandBase, command_serialize, command_deserialize)
+  ser.register(CommandLeaf, ser.serialize, ser.deserialize)
 
   actual_serialized = ser.serialize_root(expected_deserialized)
   assert actual_serialized == expected_serialized

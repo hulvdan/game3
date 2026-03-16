@@ -1,9 +1,14 @@
-_next_collider_id: 3
+_next_collider_id: 2
 colliders:
-  - __type: CAPSULE
-    is_active:
+  - is_active:
       - id: 1
         index_timeline: 0
+        value: true
+      - id: 9
+        index_timeline: 15
+        value: false
+      - id: 8
+        index_timeline: 28
         value: true
     radius:
       - id: 3
@@ -12,9 +17,6 @@ colliders:
       - id: 6
         index_timeline: 43
         value: 5
-      - id: 7
-        index_timeline: 70
-        value: 0.25
     rotation:
       - id: 5
         index_timeline: 0
@@ -22,84 +24,149 @@ colliders:
     spread:
       - id: 4
         index_timeline: 0
-        value: 3.5
+        value: 1.25
     tr:
       - id: 2
         index_timeline: 0
         value:
-          - 0.0
-          - 0.0
-  - '@': CIRCLE
-    is_active:
-      - id: 1
-        index_timeline: 0
-        value: true
-      - id: 5
-        index_timeline: 19
-        value: false
-      - id: 4
-        index_timeline: 35
-        value: true
-    radius:
-      - id: 3
-        index_timeline: 0
-        value: 2.0
-    tr:
-      - id: 2
-        index_timeline: 0
-        value:
-          - 1.0
-          - 1.75
+          - 0.75
+          - 0.5
+    type: CAPSULE
 duration_frames: 90
 history:
-  - merge_id: 2
-  - merge_id: 8
-  - merge_id: 12
-  - merge_id: 14
-  - merge_id: 16
-  - merge_id: 18
-  - merge_id: 20
-  - merge_id: 22
-  - merge_id: 24
-  - merge_id: 26
-  - merge_id: 33
-  - merge_id: 40
-  - merge_id: 42
-  - merge_id: 44
-  - merge_id: 46
-  - merge_id: 48
-  - merge_id: 50
-  - merge_id: 54
-  - merge_id: 56
-  - merge_id: 58
-  - merge_id: 60
-  - merge_id: 62
-  - merge_id: 64
-  - merge_id: 66
-  - merge_id: 68
-  - merge_id: 70
-  - merge_id: 72
-  - merge_id: 74
-  - merge_id: 76
-  - merge_id: 78
-  - merge_id: 80
-  - merge_id: 82
-  - merge_id: 84
-  - merge_id: 86
-  - merge_id: 88
-  - merge_id: 90
-  - merge_id: 92
-  - merge_id: 94
-  - merge_id: 96
-  - merge_id: 98
-  - merge_id: 100
-  - merge_id: 102
-  - merge_id: 110
-  - merge_id: 122
-  - merge_id: 126
-  - merge_id: 134
-  - merge_id: 136
-  - merge_id: 138
-history_head: 47
+  - _type: AttackCommandColliderKeyframeMove
+    collider_id: 1
+    keyframe_field: radius
+    keyframe_index_timeline_from: 40
+    keyframe_index_timeline_to: 36
+    merge_id: 2
+  - _type: AttackCommandColliderAlterField
+    collider_id: 1
+    keyframe_field: tr
+    keyframe_index_inside_list: 0
+    merge_id: 4
+    value_new:
+      '%': vec2
+      value:
+        - 0.0
+        - 0.25
+    value_old:
+      '%': vec2
+      value:
+        - 0.0
+        - 0.0
+  - _type: AttackCommandColliderAlterField
+    collider_id: 1
+    keyframe_field: tr
+    keyframe_index_inside_list: 0
+    merge_id: 6
+    value_new:
+      '%': vec2
+      value:
+        - 0.0
+        - 0.5
+    value_old:
+      '%': vec2
+      value:
+        - 0.0
+        - 0.25
+  - _type: AttackCommandColliderAlterField
+    collider_id: 1
+    keyframe_field: tr
+    keyframe_index_inside_list: 0
+    merge_id: 8
+    value_new:
+      '%': vec2
+      value:
+        - 0.25
+        - 0.5
+    value_old:
+      '%': vec2
+      value:
+        - 0.0
+        - 0.5
+  - _type: AttackCommandColliderAlterField
+    collider_id: 1
+    keyframe_field: tr
+    keyframe_index_inside_list: 0
+    merge_id: 10
+    value_new:
+      '%': vec2
+      value:
+        - 0.5
+        - 0.5
+    value_old:
+      '%': vec2
+      value:
+        - 0.25
+        - 0.5
+  - _type: AttackCommandColliderAlterField
+    collider_id: 1
+    keyframe_field: tr
+    keyframe_index_inside_list: 0
+    merge_id: 12
+    value_new:
+      '%': vec2
+      value:
+        - 0.75
+        - 0.5
+    value_old:
+      '%': vec2
+      value:
+        - 0.5
+        - 0.5
+  - _type: AttackCommandColliderAlterField
+    collider_id: 1
+    keyframe_field: spread
+    keyframe_index_inside_list: 0
+    merge_id: 14
+    value_new:
+      '%': float
+      value: 1.25
+    value_old:
+      '%': int
+      value: 1
+  - _type: AttackCommandColliderKeyframeRemove
+    collider_id: 1
+    keyframe_field: radius
+    keyframe_index_timeline: 70
+    keyframe_value:
+      '%': int
+      value: 4
+    merge_id: 16
+  - _type: AttackCommandColliderKeyframeMove
+    collider_id: 1
+    keyframe_field: radius
+    keyframe_index_timeline_from: 36
+    keyframe_index_timeline_to: 43
+    merge_id: 18
+  - _type: AttackCommandColliderKeyframeAdd
+    collider_id: 1
+    keyframe_field: is_active
+    keyframe_index_timeline: 10
+    merge_id: 26
+  - _type: AttackCommandColliderKeyframeMove
+    collider_id: 1
+    keyframe_field: is_active
+    keyframe_index_timeline_from: 10
+    keyframe_index_timeline_to: 28
+    merge_id: 28
+  - _type: AttackCommandColliderKeyframeAdd
+    collider_id: 1
+    keyframe_field: is_active
+    keyframe_index_timeline: 15
+    merge_id: 36
+  - _type: AttackCommandColliderAlterField
+    collider_id: 1
+    keyframe_field: is_active
+    keyframe_index_inside_list: 1
+    merge_id: 39
+    value_new:
+      '%': bool
+      value: false
+    value_old:
+      '%': bool
+      value: true
+history_head: 12
 name: DASH
-timeline_at: 71.70043415340086
+timeline_at: 15
