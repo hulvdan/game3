@@ -576,7 +576,7 @@ class KeyframeType(t.Protocol[T]):  ##
   ##
 
 
-@dataclass
+@dataclass(slots=True)
 @t.final
 class KeyframeTypeBool(KeyframeType[bool]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (bool,)
@@ -597,7 +597,7 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
   ##
 
 
-@dataclass
+@dataclass(slots=True)
 class KeyframeTypeFloat(KeyframeType[float]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (int, float)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.FLOAT
@@ -638,7 +638,7 @@ def _lerp_vec2(v1: vec2, v2: vec2, t: float, step: float | None = None):  ##
   ##
 
 
-@dataclass
+@dataclass(slots=True)
 class KeyframeTypeTr(KeyframeType[vec2]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (vec2,)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.VEC2
@@ -1119,8 +1119,6 @@ class Attack:  ##
     "duration_frames",
     "colliders",
     "timeline_at",
-    "history_head",
-    "history",
     "_next_collider_id",
   ]
 

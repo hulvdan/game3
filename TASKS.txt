@@ -36,6 +36,10 @@ x mark: bf_lib test serialize+deserialize commands hierarchy is supported
 x mark: serialize undo commands
 x mark: deser fix registry must load dicts as dataclasses
 x mark: deser attacks works
+- devlog: remove gmail from contributors?
+- devlog: hulvdan@yandex.ru github
+- devlog: transfer repo to hulvdan@yandex.ru
+x not exporting history
 
 * mark: validate that hierarchy can be serialized
 *
@@ -45,15 +49,11 @@ x mark: deser attacks works
 * mark: history: attack frames change
 * mark: history:
 *
-* mark: yaml deserialization: deserialize collider properly
 * mark: yaml deserialization: can add attack
-* mark: yaml deserialization:
-* mark: yaml deserialization:
 *
-* devlog: hulvdan@yandex.ru github
-* devlog: transfer repo to hulvdan@yandex.ru
-* devlog: remove gmail from contributors?
 * devlog: post: name: Жоско Погромироваю Боевку
+* devlog: post:
+* devlog: post:
 * devlog: post:
 *
 * mark: min frame cell width (don't forget DPI) + timeline horizontal scrollbar
