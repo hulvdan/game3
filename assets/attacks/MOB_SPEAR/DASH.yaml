@@ -31,11 +31,11 @@ colliders:
           - 0.0
           - 0.0
       - id: 8
-        index_timeline: 46
+        index_timeline: 57
         value:
           - 1.0
           - 0.0
     type: CAPSULE
 duration_frames: 90
 name: DASH
-timeline_at: 46
+timeline_at: 57

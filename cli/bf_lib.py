@@ -10,7 +10,7 @@ import sys
 import typing as t
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from dataclasses import dataclass, field, fields, is_dataclass
+from dataclasses import Field, dataclass, field, fields, is_dataclass
 from datetime import datetime
 from enum import Enum, IntEnum, unique
 from functools import partial
@@ -330,11 +330,34 @@ class DataclassSerializer:
 
   export_fields_field: str = "_export_fields"
 
+  def validate_serializable(self, type_: type) -> None:  ##
+    for tt in self._registries.get(type_, {}).values():
+      self.validate_serializable(tt)
+    tt = t.get_origin(type_) or type_
+    if not is_dataclass(tt):
+      assert tt in self._variant_ser_types, f"Type `{tt}` must be register()-ed"
+      for arg_type in t.get_args(type_):
+        if arg_type is Ellipsis:
+          continue
+        self.validate_serializable(arg_type)
+      return
+    fields_ = fields(tt)
+    if export_fields := getattr(tt, self.export_fields_field, None):
+      fields_ = (x for x in fields_ if x.name in export_fields)
+    for field_ in fields_:
+      to = field_.type
+      for i, param in enumerate(getattr(t.get_origin(type_), "__parameters__", ())):
+        if param is to:
+          to = t.get_args(type_)[i]
+          break
+      assert not isinstance(to, Field)  # Avoiding setting type hints same as type names
+      self.validate_serializable(to)  # ty:ignore[invalid-argument-type]
+    ##
+
   def register(
     self,
     type_: type,
-    serialize: SerFunc | None = None,
-    deserialize: DeserFunc | None = None,
+    params: tuple[SerFunc, DeserFunc, dict[Any, type[Any]] | None] | None = None,
   ) -> None:  ##
     code = type_.__name__
     assert code not in self._variant_ser_types
@@ -343,8 +366,10 @@ class DataclassSerializer:
       assert v is not type_
     for v in self._variant_deser_types:
       assert v != code
-    self._variant_ser_types[type_] = (code, serialize or self.serialize)
-    self._variant_deser_types[code] = (type_, deserialize or self.deserialize)
+    self._variant_ser_types[type_] = (code, params[0] if params else self.serialize)
+    self._variant_deser_types[code] = (type_, params[1] if params else self.deserialize)
+    if params and params[2] is not None:
+      self._registries[type_] = params[2]
     ##
 
   def serialize_root(self, value, as_=None) -> Any:  ##
@@ -413,6 +438,7 @@ class DataclassSerializer:
 
   _variant_ser_types: dict[type, tuple[str, SerFunc]] = field(default_factory=dict)
   _variant_deser_types: dict[str, tuple[type, DeserFunc]] = field(default_factory=dict)
+  _registries: dict[type, dict[Any, type]] = field(default_factory=dict)
 
   def _serialize_variant(self, value, as_) -> _VariantSerialized:
     assert as_ == Any
@@ -429,6 +455,12 @@ class DataclassSerializer:
 
   def _deserialize_primitive(self, v, _as):
     return v
+
+  def _serialize_complex(self, v: complex, _as):
+    return {"r": v.real, "i": v.imag}
+
+  def _deserialize_complex(self, v: dict, _as):
+    return complex(v["r"], v["i"])
 
   def _serialize_list(self, v: list, as_) -> list:
     tt = t.get_args(as_)[0]
@@ -466,6 +498,7 @@ class DataclassSerializer:
       bool: ("bool", self._serialize_primitive),
       int: ("int", self._serialize_primitive),
       float: ("float", self._serialize_primitive),
+      complex: ("complex", self._serialize_complex),
       str: ("str", self._serialize_primitive),
       list: ("list", self._serialize_list),
       tuple: ("tuple", self._serialize_tuple),
@@ -478,6 +511,7 @@ class DataclassSerializer:
       "bool": (bool, self._deserialize_primitive),
       "int": (int, self._deserialize_primitive),
       "float": (float, self._deserialize_primitive),
+      "complex": (complex, self._deserialize_complex),
       "str": (str, self._deserialize_primitive),
       "list": (list, self._deserialize_list),
       "tuple": (tuple, self._deserialize_tuple),
@@ -564,6 +598,9 @@ def _test_serializer():  ##
     radius: float
     spread: float
     rotation: float
+    frames_complex: list[Keyframe[complex]] = field(default_factory=list)
+    list_complex: list[complex] = field(default_factory=list)
+    field_complex: complex = field(default_factory=complex)
 
   @dataclass
   class Inner:
@@ -638,13 +675,25 @@ def _test_serializer():  ##
         "spread": 4,
         "rotation": 5,
         "frames": [],
+        "frames_complex": [],
+        "list_complex": [],
+        "field_complex": {"r": 0, "i": 0},
       },
     ],
     "colliders_any": [
       {"%": "ColliderCircle", "value": {"base_value": 1, "radius": 5, "frames": []}},
       {
         "%": "ColliderCapsule",
-        "value": {"base_value": 2, "radius": 3, "spread": 4, "rotation": 5, "frames": []},
+        "value": {
+          "base_value": 2,
+          "radius": 3,
+          "spread": 4,
+          "rotation": 5,
+          "frames": [],
+          "frames_complex": [],
+          "list_complex": [],
+          "field_complex": {"r": 0, "i": 0},
+        },
       },
     ],
     "collider": {
@@ -678,8 +727,8 @@ def _test_serializer():  ##
   )
 
   ser = DataclassSerializer()
-  ser.register(vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
-  ser.register(vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
+  ser.register(vec2, (lambda x, _: [x.x, x.y], lambda x, _: vec2(*x), None))
+  ser.register(vec3, (lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x), None))
   ser.register(Keyframe)
 
   def collider_serialize(x: ColliderBase, as_) -> Any:
@@ -698,7 +747,9 @@ def _test_serializer():  ##
       }
     )
 
-  ser.register(ColliderBase, collider_serialize, collider_deserialize)
+  ser.register(
+    ColliderBase, (collider_serialize, collider_deserialize, COLLIDER_REGISTRY)
+  )
   for tt in COLLIDER_REGISTRY.values():
     ser.register(tt)
 
@@ -711,9 +762,10 @@ def _test_serializer():  ##
     assert as_ is CommandBase
     return COMMAND_REGISTRY[x["type"]](**{k: v for k, v in x.items() if k != "type"})
 
-  ser.register(CommandBase, command_serialize, command_deserialize)
+  ser.register(CommandBase, (command_serialize, command_deserialize, COMMAND_REGISTRY))
   ser.register(CommandLeaf)
 
+  ser.validate_serializable(Attack)
   actual_serialized = ser.serialize_root(expected_deserialized)
   assert actual_serialized == expected_serialized
   expected_deserialized.not_exported = 1

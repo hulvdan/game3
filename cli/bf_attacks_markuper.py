@@ -302,10 +302,10 @@ _serializer = bf.DataclassSerializer()
 @command
 def tool_attacks_markuper() -> None:
   ser = _serializer
-  ser.register(vec1, lambda x, _: [x.x], lambda x, _: vec1(*x))
-  ser.register(vec2, lambda x, _: [x.x, x.y], lambda x, _: vec2(*x))
-  ser.register(vec3, lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x))
-  ser.register(vec4, lambda x, _: [x.x, x.y, x.z, x.w], lambda x, _: vec4(*x))
+  ser.register(vec1, (lambda x, _: [x.x], lambda x, _: vec1(*x), None))
+  ser.register(vec2, (lambda x, _: [x.x, x.y], lambda x, _: vec2(*x), None))
+  ser.register(vec3, (lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x), None))
+  ser.register(vec4, (lambda x, _: [x.x, x.y, x.z, x.w], lambda x, _: vec4(*x), None))
 
   def collider_serialize(x: ColliderBase, as_) -> Any:
     ass(isinstance(x, ColliderBase))
@@ -323,7 +323,9 @@ def tool_attacks_markuper() -> None:
       }
     )
 
-  ser.register(ColliderBase, collider_serialize, collider_deserialize)
+  ser.register(
+    ColliderBase, (collider_serialize, collider_deserialize, COLLIDER_REGISTRY)
+  )
   for tt in COLLIDER_REGISTRY.values():
     ser.register(tt)
 
@@ -343,11 +345,15 @@ def tool_attacks_markuper() -> None:
       }
     )
 
-  ser.register(AttackCommand, attack_command_serialize, attack_command_deserialize)
+  ser.register(
+    AttackCommand,
+    (attack_command_serialize, attack_command_deserialize, ATTACK_COMMAND_REGISTRY),
+  )
   for tt in ATTACK_COMMAND_REGISTRY.values():
     ser.register(tt)
 
   ser.register(Keyframe)
+  ser.validate_serializable(Attack)
 
   if PRE_BUILD_DATA_REMOVEME:
     atk1 = Attack(
