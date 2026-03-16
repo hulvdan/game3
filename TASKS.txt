@@ -45,6 +45,9 @@ x mark: validate that hierarchy can be serialized
 * mark: history: attack collider add
 * mark: history: attack collider rename
 * mark: history: attack collider remove
+*
+* mark: new collider for sword slash
+*
 * mark: history: attack frames change
 * mark: history:
 *

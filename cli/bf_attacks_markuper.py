@@ -18,6 +18,7 @@ from functools import partial, wraps
 from math import pi
 from pathlib import Path
 from typing import Any, Callable, ClassVar, Generic, Self, TypeAlias, TypeVar
+from uuid import UUID, uuid4
 
 import bf_lib as bf
 import numpy as np
@@ -37,7 +38,6 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 PRE_BUILD_DATA_REMOVEME = 0
 
 T = t.TypeVar("T")
-Variant: TypeAlias = t.Any
 
 
 ## Consts
@@ -283,7 +283,7 @@ def _dump_app_state():
   with _dump_app_state_lock:
     LOGD("Saving...")
     with tempfile.NamedTemporaryFile(
-      "w", encoding="utf-8", delete=False, suffix=".toml"
+      "w", encoding="utf-8", delete=False, suffix=".toml", newline="\n"
     ) as out:
       out_path = Path(out.name)
       toml.dump(g.dump().model_dump(), out)
@@ -330,13 +330,13 @@ def tool_attacks_markuper() -> None:
     ser.register(tt)
 
   def attack_command_serialize(x, as_) -> Any:
-    ass(isinstance(x, AttackCommand))
-    ass(as_ is AttackCommand)
+    ass(isinstance(x, CommandAttack))
+    ass(as_ is CommandAttack)
     return {"_type": x.type(), **ser.serialize_root(x, type(x))}
 
   def attack_command_deserialize(x, as_) -> Any:
-    ass(as_ is AttackCommand)
-    class_ = ATTACK_COMMAND_REGISTRY[x["_type"]]
+    ass(as_ is CommandAttack)
+    class_ = COMMAND_REGISTRY[x["_type"]]
     return class_(
       **{
         k: ser.deserialize_root(v, class_.__dataclass_fields__[k].type)
@@ -346,14 +346,15 @@ def tool_attacks_markuper() -> None:
     )
 
   ser.register(
-    AttackCommand,
-    (attack_command_serialize, attack_command_deserialize, ATTACK_COMMAND_REGISTRY),
+    CommandAttack,
+    (attack_command_serialize, attack_command_deserialize, COMMAND_REGISTRY),
   )
-  for tt in ATTACK_COMMAND_REGISTRY.values():
+  for tt in COMMAND_REGISTRY.values():
     ser.register(tt)
 
   ser.register(Keyframe)
   ser.validate_serializable(Attack)
+  ser.validate_serializable(Creature)
 
   if PRE_BUILD_DATA_REMOVEME:
     atk1 = Attack(
@@ -387,10 +388,13 @@ def tool_attacks_markuper() -> None:
 
   else:
     for folder in (x for x in ATTACKS_DIR.iterdir() if x.is_dir()):
-      creature = Creature(name=folder.name, attacks=[])
+      name, creature_id = folder.name.rsplit("_", 1)
+      creature = Creature(id=UUID(creature_id), name=name)
       g.creatures.append(creature)
       for attack_filepath in folder.glob("*.yaml"):
-        yaml_content = yaml.safe_load(attack_filepath.read_text(encoding="utf-8"))
+        if attack_filepath.name == "_.yaml":
+          continue
+        yaml_content = yaml.safe_load(bf.read_text(attack_filepath))
         if yaml_content:
           attack = _serializer.deserialize_root(yaml_content, Attack)
           creature.attacks.append(attack)
@@ -399,7 +403,7 @@ def tool_attacks_markuper() -> None:
 
   loaded_state: AppSaveState | None = None
   if _APP_STATE_FILE_PATH.exists():
-    with open(_APP_STATE_FILE_PATH, encoding="utf-8") as in_file:
+    with bf.sane_readable_file(_APP_STATE_FILE_PATH) as in_file:
       state_data = toml.load(in_file)
     loaded_state = AppSaveState(**state_data)
     g.load(loaded_state)
@@ -894,83 +898,247 @@ class CommandMergeType(IntEnum):
   MERGED_SHOULD_BE_DESTROYED = 3
 
 
-## Attack Commands
+## Commands
 @dataclass(slots=True)
-class AttackCommand(ABC):
-  @classmethod
-  @abstractmethod
-  def type(cls) -> str: ...
-
+class Command(ABC):
   merge_id: int
 
-  @abstractmethod
-  def do(self, atk: "Attack") -> None: ...
+  _export_fields = ["merge_id"]
 
   @abstractmethod
-  def undo(self, atk: "Attack") -> None: ...
+  def do(self) -> None: ...
 
   @abstractmethod
-  def try_merge(self, newest, /) -> CommandMergeType: ...
+  def undo(self) -> None: ...
+
+  def try_merge(self, _newest: Self, /) -> CommandMergeType:
+    return CommandMergeType.NONE
 
   def __init_subclass__(cls, **kwargs):
     super().__init_subclass__(**kwargs)
-    if not inspect.isabstract(cls):
-      if cls.type() not in ATTACK_COMMAND_REGISTRY:
-        ATTACK_COMMAND_REGISTRY[cls.type()] = cls
+    ass(cls.__name__.startswith("Command"))
+
+    export_fields = getattr(cls, "_export_fields", None)
+    if export_fields is None:
+      export_fields = {
+        x
+        for x, type_ in cls.__annotations__.items()
+        if (t.get_origin(type_) or type_) is not ClassVar
+      }
+    else:
+      export_fields = set(export_fields)
+    for base in cls.__bases__:
+      export_fields |= set(getattr(base, "_export_fields", ()))
+    cls._export_fields = sorted(export_fields)
+
+    # cls._export_fields = [*getattr(cls, "_export_fields", ())]
+
+    # own_fields = set(cls.__dict__.get("_export_fields", []))
+    # parent_fields = set()
+    # for base in cls.__bases__:
+    #   parent_fields |= set(getattr(base, "_export_fields", set()))
+    # cls._export_fields = parent_fields | own_fields
+
+    # if not inspect.isabstract(cls):
+    #   code = cls.__name__.removeprefix("Command")
+    #   if code not in COMMAND_REGISTRY:
+    #     COMMAND_REGISTRY[code] = cls
 
 
-ATTACK_COMMAND_REGISTRY: dict[str, type[AttackCommand]] = {}
+COMMAND_REGISTRY: dict[str, type[Command]] = {}
 
-# @dataclass(slots=True)
-# @t.final
-# class AttackCommandAlterName(Command):
-#   pass
-#
-#
+
+def _creature_create(c: "Creature") -> None:
+  g.creatures.append(c)
+  pname = f"{c.name}_{c.id}"
+  bf.recursive_mkdir(ATTACKS_DIR / pname)
+  with bf.sane_writable_file(ATTACKS_DIR / pname / "_.yaml") as out_file:
+    yaml.dump(_serializer.serialize_root(c), out_file)
+
+
+@dataclass(slots=True)
+@t.final
+class CommandCreatureAdd(Command):
+  creature_id: UUID
+
+  def do(self) -> None:
+    _creature_create(Creature(id=self.creature_id))
+
+  def undo(self) -> None:
+    c = next(x for x in g.creatures if x.id == self.creature_id)
+    shutil.rmtree(ATTACKS_DIR / f"{c.name}_{c.id}", ignore_errors=True)
+
+
+@dataclass(slots=True)
+@t.final
+class CommandCreatureRemove(Command):
+  creature: "Creature"
+
+  def do(self) -> None:
+    shutil.rmtree(
+      ATTACKS_DIR / f"{self.creature.name}_{self.creature.id}", ignore_errors=True
+    )
+
+  def undo(self) -> None:
+    _creature_create(self.creature)
+
+
+@dataclass(slots=True)
+class CommandCreature(Command):
+  creature_id: UUID
+
+  @property
+  def _creature(self) -> "Creature":
+    return next(x for x in g.creatures if x.id == self.creature_id)
+
+
+@dataclass(slots=True)
+@t.final
+class CommandCreatureAlterName(CommandCreature):
+  name_old: str
+  name_new: str
+
+  def do(self) -> None:
+    c = self._creature
+    ass(self.name_old == c.name)
+    folder_old = Creature.get_folder_name(c.id, c.name)
+    c.name = self.name_new
+    folder_new = Creature.get_folder_name(c.id, c.name)
+    shutil.move(ATTACKS_DIR / folder_old, ATTACKS_DIR / folder_new)
+
+  def undo(self) -> None:
+    c = self._creature
+    ass(self.name_old == c.name)
+    folder_new = Creature.get_folder_name(c.id, c.name)
+    c.name = self.name_old
+    folder_old = Creature.get_folder_name(c.id, c.name)
+    shutil.move(ATTACKS_DIR / folder_new, ATTACKS_DIR / folder_old)
+
+
+# assert CommandCreatureAlterName._export_fields == [
+#   "merge_id",
+#   "creature_id",
+#   "name_old",
+#   "name_new",
+# ]
+
+
+@dataclass(slots=True)
+@t.final
+class CommandCreatureAttackAdd(CommandCreature):
+  attack_id: UUID
+
+  def do(self) -> None:
+    c = self._creature
+    atk = Attack(id=self.attack_id)
+    c.attacks.append(atk)
+    with bf.sane_writable_file(
+      ATTACKS_DIR
+      / c.get_folder_name(c.id, c.name)
+      / "{}.yaml".format(atk.get_file_name_wo_ext(atk.id, atk.name))
+    ) as out_file:
+      yaml.dump(_serializer.serialize_root(atk), out_file)
+
+  def undo(self) -> None:
+    c = next(x for x in g.creatures if x.id == self.creature_id)
+    for i, x in enumerate(c.attacks):
+      if x.id == self.attack_id:
+        Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(x.file_name_wo_ext)).unlink(
+          missing_ok=True
+        )
+        del c.attacks[i]
+        return
+    ass(0)
+
+
+@dataclass(slots=True)
+@t.final
+class CommandCreatureAttackRemove(CommandCreature):
+  attack: "Attack"
+
+  def do(self) -> None:
+    c = self._creature
+    for i, x in enumerate(c.attacks):
+      if x.id == self.attack.id:
+        Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(x.file_name_wo_ext)).unlink(
+          missing_ok=True
+        )
+        del c.attacks[i]
+        return
+    ass(0)
+
+  def undo(self) -> None:
+    c = self._creature
+    c.attacks.append(self.attack)
+    with bf.sane_readable_file(
+      Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(self.attack.file_name_wo_ext))
+    ) as out_file:
+      yaml.dump(_serializer.serialize_root(self.attack), out_file)
+
+
+@dataclass(slots=True)
+class CommandAttack(Command):
+  atk: "Attack"
+
+  _export_fields = []
+
+
+@dataclass(slots=True)
+@t.final
+class CommandAttackAlterName(CommandAttack):
+  name_old: str
+  name_new: str
+
+  def do(self) -> None:
+    for i, x in enumerate(c.attacks):
+      if x.id == self.atk.id:
+        Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(x.file_name_wo_ext)).unlink(
+          missing_ok=True
+        )
+        del c.attacks[i]
+        return
+    ass(0)
+
+  def undo(self) -> None:
+    c = self._creature
+    c.attacks.append(self.attack)
+    with bf.sane_readable_file(
+      Path(ATTACKS_DIR / c.folder_name / "{}.yaml".format(self.attack.file_name_wo_ext))
+    ) as out_file:
+      yaml.dump(_serializer.serialize_root(self.attack), out_file)
+
+
 # @dataclass(slots=True)
 # @t.final
 # class AttackCommandAlterFrames(Command):
 #   pass
 
-_commands: dict[str, type] = {}
 
-
-def register_command(cls):
-  _commands[cls.__name__] = cls
-  return cls
-
-
-@register_command
 @dataclass(slots=True)
-class AttackCommandCollider(AttackCommand):
+class CommandAttackCollider(CommandAttack):
   collider_id: ColliderID
 
   def c(self, atk: "Attack") -> "ColliderBase":
     return next(c for c in atk.colliders if c.id == self.collider_id)
 
 
-ATTACK_COMMAND_COLLIDER_REGISTRY: dict[str, type[AttackCommandCollider]] = {}
+ATTACK_COMMAND_COLLIDER_REGISTRY: dict[str, type[CommandAttackCollider]] = {}
 
 
-@register_command
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
-  @classmethod
-  def type(cls) -> str:
-    return "attack_collider_keyframe_add"
-
+class CommandAttackColliderKeyframeAdd(CommandAttackCollider):
   keyframe_field: str
   keyframe_index_timeline: int
 
-  def do(self, atk: "Attack") -> None:
-    self.c(atk).make_default_keyframe_at(
+  def do(self) -> None:
+    self.c(self.atk).make_default_keyframe_at(
       self.keyframe_field, self.keyframe_index_timeline
     )
-    atk.timeline_at = self.keyframe_index_timeline
+    self.atk.timeline_at = self.keyframe_index_timeline
 
-  def undo(self, atk: "Attack") -> None:
-    frames = self.c(atk).get_keyframes(self.keyframe_field)
+  def undo(self) -> None:
+    frames = self.c(self.atk).get_keyframes(self.keyframe_field)
     ass(len(frames) > 1)
     for i, fr in enumerate(frames):
       if fr.index_timeline == self.keyframe_index_timeline:
@@ -978,35 +1146,27 @@ class AttackCommandColliderKeyframeAdd(AttackCommandCollider):
         return
     raise ValueError
 
-  def try_merge(self, _newest: Self, /) -> CommandMergeType:
-    return CommandMergeType.NONE
 
-
-@register_command
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderKeyframeMove(AttackCommandCollider):
-  @classmethod
-  def type(cls) -> str:
-    return "attack_collider_keyframe_move"
-
+class CommandAttackColliderKeyframeMove(CommandAttackCollider):
   keyframe_field: str
   keyframe_index_timeline_from: int
   keyframe_index_timeline_to: int
 
-  def do(self, atk: "Attack") -> None:
-    c = self.c(atk)
+  def do(self) -> None:
+    c = self.c(self.atk)
     frames = c.get_keyframes(self.keyframe_field)
     fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_from)
     fr.index_timeline = self.keyframe_index_timeline_to
-    atk.timeline_at = self.keyframe_index_timeline_to
+    self.atk.timeline_at = self.keyframe_index_timeline_to
 
-  def undo(self, atk: "Attack") -> None:
-    c = self.c(atk)
+  def undo(self) -> None:
+    c = self.c(self.atk)
     frames = c.get_keyframes(self.keyframe_field)
     fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_to)
     fr.index_timeline = self.keyframe_index_timeline_from
-    atk.timeline_at = self.keyframe_index_timeline_from
+    self.atk.timeline_at = self.keyframe_index_timeline_from
 
   def try_merge(self, newest: Self, /) -> CommandMergeType:
     if newest.keyframe_field != self.keyframe_field:
@@ -1020,20 +1180,15 @@ class AttackCommandColliderKeyframeMove(AttackCommandCollider):
     )
 
 
-@register_command
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
-  @classmethod
-  def type(cls) -> str:
-    return "attack_collider_keyframe_remove"
-
+class CommandAttackColliderKeyframeRemove(CommandAttackCollider):
   keyframe_field: str
   keyframe_index_timeline: int
-  keyframe_value: Variant
+  keyframe_value: Any
 
-  def do(self, atk: "Attack") -> None:
-    frames = self.c(atk).get_keyframes(self.keyframe_field)
+  def do(self) -> None:
+    frames = self.c(self.atk).get_keyframes(self.keyframe_field)
     ass(len(frames) > 1)
     for i, k in enumerate(frames):
       if k.index_timeline == self.keyframe_index_timeline:
@@ -1041,40 +1196,32 @@ class AttackCommandColliderKeyframeRemove(AttackCommandCollider):
         return
     ass(0)
 
-  def undo(self, atk: "Attack") -> None:
-    _, k = self.c(atk).make_default_keyframe_at(
+  def undo(self) -> None:
+    _, k = self.c(self.atk).make_default_keyframe_at(
       self.keyframe_field, self.keyframe_index_timeline
     )
     k.value = self.keyframe_value
-    atk.timeline_at = self.keyframe_index_timeline
-
-  def try_merge(self, _newest: Self, /) -> CommandMergeType:
-    return CommandMergeType.NONE
+    self.atk.timeline_at = self.keyframe_index_timeline
 
 
-@register_command
 @dataclass(slots=True)
 @t.final
-class AttackCommandColliderAlterField(AttackCommandCollider):
-  @classmethod
-  def type(cls) -> str:
-    return "attack_collider_alter_field"
-
+class CommandAttackColliderAlterField(CommandAttackCollider):
   keyframe_field: str
   keyframe_index_inside_list: int
-  value_old: Variant
-  value_new: Variant
+  value_old: Any
+  value_new: Any
 
-  def do(self, atk: "Attack") -> None:
-    c = self.c(atk)
+  def do(self) -> None:
+    c = self.c(self.atk)
     type_class = c.get_keyframe_type(self.keyframe_field).type_class
     ass(isinstance(self.value_old, type_class))
     ass(isinstance(self.value_new, type_class))
     k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
     k.value = self.value_new
 
-  def undo(self, atk: "Attack") -> None:
-    c = self.c(atk)
+  def undo(self) -> None:
+    c = self.c(self.atk)
     type_class = c.get_keyframe_type(self.keyframe_field).type_class
     ass(isinstance(self.value_old, type_class))
     ass(isinstance(self.value_new, type_class))
@@ -1100,10 +1247,11 @@ class AttackCommandColliderAlterField(AttackCommandCollider):
 
 @dataclass(slots=True)
 class Attack:  ##
-  name: str
-
+  id: UUID
+  name: str = "UNNAMED"
   duration_frames: int = 90
   colliders: list[ColliderBase] = field(default_factory=list)
+  _next_collider_id: ColliderID = 1
 
   collider_deselection_scheduled: bool = False
   collider_to_select: ColliderBase | None = None
@@ -1115,16 +1263,13 @@ class Attack:  ##
   timeline_started_playing_at: float = 0
 
   history_head: int = -1
-  history: list[AttackCommand] = field(default_factory=list)
-  scheduled_commands: list[AttackCommand] = field(default_factory=list)
-
-  _next_collider_id: ColliderID = 1
+  history: list[CommandAttack] = field(default_factory=list)
+  scheduled_commands: list[CommandAttack] = field(default_factory=list)
 
   _export_fields = [
     "name",
     "duration_frames",
     "colliders",
-    "timeline_at",
     "_next_collider_id",
   ]
 
@@ -1152,17 +1297,34 @@ class Attack:  ##
           ass(fr.index_timeline >= 0)
           ass(fr.index_timeline < self.duration_frames)
 
+  @classmethod
+  def get_file_name_wo_ext(cls, id_: UUID, attack_name: str) -> str:
+    return f"{attack_name}_{id_}"
+
+  @property
+  def file_name_wo_ext(self) -> str:
+    return self.get_file_name_wo_ext(self.id, self.name)
+
   ##
 
 
 @dataclass(slots=True)
 class Creature:  ##
-  name: str
-  attacks: list[Attack]
+  id: UUID
+  name: str = "UNNAMED"
+  attacks: list[Attack] = field(default_factory=list)
 
   def validate(self):
     ass(self.name)
     ass(bf.are_unique(x.name for x in self.attacks))
+
+  @classmethod
+  def get_folder_name(cls, id_: UUID, creature_name: str) -> str:
+    return f"{creature_name}_{id_}"
+
+  @property
+  def folder_name(self):
+    return self.get_folder_name(self.id, self.name)
 
   ##
 
@@ -1208,10 +1370,16 @@ class State:
     dragging_keyframe: str | None = None
     ##
 
+  @dataclass(slots=True)
+  class Explorer:  ##
+    scheduled_commands: list[Command] = field(default_factory=list)
+    ##
+
   action_id: int = 1
 
   visualizer: Visualizer = field(default_factory=Visualizer)
   timeline: Timeline = field(default_factory=Timeline)
+  explorer: Explorer = field(default_factory=Explorer)
 
   creatures: list[Creature] = field(default_factory=list)
 
@@ -1270,6 +1438,10 @@ def _override_keyframe_round_to_step(v: bool):  ##
 
 
 def _panel_explorer() -> None:  ##
+  if im.button("+creature"):
+    g.explorer.scheduled_commands.append(
+      CommandCreatureAdd(merge_id=g.action_id, creature_id=uuid4())
+    )
   for creature in g.creatures:
     creature_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
     if creature is g.ref_selected_attack_creature:
@@ -1289,6 +1461,13 @@ def _panel_explorer() -> None:  ##
             g.ref_selected_attack = attack
             g.schedule_dump()
           im.tree_pop()
+      if im.begin_popup_context_item("aboba"):
+        activated, _ = im.menu_item("Create Attack", "", False)
+        if activated:
+          g.explorer_scheduled_commands.append(
+            CommandCreatureAdd(merge_id=g.action_id, creature_id=uuid4())
+          )
+        im.end_popup()
       im.tree_pop()
   ##
 
@@ -1536,8 +1715,8 @@ def _panel_visualizer() -> None:
 
   if im.is_key_pressed(im.Key.t) or im.is_key_pressed(im.Key._1):
     vis.gizmo_mode = GizmoMode.TRANSLATE
-  elif im.is_key_pressed(im.Key.r) or im.is_key_pressed(im.Key._2):
-    vis.gizmo_mode = GizmoMode.ROTATE
+  # elif im.is_key_pressed(im.Key.r) or im.is_key_pressed(im.Key._2):
+  #   vis.gizmo_mode = GizmoMode.ROTATE
   # elif im.is_key_pressed(im.Key.s) or im.is_key_pressed(im.Key._3):
   #   vis.gizmo_mode = GizmoMode.SCALE
 
@@ -1572,7 +1751,7 @@ def _panel_visualizer() -> None:
         ass(off3.y == 0)
         off = bf.round_to_step(vec2(off3.x, off3.z), STEP_TRANSLATE)
         atk.scheduled_commands.append(
-          AttackCommandColliderAlterField(
+          CommandAttackColliderAlterField(
             g.action_id,
             c.id,
             "tr",
@@ -1852,7 +2031,7 @@ def _panel_timeline() -> None:  ##
             for k in frames:
               if k.index_timeline == hov:
                 atk.scheduled_commands.append(
-                  AttackCommandColliderKeyframeRemove(
+                  CommandAttackColliderKeyframeRemove(
                     g.action_id, c.id, field_name, hov, k.value
                   )
                 )
@@ -1868,7 +2047,7 @@ def _panel_timeline() -> None:  ##
             max_right = frames[fr_index + 1].index_timeline - 1
 
           atk.scheduled_commands.append(
-            AttackCommandColliderKeyframeMove(
+            CommandAttackColliderKeyframeMove(
               g.action_id,
               c.id,
               field_name,
@@ -1887,7 +2066,7 @@ def _panel_timeline() -> None:  ##
             if not any(x.index_timeline == idx for x in frames):
               created_keyframe_this_frame = True
               atk.scheduled_commands.append(
-                AttackCommandColliderKeyframeAdd(
+                CommandAttackColliderKeyframeAdd(
                   g.action_id,
                   collider_id=c.id,
                   keyframe_field=field_name,
@@ -2075,7 +2254,7 @@ def _panel_collider_inspector() -> None:  ##
             lambda: frames[index_f].value,
             lambda x: (
               atk.scheduled_commands.append(
-                AttackCommandColliderAlterField(
+                CommandAttackColliderAlterField(
                   g.action_id, c.id, f, index_f, frames[index_f].value, x
                 )
               )
@@ -2090,7 +2269,7 @@ def _panel_collider_inspector() -> None:  ##
             lambda: frames[index_f].value,
             lambda x: (
               atk.scheduled_commands.append(
-                AttackCommandColliderAlterField(
+                CommandAttackColliderAlterField(
                   g.action_id, c.id, f, index_f, frames[index_f].value, x
                 )
               )
@@ -2110,7 +2289,7 @@ def _panel_collider_inspector() -> None:  ##
             lambda: frames[index_f].value.x,
             lambda x: (
               atk.scheduled_commands.append(
-                AttackCommandColliderAlterField(
+                CommandAttackColliderAlterField(
                   g.action_id,
                   c.id,
                   f,
@@ -2133,7 +2312,7 @@ def _panel_collider_inspector() -> None:  ##
             lambda: frames[index_f].value.y,
             lambda x: (
               atk.scheduled_commands.append(
-                AttackCommandColliderAlterField(
+                CommandAttackColliderAlterField(
                   g.action_id,
                   c.id,
                   f,
@@ -2225,13 +2404,10 @@ def _post_new_frame() -> None:  ##
       if not g.ref_selected_attack_creature:
         raise ass(0)
       out_filepath = (
-        bf.ASSETS_DIR
-        / "attacks"
-        / g.ref_selected_attack_creature.name
-        / f"{atk.name}.yaml"
+        ATTACKS_DIR / g.ref_selected_attack_creature.name / f"{atk.name}.yaml"
       )
       bf.recursive_mkdir(out_filepath.parent)
-      with open(out_filepath, "w", encoding="utf-8", newline="\n") as out_file:
+      with bf.sane_writable_file(out_filepath) as out_file:
         yaml.dump(
           _serializer.serialize_root(atk, Attack), out_file, indent=2, line_break="\n"
         )

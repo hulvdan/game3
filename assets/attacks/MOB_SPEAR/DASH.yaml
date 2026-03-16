@@ -1,21 +1,27 @@
-_next_collider_id: 2
+_next_collider_id: 4
 colliders:
-  - _next_keyframe_id_value: 9
+  - _next_keyframe_id_value: 11
     id: 1
     is_active:
       - id: 1
         index_timeline: 0
+        value: false
+      - id: 9
+        index_timeline: 14
         value: true
+      - id: 10
+        index_timeline: 65
+        value: false
     radius:
       - id: 3
         index_timeline: 0
         value: 0.5
       - id: 6
-        index_timeline: 34
-        value: 5
+        index_timeline: 26
+        value: 1.5
       - id: 7
         index_timeline: 65
-        value: 4
+        value: 1.5
     rotation:
       - id: 5
         index_timeline: 0
@@ -31,11 +37,44 @@ colliders:
           - 0.0
           - 0.0
       - id: 8
-        index_timeline: 57
+        index_timeline: 65
         value:
-          - 1.0
+          - 2.5
           - 0.0
     type: CAPSULE
+  - _next_keyframe_id_value: 4
+    id: 2
+    is_active:
+      - id: 1
+        index_timeline: 0
+        value: true
+    radius:
+      - id: 3
+        index_timeline: 0
+        value: 0.5
+    tr:
+      - id: 2
+        index_timeline: 0
+        value:
+          - 0.25
+          - -0.25
+    type: CIRCLE
+  - _next_keyframe_id_value: 4
+    id: 3
+    is_active:
+      - id: 1
+        index_timeline: 0
+        value: true
+    radius:
+      - id: 3
+        index_timeline: 0
+        value: 0.5
+    tr:
+      - id: 2
+        index_timeline: 0
+        value:
+          - 0.0
+          - 0.0
+    type: CIRCLE
 duration_frames: 90
 name: DASH
-timeline_at: 57

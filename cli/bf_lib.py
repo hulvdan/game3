@@ -22,10 +22,12 @@ from typing import (
   Generic,
   Iterator,
   Sequence,
+  TextIO,
   TypeAlias,
   TypedDict,
   TypeVar,
 )
+from uuid import UUID
 
 import cv2
 import fnvhash
@@ -33,6 +35,7 @@ import numpy as np
 import pydantic_core
 import pyfiglet
 import pytest
+from aiohttp.typedefs import PathLike
 from bf_typer import log
 from imgui_bundle import hello_imgui, immapp
 from imgui_bundle import imgui as im
@@ -69,13 +72,13 @@ ConveyorDatum: TypeAlias = tuple[Image.Image, Path]
 ConveyorCallable: TypeAlias = Callable[[Image.Image, Path], ConveyorDatum]
 
 
-def running_pytest() -> bool:
+def running_pytest() -> bool:  ##
   return "PYTEST_CURRENT_TEST" in os.environ
+  ##
 
 
 @dataclass(slots=True)
-class _GameSettings:
-  ##
+class _GameSettings:  ##
   itch_target: str = "hulvdan/game-template"
   languages: list[str] = field(default_factory=lambda: ["russian", "english"])
   yandex_metrica_counter_id: int | None = None
@@ -91,22 +94,26 @@ game_settings = _GameSettings()
 glib_processing_functions = []
 
 
-def glib_processor(func):
+def glib_processor(func):  ##
   glib_processing_functions.append(func)
   return func
+  ##
 
 
-class StrEnum(str, Enum):
+class StrEnum(str, Enum):  ##
   def __str__(self):
     return self.value
 
+  ##
 
-class BuildType(StrEnum):
+
+class BuildType(StrEnum):  ##
   Debug = "debug"
   Release = "release"
+  ##
 
 
-class BuildPlatform(StrEnum):
+class BuildPlatform(StrEnum):  ##
   WebPlaygama = "web_playgama"
   Win = "windows"
   # Web = "web"
@@ -116,9 +123,12 @@ class BuildPlatform(StrEnum):
   def is_web(self) -> bool:
     return self.lower().startswith("web")
 
+  ##
 
-class BuildTarget(StrEnum):
+
+class BuildTarget(StrEnum):  ##
   game = "game"
+  ##
 
 
 ALLOWED_BUILDS = (  ##
@@ -167,6 +177,25 @@ AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".aac", ".m4a", ".wma", ".ogg"}
 #  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
 
 
+@contextmanager
+def sane_writable_file(path: PathLike) -> t.Generator[TextIO, None, None]:  ##
+  with open(path, "w", encoding="utf-8", newline="\n") as f:
+    yield f
+  ##
+
+
+@contextmanager
+def sane_readable_file(path: PathLike) -> t.Generator[TextIO, None, None]:  ##
+  with open(path, encoding="utf-8") as f:
+    yield f
+  ##
+
+
+def read_text(path: PathLike) -> str:  ##
+  return Path(path).read_text("utf-8")
+  ##
+
+
 def iter_neighbors(
   seq: t.Iterable[T],
 ) -> t.Generator[tuple[int, T | None, int, T | None], None, None]:  ##
@@ -204,12 +233,14 @@ def are_unique(iterable: t.Iterable) -> bool:  ##
   ##
 
 
-def replace_double_spaces(string: str) -> str:
+def replace_double_spaces(string: str) -> str:  ##
   return re.sub(REPLACING_SPACES_PATTERN, " ", string)
+  ##
 
 
-def replace_double_newlines(string: str) -> str:
+def replace_double_newlines(string: str) -> str:  ##
   return re.sub(REPLACING_NEWLINES_PATTERN, "\n", string)
+  ##
 
 
 def _test_replace_double_spaces():  ##
@@ -234,8 +265,9 @@ def _test_replace_double_newlines():  ##
   ##
 
 
-def remove_spaces(string: str) -> str:
+def remove_spaces(string: str) -> str:  ##
   return re.sub(REPLACING_SPACES_PATTERN, "", string)
+  ##
 
 
 def run_command(
@@ -272,8 +304,9 @@ def run_command(
   ##
 
 
-def recursive_mkdir(path: Path | str) -> None:
+def recursive_mkdir(path: Path | str) -> None:  ##
   Path(path).mkdir(parents=True, exist_ok=True)
+  ##
 
 
 def batched(list_: list[T], n: int) -> Iterator[list[T]]:  ##
@@ -366,7 +399,8 @@ class DataclassSerializer:
       assert v is not type_
     for v in self._variant_deser_types:
       assert v != code
-    self._variant_ser_types[type_] = (code, params[0] if params else self.serialize)
+    for tt in (type_, type_.__name__):
+      self._variant_ser_types[tt] = (code, params[0] if params else self.serialize)
     self._variant_deser_types[code] = (type_, params[1] if params else self.deserialize)
     if params and params[2] is not None:
       self._registries[type_] = params[2]
@@ -407,7 +441,8 @@ class DataclassSerializer:
     is_dc = is_dataclass(as_)
     tt = t.get_origin(as_) or as_
     if (not is_dc) or (is_dc and (tt in self._variant_ser_types)):
-      return self._variant_deser_types[as_.__name__][1](value, as_)
+      forward_refed = as_ if isinstance(as_, str) else as_.__name__
+      return self._variant_deser_types[forward_refed][1](value, as_)
     return self.deserialize(value, as_)
     ##
 
@@ -436,7 +471,7 @@ class DataclassSerializer:
 
   _VariantSerialized = TypedDict("_VariantSerialized", {"%": str, "value": Any})
 
-  _variant_ser_types: dict[type, tuple[str, SerFunc]] = field(default_factory=dict)
+  _variant_ser_types: dict[type | str, tuple[str, SerFunc]] = field(default_factory=dict)
   _variant_deser_types: dict[str, tuple[type, DeserFunc]] = field(default_factory=dict)
   _registries: dict[type, dict[Any, type]] = field(default_factory=dict)
 
@@ -492,6 +527,14 @@ class DataclassSerializer:
     tt = t.get_args(as_)[0]
     return {self.deserialize_root(x, tt) for x in v}
 
+  def _serialize_uuid(self, v: UUID, as_) -> str:
+    assert as_ is UUID
+    return str(v)
+
+  def _deserialize_uuid(self, v: str, as_) -> UUID:
+    assert as_ is UUID
+    return UUID(v)
+
   def __post_init__(self) -> None:
     self._variant_ser_types = {
       type(None): ("None", self._serialize_primitive),
@@ -503,9 +546,13 @@ class DataclassSerializer:
       list: ("list", self._serialize_list),
       tuple: ("tuple", self._serialize_tuple),
       set: ("set", self._serialize_set),
+      UUID: ("UUID", self._serialize_uuid),
       Any: ("Any", self._serialize_variant),
       # "dict": _serialize_dict,
     }
+    self._variant_ser_types.update(
+      {k.__name__: v for k, v in self._variant_ser_types.items()}  # ty:ignore[unresolved-attribute]
+    )
     self._variant_deser_types = {
       "None": (type(None), self._deserialize_primitive),
       "bool": (bool, self._deserialize_primitive),
@@ -516,6 +563,7 @@ class DataclassSerializer:
       "list": (list, self._deserialize_list),
       "tuple": (tuple, self._deserialize_tuple),
       "set": (set, self._deserialize_set),
+      "UUID": (UUID, self._deserialize_uuid),
       "Any": (Any, self._deserialize_variant),
       # "dict": _deserialize_dict,
     }
@@ -605,6 +653,7 @@ def _test_serializer():  ##
   @dataclass
   class Inner:
     pos: vec2 = field(default_factory=lambda: vec2(1, 2))
+    pos_forward: "vec2" = field(default_factory=lambda: vec2(3, 4))
     variant: Any = field(default_factory=lambda: vec2(1, 2))
     variants: list[Any] = field(default_factory=lambda: [vec2(1, 2), vec3(3, 4, 5)])
 
@@ -660,6 +709,7 @@ def _test_serializer():  ##
     "closed_tuple_of_primitives": [1, 2.0],
     "inner_dataclass": {
       "pos": [1.0, 2.0],
+      "pos_forward": [3.0, 4.0],
       "variant": {"%": "vec2", "value": [1.0, 2.0]},
       "variants": [
         {"%": "vec2", "value": [1.0, 2.0]},
