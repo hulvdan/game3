@@ -32,8 +32,16 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x mark: all attacks must have codename (for explorer panel)
 
-* mark: all attacks must have codename (for explorer panel)
+* mark: working on this shit
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
+* mark:
 * mark: save attack to yaml file
 * mark: glib codegen: load attack data from yaml
 * mark:

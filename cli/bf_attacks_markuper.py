@@ -27,8 +27,9 @@ import yaml
 from bf_glib import load_glib
 from bf_lib import imgui_assert as ass
 from bf_typer import command
-from glib_pb2 import GAttack, GCreature, Lib
+from glib_pb2 import GAttack, GCollider, GCreature, Lib
 from glm import vec1
+from google.protobuf.internal import containers
 from google.protobuf.json_format import ParseDict
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
@@ -38,7 +39,8 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
-PRE_BUILD_DATA_REMOVEME = 0
+
+Container: t.TypeAlias = containers.RepeatedCompositeFieldContainer
 
 T = t.TypeVar("T")
 
@@ -300,110 +302,32 @@ async def _background_dump_run_data():
 
 
 _serializer = bf.DataclassSerializer()
+##
 
 
 @command
 def tool_attacks_markuper() -> None:
+  ## Filling g.collider_keyframe_fields
+  for field_name, field_type in GCollider.__annotations__:
+    if t.get_origin(field_type) is not containers.RepeatedCompositeFieldContainer:
+      continue
+    args = t.get_args(field_type)
+    if len(args) != 1:
+      continue
+    if args[0].__name__.startswith("GKeyframe"):
+      g.collider_keyframe_fields.append(field_name)
+  ##
+
+  ##
   glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug)
-  g.glib = ParseDict(glib, Lib())
+  g.glib = t.cast("Lib", ParseDict(glib, Lib()))
 
-  ser = _serializer
-  ser.register(vec1, (lambda x, _: [x.x], lambda x, _: vec1(*x), None))
-  ser.register(vec2, (lambda x, _: [x.x, x.y], lambda x, _: vec2(*x), None))
-  ser.register(vec3, (lambda x, _: [x.x, x.y, x.z], lambda x, _: vec3(*x), None))
-  ser.register(vec4, (lambda x, _: [x.x, x.y, x.z, x.w], lambda x, _: vec4(*x), None))
-
-  def collider_serialize(x: ColliderBase, as_) -> Any:
-    ass(isinstance(x, ColliderBase))
-    ass(as_ is ColliderBase)
-    return {"type": x.type().name, **ser.serialize_root(x, type(x))}
-
-  def collider_deserialize(x: dict, as_) -> ColliderBase:
-    ass(as_ is ColliderBase)
-    class_ = COLLIDER_REGISTRY[x["type"]]
-    return class_(
-      **{
-        k: ser.deserialize_root(v, class_.__dataclass_fields__[k].type)
-        for k, v in x.items()
-        if k != "type"
-      }
-    )
-
-  ser.register(
-    ColliderBase, (collider_serialize, collider_deserialize, COLLIDER_REGISTRY)
-  )
-  for tt in COLLIDER_REGISTRY.values():
-    ser.register(tt)
-
-  def attack_command_serialize(x, as_) -> Any:
-    ass(isinstance(x, CommandAttack))
-    ass(as_ is CommandAttack)
-    return {"_type": x.type(), **ser.serialize_root(x, type(x))}
-
-  def attack_command_deserialize(x, as_) -> Any:
-    ass(as_ is CommandAttack)
-    class_ = COMMAND_REGISTRY[x["_type"]]
-    return class_(
-      **{
-        k: ser.deserialize_root(v, class_.__dataclass_fields__[k].type)
-        for k, v in x.items()
-        if k != "_type"
-      }
-    )
-
-  ser.register(
-    CommandAttack,
-    (attack_command_serialize, attack_command_deserialize, COMMAND_REGISTRY),
-  )
-  for tt in COMMAND_REGISTRY.values():
-    ser.register(tt)
-
-  ser.register(Keyframe)
-  ser.validate_serializable(Attack)
-  ser.validate_serializable(Creature)
-
-  if PRE_BUILD_DATA_REMOVEME:
-    atk1 = Attack(
-      name="ROLL_FRONT",
-      duration_frames=60,
-      colliders=[],
-    )
-    atk1.colliders.append(ColliderCapsule.make(atk1.next_collider_id()))
-    g.creatures = [
-      Creature(
-        name="MOB_SPEAR",
-        attacks=[
-          Attack(name="DASH", duration_frames=90),
-          Attack(name="SWING"),
-        ],
-      ),
-      Creature(
-        name="BOSS_JAGRAS",
-        attacks=[
-          atk1,
-          Attack(name="ROLL_SIDE", duration_frames=50),
-          Attack(name="JUMP_BACK"),
-        ],
-      ),
-    ]
-    c = ColliderCapsule.make(g.creatures[0].attacks[0].next_collider_id())
-    c.radius.append(Keyframe(40, 5, c._next_keyframe_id()))
-    c.radius.append(Keyframe(70, 4, c._next_keyframe_id()))
-    g.creatures[0].attacks[0].colliders.append(c)
-    g.creatures[0].attacks[0].timeline_at = 2
-
-  else:
-    for folder in (x for x in ATTACKS_DIR.iterdir() if x.is_dir()):
-      name, creature_id = folder.name.rsplit("_", 1)
-      creature = Creature(id=UUID(creature_id), name=name)
-      g.creatures.append(creature)
-      for attack_filepath in folder.glob("*.yaml"):
-        if attack_filepath.name == "_.yaml":
-          continue
-        yaml_content = yaml.safe_load(bf.read_text(attack_filepath))
-        yaml_content["id"] = Attack.get_id_from_file_name(attack_filepath.stem)
-        attack = _serializer.deserialize_root(yaml_content, Attack)
-        creature.attacks.append(attack)
+  for creature in g.glib.creatures:
+    attacks = []
+    c = TransientCreature(ref=creature, attacks=attacks)
+    for attack in creature.attacks:
+      attacks.append(TransientAttack(ref=attack, parent=c))
+    g.creatures.append(c)
 
   recursive_validate(g)
 
@@ -418,8 +342,8 @@ def tool_attacks_markuper() -> None:
 
   # removeme
   if atk := g.ref_selected_attack:
-    if atk.colliders:
-      atk.collider_to_select = atk.colliders[0]
+    if atk.ref.melee and atk.ref.melee.colliders:
+      atk.collider_to_select = atk.ref.melee.colliders[0]
 
   def setup_imgui_style():
     if loaded_state:
@@ -458,6 +382,7 @@ def tool_attacks_markuper() -> None:
     _dump_task.cancel()
 
   asyncio.run(wrapper(), debug=True)
+  ##
 
 
 _gizmo_restricted: bool = False
@@ -565,6 +490,7 @@ class ColliderType(IntEnum):  ##
   INVALID = 0
   CIRCLE = 1
   CAPSULE = 2
+  POLYGON = 3
   ##
 
 
@@ -680,7 +606,6 @@ class KeyframeTypeTr(KeyframeType[vec2]):  ##
   ##
 
 
-@dataclass(slots=True)
 class ColliderBase(ABC):  ##
   @classmethod
   @abstractmethod
@@ -811,89 +736,6 @@ class ColliderBase(ABC):  ##
       result.make_default_keyframe_at(f, 0)
     return result
 
-  def __init_subclass__(cls, **kwargs):
-    super().__init_subclass__(**kwargs)
-    if inspect.isabstract(cls):
-      return
-
-    COLLIDER_REGISTRY[cls.type().name] = cls
-    cls.keyframe_fields = []
-
-    prefix = "_keyframe_"
-
-    for field_name, field_instance in cls.__dataclass_fields__.items():
-      field_type = field_instance.type
-      origin = t.get_origin(field_type)
-      args = t.get_args(field_type)
-
-      if (origin in (list, t.List)) and args:  # noqa: UP006
-        if t.get_origin(args[0]) is Keyframe:
-          ass(field_name not in cls.keyframe_fields)
-          cls.keyframe_fields.append(field_name)
-          ass(f"{prefix}{field_name}" in cls.__dataclass_fields__)
-
-    for field_name, field_instance in cls.__dataclass_fields__.items():
-      field_type = field_instance.type
-      if field_name.startswith(prefix):
-        field_name_wo_prefix = field_name.removeprefix(prefix)
-        ass(t.get_origin(field_type) is ClassVar)
-        ass(t.get_args(field_type)[0] is KeyframeType)
-        ass(field_name_wo_prefix in cls.keyframe_fields)
-
-  ##
-
-
-COLLIDER_REGISTRY: dict[str, type[ColliderBase]] = {}
-
-
-@dataclass(slots=True)
-@t.final
-class ColliderCircle(ColliderBase):  ##
-  @classmethod
-  def type(cls) -> ColliderType:
-    return ColliderType.CIRCLE
-
-  radius: list[Keyframe[float]] = field(default_factory=list)
-
-  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
-    0.5, step=STEP_TRANSLATE, step_fast=1, min=MIN_RADIUS, max=MAX_RADIUS, fmt="%.2f"
-  )
-
-  _export_fields: t.ClassVar[list[str]] = [
-    *ColliderBase._export_fields,
-    "radius",
-  ]
-
-  ##
-
-
-@dataclass(slots=True)
-@t.final
-class ColliderCapsule(ColliderBase):  ##
-  @classmethod
-  def type(cls) -> ColliderType:
-    return ColliderType.CAPSULE
-
-  radius: list[Keyframe[float]] = field(default_factory=list)
-  spread: list[Keyframe[float]] = field(default_factory=list)
-  rotation: list[Keyframe[float]] = field(default_factory=list)
-
-  _keyframe_radius: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
-    0.5, step=STEP_TRANSLATE, step_fast=1, min=MIN_RADIUS, max=MAX_RADIUS, fmt="%.2f"
-  )
-  _keyframe_spread: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
-    1, step=STEP_TRANSLATE, step_fast=1, min=0, max=MAX_SPREAD, fmt="%.2f"
-  )
-  _keyframe_rotation: t.ClassVar[KeyframeType] = KeyframeTypeFloat(
-    0, step=STEP_ROTATE, step_fast=90, fmt="%.0f"
-  )
-
-  _export_fields: t.ClassVar[list[str]] = [
-    *ColliderBase._export_fields,
-    "radius",
-    "spread",
-    "rotation",
-  ]
   ##
 
 
@@ -956,7 +798,7 @@ COMMAND_REGISTRY: dict[str, type[Command]] = {}
 
 @dataclass(slots=True)
 class CommandAttack(Command):
-  atk: "Attack"
+  atk: "TransientAttack"
 
   _export_fields = []
 
@@ -971,7 +813,7 @@ class CommandAttack(Command):
 class CommandAttackCollider(CommandAttack):
   collider_id: ColliderID
 
-  def c(self, atk: "Attack") -> "ColliderBase":
+  def c(self, atk: "TransientAttack") -> "ColliderBase":
     return next(c for c in atk.colliders if c.id == self.collider_id)
 
 
@@ -1099,18 +941,15 @@ class CommandAttackColliderAlterField(CommandAttackCollider):
 
 
 @dataclass(slots=True)
-class Attack:  ##
-  id: UUID
-  name: str = "UNNAMED"
-  duration_frames: int = 90
-  colliders: list[ColliderBase] = field(default_factory=list)
-  _next_collider_id: ColliderID = 1
+class TransientAttack:  ##
+  ref: GAttack
+  parent: "TransientCreature"
 
   collider_deselection_scheduled: bool = False
-  collider_to_select: ColliderBase | None = None
-  collider_to_hover: ColliderBase | None = None
-  ref_selected_collider: ColliderBase | None = None
-  ref_hovered_collider: ColliderBase | None = None
+  collider_to_select: GCollider | None = None
+  collider_to_hover: GCollider | None = None
+  ref_selected_collider: GCollider | None = None
+  ref_hovered_collider: GCollider | None = None
 
   timeline_at: float = 0
   timeline_started_playing_at: float = 0
@@ -1119,36 +958,29 @@ class Attack:  ##
   history: list[CommandAttack] = field(default_factory=list)
   scheduled_commands: list[CommandAttack] = field(default_factory=list)
 
-  _export_fields = [
-    "name",
-    "duration_frames",
-    "colliders",
-    "_next_collider_id",
-  ]
-
   def next_collider_id(self) -> ColliderID:
     result = self._next_collider_id
     self._next_collider_id += 1
     return result
 
-  def get_visualization_collider(self) -> ColliderBase | None:
+  def get_visualization_collider(self) -> GCollider | None:
     if self.ref_hovered_collider:
       return self.ref_hovered_collider
     return self.ref_selected_collider
 
   def validate(self):
-    ass(self.name)
-    ass(self.duration_frames > 0)
+    ass(self.ref.duration_frames > 0)
     ass(self.timeline_at >= 0)
-    ass(self.timeline_at <= self.duration_frames)
+    ass(self.timeline_at <= self.ref.duration_frames)
     ass(self.timeline_started_playing_at >= 0)
-    ass(self.timeline_started_playing_at <= self.duration_frames)
+    ass(self.timeline_started_playing_at <= self.ref.duration_frames)
 
-    for c in self.colliders:
-      for frames in (c.get_keyframes(x) for x in c.keyframe_fields):
-        for fr in frames:
-          ass(fr.index_timeline >= 0)
-          ass(fr.index_timeline < self.duration_frames)
+    if self.ref.melee:
+      for c in self.ref.melee.colliders:
+        for frames in (get_keyframes(c, x) for x in g.collider_keyframe_fields):
+          for fr in frames:
+            ass(fr.index_timeline >= 0)
+            ass(fr.index_timeline < self.ref.duration_frames)
 
   @classmethod
   def get_file_name_wo_ext(cls, id_: UUID, attack_name: str) -> str:
@@ -1165,23 +997,24 @@ class Attack:  ##
   ##
 
 
+def get_keyframes(c: GCollider, field_name: str) -> Container[Any]:  ##
+  ass(field_name in g.collider_keyframe_fields)
+  return getattr(c, field_name)
+  ##
+
+
 @dataclass(slots=True)
-class Creature:  ##
-  id: UUID
-  name: str = "UNNAMED"
-  attacks: list[Attack] = field(default_factory=list)
+class TransientCreature:  ##
+  ref: GCreature
+  attacks: list[TransientAttack] = field(default_factory=list)
 
-  def validate(self):
-    ass(self.name)
-    ass(bf.are_unique(x.name for x in self.attacks))
+  # @classmethod
+  # def get_folder_name(cls, id_: UUID, creature_name: str) -> str:
+  #   return f"{creature_name}__{id_}"
 
-  @classmethod
-  def get_folder_name(cls, id_: UUID, creature_name: str) -> str:
-    return f"{creature_name}__{id_}"
-
-  @property
-  def folder_name(self):
-    return self.get_folder_name(self.id, self.name)
+  # @property
+  # def folder_name(self):
+  #   return self.get_folder_name(self.id, self.name)
 
   ##
 
@@ -1241,16 +1074,19 @@ class State:
 
   glib: Lib = None  # ty:ignore[invalid-assignment]
 
-  creatures: list[Creature] = field(default_factory=list)
+  creatures: list[TransientCreature] = field(default_factory=list)
+  attacks: list[TransientAttack] = field(default_factory=list)
 
   exiting: bool = False
   count: int = 0
 
   frame: int = 0
 
-  attack_to_select: GAttack | None = None
-  ref_selected_attack_creature: GCreature | None = None
-  ref_selected_attack: GAttack | None = None
+  collider_keyframe_fields: list[str] = field(default_factory=list)
+
+  attack_to_select: TransientAttack | None = None
+  ref_selected_attack_creature: TransientCreature | None = None
+  ref_selected_attack: TransientAttack | None = None
 
   attack_undo_scheduled: bool = False
   attack_redo_scheduled: bool = False
@@ -1262,20 +1098,22 @@ class State:
     return AppSaveState(
       font_scale_main=im.get_style().font_scale_main,
       creature=(
-        self.ref_selected_attack_creature.debug_name
+        self.ref_selected_attack_creature.ref.debug_name
         if self.ref_selected_attack_creature
         else None
       ),
-      attack=self.ref_selected_attack.debug_name if self.ref_selected_attack else None,
+      attack=(
+        self.ref_selected_attack.ref.debug_name if self.ref_selected_attack else None
+      ),
       visualizer__gizmo_mode=vis.gizmo_mode,
     )
     ##
 
   def load(self, value: AppSaveState) -> None:  ##
     for c in self.creatures:
-      if c.name == value.creature:
+      if c.ref.debug_name == value.creature:
         for atk in c.attacks:
-          if atk.name == value.attack:
+          if atk.ref.debug_name == value.attack:
             self.ref_selected_attack_creature = c
             self.ref_selected_attack = atk
     ##
@@ -1330,42 +1168,45 @@ def _panel_attack_inspector() -> None:  ##
   im.text("Frames")
   im.same_line()
   min_attack_frames = 1
-  for c in atk.colliders:
-    for frames in (c.get_keyframes(x) for x in c.keyframe_fields):
-      for frame in frames:
-        min_attack_frames = max(min_attack_frames, frame.index_timeline + 1)
+  if atk.ref.melee:
+    for c in atk.ref.melee.colliders:
+      for frames in (get_keyframes(c, x) for x in g.collider_keyframe_fields):
+        for frame in frames:
+          min_attack_frames = max(min_attack_frames, frame.index_timeline + 1)
   im.set_next_item_width(im.get_content_region_avail()[0])
   changed, frames = im.slider_int(
     bf.imgui_id("", "attack_duration_frames"),
-    atk.duration_frames,
+    atk.ref.duration_frames,
     min_attack_frames,
     MAX_ATTACK_FRAMES_DURATION,
   )
   if changed:
-    atk.duration_frames = frames
+    atk.ref.duration_frames = frames
     atk.timeline_at = min(atk.timeline_at, frames)
     atk.timeline_started_playing_at = min(atk.timeline_started_playing_at, frames)
 
-  if im.button("+circle"):
-    atk.colliders.append(ColliderCircle.make(atk.next_collider_id()))
-    atk.collider_to_select = atk.colliders[-1]
-  im.same_line()
-  if im.button("+capsule"):
-    atk.colliders.append(ColliderCapsule.make(atk.next_collider_id()))
-    atk.collider_to_select = atk.colliders[-1]
+  if atk.ref.melee:
+    for i, collider_type in enumerate(
+      (ColliderType.CIRCLE, ColliderType.CAPSULE, ColliderType.POLYGON)
+    ):
+      if i:
+        im.same_line()
+      if im.button("+{}".format(collider_type.name.lower())):
+        atk.ref.melee.colliders.append(GCollider(type=collider_type))
+        atk.collider_to_select = atk.ref.melee.colliders[-1]
 
-  for i, collider in enumerate(atk.colliders):
+  for i, collider in enumerate(atk.ref.colliders):
     flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
-    if atk.ref_selected_collider is collider:
+    if atk.ref.ref_selected_collider is collider:
       flags |= im.TreeNodeFlags_.selected
     if im.tree_node_ex(f"{i} {collider.type().name}", flags):
       if im.is_item_hovered():
-        atk.collider_to_hover = collider
+        atk.ref.collider_to_hover = collider
       if im.is_item_clicked():
-        if atk.ref_selected_collider is collider:
-          atk.collider_deselection_scheduled = True
+        if atk.ref.ref_selected_collider is collider:
+          atk.ref.collider_deselection_scheduled = True
         else:
-          atk.collider_to_select = collider
+          atk.ref.collider_to_select = collider
       im.tree_pop()
 
   ##
@@ -2281,7 +2122,10 @@ def _post_new_frame() -> None:  ##
       bf.recursive_mkdir(out_filepath.parent)
       with bf.sane_writable_file(out_filepath) as out_file:
         yaml.dump(
-          _serializer.serialize_root(atk, Attack), out_file, indent=2, line_break="\n"
+          _serializer.serialize_root(atk, TransientAttack),
+          out_file,
+          indent=2,
+          line_break="\n",
         )
     atk.scheduled_commands.clear()
 

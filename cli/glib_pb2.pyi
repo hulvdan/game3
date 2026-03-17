@@ -267,8 +267,9 @@ class GKeyframeFloat(_message.Message):
     def __init__(self, index: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
 
 class GCollider(_message.Message):
-    __slots__ = ("type", "pos", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "polygon__distance_min", "polygon__distance_max", "polygon__angle", "polygon__anchor_x")
+    __slots__ = ("type", "debug_name", "pos", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "polygon__distance_min", "polygon__distance_max", "polygon__angle", "polygon__anchor_x")
     TYPE_FIELD_NUMBER: _ClassVar[int]
+    DEBUG_NAME_FIELD_NUMBER: _ClassVar[int]
     POS_FIELD_NUMBER: _ClassVar[int]
     IS_ACTIVE_FIELD_NUMBER: _ClassVar[int]
     CIRCLE__RADIUS_FIELD_NUMBER: _ClassVar[int]
@@ -279,6 +280,7 @@ class GCollider(_message.Message):
     POLYGON__ANGLE_FIELD_NUMBER: _ClassVar[int]
     POLYGON__ANCHOR_X_FIELD_NUMBER: _ClassVar[int]
     type: int
+    debug_name: str
     pos: _containers.RepeatedCompositeFieldContainer[GKeyframeV2]
     is_active: _containers.RepeatedCompositeFieldContainer[GKeyframeBool]
     circle__radius: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
@@ -288,7 +290,7 @@ class GCollider(_message.Message):
     polygon__distance_max: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     polygon__angle: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     polygon__anchor_x: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
-    def __init__(self, type: _Optional[int] = ..., pos: _Optional[_Iterable[_Union[GKeyframeV2, _Mapping]]] = ..., is_active: _Optional[_Iterable[_Union[GKeyframeBool, _Mapping]]] = ..., circle__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__spread: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_min: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_max: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__angle: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__anchor_x: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ...) -> None: ...
+    def __init__(self, type: _Optional[int] = ..., debug_name: _Optional[str] = ..., pos: _Optional[_Iterable[_Union[GKeyframeV2, _Mapping]]] = ..., is_active: _Optional[_Iterable[_Union[GKeyframeBool, _Mapping]]] = ..., circle__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__spread: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_min: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_max: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__angle: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__anchor_x: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ...) -> None: ...
 
 class GAttackMelee(_message.Message):
     __slots__ = ("damage", "damage_stamina", "evade_flags", "colliders", "hp_rally_recover")
