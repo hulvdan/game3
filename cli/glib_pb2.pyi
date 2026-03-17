@@ -280,6 +280,16 @@ class GKeyframeFloat(_message.Message):
     value: float
     def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
 
+class GKeyframeString(_message.Message):
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    id: int
+    index_timeline: int
+    value: str
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[str] = ...) -> None: ...
+
 class GCollider(_message.Message):
     __slots__ = ("id", "type", "debug_name", "tr", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "polygon__distance_min", "polygon__distance_max", "polygon__angle", "polygon__anchor_x")
     ID_FIELD_NUMBER: _ClassVar[int]
