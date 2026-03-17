@@ -211,66 +211,81 @@ class GTagValue(_message.Message):
     def __init__(self, tag_type: _Optional[int] = ..., i1: _Optional[int] = ..., i2: _Optional[int] = ..., i3: _Optional[int] = ..., i4: _Optional[int] = ..., i5: _Optional[int] = ..., i6: _Optional[int] = ..., f1: _Optional[float] = ..., f2: _Optional[float] = ..., f3: _Optional[float] = ..., f4: _Optional[float] = ..., f5: _Optional[float] = ..., f6: _Optional[float] = ..., projectile_type: _Optional[int] = ..., creature_type: _Optional[int] = ..., team_flags: _Optional[int] = ...) -> None: ...
 
 class GKeyframeV1(_message.Message):
-    __slots__ = ("index", "value")
-    INDEX_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
     VALUE_FIELD_NUMBER: _ClassVar[int]
-    index: int
+    id: int
+    index_timeline: int
     value: GV1
-    def __init__(self, index: _Optional[int] = ..., value: _Optional[_Union[GV1, _Mapping]] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV1, _Mapping]] = ...) -> None: ...
 
 class GKeyframeV2(_message.Message):
-    __slots__ = ("index", "value")
-    INDEX_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
     VALUE_FIELD_NUMBER: _ClassVar[int]
-    index: int
+    id: int
+    index_timeline: int
     value: GV2
-    def __init__(self, index: _Optional[int] = ..., value: _Optional[_Union[GV2, _Mapping]] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV2, _Mapping]] = ...) -> None: ...
 
 class GKeyframeV3(_message.Message):
-    __slots__ = ("index", "value")
-    INDEX_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
     VALUE_FIELD_NUMBER: _ClassVar[int]
-    index: int
+    id: int
+    index_timeline: int
     value: GV3
-    def __init__(self, index: _Optional[int] = ..., value: _Optional[_Union[GV3, _Mapping]] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV3, _Mapping]] = ...) -> None: ...
 
 class GKeyframeV4(_message.Message):
-    __slots__ = ("index", "value")
-    INDEX_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
     VALUE_FIELD_NUMBER: _ClassVar[int]
-    index: int
+    id: int
+    index_timeline: int
     value: GV4
-    def __init__(self, index: _Optional[int] = ..., value: _Optional[_Union[GV4, _Mapping]] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV4, _Mapping]] = ...) -> None: ...
 
 class GKeyframeBool(_message.Message):
-    __slots__ = ("index", "value")
-    INDEX_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
     VALUE_FIELD_NUMBER: _ClassVar[int]
-    index: int
+    id: int
+    index_timeline: int
     value: bool
-    def __init__(self, index: _Optional[int] = ..., value: _Optional[bool] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[bool] = ...) -> None: ...
 
 class GKeyframeInt32(_message.Message):
-    __slots__ = ("index", "value")
-    INDEX_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
     VALUE_FIELD_NUMBER: _ClassVar[int]
-    index: int
+    id: int
+    index_timeline: int
     value: int
-    def __init__(self, index: _Optional[int] = ..., value: _Optional[int] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[int] = ...) -> None: ...
 
 class GKeyframeFloat(_message.Message):
-    __slots__ = ("index", "value")
-    INDEX_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
     VALUE_FIELD_NUMBER: _ClassVar[int]
-    index: int
+    id: int
+    index_timeline: int
     value: float
-    def __init__(self, index: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
 
 class GCollider(_message.Message):
-    __slots__ = ("type", "debug_name", "pos", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "polygon__distance_min", "polygon__distance_max", "polygon__angle", "polygon__anchor_x")
+    __slots__ = ("id", "type", "debug_name", "tr", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "polygon__distance_min", "polygon__distance_max", "polygon__angle", "polygon__anchor_x")
+    ID_FIELD_NUMBER: _ClassVar[int]
     TYPE_FIELD_NUMBER: _ClassVar[int]
     DEBUG_NAME_FIELD_NUMBER: _ClassVar[int]
-    POS_FIELD_NUMBER: _ClassVar[int]
+    TR_FIELD_NUMBER: _ClassVar[int]
     IS_ACTIVE_FIELD_NUMBER: _ClassVar[int]
     CIRCLE__RADIUS_FIELD_NUMBER: _ClassVar[int]
     CAPSULE__RADIUS_FIELD_NUMBER: _ClassVar[int]
@@ -279,9 +294,10 @@ class GCollider(_message.Message):
     POLYGON__DISTANCE_MAX_FIELD_NUMBER: _ClassVar[int]
     POLYGON__ANGLE_FIELD_NUMBER: _ClassVar[int]
     POLYGON__ANCHOR_X_FIELD_NUMBER: _ClassVar[int]
+    id: int
     type: int
     debug_name: str
-    pos: _containers.RepeatedCompositeFieldContainer[GKeyframeV2]
+    tr: _containers.RepeatedCompositeFieldContainer[GKeyframeV2]
     is_active: _containers.RepeatedCompositeFieldContainer[GKeyframeBool]
     circle__radius: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     capsule__radius: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
@@ -290,7 +306,7 @@ class GCollider(_message.Message):
     polygon__distance_max: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     polygon__angle: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     polygon__anchor_x: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
-    def __init__(self, type: _Optional[int] = ..., debug_name: _Optional[str] = ..., pos: _Optional[_Iterable[_Union[GKeyframeV2, _Mapping]]] = ..., is_active: _Optional[_Iterable[_Union[GKeyframeBool, _Mapping]]] = ..., circle__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__spread: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_min: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_max: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__angle: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__anchor_x: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., type: _Optional[int] = ..., debug_name: _Optional[str] = ..., tr: _Optional[_Iterable[_Union[GKeyframeV2, _Mapping]]] = ..., is_active: _Optional[_Iterable[_Union[GKeyframeBool, _Mapping]]] = ..., circle__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__spread: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_min: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_max: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__angle: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__anchor_x: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ...) -> None: ...
 
 class GAttackMelee(_message.Message):
     __slots__ = ("damage", "damage_stamina", "evade_flags", "colliders", "hp_rally_recover")

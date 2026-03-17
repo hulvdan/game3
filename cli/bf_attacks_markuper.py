@@ -1,6 +1,5 @@
 ## Imports
 import asyncio
-import inspect
 import math
 import random
 import shutil
@@ -28,7 +27,6 @@ from bf_glib import load_glib
 from bf_lib import imgui_assert as ass
 from bf_typer import command
 from glib_pb2 import GAttack, GCollider, GCreature, Lib
-from glm import vec1
 from google.protobuf.internal import containers
 from google.protobuf.json_format import ParseDict
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
@@ -491,6 +489,11 @@ class ColliderType(IntEnum):  ##
   CIRCLE = 1
   CAPSULE = 2
   POLYGON = 3
+
+  @classmethod
+  def get_name(cls, value: int) -> str:
+    return next(x.name for x in cls if x.value == value)
+
   ##
 
 
@@ -649,70 +652,6 @@ class ColliderBase(ABC):  ##
   def get_keyframe_type(self, field_name: str) -> KeyframeType:
     return getattr(self, f"_keyframe_{field_name}")
 
-  def make_keyframe_value_at(
-    self, field: str, index_timeline: float
-  ) -> tuple[int, t.Any]:
-    frames = self.get_keyframes(field)
-    keyframe_type = self.get_keyframe_type(field)
-
-    for i, fr in enumerate(frames):
-      if abs(fr.index_timeline - index_timeline) < 0.001:
-        return (i, keyframe_type.make_copy(fr.value))
-
-    for _, left, right_list_index, right in bf.iter_neighbors(frames):
-      if left and right:
-        if left.index_timeline < index_timeline < right.index_timeline:
-          t = (index_timeline - left.index_timeline) / (
-            right.index_timeline - left.index_timeline
-          )
-          return (
-            right_list_index,
-            keyframe_type.make_lerp(left.value, right.value, t),
-          )
-
-      elif left:
-        if left.index_timeline < index_timeline:
-          return (right_list_index, keyframe_type.make_copy(left.value))
-
-      elif right:
-        if index_timeline < right.index_timeline:
-          return (right_list_index, keyframe_type.make_copy(right.value))
-
-    return (0, keyframe_type.make_default())
-
-  def make_default_keyframe_at(
-    self, field: str, index_timeline: int
-  ) -> tuple[int, Keyframe]:
-    frames = self.get_keyframes(field)
-    for fr in frames:
-      ass(fr.index_timeline != index_timeline)
-    with _override_keyframe_round_to_step(True):
-      insert_index, value = self.make_keyframe_value_at(field, index_timeline)
-    k = Keyframe(index_timeline, value, self._next_keyframe_id())
-    frames.insert(insert_index, k)
-    ass(frames == sorted(frames, key=lambda x: x.index_timeline))
-    return (insert_index, k)
-
-  def select_keyframe(
-    self,
-    field_name: str,
-    index_inside_list: int,
-    *,
-    update_timeline_playhead: bool = True,
-  ) -> None:
-    frames = self.get_keyframes(field_name)
-    fr = frames[index_inside_list]
-    self.keyframe_to_select = (
-      SelectedKeyframe(
-        id=fr.id,
-        key=_keyframe_id(field_name, fr.id),
-        field=field_name,
-        index_timeline=fr.index_timeline,
-        index_inside_list=index_inside_list,
-      ),
-      update_timeline_playhead,
-    )
-
   def validate(self):
     ass(self.id > 0)
     for frames in (self.get_keyframes(x) for x in self.keyframe_fields):
@@ -733,10 +672,77 @@ class ColliderBase(ABC):  ##
       **{x: [] for x in cls.keyframe_fields},
     )
     for f in cls.keyframe_fields:
-      result.make_default_keyframe_at(f, 0)
+      make_default_keyframe_at(result, f, 0)
     return result
 
   ##
+
+
+def make_keyframe_value_at(
+  self: GCollider, field: str, index_timeline: float
+) -> tuple[int, t.Any]:
+  frames = get_keyframes(self, field)
+  keyframe_type = get_keyframe_type(self, field)
+
+  for i, fr in enumerate(frames):
+    if abs(fr.index_timeline - index_timeline) < 0.001:
+      return (i, keyframe_type.make_copy(fr.value))
+
+  for _, left, right_list_index, right in bf.iter_neighbors(frames):
+    if left and right:
+      if left.index_timeline < index_timeline < right.index_timeline:
+        t = (index_timeline - left.index_timeline) / (
+          right.index_timeline - left.index_timeline
+        )
+        return (
+          right_list_index,
+          keyframe_type.make_lerp(left.value, right.value, t),
+        )
+
+    elif left:
+      if left.index_timeline < index_timeline:
+        return (right_list_index, keyframe_type.make_copy(left.value))
+
+    elif right:
+      if index_timeline < right.index_timeline:
+        return (right_list_index, keyframe_type.make_copy(right.value))
+
+  return (0, keyframe_type.make_default())
+
+
+def make_default_keyframe_at(
+  self: GCollider, field: str, index_timeline: int
+) -> tuple[int, Keyframe]:
+  frames = get_keyframes(self, field)
+  for fr in frames:
+    ass(fr.index_timeline != index_timeline)
+  with _override_keyframe_round_to_step(True):
+    insert_index, value = make_keyframe_value_at(self, field, index_timeline)
+  k = Keyframe(index_timeline, value, self._next_keyframe_id())
+  frames.insert(insert_index, k)
+  ass(frames == sorted(frames, key=lambda x: x.index_timeline))
+  return (insert_index, k)
+
+
+def select_keyframe(
+  self: GCollider,
+  field_name: str,
+  index_inside_list: int,
+  *,
+  update_timeline_playhead: bool = True,
+) -> None:
+  frames = get_keyframes(self, field_name)
+  fr = frames[index_inside_list]
+  self.keyframe_to_select = (
+    SelectedKeyframe(
+      id=fr.id,
+      key=_keyframe_id(field_name, fr.id),
+      field=field_name,
+      index_timeline=fr.index_timeline,
+      index_inside_list=index_inside_list,
+    ),
+    update_timeline_playhead,
+  )
 
 
 @unique
@@ -813,8 +819,8 @@ class CommandAttack(Command):
 class CommandAttackCollider(CommandAttack):
   collider_id: ColliderID
 
-  def c(self, atk: "TransientAttack") -> "ColliderBase":
-    return next(c for c in atk.colliders if c.id == self.collider_id)
+  def c(self, atk: "TransientAttack") -> GCollider:
+    return next(c for c in atk.ref.melee.colliders if c.id == self.collider_id)
 
 
 ATTACK_COMMAND_COLLIDER_REGISTRY: dict[str, type[CommandAttackCollider]] = {}
@@ -827,9 +833,8 @@ class CommandAttackColliderKeyframeAdd(CommandAttackCollider):
   keyframe_index_timeline: int
 
   def do(self) -> None:
-    self.c(self.atk).make_default_keyframe_at(
-      self.keyframe_field, self.keyframe_index_timeline
-    )
+    c = self.c(self.atk)
+    make_default_keyframe_at(c, self.keyframe_field, self.keyframe_index_timeline)
     self.atk.timeline_at = self.keyframe_index_timeline
 
   def undo(self) -> None:
@@ -1136,12 +1141,12 @@ def _override_keyframe_round_to_step(v: bool):  ##
 
 
 def _panel_explorer() -> None:  ##
-  for creature in g.glib.creatures:
+  for creature in g.creatures:
     # for creature in g.creatures:
     creature_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
     if creature is g.ref_selected_attack_creature:
       creature_flags |= im.TreeNodeFlags_.selected
-    if im.tree_node_ex(creature.name, creature_flags):
+    if im.tree_node_ex(creature.ref.debug_name, creature_flags):
       for attack in creature.attacks:
         flags = (
           im.TreeNodeFlags_.leaf
@@ -1150,7 +1155,7 @@ def _panel_explorer() -> None:  ##
         )
         if attack is g.ref_selected_attack:
           flags |= im.TreeNodeFlags_.selected
-        if im.tree_node_ex(attack.name, flags):
+        if im.tree_node_ex(attack.ref.debug_name, flags):
           if im.is_item_clicked():
             g.ref_selected_attack_creature = creature
             g.ref_selected_attack = attack
@@ -1195,19 +1200,19 @@ def _panel_attack_inspector() -> None:  ##
         atk.ref.melee.colliders.append(GCollider(type=collider_type))
         atk.collider_to_select = atk.ref.melee.colliders[-1]
 
-  for i, collider in enumerate(atk.ref.colliders):
-    flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
-    if atk.ref.ref_selected_collider is collider:
-      flags |= im.TreeNodeFlags_.selected
-    if im.tree_node_ex(f"{i} {collider.type().name}", flags):
-      if im.is_item_hovered():
-        atk.ref.collider_to_hover = collider
-      if im.is_item_clicked():
-        if atk.ref.ref_selected_collider is collider:
-          atk.ref.collider_deselection_scheduled = True
-        else:
-          atk.ref.collider_to_select = collider
-      im.tree_pop()
+    for i, collider in enumerate(atk.ref.melee.colliders):
+      flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
+      if atk.ref_selected_collider is collider:
+        flags |= im.TreeNodeFlags_.selected
+      if im.tree_node_ex("{} {}".format(i, ColliderType.get_name(collider.type)), flags):
+        if im.is_item_hovered():
+          atk.collider_to_hover = collider
+        if im.is_item_clicked():
+          if atk.ref_selected_collider is collider:
+            atk.collider_deselection_scheduled = True
+          else:
+            atk.collider_to_select = collider
+        im.tree_pop()
 
   ##
 
@@ -1360,49 +1365,50 @@ def _panel_visualizer() -> None:
   sel_col = atk.ref_selected_collider
   hov_col = atk.ref_hovered_collider
   visual_collider = atk.get_visualization_collider()
-  for c in atk.colliders:
-    color_ = COLOR_YELLOW
-    if c is sel_col:
-      color_ = COLOR_LIGHT_BLUE
-    fade_ = False
-    if hov_col is None:
-      fade_ = (sel_col is not None) and (sel_col is not c)
-    else:
-      fade_ = c is not hov_col
-    if fade_:
-      color_ = imgui_fade_replace(color_, 0.25)
+  if atk.ref.melee:
+    for c in atk.ref.melee.colliders:
+      color_ = COLOR_YELLOW
+      if c is sel_col:
+        color_ = COLOR_LIGHT_BLUE
+      fade_ = False
+      if hov_col is None:
+        fade_ = (sel_col is not None) and (sel_col is not c)
+      else:
+        fade_ = c is not hov_col
+      if fade_:
+        color_ = imgui_fade_replace(color_, 0.25)
 
-    is_active = c.make_keyframe_value_at("is_active", atk.timeline_at)[1]
-    if not is_active:
-      if c is not visual_collider:
-        continue
-      color_ = imgui_fade_multiply(color_, 0.25)
+      is_active = make_keyframe_value_at(c, "is_active", atk.timeline_at)[1]
+      if not is_active:
+        if c is not visual_collider:
+          continue
+        color_ = imgui_fade_multiply(color_, 0.25)
 
-    color = imgui_color_to_u32(color_)
+      color = imgui_color_to_u32(color_)
 
-    c_pos = c.make_keyframe_value_at("tr", atk.timeline_at)[1]
-    m = glm.translate(vec3(c_pos.x, 0, c_pos.y))
-    center = vec3(m * vec4(0, 0, 0, 1))
+      c_pos = c.make_keyframe_value_at("tr", atk.timeline_at)[1]
+      m = glm.translate(vec3(c_pos.x, 0, c_pos.y))
+      center = vec3(m * vec4(0, 0, 0, 1))
 
-    match c.type():
-      case ColliderType.CIRCLE:
-        if not isinstance(c, ColliderCircle):
+      match c.type:
+        case ColliderType.CIRCLE:
+          if not isinstance(c, ColliderCircle):
+            ass(0)
+
+          radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
+          draw_circle(center, radius, color)
+
+        case ColliderType.CAPSULE:
+          if not isinstance(c, ColliderCapsule):
+            raise ass(0)
+
+          radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
+          spread = c.make_keyframe_value_at("spread", atk.timeline_at)[1]
+          rotation = c.make_keyframe_value_at("rotation", atk.timeline_at)[1]
+          draw_capsule(center, radius, spread, math.radians(rotation), color)
+
+        case _:
           ass(0)
-
-        radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
-        draw_circle(center, radius, color)
-
-      case ColliderType.CAPSULE:
-        if not isinstance(c, ColliderCapsule):
-          raise ass(0)
-
-        radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
-        spread = c.make_keyframe_value_at("spread", atk.timeline_at)[1]
-        rotation = c.make_keyframe_value_at("rotation", atk.timeline_at)[1]
-        draw_capsule(center, radius, spread, math.radians(rotation), color)
-
-      case _:
-        ass(0)
 
   if im.is_key_pressed(im.Key.t) or im.is_key_pressed(im.Key._1):
     vis.gizmo_mode = GizmoMode.TRANSLATE
@@ -1430,12 +1436,10 @@ def _panel_visualizer() -> None:
       "delta_matrix": delta,
     }
 
-    frames_tr = c.get_keyframes("tr")
+    frames_tr = get_keyframes(c, "tr")
     tr_closest_index, poss_ = _get_closest_keyframe(frames_tr, atk.timeline_at)
     tr_pos = poss_.value
     m = _to_Matrix16(glm.translate(vec3(tr_pos.x, 0, tr_pos.y)))
-    if not isinstance(c, (ColliderCircle, ColliderCapsule)):
-      raise ass(0)
     with gizmo_restrict(m, (False, True, False), disable_translation_y=True):
       if gizmo.manipulate(object_matrix=m, **man_kwargs):
         off3 = _to_mat4(delta) * vec4(0, 0, 0, 1)
@@ -1452,44 +1456,6 @@ def _panel_visualizer() -> None:
             value_new=c.tr[tr_closest_index].value + off,
           )
         )
-    # match c.type():
-    #   case ColliderType.CIRCLE:
-    #     if not isinstance(c, ColliderCircle):
-    #       raise ass(0)
-    #     match vis.gizmo_mode:
-    #       case GizmoMode.TRANSLATE:
-    #         with gizmo_restrict(m, (False, True, False), disable_translation_y=True):
-    #           if gizmo.manipulate(object_matrix=m, **man_kwargs):
-    #             off3 = _to_mat4(delta) * vec4(0, 0, 0, 1)
-    #             c.tr[tr_closest_index].value += bf.round_to_step(
-    #               vec2(off3.x, off3.z), STEP_TRANSLATE
-    #             )
-    #       # case GizmoMode.ROTATE:
-    #       #   imgui_error_top_bar("Can't use ROTATE on CIRCLE collider")
-    #       # case GizmoMode.SCALE:
-    #       #   with gizmo_restrict(m, (False, True, True), disable_translation_y=True):
-    #       #     gizmo.manipulate(object_matrix=m, **man_kwargs)
-    #
-    #   case ColliderType.CAPSULE:
-    #     if not isinstance(c, ColliderCapsule):
-    #       raise ass(0)
-    #     match vis.gizmo_mode:
-    #       case GizmoMode.TRANSLATE:
-    #         with gizmo_restrict(m, (False, True, False), disable_translation_y=True):
-    #           if gizmo.manipulate(object_matrix=m, **man_kwargs):
-    #             off3 = _to_mat4(delta) * vec4(0, 0, 0, 1)
-    #             c.tr[tr_closest_index].value += bf.round_to_step(
-    #               vec2(off3.x, off3.z), STEP_TRANSLATE
-    #             )
-    #       # case GizmoMode.ROTATE:
-    #       #   with gizmo_restrict(m, (False, True, False), disable_translation_y=True):
-    #       #     gizmo.manipulate(object_matrix=m, **man_kwargs)
-    #       # case GizmoMode.SCALE:
-    #       #   with gizmo_restrict(m, (False, True, True), disable_translation_y=True):
-    #       #     if gizmo.manipulate(object_matrix=m, **man_kwargs):
-    #       #       mm = _to_mat4(delta)
-    #       #       off = bf.round_to_step(vec2(mm * vec4(0, 0, 0, 1)))
-    #       #       c.tr[tr_closest_index].value += off
 
   gizmo_size = 120 * im.get_window_dpi_scale()
   gizmo.view_manipulate(
