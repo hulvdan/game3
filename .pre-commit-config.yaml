@@ -141,3 +141,4 @@ repos:
     hooks:
       - id: editorconfig-checker
         exclude: ^(addons|assets)/.*$
+        args: ["-disable-indent-size"]
