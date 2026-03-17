@@ -16,7 +16,7 @@ from enum import IntEnum, unique
 from functools import partial, wraps
 from math import pi
 from pathlib import Path
-from typing import Any, Callable, ClassVar, Generic, Self, TypeAlias, TypeVar
+from typing import Any, Callable, ClassVar, Self, TypeAlias, TypeVar
 from uuid import UUID
 
 import bf_lib as bf
@@ -26,7 +26,19 @@ import yaml
 from bf_glib import load_glib
 from bf_lib import imgui_assert as ass
 from bf_typer import command
-from glib_pb2 import GAttack, GCollider, GCreature, Lib
+from glib_pb2 import (
+  GAttack,
+  GCollider,
+  GCreature,
+  GKeyframeBool,
+  GKeyframeFloat,
+  GKeyframeInt32,
+  GKeyframeV1,
+  GKeyframeV2,
+  GKeyframeV3,
+  GKeyframeV4,
+  Lib,
+)
 from google.protobuf.internal import containers
 from google.protobuf.json_format import ParseDict
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
@@ -37,8 +49,26 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
+# [[[cog
+# import re, pathlib
+# keyframe_types = re.findall(
+#   'message (GKeyframe[a-zA-Z0-9_]+) ',
+#   pathlib.Path('src/game/glib.proto').read_text(encoding='utf-8')
+# )
+# print('GKeyframe: TypeAlias = {}'.format(' | '.join(keyframe_types)))
+# cog]]]
+GKeyframe: TypeAlias = (
+  GKeyframeV1
+  | GKeyframeV2
+  | GKeyframeV3
+  | GKeyframeV4
+  | GKeyframeBool
+  | GKeyframeInt32
+  | GKeyframeFloat
+)
+# [[[end]]]
 
-Container: t.TypeAlias = containers.RepeatedCompositeFieldContainer
+GKeyframesContainer: t.TypeAlias = containers.RepeatedCompositeFieldContainer[GKeyframe]
 
 T = t.TypeVar("T")
 
@@ -306,26 +336,43 @@ _serializer = bf.DataclassSerializer()
 @command
 def tool_attacks_markuper() -> None:
   ## Filling g.collider_keyframe_fields
-  for field_name, field_type in GCollider.__annotations__:
-    if t.get_origin(field_type) is not containers.RepeatedCompositeFieldContainer:
-      continue
-    args = t.get_args(field_type)
-    if len(args) != 1:
-      continue
-    if args[0].__name__.startswith("GKeyframe"):
-      g.collider_keyframe_fields.append(field_name)
+  for mode in range(2):
+    for field_name, field_type in GCollider.__annotations__:
+      if t.get_origin(field_type) is not containers.RepeatedCompositeFieldContainer:
+        continue
+      args = t.get_args(field_type)
+      if len(args) != 1:
+        continue
+
+      if args[0].__name__.startswith("GKeyframe"):
+        # mode = 0 -> filling PER TYPE (e.g. circle__*, capsule__*)
+        if (mode == 0) and ("__" in field_name):
+          collider_type = ColliderType[field_name.split("__", 1)[0].upper()].value
+          g.keyframe_fields_per_collider_type[collider_type].append(field_name)
+
+        # mode = 1 -> filling COMMON (e.g. tr, is_active)
+        elif (mode == 1) and ("__" not in field_name):
+          for fields in g.keyframe_fields_per_collider_type.values():
+            fields.append(field_name)
+
+  ass(g.keyframe_fields_per_collider_type)
   ##
 
   ##
   glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug)
   g.glib = t.cast("Lib", ParseDict(glib, Lib()))
 
-  for creature in g.glib.creatures:
+  for creature_ in g.glib.creatures:
     attacks = []
-    c = TransientCreature(ref=creature, attacks=attacks)
-    for attack in creature.attacks:
-      attacks.append(TransientAttack(ref=attack, parent=c))
-    g.creatures.append(c)
+    creature = TransientCreature(ref=creature_, attacks=attacks)
+    for attack_ in creature_.attacks:
+      colliders = []
+      attack = TransientAttack(ref=attack_, parent=creature, colliders=colliders)
+      if attack_.melee:
+        for collider_ in attack_.melee.colliders:
+          colliders.append(TransientCollider(ref=collider_))
+      attacks.append(attack)
+    g.creatures.append(creature)
 
   recursive_validate(g)
 
@@ -341,7 +388,7 @@ def tool_attacks_markuper() -> None:
   # removeme
   if atk := g.ref_selected_attack:
     if atk.ref.melee and atk.ref.melee.colliders:
-      atk.collider_to_select = atk.ref.melee.colliders[0]
+      atk.collider_to_select = atk.colliders[0]
 
   def setup_imgui_style():
     if loaded_state:
@@ -383,6 +430,7 @@ def tool_attacks_markuper() -> None:
   ##
 
 
+##
 _gizmo_restricted: bool = False
 
 
@@ -449,25 +497,6 @@ def _to_mat4(m: Matrix16) -> mat4:
 ##
 
 
-@dataclass(slots=True)
-class Keyframe(Generic[T]):  ##
-  index_timeline: int
-  value: T
-  id: int = 0
-
-  _export_fields = [
-    "index_timeline",
-    "value",
-    "id",
-  ]
-
-  def validate(self):
-    ass(self.id > 0)
-    ass(self.index_timeline >= 0)
-
-  ##
-
-
 @dataclass(slots=True, frozen=True)
 class SelectedKeyframe:  ##
   id: int
@@ -507,7 +536,7 @@ class KeyframeTypeEnum(IntEnum):  ##
 
 
 @t.runtime_checkable
-class KeyframeType(t.Protocol[T]):  ##
+class GKeyframeType(t.Protocol[T]):  ##
   type_class: t.ClassVar[tuple[type]]
   type: t.ClassVar[KeyframeTypeEnum]
   line_spanning_rows: t.ClassVar[int] = 1
@@ -523,7 +552,7 @@ class KeyframeType(t.Protocol[T]):  ##
 
 @dataclass(slots=True)
 @t.final
-class KeyframeTypeBool(KeyframeType[bool]):  ##
+class KeyframeTypeBool(GKeyframeType[bool]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (bool,)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.BOOL
 
@@ -543,7 +572,7 @@ class KeyframeTypeBool(KeyframeType[bool]):  ##
 
 
 @dataclass(slots=True)
-class KeyframeTypeFloat(KeyframeType[float]):  ##
+class KeyframeTypeFloat(GKeyframeType[float]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (int, float)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.FLOAT
 
@@ -584,7 +613,7 @@ def _lerp_vec2(v1: vec2, v2: vec2, t: float, step: float | None = None):  ##
 
 
 @dataclass(slots=True)
-class KeyframeTypeTr(KeyframeType[vec2]):  ##
+class KeyframeTypeTr(GKeyframeType[vec2]):  ##
   type_class: t.ClassVar[tuple[type, ...]] = (vec2,)
   type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.VEC2
 
@@ -606,150 +635,16 @@ class KeyframeTypeTr(KeyframeType[vec2]):  ##
       result = bf.round_to_step(result, self.step)
     return result
 
-  ##
 
-
-class ColliderBase(ABC):  ##
-  @classmethod
-  @abstractmethod
-  def type(cls) -> ColliderType: ...
-
-  id: int = 0
-
-  selected_keyframe: SelectedKeyframe | None = None
-  keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
-
-  _next_keyframe_id_value: KeyframeID = 1
-
-  is_active: list[Keyframe[bool]] = field(default_factory=list)
-  tr: list[Keyframe[vec2]] = field(default_factory=list)
-
-  _keyframe_is_active: t.ClassVar[KeyframeType] = KeyframeTypeBool(True)
-  _keyframe_tr: t.ClassVar[KeyframeType] = KeyframeTypeTr()
-
-  _export_fields: t.ClassVar[list[str]] = [
-    "id",
-    "is_active",
-    "tr",
-    "_next_keyframe_id_value",
-  ]
-
-  keyframe_fields: t.ClassVar[list[str]]
-
-  def __new__(cls, *_args, **_kwargs):
-    ass(cls is not ColliderBase)
-    return super().__new__(cls)
-
-  def _next_keyframe_id(self) -> KeyframeID:
-    result = self._next_keyframe_id_value
-    self._next_keyframe_id_value += 1
-    return result
-
-  def get_keyframes(self, field_name: str) -> list[Keyframe]:
-    ass(field_name in self.keyframe_fields)
-    return getattr(self, field_name)
-
-  def get_keyframe_type(self, field_name: str) -> KeyframeType:
-    return getattr(self, f"_keyframe_{field_name}")
-
-  def validate(self):
-    ass(self.id > 0)
-    for frames in (self.get_keyframes(x) for x in self.keyframe_fields):
-      for i in range(len(frames) - 1):
-        ass(
-          frames[i].index_timeline < frames[i + 1].index_timeline,
-          ("Keyframes must be sorted by `index`"),
-        )
-
-  @classmethod
-  def make(cls, id_: int) -> Self:
-    ass(cls is not ColliderBase)
-    result = cls(
-      id=id_,
-      selected_keyframe=None,
-      keyframe_to_select=None,
-      _next_keyframe_id_value=1,
-      **{x: [] for x in cls.keyframe_fields},
-    )
-    for f in cls.keyframe_fields:
-      make_default_keyframe_at(result, f, 0)
-    return result
-
-  ##
-
-
-def make_keyframe_value_at(
-  self: GCollider, field: str, index_timeline: float
-) -> tuple[int, t.Any]:
-  frames = get_keyframes(self, field)
-  keyframe_type = get_keyframe_type(self, field)
-
-  for i, fr in enumerate(frames):
-    if abs(fr.index_timeline - index_timeline) < 0.001:
-      return (i, keyframe_type.make_copy(fr.value))
-
-  for _, left, right_list_index, right in bf.iter_neighbors(frames):
-    if left and right:
-      if left.index_timeline < index_timeline < right.index_timeline:
-        t = (index_timeline - left.index_timeline) / (
-          right.index_timeline - left.index_timeline
-        )
-        return (
-          right_list_index,
-          keyframe_type.make_lerp(left.value, right.value, t),
-        )
-
-    elif left:
-      if left.index_timeline < index_timeline:
-        return (right_list_index, keyframe_type.make_copy(left.value))
-
-    elif right:
-      if index_timeline < right.index_timeline:
-        return (right_list_index, keyframe_type.make_copy(right.value))
-
-  return (0, keyframe_type.make_default())
-
-
-def make_default_keyframe_at(
-  self: GCollider, field: str, index_timeline: int
-) -> tuple[int, Keyframe]:
-  frames = get_keyframes(self, field)
-  for fr in frames:
-    ass(fr.index_timeline != index_timeline)
-  with _override_keyframe_round_to_step(True):
-    insert_index, value = make_keyframe_value_at(self, field, index_timeline)
-  k = Keyframe(index_timeline, value, self._next_keyframe_id())
-  frames.insert(insert_index, k)
-  ass(frames == sorted(frames, key=lambda x: x.index_timeline))
-  return (insert_index, k)
-
-
-def select_keyframe(
-  self: GCollider,
-  field_name: str,
-  index_inside_list: int,
-  *,
-  update_timeline_playhead: bool = True,
-) -> None:
-  frames = get_keyframes(self, field_name)
-  fr = frames[index_inside_list]
-  self.keyframe_to_select = (
-    SelectedKeyframe(
-      id=fr.id,
-      key=_keyframe_id(field_name, fr.id),
-      field=field_name,
-      index_timeline=fr.index_timeline,
-      index_inside_list=index_inside_list,
-    ),
-    update_timeline_playhead,
-  )
+##
 
 
 @unique
-class CommandMergeType(IntEnum):
+class CommandMergeType(IntEnum):  ##
   NONE = 1
   MERGED_OKAY = 2
   MERGED_SHOULD_BE_DESTROYED = 3
+  ##
 
 
 ## Commands
@@ -819,8 +714,8 @@ class CommandAttack(Command):
 class CommandAttackCollider(CommandAttack):
   collider_id: ColliderID
 
-  def c(self, atk: "TransientAttack") -> GCollider:
-    return next(c for c in atk.ref.melee.colliders if c.id == self.collider_id)
+  def c(self, atk: "TransientAttack") -> "TransientCollider":
+    return next(c for c in atk.colliders if c.ref.id == self.collider_id)
 
 
 ATTACK_COMMAND_COLLIDER_REGISTRY: dict[str, type[CommandAttackCollider]] = {}
@@ -834,11 +729,12 @@ class CommandAttackColliderKeyframeAdd(CommandAttackCollider):
 
   def do(self) -> None:
     c = self.c(self.atk)
-    make_default_keyframe_at(c, self.keyframe_field, self.keyframe_index_timeline)
+    c.make_default_keyframe_at(self.keyframe_field, self.keyframe_index_timeline)
     self.atk.timeline_at = self.keyframe_index_timeline
 
   def undo(self) -> None:
-    frames = self.c(self.atk).get_keyframes(self.keyframe_field)
+    c = self.c(self.atk)
+    frames = get_keyframes(c, self.keyframe_field)
     ass(len(frames) > 1)
     for i, fr in enumerate(frames):
       if fr.index_timeline == self.keyframe_index_timeline:
@@ -856,14 +752,14 @@ class CommandAttackColliderKeyframeMove(CommandAttackCollider):
 
   def do(self) -> None:
     c = self.c(self.atk)
-    frames = c.get_keyframes(self.keyframe_field)
+    frames = get_keyframes(c, self.keyframe_field)
     fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_from)
     fr.index_timeline = self.keyframe_index_timeline_to
     self.atk.timeline_at = self.keyframe_index_timeline_to
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    frames = c.get_keyframes(self.keyframe_field)
+    frames = get_keyframes(c, self.keyframe_field)
     fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_to)
     fr.index_timeline = self.keyframe_index_timeline_from
     self.atk.timeline_at = self.keyframe_index_timeline_from
@@ -888,7 +784,8 @@ class CommandAttackColliderKeyframeRemove(CommandAttackCollider):
   keyframe_value: Any
 
   def do(self) -> None:
-    frames = self.c(self.atk).get_keyframes(self.keyframe_field)
+    c = self.c(self.atk)
+    frames = get_keyframes(c, self.keyframe_field)
     ass(len(frames) > 1)
     for i, k in enumerate(frames):
       if k.index_timeline == self.keyframe_index_timeline:
@@ -917,7 +814,7 @@ class CommandAttackColliderAlterField(CommandAttackCollider):
     type_class = c.get_keyframe_type(self.keyframe_field).type_class
     ass(isinstance(self.value_old, type_class))
     ass(isinstance(self.value_new, type_class))
-    k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
+    k = get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
     k.value = self.value_new
 
   def undo(self) -> None:
@@ -925,7 +822,7 @@ class CommandAttackColliderAlterField(CommandAttackCollider):
     type_class = c.get_keyframe_type(self.keyframe_field).type_class
     ass(isinstance(self.value_old, type_class))
     ass(isinstance(self.value_new, type_class))
-    k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
+    k = get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
     k.value = self.value_old
 
   def try_merge(self, newest: Self, /) -> CommandMergeType:
@@ -946,15 +843,106 @@ class CommandAttackColliderAlterField(CommandAttackCollider):
 
 
 @dataclass(slots=True)
+class TransientCollider:  ##
+  ref: GCollider
+
+  selected_keyframe: SelectedKeyframe | None = None
+  keyframe_to_select: tuple[SelectedKeyframe, bool] | None = None
+  _next_keyframe_id_value: KeyframeID = 1
+
+  def _next_keyframe_id(self) -> KeyframeID:
+    result = self._next_keyframe_id_value
+    self._next_keyframe_id_value += 1
+    return result
+
+  def get_keyframe_type(self, field_name: str) -> GKeyframeType:
+    return getattr(self, f"_keyframe_{field_name}")
+
+  @classmethod
+  def make(cls, id_: int, type_: ColliderType) -> Self:
+    result = cls(ref=GCollider(id=id_, type=type_))
+    for f in g.keyframe_fields_per_collider_type[type_]:
+      result.make_default_keyframe_at(f, 0)
+    return result
+
+  def make_keyframe_value_at(
+    self, field: str, index_timeline: float
+  ) -> tuple[int, t.Any]:
+    frames = get_keyframes(self, field)
+    keyframe_type = self.get_keyframe_type(field)
+
+    for i, fr in enumerate(frames):
+      if abs(fr.index_timeline - index_timeline) < 0.001:
+        return (i, keyframe_type.make_copy(fr.value))
+
+    for _, left, right_list_index, right in bf.iter_neighbors(frames):
+      if left and right:
+        if left.index_timeline < index_timeline < right.index_timeline:
+          t = (index_timeline - left.index_timeline) / (
+            right.index_timeline - left.index_timeline
+          )
+          return (
+            right_list_index,
+            keyframe_type.make_lerp(left.value, right.value, t),
+          )
+
+      elif left:
+        if left.index_timeline < index_timeline:
+          return (right_list_index, keyframe_type.make_copy(left.value))
+
+      elif right:
+        if index_timeline < right.index_timeline:
+          return (right_list_index, keyframe_type.make_copy(right.value))
+
+    return (0, keyframe_type.make_default())
+
+  def make_default_keyframe_at(
+    self, field: str, index_timeline: int
+  ) -> tuple[int, GKeyframe]:
+    frames = get_keyframes(self, field)
+    for fr in frames:
+      ass(fr.index_timeline != index_timeline)
+    with _override_keyframe_round_to_step(True):
+      insert_index, value = self.make_keyframe_value_at(field, index_timeline)
+    k = Keyframe(index_timeline, value, self._next_keyframe_id())
+    frames.insert(insert_index, k)
+    ass(frames == sorted(frames, key=lambda x: x.index_timeline))
+    return (insert_index, k)
+
+  def select_keyframe(
+    self,
+    field_name: str,
+    index_inside_list: int,
+    *,
+    update_timeline_playhead: bool = True,
+  ) -> None:
+    frames = get_keyframes(self, field_name)
+    fr = frames[index_inside_list]
+    self.keyframe_to_select = (
+      SelectedKeyframe(
+        id=fr.id,
+        key=_keyframe_id(field_name, fr.id),
+        field=field_name,
+        index_timeline=fr.index_timeline,
+        index_inside_list=index_inside_list,
+      ),
+      update_timeline_playhead,
+    )
+
+  ##
+
+
+@dataclass(slots=True)
 class TransientAttack:  ##
   ref: GAttack
   parent: "TransientCreature"
+  colliders: list[TransientCollider] = field(default_factory=list)
 
   collider_deselection_scheduled: bool = False
-  collider_to_select: GCollider | None = None
-  collider_to_hover: GCollider | None = None
-  ref_selected_collider: GCollider | None = None
-  ref_hovered_collider: GCollider | None = None
+  collider_to_select: TransientCollider | None = None
+  collider_to_hover: TransientCollider | None = None
+  ref_selected_collider: TransientCollider | None = None
+  ref_hovered_collider: TransientCollider | None = None
 
   timeline_at: float = 0
   timeline_started_playing_at: float = 0
@@ -968,7 +956,7 @@ class TransientAttack:  ##
     self._next_collider_id += 1
     return result
 
-  def get_visualization_collider(self) -> GCollider | None:
+  def get_visualization_collider(self) -> TransientCollider | None:
     if self.ref_hovered_collider:
       return self.ref_hovered_collider
     return self.ref_selected_collider
@@ -981,19 +969,21 @@ class TransientAttack:  ##
     ass(self.timeline_started_playing_at <= self.ref.duration_frames)
 
     if self.ref.melee:
-      for c in self.ref.melee.colliders:
-        for frames in (get_keyframes(c, x) for x in g.collider_keyframe_fields):
+      for c in self.colliders:
+        for frames in (
+          get_keyframes(c, x) for x in g.keyframe_fields_per_collider_type[c.ref.type]
+        ):
           for fr in frames:
             ass(fr.index_timeline >= 0)
             ass(fr.index_timeline < self.ref.duration_frames)
-
-  @classmethod
-  def get_file_name_wo_ext(cls, id_: UUID, attack_name: str) -> str:
-    return f"{attack_name}__{id_}"
+          for i in range(len(frames) - 1):
+            ass(frames[i].index_timeline < frames[i + 1].index_timeline)
 
   @property
-  def file_name_wo_ext(self) -> str:
-    return self.get_file_name_wo_ext(self.id, self.name)
+  def export_path(self) -> Path:
+    return (
+      ATTACKS_DIR / self.parent.ref.debug_name / "{}.yaml".format(self.ref.debug_name)
+    )
 
   @classmethod
   def get_id_from_file_name(cls, name: str) -> UUID:
@@ -1002,8 +992,8 @@ class TransientAttack:  ##
   ##
 
 
-def get_keyframes(c: GCollider, field_name: str) -> Container[Any]:  ##
-  ass(field_name in g.collider_keyframe_fields)
+def get_keyframes(c: TransientCollider, field_name: str) -> GKeyframesContainer:  ##
+  ass(field_name in g.keyframe_fields_per_collider_type)
   return getattr(c, field_name)
   ##
 
@@ -1012,15 +1002,6 @@ def get_keyframes(c: GCollider, field_name: str) -> Container[Any]:  ##
 class TransientCreature:  ##
   ref: GCreature
   attacks: list[TransientAttack] = field(default_factory=list)
-
-  # @classmethod
-  # def get_folder_name(cls, id_: UUID, creature_name: str) -> str:
-  #   return f"{creature_name}__{id_}"
-
-  # @property
-  # def folder_name(self):
-  #   return self.get_folder_name(self.id, self.name)
-
   ##
 
 
@@ -1087,7 +1068,7 @@ class State:
 
   frame: int = 0
 
-  collider_keyframe_fields: list[str] = field(default_factory=list)
+  keyframe_fields_per_collider_type: dict[int, list[str]] = field(default_factory=dict)
 
   attack_to_select: TransientAttack | None = None
   ref_selected_attack_creature: TransientCreature | None = None
@@ -1125,6 +1106,12 @@ class State:
 
   def schedule_dump(self) -> None:  ##
     self.scheduled_dump.release()
+    ##
+
+  def validate(self):  ##
+    for creature in self.creatures:
+      for attack in creature.attacks:
+        attack.validate()
     ##
 
 
@@ -1174,8 +1161,10 @@ def _panel_attack_inspector() -> None:  ##
   im.same_line()
   min_attack_frames = 1
   if atk.ref.melee:
-    for c in atk.ref.melee.colliders:
-      for frames in (get_keyframes(c, x) for x in g.collider_keyframe_fields):
+    for c in atk.colliders:
+      for frames in (
+        get_keyframes(c, x) for x in g.keyframe_fields_per_collider_type[c.ref.type]
+      ):
         for frame in frames:
           min_attack_frames = max(min_attack_frames, frame.index_timeline + 1)
   im.set_next_item_width(im.get_content_region_avail()[0])
@@ -1198,13 +1187,15 @@ def _panel_attack_inspector() -> None:  ##
         im.same_line()
       if im.button("+{}".format(collider_type.name.lower())):
         atk.ref.melee.colliders.append(GCollider(type=collider_type))
-        atk.collider_to_select = atk.ref.melee.colliders[-1]
+        atk.collider_to_select = atk.colliders[-1]
 
-    for i, collider in enumerate(atk.ref.melee.colliders):
+    for i, collider in enumerate(atk.colliders):
       flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
       if atk.ref_selected_collider is collider:
         flags |= im.TreeNodeFlags_.selected
-      if im.tree_node_ex("{} {}".format(i, ColliderType.get_name(collider.type)), flags):
+      if im.tree_node_ex(
+        "{} {}".format(i, ColliderType.get_name(collider.ref.type)), flags
+      ):
         if im.is_item_hovered():
           atk.collider_to_hover = collider
         if im.is_item_clicked():
@@ -1366,7 +1357,7 @@ def _panel_visualizer() -> None:
   hov_col = atk.ref_hovered_collider
   visual_collider = atk.get_visualization_collider()
   if atk.ref.melee:
-    for c in atk.ref.melee.colliders:
+    for c in atk.colliders:
       color_ = COLOR_YELLOW
       if c is sel_col:
         color_ = COLOR_LIGHT_BLUE
@@ -1378,7 +1369,7 @@ def _panel_visualizer() -> None:
       if fade_:
         color_ = imgui_fade_replace(color_, 0.25)
 
-      is_active = make_keyframe_value_at(c, "is_active", atk.timeline_at)[1]
+      is_active = c.make_keyframe_value_at("is_active", atk.timeline_at)[1]
       if not is_active:
         if c is not visual_collider:
           continue
@@ -1390,18 +1381,12 @@ def _panel_visualizer() -> None:
       m = glm.translate(vec3(c_pos.x, 0, c_pos.y))
       center = vec3(m * vec4(0, 0, 0, 1))
 
-      match c.type:
-        case ColliderType.CIRCLE:
-          if not isinstance(c, ColliderCircle):
-            ass(0)
-
+      match c.ref.type:
+        case ColliderType.CIRCLE.value:
           radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
           draw_circle(center, radius, color)
 
-        case ColliderType.CAPSULE:
-          if not isinstance(c, ColliderCapsule):
-            raise ass(0)
-
+        case ColliderType.CAPSULE.value:
           radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
           spread = c.make_keyframe_value_at("spread", atk.timeline_at)[1]
           rotation = c.make_keyframe_value_at("rotation", atk.timeline_at)[1]
@@ -1632,7 +1617,7 @@ def _panel_timeline() -> None:  ##
 
   for field_name, frames in (
     ("", None),
-    *(((x, c.get_keyframes(x)) for x in c.keyframe_fields) if c else ()),
+    *(((x, get_keyframes(c, x)) for x in c.keyframe_fields) if c else ()),
   ):
     line_spanning_rows = 1
     if c and field_name:
@@ -1683,7 +1668,7 @@ def _panel_timeline() -> None:  ##
           if (
             (not tim.dragging_keyframe)
             and (im.is_mouse_clicked(1) or im.is_key_pressed(im.Key.delete))
-            and (len(frames := c.get_keyframes(field_name)) > 1)
+            and (len(frames := get_keyframes(c, field_name)) > 1)
           ):
             hov = imgui_timeline_line_out.hovered_index_half_cell_offset
             for k in frames:
@@ -1774,7 +1759,6 @@ def _panel_timeline() -> None:  ##
   if not were_dragging_keyframe_this_frame:
     tim.dragging_keyframe = None
 
-  recursive_validate(g)
   im.dummy((0, 0))
 
   ##
@@ -1807,8 +1791,8 @@ def _inspector_input_float(
 
 
 def _get_closest_keyframe(
-  keyframes: list[Keyframe[T]], to: float = 0
-) -> tuple[int, Keyframe[T]]:  ##
+  keyframes: GKeyframesContainer, to: float = 0
+) -> tuple[int, T]:  ##
   return min(enumerate(keyframes), key=lambda x: abs(x[1].index_timeline - to))
   ##
 
@@ -1827,7 +1811,7 @@ def _panel_collider_inspector() -> None:  ##
   ass(current_frame >= 0)
 
   def closest_keyframe_list_index(field_name: str) -> int:
-    return _get_closest_keyframe(c.get_keyframes(field_name), atk.timeline_at)[0]
+    return _get_closest_keyframe(get_keyframes(c, field_name), atk.timeline_at)[0]
 
   # im.dummy((1, im.get_frame_height()))
   im.dummy((1, im.get_text_line_height()))
@@ -1855,7 +1839,7 @@ def _panel_collider_inspector() -> None:  ##
           if (not disabled) and im.is_key_pressed(key):
             vertical_off = voff
 
-      frames = c.get_keyframes(f)
+      frames = get_keyframes(c, f)
       keyframe_type = c.get_keyframe_type(f)
 
       im.table_next_row()
@@ -2130,25 +2114,27 @@ def _post_new_frame() -> None:  ##
 
 
 def _test_make_default_keyframe_at():  ##
-  c = ColliderCapsule.make(1)
-  c.radius[0].index_timeline = 10
+  c = TransientCollider.make(1, ColliderType.CIRCLE)
+  c.ref.circle__radius[0].index_timeline = 10
   for v in (5, 15, 9, 11):
     c.make_default_keyframe_at("radius", v)
-    ass(c.radius == sorted(c.radius, key=lambda x: x.index_timeline))
-  recursive_validate(c)
+    ass(
+      list(c.ref.circle__radius)
+      == sorted(c.ref.circle__radius, key=lambda x: x.index_timeline)
+    )
   ##
 
 
 def _test_first_keyframe_yields_correct_values():  ##
-  c = ColliderCapsule.make(1)
-  c.tr[0].value = vec2(random.uniform(-100, 100), random.uniform(-100, 100))
-  c.radius[0].value = random.uniform(0.25, 2)
+  c = TransientCollider.make(1, ColliderType.CAPSULE)
+  c.ref.tr[0].value = vec2(random.uniform(-100, 100), random.uniform(-100, 100))
+  c.ref.capsule__radius[0].value = random.uniform(0.25, 2)
 
   _, v = c.make_keyframe_value_at("tr", 0)
   ass(isinstance(v, vec2))
-  ass(v == c.tr[0].value)
+  ass(v == c.ref.tr[0].value)
 
   _, r = c.make_keyframe_value_at("radius", 0)
-  ass(r == c.radius[0].value)
+  ass(r == c.ref.capsule__radius[0].value)
   recursive_validate(c)
   ##
