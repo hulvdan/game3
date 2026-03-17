@@ -975,18 +975,18 @@ class _CommandAttackColliderKeyframeRemove(_CommandAttackCollider):
 class _CommandAttackColliderAlterField(_CommandAttackCollider):
   keyframe_field: str
   keyframe_index_inside_list: int
-  value_old: Any
-  value_new: Any
+  old: Any
+  new: Any
 
   def do(self) -> None:
     c = self.c(self.atk)
     k = _get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
-    k.value = _to_proto(self.value_new)
+    k.value.CopyFrom(_to_proto(self.new))  # ty:ignore[unresolved-attribute]
 
   def undo(self) -> None:
     c = self.c(self.atk)
     k = _get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
-    k.value = _to_proto(self.value_old)
+    k.value.CopyFrom(_to_proto(self.old))  # ty:ignore[unresolved-attribute]
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
     if newest.keyframe_field != self.keyframe_field:
@@ -994,10 +994,10 @@ class _CommandAttackColliderAlterField(_CommandAttackCollider):
     if newest.keyframe_index_inside_list != self.keyframe_index_inside_list:
       return _CommandMergeType.NONE
 
-    self.value_new = newest.value_new
+    self.new = newest.new
     return (
       _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
-      if (self.value_old == self.value_new)
+      if (self.old == self.new)
       else _CommandMergeType.MERGED_OKAY
     )
 
@@ -1622,8 +1622,8 @@ def _panel_visualizer() -> None:
             collider_id=c.ref.id,
             keyframe_field="tr",
             keyframe_index_inside_list=tr_closest_index,
-            value_old=_from_proto(c.ref.tr[tr_closest_index].value),
-            value_new=_from_proto(c.ref.tr[tr_closest_index].value) + off,
+            old=_from_proto(c.ref.tr[tr_closest_index].value),
+            new=_from_proto(c.ref.tr[tr_closest_index].value) + off,
           )
         )
 
@@ -2103,8 +2103,8 @@ def _panel_collider_inspector() -> None:  ##
                   collider_id=c.ref.id,
                   keyframe_field=f,
                   keyframe_index_inside_list=index_f,
-                  value_old=frames[index_f].value,
-                  value_new=x,
+                  old=frames[index_f].value,
+                  new=x,
                 )
               )
               if frames[index_f].value != x
@@ -2125,8 +2125,8 @@ def _panel_collider_inspector() -> None:  ##
                   collider_id=c.ref.id,
                   keyframe_field=f,
                   keyframe_index_inside_list=index_f,
-                  value_old=frames[index_f].value,
-                  value_new=x,
+                  old=frames[index_f].value,
+                  new=x,
                 )
               )
               if frames[index_f].value != x
@@ -2152,8 +2152,8 @@ def _panel_collider_inspector() -> None:  ##
                   collider_id=c.ref.id,
                   keyframe_field=f,
                   keyframe_index_inside_list=index_f,
-                  value_old=frames[index_f].value,
-                  value_new=vec2(x, frames[index_f].value.y),
+                  old=frames[index_f].value,
+                  new=vec2(x, frames[index_f].value.y),
                 )
               )
               if frames[index_f].value.x != x
@@ -2176,8 +2176,8 @@ def _panel_collider_inspector() -> None:  ##
                   collider_id=c.ref.id,
                   keyframe_field=f,
                   keyframe_index_inside_list=index_f,
-                  value_old=frames[index_f].value,
-                  value_new=vec2(frames[index_f].value.x, x),
+                  old=frames[index_f].value,
+                  new=vec2(frames[index_f].value.x, x),
                 )
               )
               if frames[index_f].value.y != x
