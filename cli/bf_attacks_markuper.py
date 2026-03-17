@@ -818,7 +818,7 @@ class _Command(ABC):
 
   def __init_subclass__(cls, **kwargs):
     super().__init_subclass__(**kwargs)
-    ass(cls.__name__.startswith("Command"))
+    ass(cls.__name__.startswith("_Command"))
 
     export_fields = getattr(cls, "_export_fields", None)
     if export_fields is None:

@@ -72,6 +72,9 @@ ConveyorDatum: TypeAlias = tuple[Image.Image, Path]
 ConveyorCallable: TypeAlias = Callable[[Image.Image, Path], ConveyorDatum]
 
 
+DEBUGGER_IS_ACTIVE = sys.gettrace() is not None
+
+
 def running_pytest() -> bool:  ##
   return "PYTEST_CURRENT_TEST" in os.environ
   ##
@@ -2330,7 +2333,8 @@ def imgui_assert(expr, *args) -> Exception:  ##
     if running_pytest():
       assert expr
     else:
-      breakpoint()
+      if DEBUGGER_IS_ACTIVE:
+        breakpoint()
       assert expr, args
     msg = f"imgui_assert: {expr}, {args}"
     raise ValueError(msg)

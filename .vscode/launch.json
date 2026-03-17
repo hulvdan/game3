@@ -27,6 +27,17 @@
       "preLaunchTask": "5_lint"
     },
     {
+      "name": "regenerate_python_glib_proto",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "cli/bf_cli.py",
+      "args": [
+        "regenerate_python_glib_proto"
+      ],
+      "console": "integratedTerminal",
+      "preLaunchTask": "5_lint"
+    },
+    {
       "name": "codegen",
       "type": "debugpy",
       "request": "launch",

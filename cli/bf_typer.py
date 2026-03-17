@@ -174,6 +174,7 @@ def timed_exit(code: int) -> NoReturn:  ##
     global_timing_manager_instance.__exit__(None, None, None)
     console_handler.flush()
 
+  assert not code
   old_exit(code)
   ##
 
