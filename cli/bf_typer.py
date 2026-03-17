@@ -194,6 +194,3 @@ app = typer.Typer(
 
 def command(f: Callable[P, T]) -> Callable[P, T]:
   return app.command(f.__name__)(f)  # type: ignore
-
-
-###

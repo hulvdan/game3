@@ -16,7 +16,19 @@
       "preLaunchTask": "5_lint"
     },
     {
-      "name": "process_images",
+      "name": "tool_attacks_markuper",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "cli/bf_cli.py",
+      "args": [
+        "tool_attacks_markuper"
+      ],
+      "console": "integratedTerminal",
+      "preLaunchTask": "tool_attacks_markuper",
+      "justMyCode": false
+    },
+    {
+      "name": "_process_images",
       "type": "debugpy",
       "request": "launch",
       "program": "cli/bf_cli.py",
@@ -27,7 +39,7 @@
       "preLaunchTask": "5_lint"
     },
     {
-      "name": "regenerate_python_glib_proto",
+      "name": "_regenerate_python_glib_proto",
       "type": "debugpy",
       "request": "launch",
       "program": "cli/bf_cli.py",
@@ -38,7 +50,7 @@
       "preLaunchTask": "5_lint"
     },
     {
-      "name": "codegen",
+      "name": "_codegen",
       "type": "debugpy",
       "request": "launch",
       "program": "cli/bf_cli.py",
@@ -51,7 +63,7 @@
       "preLaunchTask": "5_lint"
     },
     {
-      "name": "temp",
+      "name": "_temp",
       "type": "debugpy",
       "request": "launch",
       "program": "cli/bf_cli.py",
@@ -60,18 +72,6 @@
       ],
       "console": "integratedTerminal",
       "preLaunchTask": "5_lint"
-    },
-    {
-      "name": "tool_attacks_markuper",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "cli/bf_cli.py",
-      "args": [
-        "tool_attacks_markuper"
-      ],
-      "console": "integratedTerminal",
-      "preLaunchTask": "tool_attacks_markuper",
-      "justMyCode": false
     }
   ]
 }

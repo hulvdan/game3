@@ -33,10 +33,9 @@ PLAN
 ============================================================
 x clear
 x mark: all attacks must have codename (for explorer panel)
+x sync imgui + mark: set creature attack names
 
-* mark: working on this shit
-* mark:
-* mark:
+* mark: impl support of abilities
 * mark:
 * mark:
 * mark:

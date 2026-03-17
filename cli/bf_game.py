@@ -336,7 +336,9 @@ def _process_glib(genline, glib) -> None:
   ## Creatures
   with push("creatures"):
     for x in glib["creatures"][1:]:
+      creature_attack_names = []
       with push(x["type"]):
+        x["debug_name"] = x["type"]
         x["mass"] = x.get("mass", 1)
         is_player = x["type"] == "PLAYER"
         x["res"] = "res://src/game/res_creatures/_{}.tres".format(x["type"].lower())
@@ -344,6 +346,10 @@ def _process_glib(genline, glib) -> None:
           mirrored_attacks = []
           for i, attack in enumerate(x.get("attacks", [])):
             with push(i):
+              attack_debug_name = attack.get("debug_name")
+              asserte(attack_debug_name)
+              if attack_debug_name:
+                asserte(attack_debug_name not in creature_attack_names)
               validate_attack(attack, is_player)
               if not is_player:
                 asserte("condition" in attack)

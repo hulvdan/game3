@@ -2328,20 +2328,6 @@ def ldtk_load(filepath: Path | str) -> Ldtk:  ##
 # ╚═╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝ ╚═╝
 
 
-def imgui_assert(expr, *args) -> Exception:  ##
-  if not expr:
-    if running_pytest():
-      assert expr
-    else:
-      if DEBUGGER_IS_ACTIVE:
-        breakpoint()
-      assert expr, args
-    msg = f"imgui_assert: {expr}, {args}"
-    raise ValueError(msg)
-  return None  # ty:ignore[invalid-return-type]
-  ##
-
-
 @dataclass
 class ImGuiPanel:  ##
   label: str
@@ -2365,7 +2351,7 @@ def show_imgui(
   post_new_frame: hello_imgui.VoidFunction | None = None,
   before_exit: hello_imgui.VoidFunction | None = None,
   show_status: hello_imgui.VoidFunction | None = None,
-) -> t.Coroutine[None, None, None]:  ##
+) -> None:  ##
   print(
     f"For information, demos sources are available in {demo_utils.demos_assets_folder()}"
   )
@@ -2528,7 +2514,7 @@ def show_imgui(
   addons.with_implot3d = True
   addons.with_im_anim = True
 
-  return immapp.run_async(runner_params, addons)
+  immapp.run(runner_params, addons)
   ##
 
 

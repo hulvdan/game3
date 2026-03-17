@@ -277,7 +277,8 @@ creatures:
       #   stamina_cost:
       #     flat: 25
       #     rally: 5
-      - duration_frames: 8
+      - debug_name: SHOT1
+        duration_frames: 8
         projectile_type: ARROW
         projectile_spawns:
           - at: 0.1
@@ -289,7 +290,8 @@ creatures:
             distance: -0.2
             dur: 0.4
             pow: 1
-      - duration_frames: 8
+      - debug_name: SHOT2
+        duration_frames: 8
         projectile_type: ARROW
         projectile_spawns:
           - at: 0.1
@@ -301,7 +303,8 @@ creatures:
             distance: -0.1
             dur: 0.4
             pow: 1
-      - duration_frames: 12
+      - debug_name: SHOT3
+        duration_frames: 12
         projectile_type: ARROW
         projectile_spawns:
           - at: 0.15
@@ -322,7 +325,8 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration_frames: 24
+      - debug_name: ATK1
+        duration_frames: 24
         projectile_type: BOMB
         projectile_spawns:
           - at: 0.5
@@ -338,7 +342,8 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration_frames: 60
+      - debug_name: ATK1
+        duration_frames: 60
         projectile_type: BALL
         projectile_spawns:
           - at: 0.5
@@ -356,7 +361,8 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration_frames: 30
+      - debug_name: ATK1
+        duration_frames: 30
         projectile_type: HOMING
         projectile_spawns:
           - at: 0.5
@@ -377,7 +383,8 @@ creatures:
     speed: 0.8
     collider_size: 0.64
     attacks:
-      - duration_frames: 39
+      - debug_name: ATK1
+        duration_frames: 39
         projectile_type: HOMING
         projectile_spawns:
           - at: 0.8
@@ -393,7 +400,8 @@ creatures:
     speed: 0.8
     collider_size: 0.64
     attacks:
-      - duration_frames: 39
+      - debug_name: ATK1
+        duration_frames: 39
         projectile_type: STAR_HIVE
         projectile_spawns:
           - at: 0.8
@@ -409,7 +417,8 @@ creatures:
     speed: 0.8
     collider_size: 0.64
     attacks:
-      - duration_frames: 30
+      - debug_name: ATK1
+        duration_frames: 30
         projectile_type: STAR_HIVE_INSIDE
         projectile_spawns:
           - at: 0.5
@@ -425,7 +434,8 @@ creatures:
     speed: 0.8
     collider_size: 0.64
     attacks:
-      - duration_frames: 30
+      - debug_name: ATK1
+        duration_frames: 30
         projectile_type: BOMB_BLOCKABLE
         projectile_spawns:
           - at: 0.5
@@ -441,7 +451,8 @@ creatures:
     speed: 1
     collider_size: 0.64
     attacks:
-      - duration_frames: 24
+      - debug_name: ATK1
+        duration_frames: 24
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
@@ -467,7 +478,8 @@ creatures:
     speed: 1
     collider_size: 0.64
     attacks:
-      - duration_frames: 36
+      - debug_name: ATK1
+        duration_frames: 36
         cooldown_min: 1.5
         cooldown_max: 2.2
         projectile_type: BLINK
@@ -483,7 +495,8 @@ creatures:
     speed: 1
     collider_size: 0.64
     attacks:
-      - duration_frames: 24
+      - debug_name: ATK1
+        duration_frames: 24
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
@@ -510,7 +523,8 @@ creatures:
     speed: 1
     collider_size: 0.64
     attacks:
-      - duration_frames: 24
+      - debug_name: ATK1
+        duration_frames: 24
         cooldown_min: 1.5
         cooldown_max: 2.2
         melee:
@@ -537,7 +551,8 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration_frames: 90
+      - debug_name: ATK1
+        duration_frames: 90
         projectile_type: SUMMON
         projectile_spawns:
           - at: 0.5
@@ -554,7 +569,8 @@ creatures:
     speed: 0.4
     collider_size: 0.64
     attacks:
-      - duration_frames: 24
+      - debug_name: ATK1
+        duration_frames: 24
         projectile_type: AREA_SLOWDOWN
         projectile_spawns:
           - at: 0.5
@@ -573,7 +589,8 @@ creatures:
     rotation_speed: 0.5
     mass: 4
     attacks:
-      - duration_frames: 90
+      - debug_name: FORWARD
+        duration_frames: 90
         cooldown_min: 3.0
         cooldown_max: 5.0
         stops_tracking_at: 0.4
@@ -586,7 +603,8 @@ creatures:
           attackcondition_type: CAPSULE_CONTAINED
           distance_max: 4
           capsule__radius: 0.4
-      - duration_frames: 90
+      - debug_name: SIDE
+        duration_frames: 90
         cooldown_min: 3.0
         cooldown_max: 5.0
         stops_tracking_at: 0.0

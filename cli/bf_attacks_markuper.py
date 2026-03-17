@@ -1,19 +1,15 @@
 ## Imports
-import asyncio
 import math
 import random
 import shutil
-import sys
 import tempfile
-import threading
-import traceback
 import typing as t
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import IntEnum, unique
-from functools import partial, wraps
+from functools import partial
 from math import pi
 from pathlib import Path
 from typing import Any, Callable, ClassVar, Self, TypeAlias, TypeVar
@@ -23,7 +19,6 @@ import numpy as np
 import toml
 import yaml
 from bf_glib import load_glib
-from bf_lib import imgui_assert as ass
 from bf_typer import command
 from glib_pb2 import (
   GV1,
@@ -375,7 +370,7 @@ def lerp_Matrix16(
   c = gizmo.MatrixComponents()
   c.translation.values[:] = c1.translation.values * (1 - t) + c2.translation.values * t
   if step_translate is not None:
-    ass(step_translate > 0)
+    assert step_translate > 0
     for i in range(3):
       c.translation.values[i] = bf.round_to_step(c.translation.values[i], step_translate)
   c.rotation.values[:] = c1.rotation.values
@@ -399,24 +394,17 @@ vec3_left = vec3(-1, 0, 0)
 vec3_forward = vec3(0, 0, 1)
 vec3_backward = vec3(0, 0, -1)
 
-_dump_app_state_lock = threading.Lock()
-
 
 def _dump_app_state():
-  with _dump_app_state_lock:
-    LOGD("Saving...")
-    with tempfile.NamedTemporaryFile(
-      "w", encoding="utf-8", delete=False, suffix=".toml", newline="\n"
-    ) as out:
-      out_path = Path(out.name)
-      toml.dump(g.dump().model_dump(), out)
-    shutil.move(out_path, _APP_STATE_FILE_PATH)
+  LOGD("Saving...")
+  with tempfile.NamedTemporaryFile(
+    "w", encoding="utf-8", delete=False, suffix=".toml", newline="\n"
+  ) as out:
+    out_path = Path(out.name)
+    toml.dump(g.dump().model_dump(), out)
+  shutil.move(out_path, _APP_STATE_FILE_PATH)
 
-
-async def _background_dump_run_data():
-  while True:
-    await g.scheduled_dump.acquire()
-    _dump_app_state()
+  _dump_app_state()
 
 
 _serializer = bf.DataclassSerializer()
@@ -493,12 +481,12 @@ def tool_attacks_markuper() -> None:
       if "__" in field_name:
         # field is only for specific collider type (e.g. circle__*, capsule__*)
         collider_type = _ColliderType[field_name.split("__", 1)[0].upper()].value
-        ass(collider_type in g.keyframe_field_types_per_collider_type)
+        assert collider_type in g.keyframe_field_types_per_collider_type
 
       else:
         # field is shared among colliders (e.g. tr, is_active)
         for fields in g.keyframe_field_types_per_collider_type.values():
-          ass(field_name in fields)
+          assert field_name in fields
   ##
 
   ##
@@ -537,39 +525,21 @@ def tool_attacks_markuper() -> None:
     if loaded_state:
       im.get_style().font_scale_main = loaded_state.font_scale_main
 
-  def enable_debug(func):
-    @wraps(func)
-    def exception_wrapper():
-      try:
-        func()
-      except Exception as e:
-        traceback.print_exception(*sys.exc_info())
-        _trace = traceback.format_exception(e)
-        breakpoint()
-        raise
-
-    return exception_wrapper
-
-  async def wrapper() -> None:
-    _dump_task = asyncio.create_task(_background_dump_run_data())
-    await bf.show_imgui(
-      "Attacks Markuper",
-      [
-        bf.ImGuiPanel("Visualizer", enable_debug(_panel_visualizer)),
-        bf.ImGuiPanel("Explorer", enable_debug(_panel_explorer)),
-        bf.ImGuiPanel("Attack", enable_debug(_panel_attack_inspector)),
-        bf.ImGuiPanel("Collider", enable_debug(_panel_collider_inspector)),
-        bf.ImGuiPanel("Timeline", enable_debug(_panel_timeline)),
-        bf.ImGuiPanel("Logs", hello_imgui.log_gui),
-      ],
-      setup_imgui_style=setup_imgui_style,
-      post_new_frame=enable_debug(_post_new_frame),
-      before_exit=_dump_app_state,
-      show_status=_show_status,
-    )
-    _dump_task.cancel()
-
-  asyncio.run(wrapper(), debug=True)
+  bf.show_imgui(
+    "Attacks Markuper",
+    [
+      bf.ImGuiPanel("Visualizer", _panel_visualizer),
+      bf.ImGuiPanel("Explorer", _panel_explorer),
+      bf.ImGuiPanel("Attack", _panel_attack_inspector),
+      bf.ImGuiPanel("Collider", _panel_collider_inspector),
+      bf.ImGuiPanel("Timeline", _panel_timeline),
+      bf.ImGuiPanel("Logs", hello_imgui.log_gui),
+    ],
+    setup_imgui_style=setup_imgui_style,
+    post_new_frame=_post_new_frame,
+    before_exit=_dump_app_state,
+    show_status=_show_status,
+  )
   ##
 
 
@@ -586,7 +556,7 @@ def _gizmo_restrict(
   disable_translation_z: bool = False,
 ):
   global _gizmo_restricted
-  ass(not _gizmo_restricted)
+  assert not _gizmo_restricted
 
   _gizmo_restricted = True
   gizmo.set_axis_mask(*mask)
@@ -649,8 +619,8 @@ class _SelectedKeyframe:  ##
   index_inside_list: int
 
   def validate(self):
-    ass(self.id > 0)
-    ass(self.index_timeline >= 0)
+    assert self.id > 0
+    assert self.index_timeline >= 0
 
   ##
 
@@ -708,7 +678,7 @@ class _KeyframeTypeBool(_KeyframeType[bool]):  ##
     return v
 
   def make_lerp(self, v1: bool, v2: bool, t: float) -> bool:  # noqa: ARG002
-    ass(0 <= t <= 1)
+    assert 0 <= t <= 1
     return v1
 
   ##
@@ -727,19 +697,19 @@ class _KeyframeTypeFloat(_KeyframeType[float]):  ##
   fmt: str = "%.3f"
 
   def make_default(self) -> float:
-    ass(self.min <= self.default <= self.max)
+    assert self.min <= self.default <= self.max
     return self.default
 
   def make_copy(self, v: float) -> float:
-    ass(self.min <= v <= self.max)
+    assert self.min <= v <= self.max
     return v
 
   def make_lerp(self, v1: float, v2: float, t: float) -> float:
-    ass(0 <= t <= 1)
+    assert 0 <= t <= 1
     result = bf.lerp(v1, v2, t)
-    ass(self.min <= v1 <= self.max)
-    ass(self.min <= v2 <= self.max)
-    ass(self.min <= result * 1.001 <= self.max * 1.002)
+    assert self.min <= v1 <= self.max
+    assert self.min <= v2 <= self.max
+    assert self.min <= result * 1.001 <= self.max * 1.002
     if g.visualizer.round_to_step:
       result = bf.round_to_step(result, self.step)
     return result
@@ -778,7 +748,7 @@ class _KeyframeTypeV2(_KeyframeType[GV2]):  ##
     return result
 
   def make_lerp(self, v1: GV2, v2: GV2, t: float) -> GV2:
-    ass(0 <= t <= 1)
+    assert 0 <= t <= 1
     result = _into_proto(
       _lerp_vec2(
         _from_proto(v1),
@@ -818,7 +788,7 @@ class _Command(ABC):
 
   def __init_subclass__(cls, **kwargs):
     super().__init_subclass__(**kwargs)
-    ass(cls.__name__.startswith("_Command"))
+    assert cls.__name__.startswith("_Command")
 
     export_fields = getattr(cls, "_export_fields", None)
     if export_fields is None:
@@ -888,7 +858,7 @@ class _CommandAttackColliderKeyframeAdd(_CommandAttackCollider):
   def undo(self) -> None:
     c = self.c(self.atk)
     frames = _get_keyframes(c, self.keyframe_field)
-    ass(len(frames) > 1)
+    assert len(frames) > 1
     for i, fr in enumerate(frames):
       if fr.index_timeline == self.keyframe_index_timeline:
         del frames[i]
@@ -939,12 +909,12 @@ class _CommandAttackColliderKeyframeRemove(_CommandAttackCollider):
   def do(self) -> None:
     c = self.c(self.atk)
     frames = _get_keyframes(c, self.keyframe_field)
-    ass(len(frames) > 1)
+    assert len(frames) > 1
     for i, k in enumerate(frames):
       if k.index_timeline == self.keyframe_index_timeline:
         del frames[i]
         return
-    ass(0)
+    assert 0
 
   def undo(self) -> None:
     _, k = self.c(self.atk).make_default_keyframe_at(
@@ -1045,7 +1015,7 @@ class _TransientCollider:
   ) -> tuple[int, _GKeyframe]:  ##
     frames = _get_keyframes(self, field)
     for fr in frames:
-      ass(fr.index_timeline != index_timeline)
+      assert fr.index_timeline != index_timeline
     with _override_keyframe_round_to_step(True):
       insert_index, value = self.make_keyframe_value_at(field, index_timeline)
     k: _GKeyframe = GCollider.__annotations__[field](
@@ -1054,7 +1024,7 @@ class _TransientCollider:
       value=value,
     )
     frames.insert(insert_index, k)
-    ass(frames == sorted(frames, key=lambda x: x.index_timeline))
+    assert frames == sorted(frames, key=lambda x: x.index_timeline)
     return (insert_index, k)
     ##
 
@@ -1121,11 +1091,11 @@ class _TransientAttack:  ##
     return self.ref_selected_collider
 
   def validate(self):
-    ass(self.ref.duration_frames > 0)
-    ass(self.timeline_at >= 0)
-    ass(self.timeline_at <= self.ref.duration_frames)
-    ass(self.timeline_started_playing_at >= 0)
-    ass(self.timeline_started_playing_at <= self.ref.duration_frames)
+    assert self.ref.duration_frames > 0
+    assert self.timeline_at >= 0
+    assert self.timeline_at <= self.ref.duration_frames
+    assert self.timeline_started_playing_at >= 0
+    assert self.timeline_started_playing_at <= self.ref.duration_frames
 
     if self.ref.melee:
       for c in self.colliders:
@@ -1134,10 +1104,10 @@ class _TransientAttack:  ##
           for x in g.keyframe_field_types_per_collider_type[c.ref.type]
         ):
           for fr in frames:
-            ass(fr.index_timeline >= 0)
-            ass(fr.index_timeline < self.ref.duration_frames)
+            assert fr.index_timeline >= 0
+            assert fr.index_timeline < self.ref.duration_frames
           for i in range(len(frames) - 1):
-            ass(frames[i].index_timeline < frames[i + 1].index_timeline)
+            assert frames[i].index_timeline < frames[i + 1].index_timeline
 
   @property
   def export_path(self) -> Path:
@@ -1149,7 +1119,7 @@ class _TransientAttack:  ##
 
 
 def _get_keyframes(c: _TransientCollider, field_name: str) -> _GKeyframesContainer:  ##
-  ass(field_name in g.keyframe_field_types_per_collider_type)
+  assert field_name in g.keyframe_field_types_per_collider_type
   return getattr(c, field_name)
   ##
 
@@ -1235,7 +1205,7 @@ class _State:
   attack_undo_scheduled: bool = False
   attack_redo_scheduled: bool = False
 
-  scheduled_dump: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(0))
+  scheduled_dump: bool = False
 
   def dump(self) -> _AppSaveState:  ##
     vis = self.visualizer
@@ -1263,7 +1233,7 @@ class _State:
     ##
 
   def schedule_dump(self) -> None:  ##
-    self.scheduled_dump.release()
+    self.scheduled_dump = True
     ##
 
   def validate(self):  ##
@@ -1369,7 +1339,7 @@ def _panel_attack_inspector() -> None:  ##
 def _panel_visualizer() -> None:
   atk = g.ref_selected_attack
   if atk is None:
-    ass(g.ref_selected_attack_creature is None)
+    assert g.ref_selected_attack_creature is None
     return
 
   ## Setup
@@ -1452,12 +1422,12 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
-    ass(segments >= 8)
-    ass(radius > 0)
-    ass(isinstance(p, vec3))
-    ass(glm.dot(plane[1], plane[0]) < 0.00001)
+    assert segments >= 8
+    assert radius > 0
+    assert isinstance(p, vec3)
+    assert glm.dot(plane[1], plane[0]) < 0.00001
     normal = glm.cross(plane[0], plane[1])
-    ass(abs(glm.length(normal) - 1) < 0.00001)
+    assert abs(glm.length(normal) - 1) < 0.00001
     m = glm.rotate(2.0 * pi / segments, normal)
     cur = glm.cross(normal, vec3_forward) * radius
     for _ in range(segments):
@@ -1475,14 +1445,14 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
-    ass(segments >= 8)
-    ass(spread >= 0)
-    ass(radius > 0)
-    ass(isinstance(p, vec3))
-    ass(segments % 2 == 0)
-    ass(glm.dot(plane[0], plane[1]) < 0.00001)
+    assert segments >= 8
+    assert spread >= 0
+    assert radius > 0
+    assert isinstance(p, vec3)
+    assert segments % 2 == 0
+    assert glm.dot(plane[0], plane[1]) < 0.00001
     normal = glm.cross(plane[1], plane[0])
-    ass(abs(glm.length(normal) - 1) < 0.00001)
+    assert abs(glm.length(normal) - 1) < 0.00001
     m = glm.rotate(2.0 * pi / segments, normal)
 
     plane_axis = vec4(plane[0], 0)  # type: ignore
@@ -1551,7 +1521,7 @@ def _panel_visualizer() -> None:
           draw_capsule(center, radius, spread, math.radians(rotation), color)
 
         case _:
-          ass(0)
+          assert 0
 
   if im.is_key_pressed(im.Key.t) or im.is_key_pressed(im.Key._1):
     vis.gizmo_mode = _GizmoMode.TRANSLATE
@@ -1582,13 +1552,12 @@ def _panel_visualizer() -> None:
     frames_tr = _get_keyframes(c, "tr")
     tr_closest_index, poss_ = _get_closest_keyframe(frames_tr, atk.timeline_at)
     tr_pos = poss_.value
-    if not isinstance(tr_pos, GV2):
-      raise ass(0)
+    assert isinstance(tr_pos, GV2)
     m = _to_Matrix16(glm.translate(vec3(tr_pos.x, 0, tr_pos.y)))
     with _gizmo_restrict(m, (False, True, False), disable_translation_y=True):
       if gizmo.manipulate(object_matrix=m, **man_kwargs):
         off3 = _to_mat4(delta) * vec4(0, 0, 0, 1)
-        ass(off3.y == 0)
+        assert off3.y == 0
         off = bf.round_to_step(vec2(off3.x, off3.z), _STEP_TRANSLATE)
         atk.scheduled_commands.append(
           _CommandAttackColliderAlterField(
@@ -1645,8 +1614,8 @@ imgui_timeline_line_out = ImguiTimelineLineOut(ImVec2(), ImVec2())
 
 
 def imgui_timeline_line(indices_width: int, rows: int, color: int) -> None:  ##
-  ass(indices_width >= 1)
-  ass(rows >= 1)
+  assert indices_width >= 1
+  assert rows >= 1
 
   out = imgui_timeline_line_out
   out.pos_top_left = im.get_cursor_screen_pos()
@@ -1692,7 +1661,7 @@ def _panel_timeline() -> None:  ##
   if not atk:
     imgui_draw_cross()
     return
-  ass(atk.ref.duration_frames > 0)
+  assert atk.ref.duration_frames > 0
   c = atk.get_visualization_collider()
 
   io = im.get_io()
@@ -1894,8 +1863,7 @@ def _panel_timeline() -> None:  ##
         if imgui_timeline_line_out.hovered:
           hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
 
-  if not lines_top_left:
-    raise ass(0)
+  assert lines_top_left
 
   for i in range(atk.ref.duration_frames):
     posx = lines_top_left.x + i * imgui_timeline_line_out.width / atk.ref.duration_frames
@@ -1977,7 +1945,7 @@ def _panel_collider_inspector() -> None:  ##
   c_keyframe_fields_list = list(c_keyframe_fields)
 
   current_frame = min(int(atk.timeline_at + 0.5), atk.ref.duration_frames - 1)
-  ass(current_frame >= 0)
+  assert current_frame >= 0
 
   def closest_keyframe_list_index(field_name: str) -> int:
     return _get_closest_keyframe(_get_keyframes(c, field_name), atk.timeline_at)[0]
@@ -2167,7 +2135,7 @@ def _panel_collider_inspector() -> None:  ##
           )
 
         case _:
-          raise ass(0)
+          assert 0
 
     im.end_table()
 
@@ -2189,6 +2157,10 @@ def _show_status() -> None:  ##
 
 
 def _post_new_frame() -> None:  ##
+  if g.scheduled_dump:
+    g.scheduled_dump = False
+    _dump_app_state()
+
   io = im.get_io()
 
   if any((im.is_mouse_clicked(x) or im.is_mouse_released(x)) for x in range(3)):
@@ -2236,8 +2208,7 @@ def _post_new_frame() -> None:  ##
               atk.history_head -= 1
               atk.history.pop()
     if atk.scheduled_commands:
-      if not g.ref_selected_attack_creature:
-        raise ass(0)
+      assert g.ref_selected_attack_creature
       export_path = atk.export_path
       bf.recursive_mkdir(export_path.parent)
       with bf.sane_writable_file(export_path) as out_file:
@@ -2283,10 +2254,10 @@ def _test_make_default_keyframe_at():  ##
   c.ref.circle__radius[0].index_timeline = 10
   for v in (5, 15, 9, 11):
     c.make_default_keyframe_at("radius", v)
-    ass(
-      list(c.ref.circle__radius)
-      == sorted(c.ref.circle__radius, key=lambda x: x.index_timeline)
+    assert list(c.ref.circle__radius) == sorted(
+      c.ref.circle__radius, key=lambda x: x.index_timeline
     )
+
   ##
 
 
@@ -2296,9 +2267,9 @@ def _test_first_keyframe_yields_correct_values():  ##
   c.ref.capsule__radius[0].value = random.uniform(0.25, 2)
 
   _, v = c.make_keyframe_value_at("tr", 0)
-  ass(isinstance(v, vec2))
-  ass(v == c.ref.tr[0].value)
+  assert isinstance(v, vec2)
+  assert v == c.ref.tr[0].value
 
   _, r = c.make_keyframe_value_at("radius", 0)
-  ass(r == c.ref.capsule__radius[0].value)
+  assert r == c.ref.capsule__radius[0].value
   ##

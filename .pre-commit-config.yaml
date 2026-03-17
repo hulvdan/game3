@@ -15,12 +15,6 @@ repos:
         exclude: ^addons/.*$
         types: []
       - id: python-no-eval
-        name: 'Prohibited: "assert". Use "ass"'
-        entry: "^[ ]*assert"
-        language: pygrep
-        files: ^.*bf_attacks_markuper\.py$
-        types: []
-      - id: python-no-eval
         name: 'Prohibited: "def test_". Use "def _test_"'
         entry: "def test_"
         language: pygrep
