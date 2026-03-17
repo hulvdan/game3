@@ -131,7 +131,9 @@
     {
       "label": "regenerate_python_glib_proto",
       "type": "shell",
-      "command": "uv run python cli/bf_cli.py regenerate_python_glib_proto",
+      // Сначала запускаю protoc, чтобы избежать «запускаю питон,
+      // а он падает, т.к. import-ированного типа больше нет в proto»
+      "command": "cli/protoc.exe --python_out=cli --pyi_out=cli --proto_path=src/game src/game/glib.proto && uv run python cli/bf_cli.py regenerate_python_glib_proto",
       "hide": true
     },
     {
@@ -140,8 +142,8 @@
       "dependsOn": [
         "regenerate_python_glib_proto",
         "5_lint"
-      ]
-      // "hide": true
+      ],
+      "hide": true
     }
   ]
 }

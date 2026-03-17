@@ -210,46 +210,6 @@ class GTagValue(_message.Message):
     team_flags: int
     def __init__(self, tag_type: _Optional[int] = ..., i1: _Optional[int] = ..., i2: _Optional[int] = ..., i3: _Optional[int] = ..., i4: _Optional[int] = ..., i5: _Optional[int] = ..., i6: _Optional[int] = ..., f1: _Optional[float] = ..., f2: _Optional[float] = ..., f3: _Optional[float] = ..., f4: _Optional[float] = ..., f5: _Optional[float] = ..., f6: _Optional[float] = ..., projectile_type: _Optional[int] = ..., creature_type: _Optional[int] = ..., team_flags: _Optional[int] = ...) -> None: ...
 
-class GKeyframeV1(_message.Message):
-    __slots__ = ("id", "index_timeline", "value")
-    ID_FIELD_NUMBER: _ClassVar[int]
-    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
-    VALUE_FIELD_NUMBER: _ClassVar[int]
-    id: int
-    index_timeline: int
-    value: GV1
-    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV1, _Mapping]] = ...) -> None: ...
-
-class GKeyframeV2(_message.Message):
-    __slots__ = ("id", "index_timeline", "value")
-    ID_FIELD_NUMBER: _ClassVar[int]
-    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
-    VALUE_FIELD_NUMBER: _ClassVar[int]
-    id: int
-    index_timeline: int
-    value: GV2
-    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV2, _Mapping]] = ...) -> None: ...
-
-class GKeyframeV3(_message.Message):
-    __slots__ = ("id", "index_timeline", "value")
-    ID_FIELD_NUMBER: _ClassVar[int]
-    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
-    VALUE_FIELD_NUMBER: _ClassVar[int]
-    id: int
-    index_timeline: int
-    value: GV3
-    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV3, _Mapping]] = ...) -> None: ...
-
-class GKeyframeV4(_message.Message):
-    __slots__ = ("id", "index_timeline", "value")
-    ID_FIELD_NUMBER: _ClassVar[int]
-    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
-    VALUE_FIELD_NUMBER: _ClassVar[int]
-    id: int
-    index_timeline: int
-    value: GV4
-    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV4, _Mapping]] = ...) -> None: ...
-
 class GKeyframeBool(_message.Message):
     __slots__ = ("id", "index_timeline", "value")
     ID_FIELD_NUMBER: _ClassVar[int]
@@ -289,6 +249,46 @@ class GKeyframeString(_message.Message):
     index_timeline: int
     value: str
     def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[str] = ...) -> None: ...
+
+class GKeyframeV1(_message.Message):
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    id: int
+    index_timeline: int
+    value: GV1
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV1, _Mapping]] = ...) -> None: ...
+
+class GKeyframeV2(_message.Message):
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    id: int
+    index_timeline: int
+    value: GV2
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV2, _Mapping]] = ...) -> None: ...
+
+class GKeyframeV3(_message.Message):
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    id: int
+    index_timeline: int
+    value: GV3
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV3, _Mapping]] = ...) -> None: ...
+
+class GKeyframeV4(_message.Message):
+    __slots__ = ("id", "index_timeline", "value")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    id: int
+    index_timeline: int
+    value: GV4
+    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV4, _Mapping]] = ...) -> None: ...
 
 class GCollider(_message.Message):
     __slots__ = ("id", "type", "debug_name", "tr", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "polygon__distance_min", "polygon__distance_max", "polygon__angle", "polygon__anchor_x")
@@ -389,8 +389,9 @@ class GAttackConditionValue(_message.Message):
     def __init__(self, attackcondition_type: _Optional[int] = ..., distance_min: _Optional[float] = ..., distance_max: _Optional[float] = ..., rotation: _Optional[float] = ..., capsule__radius: _Optional[float] = ...) -> None: ...
 
 class GAttack(_message.Message):
-    __slots__ = ("debug_name", "duration_frames", "cooldown_min", "cooldown_max", "movement_scale", "stamina_cost", "stops_tracking_at", "projectile_type", "projectile_spawns", "melee", "tags", "impulses", "condition")
+    __slots__ = ("debug_name", "debug_mirrored", "duration_frames", "cooldown_min", "cooldown_max", "movement_scale", "stamina_cost", "stops_tracking_at", "projectile_type", "projectile_spawns", "melee", "tags", "impulses", "condition")
     DEBUG_NAME_FIELD_NUMBER: _ClassVar[int]
+    DEBUG_MIRRORED_FIELD_NUMBER: _ClassVar[int]
     DURATION_FRAMES_FIELD_NUMBER: _ClassVar[int]
     COOLDOWN_MIN_FIELD_NUMBER: _ClassVar[int]
     COOLDOWN_MAX_FIELD_NUMBER: _ClassVar[int]
@@ -404,6 +405,7 @@ class GAttack(_message.Message):
     IMPULSES_FIELD_NUMBER: _ClassVar[int]
     CONDITION_FIELD_NUMBER: _ClassVar[int]
     debug_name: str
+    debug_mirrored: bool
     duration_frames: int
     cooldown_min: float
     cooldown_max: float
@@ -416,7 +418,7 @@ class GAttack(_message.Message):
     tags: _containers.RepeatedCompositeFieldContainer[GTagValue]
     impulses: _containers.RepeatedCompositeFieldContainer[GImpulseData]
     condition: GAttackConditionValue
-    def __init__(self, debug_name: _Optional[str] = ..., duration_frames: _Optional[int] = ..., cooldown_min: _Optional[float] = ..., cooldown_max: _Optional[float] = ..., movement_scale: _Optional[float] = ..., stamina_cost: _Optional[_Union[GStaminaCost, _Mapping]] = ..., stops_tracking_at: _Optional[float] = ..., projectile_type: _Optional[int] = ..., projectile_spawns: _Optional[_Iterable[_Union[GProjectileSpawn, _Mapping]]] = ..., melee: _Optional[_Union[GAttackMelee, _Mapping]] = ..., tags: _Optional[_Iterable[_Union[GTagValue, _Mapping]]] = ..., impulses: _Optional[_Iterable[_Union[GImpulseData, _Mapping]]] = ..., condition: _Optional[_Union[GAttackConditionValue, _Mapping]] = ...) -> None: ...
+    def __init__(self, debug_name: _Optional[str] = ..., debug_mirrored: _Optional[bool] = ..., duration_frames: _Optional[int] = ..., cooldown_min: _Optional[float] = ..., cooldown_max: _Optional[float] = ..., movement_scale: _Optional[float] = ..., stamina_cost: _Optional[_Union[GStaminaCost, _Mapping]] = ..., stops_tracking_at: _Optional[float] = ..., projectile_type: _Optional[int] = ..., projectile_spawns: _Optional[_Iterable[_Union[GProjectileSpawn, _Mapping]]] = ..., melee: _Optional[_Union[GAttackMelee, _Mapping]] = ..., tags: _Optional[_Iterable[_Union[GTagValue, _Mapping]]] = ..., impulses: _Optional[_Iterable[_Union[GImpulseData, _Mapping]]] = ..., condition: _Optional[_Union[GAttackConditionValue, _Mapping]] = ...) -> None: ...
 
 class GAbility(_message.Message):
     __slots__ = ("type", "debug_name", "attack", "recovering_attacks")

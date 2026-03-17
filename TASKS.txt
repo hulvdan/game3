@@ -35,6 +35,8 @@ x clear
 x mark: all attacks must have codename (for explorer panel)
 x sync imgui + mark: set creature attack names
 
+* HH НАПИСАТЬ TOO OIIYN
+*
 * mark: impl support of abilities
 * mark:
 * mark:

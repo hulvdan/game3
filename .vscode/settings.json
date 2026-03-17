@@ -45,7 +45,7 @@
     },
     {
       "match": ".proto$",
-      "command": "proto-renumber -replace ${file} && buf format -w ${file}"
+      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && proto-renumber -replace ${file} && buf format -w ${file}"
     },
     {
       "match": "glib.proto$",

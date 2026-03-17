@@ -140,53 +140,64 @@ message GTagValue {
   int32 team_flags = 16;
 }
 
-message GKeyframeV1 {
-  int32 id = 1;
-  int32 index_timeline = 2;
-  GV1 value = 3;
-}
-
-message GKeyframeV2 {
-  int32 id = 1;
-  int32 index_timeline = 2;
-  GV2 value = 3;
-}
-
-message GKeyframeV3 {
-  int32 id = 1;
-  int32 index_timeline = 2;
-  GV3 value = 3;
-}
-
-message GKeyframeV4 {
-  int32 id = 1;
-  int32 index_timeline = 2;
-  GV4 value = 3;
-}
-
+/* [[[cog
+   for type, suffix in (
+     ('bool', 'Bool'),
+     ('int32', 'Int32'),
+     ('float', 'Float'),
+     ('string', 'String'),
+     ('GV1', 'V1'),
+     ('GV2', 'V2'),
+     ('GV3', 'V3'),
+     ('GV4', 'V4'),
+   ):
+     print(rf"""message GKeyframe{suffix} {{
+       int32 id = 1;
+       int32 index_timeline = 2;
+       {type} value = 3;
+     }}""")
+   cog]]] */
 message GKeyframeBool {
   int32 id = 1;
   int32 index_timeline = 2;
   bool value = 3;
 }
-
 message GKeyframeInt32 {
   int32 id = 1;
   int32 index_timeline = 2;
   int32 value = 3;
 }
-
 message GKeyframeFloat {
   int32 id = 1;
   int32 index_timeline = 2;
   float value = 3;
 }
-
 message GKeyframeString {
   int32 id = 1;
   int32 index_timeline = 2;
   string value = 3;
 }
+message GKeyframeV1 {
+  int32 id = 1;
+  int32 index_timeline = 2;
+  GV1 value = 3;
+}
+message GKeyframeV2 {
+  int32 id = 1;
+  int32 index_timeline = 2;
+  GV2 value = 3;
+}
+message GKeyframeV3 {
+  int32 id = 1;
+  int32 index_timeline = 2;
+  GV3 value = 3;
+}
+message GKeyframeV4 {
+  int32 id = 1;
+  int32 index_timeline = 2;
+  GV4 value = 3;
+}
+// [[[end]]]
 
 message GCollider {
   int32 id = 1;
@@ -250,23 +261,25 @@ message GAttackConditionValue {
 
 message GAttack {
   string debug_name = 1;
-  int32 duration_frames = 2;
-  float cooldown_min = 3;
-  float cooldown_max = 4;
+  bool debug_mirrored = 2;
 
-  float movement_scale = 5;
-  GStaminaCost stamina_cost = 6;
+  int32 duration_frames = 3;
+  float cooldown_min = 4;
+  float cooldown_max = 5;
 
-  float stops_tracking_at = 7;
+  float movement_scale = 6;
+  GStaminaCost stamina_cost = 7;
 
-  int32 projectile_type = 8;
-  repeated GProjectileSpawn projectile_spawns = 9;
+  float stops_tracking_at = 8;
 
-  GAttackMelee melee = 10;
-  repeated GTagValue tags = 11;
-  repeated GImpulseData impulses = 12;
+  int32 projectile_type = 9;
+  repeated GProjectileSpawn projectile_spawns = 10;
 
-  GAttackConditionValue condition = 13;
+  GAttackMelee melee = 11;
+  repeated GTagValue tags = 12;
+  repeated GImpulseData impulses = 13;
+
+  GAttackConditionValue condition = 14;
 }
 
 message GAbility {

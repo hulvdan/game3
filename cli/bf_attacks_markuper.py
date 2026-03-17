@@ -1,4 +1,5 @@
 ## Imports
+
 import math
 import random
 import shutil
@@ -149,6 +150,7 @@ def _from_proto(x):
 ##
 
 
+## _GKeyframe: TypeAlias
 # [[[cog
 # import re, pathlib
 # keyframe_types = re.findall(
@@ -158,16 +160,45 @@ def _from_proto(x):
 # print('_GKeyframe: TypeAlias = {}'.format(' | '.join(keyframe_types)))
 # cog]]]
 _GKeyframe: TypeAlias = (
-  GKeyframeV1
-  | GKeyframeV2
-  | GKeyframeV3
-  | GKeyframeV4
-  | GKeyframeBool
+  GKeyframeBool
   | GKeyframeInt32
   | GKeyframeFloat
   | GKeyframeString
+  | GKeyframeV1
+  | GKeyframeV2
+  | GKeyframeV3
+  | GKeyframeV4
 )
-# [[[end]]]
+# [[[end]]] ##
+
+## _gcollider_keyframe_fields: list[str]
+# [[[cog
+# import ast, pathlib
+# tree = ast.parse(pathlib.Path("cli/glib_pb2.pyi").read_text(encoding="utf-8"))
+# _gcollider_keyframe_fields = [
+#     a.target.id
+#     for cls in tree.body if (isinstance(cls, ast.ClassDef) and cls.name == "GCollider")
+#     for a in cls.body if isinstance(a, ast.AnnAssign)
+#     and isinstance(a.annotation, ast.Subscript)
+#     and isinstance(a.annotation.value, ast.Attribute)
+#     and (a.annotation.value.attr == "RepeatedCompositeFieldContainer")
+#     and a.annotation.slice.id.startswith("GKeyframe")
+# ]
+# print(f"{_gcollider_keyframe_fields=}")
+# cog]]]
+_gcollider_keyframe_fields = [
+  "tr",
+  "is_active",
+  "circle__radius",
+  "capsule__radius",
+  "capsule__spread",
+  "polygon__distance_min",
+  "polygon__distance_max",
+  "polygon__angle",
+  "polygon__anchor_x",
+]
+# [[[end]]] ##
+
 
 _GContainer: t.TypeAlias = containers.RepeatedCompositeFieldContainer
 _GKeyframesContainer: t.TypeAlias = _GContainer[_GKeyframe]
@@ -404,8 +435,6 @@ def _dump_app_state():
     toml.dump(g.dump().model_dump(), out)
   shutil.move(out_path, _APP_STATE_FILE_PATH)
 
-  _dump_app_state()
-
 
 _serializer = bf.DataclassSerializer()
 ##
@@ -493,10 +522,12 @@ def tool_attacks_markuper() -> None:
   glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug)
   g.glib = t.cast("Lib", ParseDict(glib, Lib()))
 
-  for creature_ in g.glib.creatures:
+  for creature_ in g.glib.creatures[1:]:
     attacks = []
     creature = _TransientCreature(ref=creature_, attacks=attacks)
     for attack_ in creature_.attacks:
+      if attack_.debug_mirrored:
+        continue
       colliders = []
       attack = _TransientAttack(ref=attack_, parent=creature, colliders=colliders)
       if attack_.melee:
@@ -516,7 +547,6 @@ def tool_attacks_markuper() -> None:
 
   g.validate()
 
-  # removeme
   if atk := g.ref_selected_attack:
     if atk.ref.melee and atk.ref.melee.colliders:
       atk.collider_to_select = atk.colliders[0]
@@ -775,8 +805,6 @@ class _CommandMergeType(IntEnum):  ##
 class _Command(ABC):
   merge_id: int
 
-  _export_fields = ["merge_id"]
-
   @abstractmethod
   def do(self) -> None: ...
 
@@ -786,51 +814,67 @@ class _Command(ABC):
   def try_merge(self, _newest, /) -> _CommandMergeType:
     return _CommandMergeType.NONE
 
-  def __init_subclass__(cls, **kwargs):
-    super().__init_subclass__(**kwargs)
-    assert cls.__name__.startswith("_Command")
-
-    export_fields = getattr(cls, "_export_fields", None)
-    if export_fields is None:
-      export_fields = {
-        x
-        for x, type_ in cls.__annotations__.items()
-        if (t.get_origin(type_) or type_) is not ClassVar
-      }
-    else:
-      export_fields = set(export_fields)
-    for base in cls.__bases__:
-      export_fields |= set(getattr(base, "_export_fields", ()))
-    cls._export_fields = sorted(export_fields)
-
-    # cls._export_fields = [*getattr(cls, "_export_fields", ())]
-
-    # own_fields = set(cls.__dict__.get("_export_fields", []))
-    # parent_fields = set()
-    # for base in cls.__bases__:
-    #   parent_fields |= set(getattr(base, "_export_fields", set()))
-    # cls._export_fields = parent_fields | own_fields
-
-    # if not inspect.isabstract(cls):
-    #   code = cls.__name__.removeprefix("Command")
-    #   if code not in COMMAND_REGISTRY:
-    #     COMMAND_REGISTRY[code] = cls
-
-
-COMMAND_REGISTRY: dict[str, type[_Command]] = {}
-
 
 @dataclass(slots=True)
 class _CommandAttack(_Command):
   atk: "_TransientAttack"
 
-  _export_fields = []
+
+@dataclass(slots=True)
+@t.final
+class _CommandAttackCreateCollider(_CommandAttack):
+  collider_id: int
+  collider_type: _ColliderType
+
+  def do(self) -> None:
+    for collider in self.atk.colliders:
+      assert collider.ref.id < self.collider_id
+    self.atk.colliders.append(
+      _TransientCollider(
+        ref=GCollider(id=self.collider_id, type=self.collider_type.value)
+      )
+    )
+
+  def undo(self) -> None:
+    index = next(
+      i for i, c in enumerate(self.atk.ref.melee.colliders) if c.id == self.collider_id
+    )
+    del self.atk.colliders[index]
+    del self.atk.ref.melee.colliders[index]
 
 
-# @dataclass(slots=True)
-# @t.final
-# class CommandAttackAlterFrames(Command):
-#   pass
+def iterate_over_containers(
+  collider: GCollider,
+) -> t.Iterable[tuple(str, Container[_GKeyframe])]:
+  pass
+
+
+@dataclass(slots=True)
+@t.final
+class _CommandAttackAlterFrames(_CommandAttack):
+  old: int
+  new: int
+
+  def do(self) -> None:
+    if self.atk.ref.melee:
+      for c in self.atk.ref.melee.colliders:
+        for container in iterate_over_containers(c):
+          pass
+    self.atk.ref.duration_frames = self.new
+
+  def undo(self) -> None:
+    self.atk.ref.duration_frames = self.old
+
+  def try_merge(self, newest: Self, /) -> _CommandMergeType:
+    if newest.atk is not self.atk:
+      return _CommandMergeType.NONE
+
+    self.new = newest.new
+    return (
+      _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
+      if (self.old == self.new)
+      else _CommandMergeType.MERGED_OKAY
+    )
 
 
 @dataclass(slots=True)

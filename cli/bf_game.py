@@ -355,6 +355,7 @@ def _process_glib(genline, glib) -> None:
                 asserte("condition" in attack)
               if attack.pop("mirrorable", False):
                 copied_attack = copy.deepcopy(attack)
+                copied_attack["debug_mirrored"] = True
                 bf.recursive_visiter(copied_attack, "degrees", None, mirror_sign)
                 bf.recursive_visiter(copied_attack, "radians", None, mirror_sign)
                 mirrored_attacks.append(copied_attack)
