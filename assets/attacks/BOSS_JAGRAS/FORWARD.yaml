@@ -1,0 +1,27 @@
+condition:
+  attackconditionType: 2
+  capsuleRadius: 0.4
+  distanceMax: 4.0
+cooldownMax: 5.0
+cooldownMin: 3.0
+debugName: FORWARD
+durationFrames: 90
+impulses:
+  - at: 0.4
+    distance: 4.0
+    dur: 2.0
+    pow: 1.0
+melee:
+  colliders:
+    - circleRadius:
+        - id: 3
+          value: 0.5
+      id: 1
+      isActive:
+        - id: 2
+          value: true
+      tr:
+        - id: 1
+          value: {}
+      type: 1
+stopsTrackingAt: 0.4

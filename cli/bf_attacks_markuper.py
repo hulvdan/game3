@@ -1,5 +1,4 @@
 ## Imports
-
 import math
 import random
 import shutil
@@ -13,7 +12,7 @@ from enum import IntEnum, unique
 from functools import partial
 from math import pi
 from pathlib import Path
-from typing import Any, Callable, ClassVar, Self, TypeAlias, TypeVar
+from typing import Any, Callable, Generator, Generic, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
 import numpy as np
@@ -52,47 +51,31 @@ from pyglm.glm import mat4, radians, vec1, vec2, vec3, vec4
 
 ## def _into_proto(x)
 @t.overload
-def _into_proto(x: bool) -> bool: ...
-
-
+def _to_proto(x: bool) -> bool: ...
 @t.overload
-def _into_proto(x: int) -> int: ...
-
-
+def _to_proto(x: int) -> int: ...
 @t.overload
-def _into_proto(x: float) -> float: ...
-
-
+def _to_proto(x: float) -> float: ...
 @t.overload
-def _into_proto(x: vec1) -> GV1: ...
-
-
+def _to_proto(x: vec1) -> GV1: ...
 @t.overload
-def _into_proto(x: vec2) -> GV2: ...
-
-
+def _to_proto(x: vec2) -> GV2: ...
 @t.overload
-def _into_proto(x: vec3) -> GV3: ...
-
-
+def _to_proto(x: vec3) -> GV3: ...
 @t.overload
-def _into_proto(x: vec4) -> GV4: ...
-
-
+def _to_proto(x: vec4) -> GV4: ...
 @t.overload
-def _into_proto(x: str) -> str: ...
-
-
-def _into_proto(x):
+def _to_proto(x: str) -> str: ...
+def _to_proto(x):
   match x:
     case vec1():
-      return GV1(x.x)
+      return GV1(x=x.x)
     case vec2():
-      return GV2(x.x, x.y)
+      return GV2(x=x.x, y=x.y)
     case vec3():
-      return GV3(x.x, x.y, x.z)
+      return GV3(x=x.x, y=x.y, z=x.z)
     case vec4():
-      return GV4(x.x, x.y, x.z, x.w)
+      return GV4(x=x.x, y=x.y, z=x.z, w=x.w)
     case _:
       return x
 
@@ -103,36 +86,20 @@ def _into_proto(x):
 ## def _from_proto(x)
 @t.overload
 def _from_proto(x: bool) -> bool: ...
-
-
 @t.overload
 def _from_proto(x: int) -> int: ...
-
-
 @t.overload
 def _from_proto(x: float) -> float: ...
-
-
 @t.overload
 def _from_proto(x: GV1) -> vec1: ...
-
-
 @t.overload
 def _from_proto(x: GV2) -> vec2: ...
-
-
 @t.overload
 def _from_proto(x: GV3) -> vec3: ...
-
-
 @t.overload
 def _from_proto(x: GV4) -> vec4: ...
-
-
 @t.overload
 def _from_proto(x: str) -> str: ...
-
-
 def _from_proto(x):
   match x:
     case GV1():
@@ -204,6 +171,11 @@ _GContainer: t.TypeAlias = containers.RepeatedCompositeFieldContainer
 _GKeyframesContainer: t.TypeAlias = _GContainer[_GKeyframe]
 
 T = t.TypeVar("T")
+T1 = t.TypeVar("T1")
+T2 = t.TypeVar("T2")
+T3 = t.TypeVar("T3")
+T4 = t.TypeVar("T4")
+T5 = t.TypeVar("T5")
 
 
 ## Consts
@@ -678,26 +650,35 @@ class _KeyframeTypeEnum(IntEnum):  ##
   ##
 
 
-@t.runtime_checkable
-class _KeyframeType(t.Protocol[T]):  ##
-  # type_class: t.ClassVar[tuple[type]]
-  # type: t.ClassVar[KeyframeTypeEnum]
+@dataclass(slots=True)
+class _KeyframeType(ABC, Generic[T1, T2]):  ##
   line_spanning_rows: t.ClassVar[int] = 1
 
-  def make_default(self) -> T: ...
+  @classmethod
+  @abstractmethod
+  def proto_class(cls) -> type[T2]: ...
 
-  def make_copy(self, v: T) -> T: ...
+  @abstractmethod
+  def make_default(self) -> T1: ...
 
-  def make_lerp(self, v1: T, v2: T, t: float) -> T: ...
+  @abstractmethod
+  def make_copy(self, v: T1) -> T1: ...
+
+  @abstractmethod
+  def make_lerp(self, v1: T1, v2: T1, t: float) -> T1: ...
 
   ##
 
 
 @dataclass(slots=True)
 @t.final
-class _KeyframeTypeBool(_KeyframeType[bool]):  ##
+class _KeyframeTypeBool(_KeyframeType[bool, GKeyframeBool]):  ##
   # type_class: t.ClassVar[tuple[type, ...]] = (bool,)
   # type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.BOOL
+
+  @classmethod
+  def proto_class(cls) -> type[GKeyframeBool]:
+    return GKeyframeBool
 
   default: bool
 
@@ -715,9 +696,14 @@ class _KeyframeTypeBool(_KeyframeType[bool]):  ##
 
 
 @dataclass(slots=True)
-class _KeyframeTypeFloat(_KeyframeType[float]):  ##
+@t.final
+class _KeyframeTypeFloat(_KeyframeType[float, GKeyframeFloat]):  ##
   # type_class: t.ClassVar[tuple[type, ...]] = (int, float)
   # type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.FLOAT
+
+  @classmethod
+  def proto_class(cls) -> type[GKeyframeFloat]:
+    return GKeyframeFloat
 
   default: float
   step: float
@@ -756,9 +742,14 @@ def _lerp_vec2(v1: vec2, v2: vec2, t: float, step: float | None = None):  ##
 
 
 @dataclass(slots=True)
-class _KeyframeTypeV2(_KeyframeType[GV2]):  ##
+@t.final
+class _KeyframeTypeV2(_KeyframeType[GV2, GKeyframeV2]):  ##
   # type_class: t.ClassVar[tuple[type, ...]] = (GV2,)
   # type: t.ClassVar[KeyframeTypeEnum] = KeyframeTypeEnum.VEC2
+
+  @classmethod
+  def proto_class(cls) -> type[GKeyframeV2]:
+    return GKeyframeV2
 
   line_spanning_rows: t.ClassVar[int] = 2
 
@@ -779,7 +770,7 @@ class _KeyframeTypeV2(_KeyframeType[GV2]):  ##
 
   def make_lerp(self, v1: GV2, v2: GV2, t: float) -> GV2:
     assert 0 <= t <= 1
-    result = _into_proto(
+    result = _to_proto(
       _lerp_vec2(
         _from_proto(v1),
         _from_proto(v2),
@@ -829,11 +820,14 @@ class _CommandAttackCreateCollider(_CommandAttack):
   def do(self) -> None:
     for collider in self.atk.colliders:
       assert collider.ref.id < self.collider_id
-    self.atk.colliders.append(
-      _TransientCollider(
-        ref=GCollider(id=self.collider_id, type=self.collider_type.value)
-      )
+    c = _TransientCollider(
+      ref=GCollider(id=self.collider_id, type=self.collider_type.value)
     )
+    for field_name in g.keyframe_field_types_per_collider_type[self.collider_type.value]:
+      c.make_default_keyframe_at(field_name, 0)
+    self.atk.colliders.append(c)
+    self.atk.ref.melee.colliders.append(self.atk.colliders[-1].ref)
+    self.atk.collider_to_select = self.atk.colliders[-1]
 
   def undo(self) -> None:
     index = next(
@@ -845,8 +839,9 @@ class _CommandAttackCreateCollider(_CommandAttack):
 
 def iterate_over_containers(
   collider: GCollider,
-) -> t.Iterable[tuple(str, Container[_GKeyframe])]:
-  pass
+) -> Generator[tuple[str, _GKeyframesContainer], None, None]:
+  for f in _gcollider_keyframe_fields:
+    yield (f, getattr(collider, f))
 
 
 @dataclass(slots=True)
@@ -856,14 +851,12 @@ class _CommandAttackAlterFrames(_CommandAttack):
   new: int
 
   def do(self) -> None:
-    if self.atk.ref.melee:
-      for c in self.atk.ref.melee.colliders:
-        for container in iterate_over_containers(c):
-          pass
     self.atk.ref.duration_frames = self.new
+    self._validate()
 
   def undo(self) -> None:
     self.atk.ref.duration_frames = self.old
+    self._validate()
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
     if newest.atk is not self.atk:
@@ -875,6 +868,15 @@ class _CommandAttackAlterFrames(_CommandAttack):
       if (self.old == self.new)
       else _CommandMergeType.MERGED_OKAY
     )
+
+  def _validate(self):
+    assert self.old > 0
+    assert self.new > 0
+    if self.atk.ref.melee:
+      for c in self.atk.ref.melee.colliders:
+        for _, frames in iterate_over_containers(c):
+          for frame in frames:
+            assert self.new > frame.index_timeline
 
 
 @dataclass(slots=True)
@@ -979,12 +981,12 @@ class _CommandAttackColliderAlterField(_CommandAttackCollider):
   def do(self) -> None:
     c = self.c(self.atk)
     k = _get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
-    k.value = self.value_new
+    k.value = _to_proto(self.value_new)
 
   def undo(self) -> None:
     c = self.c(self.atk)
     k = _get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
-    k.value = self.value_old
+    k.value = _to_proto(self.value_old)
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
     if newest.keyframe_field != self.keyframe_field:
@@ -1055,14 +1057,16 @@ class _TransientCollider:
     ##
 
   def make_default_keyframe_at(
-    self, field: str, index_timeline: int
+    self, field_name: str, index_timeline: int
   ) -> tuple[int, _GKeyframe]:  ##
-    frames = _get_keyframes(self, field)
+    frames = _get_keyframes(self, field_name)
     for fr in frames:
       assert fr.index_timeline != index_timeline
     with _override_keyframe_round_to_step(True):
-      insert_index, value = self.make_keyframe_value_at(field, index_timeline)
-    k: _GKeyframe = GCollider.__annotations__[field](
+      insert_index, value = self.make_keyframe_value_at(field_name, index_timeline)
+    k: _GKeyframe = g.keyframe_field_types_per_collider_type[self.ref.type][
+      field_name
+    ].proto_class()(
       id=self._next_keyframe_id(),
       index_timeline=index_timeline,
       value=value,
@@ -1125,8 +1129,10 @@ class _TransientAttack:  ##
   scheduled_commands: list[_CommandAttack] = field(default_factory=list)
 
   def next_collider_id(self) -> _ColliderID:
-    result = self._next_collider_id
-    self._next_collider_id += 1
+    result = 1
+    if self.ref.melee:
+      for c in self.ref.melee.colliders:
+        result = max(result, c.id + 1)
     return result
 
   def get_visualization_collider(self) -> _TransientCollider | None:
@@ -1163,8 +1169,8 @@ class _TransientAttack:  ##
 
 
 def _get_keyframes(c: _TransientCollider, field_name: str) -> _GKeyframesContainer:  ##
-  assert field_name in g.keyframe_field_types_per_collider_type
-  return getattr(c, field_name)
+  assert field_name in g.keyframe_field_types_per_collider_type[c.ref.type]
+  return getattr(c.ref, field_name)
   ##
 
 
@@ -1358,8 +1364,14 @@ def _panel_attack_inspector() -> None:  ##
       if i:
         im.same_line()
       if im.button("+{}".format(collider_type.name.lower())):
-        atk.ref.melee.colliders.append(GCollider(type=collider_type))
-        atk.collider_to_select = atk.colliders[-1]
+        atk.scheduled_commands.append(
+          _CommandAttackCreateCollider(
+            merge_id=g.action_id,
+            atk=atk,
+            collider_id=atk.next_collider_id(),
+            collider_type=collider_type,
+          )
+        )
 
     for i, collider in enumerate(atk.colliders):
       flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
@@ -1555,13 +1567,13 @@ def _panel_visualizer() -> None:
 
       match c.ref.type:
         case _ColliderType.CIRCLE.value:
-          radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
+          radius = c.make_keyframe_value_at("circle__radius", atk.timeline_at)[1]
           draw_circle(center, radius, color)
 
         case _ColliderType.CAPSULE.value:
-          radius = c.make_keyframe_value_at("radius", atk.timeline_at)[1]
-          spread = c.make_keyframe_value_at("spread", atk.timeline_at)[1]
-          rotation = c.make_keyframe_value_at("rotation", atk.timeline_at)[1]
+          radius = c.make_keyframe_value_at("capsule__radius", atk.timeline_at)[1]
+          spread = c.make_keyframe_value_at("capsule__spread", atk.timeline_at)[1]
+          rotation = c.make_keyframe_value_at("capsule__rotation", atk.timeline_at)[1]
           draw_capsule(center, radius, spread, math.radians(rotation), color)
 
         case _:
@@ -1610,8 +1622,8 @@ def _panel_visualizer() -> None:
             collider_id=c.ref.id,
             keyframe_field="tr",
             keyframe_index_inside_list=tr_closest_index,
-            value_old=c.ref.tr[tr_closest_index].value,
-            value_new=c.ref.tr[tr_closest_index].value + off,
+            value_old=_from_proto(c.ref.tr[tr_closest_index].value),
+            value_new=_from_proto(c.ref.tr[tr_closest_index].value) + off,
           )
         )
 
@@ -2216,9 +2228,6 @@ def _post_new_frame() -> None:  ##
 
   atk = g.ref_selected_attack
   if atk:
-    if atk.collider_to_select:
-      atk.ref_selected_collider = atk.collider_to_select
-      atk.collider_to_select = None
     if atk.collider_deselection_scheduled:
       atk.ref_selected_collider = None
       atk.collider_deselection_scheduled = False
@@ -2256,8 +2265,11 @@ def _post_new_frame() -> None:  ##
       export_path = atk.export_path
       bf.recursive_mkdir(export_path.parent)
       with bf.sane_writable_file(export_path) as out_file:
-        yaml.dump(MessageToDict(atk), out_file, indent=2, line_break="\n")
+        yaml.dump(MessageToDict(atk.ref), out_file, indent=2, line_break="\n")
     atk.scheduled_commands.clear()
+    if atk.collider_to_select:
+      atk.ref_selected_collider = atk.collider_to_select
+      atk.collider_to_select = None
 
     # Handling undo.
     g.attack_undo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.z)
