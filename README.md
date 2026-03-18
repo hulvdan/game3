@@ -2,12 +2,12 @@
 
 ## Setting Up The Machine
 
-- Download godot source to c:\Users\user\dev\home\godot-4.6-stable
+- Download godot source to ..\godot-4.6-stable
 - Inside of it execute:
   ```
   python misc\scripts\install_d3d12_sdk_windows.py
   ```
-- Create godot.exe, godot_console.exe in PATH
+- Make godot.exe, godot_console.exe accessible
   ```
   mklink c:\Users\user\Programs\PATH\godot.exe c:\Users\user\Programs\godot\Godot_v4.6-stable_win64.exe
   mklink c:\Users\user\Programs\PATH\godot_console.exe c:\Users\user\Programs\godot\Godot_v4.6-stable_win64_console.exe
@@ -18,7 +18,10 @@
   https://github.com/GDQuest/GDScript-formatter/releases
 - (for stylua pre-commit) Install rust
   https://rust-lang.org/tools/install/
-- (for proto) go install github.com/mariomakdis/proto-renumber@v1.1.0
+- (for proto)
+  ```
+  go install github.com/mariomakdis/proto-renumber@v1.1.0
+  ```
 - Optional. For web local testing:
   ```
   npm install -g serve

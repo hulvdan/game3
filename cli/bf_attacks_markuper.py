@@ -53,7 +53,9 @@ class _ExportAttack(BaseModel):  ##
   class _ExportMelee(BaseModel):
     colliders: list[dict]
 
-  melee: _ExportMelee
+  duration_frames: int
+  stamina_consumption_frame: int
+  melee: _ExportMelee | None
   ##
 
 
@@ -189,8 +191,8 @@ T5 = t.TypeVar("T5")
 
 ## Consts
 ASSETS_ATTACKS_DIR = bf.ASSETS_DIR / "attacks"
-_FPS = 30
-_MAX_ATTACK_FRAMES_DURATION = 10 * _FPS
+ATTACKS_FPS = 30
+_MAX_ATTACK_FRAMES_DURATION = 10 * ATTACKS_FPS
 _STEP_TRANSLATE = 0.25
 _STEP_ROTATE = 15
 _STEP_SCALE = 0.25
@@ -367,10 +369,10 @@ SNAP_SCALE.values[:] = _STEP_SCALE
 # fmt: off
 def identity_matrix() ->  Matrix16:
   return gizmo.Matrix16([
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0])
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1])
 # fmt: on
 
 
@@ -1789,7 +1791,7 @@ def _panel_timeline() -> None:  ##
   io = im.get_io()
 
   if tim.is_playing:
-    atk.timeline_at += im.get_io().delta_time * _FPS
+    atk.timeline_at += im.get_io().delta_time * ATTACKS_FPS
     if atk.timeline_at > atk.ref.duration_frames:
       atk.timeline_at -= atk.ref.duration_frames
   else:
@@ -2382,7 +2384,7 @@ def _test_make_default_keyframe_at():  ##
   c = _TransientCollider.make(1, _ColliderType.CIRCLE)
   c.ref.circle__radius[0].index_timeline = 10
   for v in (5, 15, 9, 11):
-    c.make_default_keyframe_at("radius", v)
+    c.make_default_keyframe_at("circle__radius", v)
     assert list(c.ref.circle__radius) == sorted(
       c.ref.circle__radius, key=lambda x: x.index_timeline
     )
@@ -2399,6 +2401,6 @@ def _test_first_keyframe_yields_correct_values():  ##
   assert isinstance(v, vec2)
   assert v == c.ref.tr[0].value
 
-  _, r = c.make_keyframe_value_at("radius", 0)
+  _, r = c.make_keyframe_value_at("capsule__radius", 0)
   assert r == c.ref.capsule__radius[0].value
   ##

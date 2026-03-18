@@ -135,17 +135,17 @@ def do_test() -> None:  ##
 
 
 # def do_stop_debugger_ahk() -> None: ##
-#     bf.run_command(r"autohotkey .nvim-personal\cli.ahk stop_debugger")
+#     bf.run_command(r"autohotkey cli\cli.ahk stop_debugger")
 #     ##
 
 
 def do_activate_godot_ahk() -> None:  ##
-  bf.run_command(r"autohotkey .nvim-personal\cli.ahk activate")
+  bf.run_command(r"autohotkey cli\cli.ahk activate")
   ##
 
 
 def do_run_in_godot_ahk() -> None:  ##
-  bf.run_command(r"autohotkey .nvim-personal\cli.ahk run_in_godot")
+  bf.run_command(r"autohotkey cli\cli.ahk run_in_godot")
   ##
 
 

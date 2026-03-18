@@ -26,7 +26,7 @@ import bf_lib as bf
 import numpy as np
 import yaml
 from bf_attacks_markuper import *  # noqa: F403
-from bf_attacks_markuper import ASSETS_ATTACKS_DIR
+from bf_attacks_markuper import ASSETS_ATTACKS_DIR, ATTACKS_FPS
 from bf_typer import command, timing
 from deepmerge import always_merger
 from PIL import Image
@@ -157,6 +157,9 @@ def _process_glib(genline, glib) -> None:
       flags = flags | team_type_2_value[t]
     setter(flags)
     ##
+
+  genline(f"const ATTACKS_FPS := {ATTACKS_FPS}")
+  genline(f"const ATTACKS_FPSf := {ATTACKS_FPS}.0")
 
   ## LDTK. Enums
   ldtk_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
@@ -354,6 +357,7 @@ def _process_glib(genline, glib) -> None:
         with push("attacks"):
           mirrored_attacks = []
           for i, attack in enumerate(x.get("attacks", [])):
+            attack["duration_frames"] = 1
             loaded_attack = creature_to_loaded_attacks[x["type"]].get(
               attack.get("debug_name")
             )
@@ -383,12 +387,12 @@ def _process_glib(genline, glib) -> None:
                   validate_tags(attack.get("tags", []), "attack")
   ##
 
-  ## Abilities
-  with push("abilities"):
-    for i, x in enumerate(glib["abilities"]):
-      with push(i), push("attack"):
-        validate_attack(x["attack"], True)
-  ##
+  # ## Abilities
+  # with push("abilities"):
+  #   for i, x in enumerate(glib["abilities"]):
+  #     with push(i), push("attack"):
+  #       validate_attack(x["attack"], True)
+  # ##
 
   ## Projectiles
   need_to_have_damage_stamina = []

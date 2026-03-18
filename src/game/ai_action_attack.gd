@@ -14,7 +14,7 @@ static func explicit_update_attack(
 	var is_player := c.type == glib.GCreatureType.PLAYER
 
 	## Attack start
-	if !c.attack_elapsed:
+	if !c.attack_elapsed_frames:
 		if c.change_attack_to:
 			c.current_attack = c.change_attack_to
 		elif c.change_ability_to:
@@ -35,7 +35,6 @@ static func explicit_update_attack(
 	##
 
 	var attack := c.current_attack
-	var melee := attack.get_melee()
 
 	## Tracking target
 	if c.attack_elapsed <= attack.get_stops_tracking_at():
@@ -51,19 +50,7 @@ static func explicit_update_attack(
 
 	## Player consuming stamina
 	if is_player:
-		var consume_stamina_at := INF
-		if attack.get_projectile_spawns():
-			consume_stamina_at = min(consume_stamina_at, attack.get_projectile_spawns()[0].get_at())
-		if melee:
-			consume_stamina_at = min(consume_stamina_at, melee.get_starts_at())
-		if consume_stamina_at == INF:
-			consume_stamina_at = 0.0
-
-		if (
-			!Room.v.player.attack_consumed_stamina
-			&& (c.attack_elapsed >= consume_stamina_at)
-		):
-			Room.v.player.attack_consumed_stamina = true
+		if c.attack_elapsed_frames == attack.get_stamina_consumption_frame():
 			Room.v.player.consume_stamina(attack.get_stamina_cost())
 	##
 
@@ -153,9 +140,7 @@ static func explicit_update_attack(
 	##
 
 	## Attack finish
-	if c.attack_elapsed >= c.current_attack.get_duration():
-		if is_player:
-			Room.v.player.attack_consumed_stamina = false
+	if c.attack_elapsed_frames >= c.current_attack.get_duration_frames():
 		c.attack_blinked = false
 		c.attack_dashed = false
 		c.attack_elapsed = 0.0

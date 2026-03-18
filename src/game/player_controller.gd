@@ -23,7 +23,6 @@ var creature: Creature
 var bow: Node3D
 var inside_enemy_t := 0.0
 var rolling_retrievable_cost := 0.0
-var attack_consumed_stamina: bool
 var stamina := 0.0
 var stamina_rally := 0.0
 var stamina_ki := 0.0

@@ -310,10 +310,11 @@ class UpdaterDefault extends UpdaterBase:
 						var owner := x.d.owner__mb_freed_or_null
 						assert(owner.current_attack)
 						if owner.current_attack:
-							owner.attack_elapsed = max(
-								owner.attack_elapsed,
-								owner.current_attack.get_duration() - hook.get_f4(),
+							owner.attack_elapsed_frames = max(
+								owner.attack_elapsed_frames,
+								owner.current_attack.get_duration_frames() - hook.get_f4() * glib.ATTACKS_FPSf,
 							)
+							owner.attack_elapsed = owner.attack_elapsed_frames / glib.ATTACKS_FPSf
 						var dd := (
 							bf.xz(interactable.transform.origin)
 							- bf.xz(x.d.owner__mb_freed_or_null.transform.origin)
@@ -353,7 +354,7 @@ class UpdaterDefault extends UpdaterBase:
 							if owner.current_attack:
 								owner.attack_elapsed = max(
 									owner.attack_elapsed,
-									owner.current_attack.get_duration() - hook.get_f4(),
+									owner.current_attack.get_duration_frames() / glib.ATTACKS_FPSf - hook.get_f4(),
 								)
 							var dd := (
 								bf.xz(creature.transform.origin)
