@@ -35,6 +35,7 @@ x clear
 x HH НАПИСАТЬ ИП МАМЗЕЛЬ HH БОТ
 x mark: fix crashes
 x mark: exporting
+x mark: proto export snake_case
 
 * HH НАПИСАТЬ TOO OIIYN
 *

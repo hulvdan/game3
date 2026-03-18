@@ -1,21 +1,21 @@
 melee:
   colliders:
-    - circleRadius:
+    - circle__radius:
         - id: 3
           value: 0.5
       id: 1
-      isActive:
+      is_active:
         - id: 1
         - id: 5
-          indexTimeline: 21
+          index_timeline: 21
           value: true
         - id: 4
-          indexTimeline: 33
+          index_timeline: 33
       tr:
         - id: 2
           value: {}
         - id: 6
-          indexTimeline: 45
+          index_timeline: 45
           value:
             x: 2.0
       type: 1

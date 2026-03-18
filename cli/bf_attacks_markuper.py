@@ -2293,7 +2293,9 @@ def _post_new_frame() -> None:  ##
       bf.recursive_mkdir(export_path.parent)
       with bf.sane_writable_file(export_path) as out_file:
         yaml.dump(
-          _ExportAttack(**MessageToDict(atk.ref)).model_dump(),
+          _ExportAttack(
+            **MessageToDict(atk.ref, preserving_proto_field_name=True)
+          ).model_dump(),
           out_file,
           indent=2,
           line_break="\n",
