@@ -74,3 +74,19 @@ melee:
         - id: 2
           value: {}
       type: 3
+    - capsule__radius:
+        - id: 3
+          value: 0.5
+      capsule__rotation:
+        - id: 5
+      capsule__spread:
+        - id: 4
+          value: 1.0
+      id: 5
+      is_active:
+        - id: 1
+          value: true
+      tr:
+        - id: 2
+          value: {}
+      type: 2

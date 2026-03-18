@@ -6,18 +6,6 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
-class GV1i(_message.Message):
-    __slots__ = ("x",)
-    X_FIELD_NUMBER: _ClassVar[int]
-    x: int
-    def __init__(self, x: _Optional[int] = ...) -> None: ...
-
-class GV1(_message.Message):
-    __slots__ = ("x",)
-    X_FIELD_NUMBER: _ClassVar[int]
-    x: float
-    def __init__(self, x: _Optional[float] = ...) -> None: ...
-
 class GV2i(_message.Message):
     __slots__ = ("x", "y")
     X_FIELD_NUMBER: _ClassVar[int]
@@ -229,16 +217,6 @@ class GKeyframeString(_message.Message):
     index_timeline: int
     value: str
     def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[str] = ...) -> None: ...
-
-class GKeyframeV1(_message.Message):
-    __slots__ = ("id", "index_timeline", "value")
-    ID_FIELD_NUMBER: _ClassVar[int]
-    INDEX_TIMELINE_FIELD_NUMBER: _ClassVar[int]
-    VALUE_FIELD_NUMBER: _ClassVar[int]
-    id: int
-    index_timeline: int
-    value: GV1
-    def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV1, _Mapping]] = ...) -> None: ...
 
 class GKeyframeV2(_message.Message):
     __slots__ = ("id", "index_timeline", "value")

@@ -22,7 +22,6 @@ import yaml
 from bf_glib import load_glib
 from bf_typer import command
 from glib_pb2 import (
-  GV1,
   GV2,
   GV3,
   GV4,
@@ -33,7 +32,6 @@ from glib_pb2 import (
   GKeyframeFloat,
   GKeyframeInt32,
   GKeyframeString,
-  GKeyframeV1,
   GKeyframeV2,
   GKeyframeV3,
   GKeyframeV4,
@@ -46,7 +44,7 @@ from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
 from pyglm import glm
-from pyglm.glm import mat4, radians, vec1, vec2, vec3, vec4
+from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 ##
 
@@ -67,8 +65,6 @@ def _to_proto(x: int) -> int: ...
 @t.overload
 def _to_proto(x: float) -> float: ...
 @t.overload
-def _to_proto(x: vec1) -> GV1: ...
-@t.overload
 def _to_proto(x: vec2) -> GV2: ...
 @t.overload
 def _to_proto(x: vec3) -> GV3: ...
@@ -78,8 +74,6 @@ def _to_proto(x: vec4) -> GV4: ...
 def _to_proto(x: str) -> str: ...
 def _to_proto(x):
   match x:
-    case vec1():
-      return GV1(x=x.x)
     case vec2():
       return GV2(x=x.x, y=x.y)
     case vec3():
@@ -101,8 +95,6 @@ def _from_proto(x: int) -> int: ...
 @t.overload
 def _from_proto(x: float) -> float: ...
 @t.overload
-def _from_proto(x: GV1) -> vec1: ...
-@t.overload
 def _from_proto(x: GV2) -> vec2: ...
 @t.overload
 def _from_proto(x: GV3) -> vec3: ...
@@ -112,8 +104,6 @@ def _from_proto(x: GV4) -> vec4: ...
 def _from_proto(x: str) -> str: ...
 def _from_proto(x):
   match x:
-    case GV1():
-      return vec1(x.x)
     case GV2():
       return vec2(x.x, x.y)
     case GV3():
@@ -141,7 +131,6 @@ _GKeyframe: TypeAlias = (
   | GKeyframeInt32
   | GKeyframeFloat
   | GKeyframeString
-  | GKeyframeV1
   | GKeyframeV2
   | GKeyframeV3
   | GKeyframeV4

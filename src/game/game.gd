@@ -361,82 +361,95 @@ func _physics_process(dt: float) -> void:
 		if !melee:
 			continue
 
-		if creature.attack_elapsed < melee.get_starts_at():
-			continue
-		if creature.attack_elapsed > melee.get_ends_at():
-			continue
-
 		apply_damage_melee_data.attack_id = creature.attack_id
 		apply_damage_melee_data.impulse = 1
 		apply_damage_melee_data.evade_flags = melee.get_evade_flags()
 
 		var attacker_pos := bf.xz(creature.transform.origin)
+		var e: int = creature.attack_elapsed_frames
 
-		var polygon := melee.get_polygon()
-		var circle := melee.get_circle()
-		if polygon:
-			assert(!circle)
-		if circle:
-			assert(!polygon)
+		for collider in attack.get_melee().get_colliders():
+			var is_active := false
+			for k in collider.get_is_active():
+				if k.get_index_timeline() <= creature.attack_elapsed_frames:
+					is_active = k.get_value()
+			if !is_active:
+				continue
 
-		Game.set_gizmos_color_according_to_evade_flags(apply_damage_melee_data.evade_flags)
-		for mask: int in [
-			2 ** glib.GMaskType.CREATURES,
-			2 ** glib.GMaskType.INTERACTABLES,
-		]:
-			var q: Array[Dictionary]
-			if polygon:
-				var off := creature.attack_target_dir * (polygon.get_distance_max() * (polygon.get_anchor_x() - 0.5))
-				q = Collisions.query_circle_segment(
-					attacker_pos + off,
-					polygon.get_distance_min(),
-					polygon.get_distance_max(),
-					-creature.attack_target_dir.angle(),
-					polygon.get_angle(),
-					mask,
-					true,
-					false,
-					12,
-				)
-			if circle:
-				var off := creature.attack_target_dir * circle.get_radius() * circle.get_anchor_x()
-				q = Collisions.query_circle(
-					attacker_pos + off,
-					circle.get_radius(),
-					mask,
-					true,
-					false,
-					12,
-				)
+			var off_: glib.GV2 = _make_keyframe_value_at(collider.get_tr(), creature.attack_elapsed_frames)
+			var off: Vector2 = glib.ToV2(off_)
+			var collider_pos := attacker_pos + off
 
-			if mask == 2 ** glib.GMaskType.INTERACTABLES:
-				for d: Dictionary in q:
-					var x: Interactable = d.collider
-					if x in creature.attack_damaged_interactables:
-						continue
-					apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
-						attacker_pos,
-						bf.xz(x.transform.origin),
-					)
-					if apply_damage_interactable(x, melee.get_damage(), apply_damage_melee_data):
-						creature.attack_damaged_interactables.append(x)
-			else:
-				for d: Dictionary in q:
-					var x: Creature = d.collider
-					if (
-						(x.type == glib.GCreatureType.PLAYER)
-						== (creature.type == glib.GCreatureType.PLAYER)
-					):
-						continue
-					if x in creature.attack_damaged_creatures:
-						continue
-					apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
-						attacker_pos,
-						bf.xz(x.transform.origin),
-					)
-					apply_damage_melee_data.damage_stamina = melee.get_damage_stamina()
-					if apply_damage(x, melee.get_damage(), apply_damage_melee_data):
-						creature.attack_damaged_creatures.append(x)
+			Game.set_gizmos_color_according_to_evade_flags(apply_damage_melee_data.evade_flags)
+			for mask: int in [
+				2 ** glib.GMaskType.CREATURES,
+				2 ** glib.GMaskType.INTERACTABLES,
+			]:
+				var q: Array[Dictionary]
+
+				match collider.get_type():
+					1: # Circle
+						var radius: float = _make_keyframe_value_at(collider.get_circle__radius(), e)
+						q = Collisions.query_circle(collider_pos, radius, mask, true, false, 12)
+					2: # Capsule
+						var radius: float = _make_keyframe_value_at(collider.get_capsule__radius(), e)
+						var rotation: float = _make_keyframe_value_at(collider.get_capsule__rotation(), e)
+						var spread: float = _make_keyframe_value_at(collider.get_capsule__spread(), e)
+						q = Collisions.query_capsule(
+							collider_pos,
+							-creature.attack_target_dir.angle() + rotation,
+							radius * 2 + spread,
+							radius,
+							mask,
+							true,
+							false,
+							12,
+						)
+					3: # Polygon
+						var dist_max: float = _make_keyframe_value_at(collider.get_polygon__dist_max(), e)
+						var dist_min: float = _make_keyframe_value_at(collider.get_polygon__dist_min(), e)
+						var rotation: float = _make_keyframe_value_at(collider.get_polygon__rotation(), e)
+						var spread_angle: float = _make_keyframe_value_at(collider.get_polygon__spread_angle(), e)
+						q = Collisions.query_circle_segment(
+							collider_pos,
+							dist_min,
+							dist_max,
+							-creature.attack_target_dir.angle() + rotation,
+							spread_angle,
+							mask,
+							true,
+							false,
+							12,
+						)
+
+				if mask == 2 ** glib.GMaskType.INTERACTABLES:
+					for d: Dictionary in q:
+						var x: Interactable = d.collider
+						if x in creature.attack_damaged_interactables:
+							continue
+						apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
+							attacker_pos,
+							bf.xz(x.transform.origin),
+						)
+						if apply_damage_interactable(x, melee.get_damage(), apply_damage_melee_data):
+							creature.attack_damaged_interactables.append(x)
+				else:
+					for d: Dictionary in q:
+						var x: Creature = d.collider
+						if (
+							(x.type == glib.GCreatureType.PLAYER)
+							== (creature.type == glib.GCreatureType.PLAYER)
+						):
+							continue
+						if x in creature.attack_damaged_creatures:
+							continue
+						apply_damage_melee_data.impulse_dir = bf.vector2_direction_or_random(
+							attacker_pos,
+							bf.xz(x.transform.origin),
+						)
+						apply_damage_melee_data.damage_stamina = melee.get_damage_stamina()
+						if apply_damage(x, melee.get_damage(), apply_damage_melee_data):
+							creature.attack_damaged_creatures.append(x)
 
 	Collisions.set_gizmos_color(Color.YELLOW)
 	##
@@ -721,6 +734,71 @@ func make_projectile(d: Projectile.Data) -> void: ##
 	d.target = d.pos + target_dir * min(data.get_distance(), (d.target - d.pos).length())
 
 	projectiles_to_make.append(d)
+	##
+
+
+func _keyframe_make_lerp(v1, v2, t: float) -> Variant: ##
+	assert(typeof(v1) == typeof(v2))
+	assert(t >= 0)
+	assert(t <= 1)
+	if v1 is int:
+		return lerp(float(v1 as int), float(v2 as int), t)
+
+	if v1 is float:
+		return lerp(v1, v2, t)
+
+	if v1 is glib.GV2:
+		var v1_: glib.GV2 = v1
+		var v2_: glib.GV2 = v2
+		var x: float = lerp(v1_.get_x(), v2_.get_x(), t)
+		var y: float = lerp(v1_.get_y(), v2_.get_y(), t)
+		return Vector2(x, y)
+
+	if v1 is glib.GV3:
+		var v1_: glib.GV3 = v1
+		var v2_: glib.GV3 = v2
+		var x: float = lerp(v1_.get_x(), v2_.get_x(), t)
+		var y: float = lerp(v1_.get_y(), v2_.get_y(), t)
+		var z: float = lerp(v1_.get_z(), v2_.get_z(), t)
+		return Vector3(x, y, z)
+
+	if v1 is glib.GV4:
+		var v1_: glib.GV4 = v1
+		var v2_: glib.GV4 = v2
+		var x: float = lerp(v1_.get_x(), v2_.get_x(), t)
+		var y: float = lerp(v1_.get_y(), v2_.get_y(), t)
+		var z: float = lerp(v1_.get_z(), v2_.get_z(), t)
+		var w: float = lerp(v1_.get_w(), v2_.get_w(), t)
+		return Vector4(x, y, z, w)
+
+	bf.invalid_path()
+	return null
+	##
+
+
+func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: ##
+	assert(len(keyframes))
+	for item in bf.IterNeighbors.new(keyframes):
+		var left = item[1]
+		var right = item[3]
+
+		if left and right:
+			if (left.index_timeline < index_timeline) && (index_timeline < right.index_timeline):
+				var t = (index_timeline - left.index_timeline) / (
+					right.index_timeline - left.index_timeline
+				)
+				return _keyframe_make_lerp(left.value, right.value, t)
+
+		elif left:
+			if left.index_timeline < index_timeline:
+				return left.value
+
+		elif right:
+			if index_timeline < right.index_timeline:
+				return right.value
+
+	bf.invalid_path()
+	return null
 	##
 
 

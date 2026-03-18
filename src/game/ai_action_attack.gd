@@ -26,7 +26,7 @@ static func explicit_update_attack(
 		c.attack_damaged_creatures.clear()
 		c.attack_damaged_interactables.clear()
 
-		var dur := c.current_attack.get_duration()
+		var dur := c.current_attack.get_duration_frames()
 		if c.type != glib.GCreatureType.PLAYER:
 			Game.v.enemy_started_attack.emit(c.transform.origin)
 			if action_cooldown:
@@ -47,6 +47,7 @@ static func explicit_update_attack(
 	##
 
 	c.attack_elapsed += dt
+	c.attack_elapsed_frames += 1
 
 	## Player consuming stamina
 	if is_player:
@@ -158,6 +159,7 @@ static func explicit_update_attack(
 		c.attack_blinked = false
 		c.attack_dashed = false
 		c.attack_elapsed = 0.0
+		c.attack_elapsed_frames = 0
 		c.attack_projectiles_spawned = 0
 		c.attack_impulses_applied = 0
 		c.attack_id = 0

@@ -195,3 +195,37 @@ func unstable_remove_all_by_key(arr: Array, key: Callable) -> void: ##
 			_remove_indices.append(i)
 	unstable_remove_indices(arr, _remove_indices)
 	##
+
+
+class IterNeighbors: ##
+	var _seq: Array
+	var _i: int
+	var _prev_i: int
+	var _prev_val
+
+
+	func _init(seq):
+		_seq = seq
+
+
+	func _iter_init(_arg):
+		_i = 0
+		_prev_i = -1
+		_prev_val = null
+		return true
+
+
+	func _iter_next(_arg):
+		_i += 1
+		return _i <= _seq.size()
+
+
+	func _iter_get(_arg):
+		if _i < _seq.size():
+			var val = _seq[_i]
+			var result = [_prev_i, _prev_val, _i, val]
+			_prev_i = _i
+			_prev_val = val
+			return result
+		return [_prev_i, _prev_val, _i, null]
+	##

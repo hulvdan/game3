@@ -39,6 +39,7 @@ x mark: proto export snake_case
 x HH НАПИСАТЬ TOO OIIYN
 x mark: polygon collider
 - renaming just added images inside docs/ (rename in README lol)
+x game: implementing animated colliders
 
 * game: make new melee colliders implementation
 *

@@ -138,6 +138,12 @@ func ToV3(value: GV3) -> Vector3:
 func ToV3i(value: GV3i) -> Vector3i:
     return Vector3i(value.get_x(), value.get_y(), value.get_z())
 
+func ToV4(value: GV4) -> Vector4:
+    return Vector4(value.get_x(), value.get_y(), value.get_z(), value.get_w())
+
+func ToV4i(value: GV4i) -> Vector4i:
+    return Vector4i(value.get_x(), value.get_y(), value.get_z(), value.get_w())
+
 static var _glib_mtime: int = -1
 
 const glib_binary_path: String = "res://assets/glib.binpb"

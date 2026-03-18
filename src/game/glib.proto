@@ -8,14 +8,6 @@ syntax = "proto3";
 // ███████╗██║ ╚████║╚██████╔╝██║██║ ╚████║███████╗
 // ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝╚══════╝
 
-message GV1i {
-  int32 x = 1;
-}
-
-message GV1 {
-  float x = 1;
-}
-
 message GV2i {
   int32 x = 1;
   int32 y = 2;
@@ -134,7 +126,6 @@ message GTagValue {
      ('int32', 'Int32'),
      ('float', 'Float'),
      ('string', 'String'),
-     ('GV1', 'V1'),
      ('GV2', 'V2'),
      ('GV3', 'V3'),
      ('GV4', 'V4'),
@@ -164,11 +155,6 @@ message GKeyframeString {
   int32 id = 1;
   int32 index_timeline = 2;
   string value = 3;
-}
-message GKeyframeV1 {
-  int32 id = 1;
-  int32 index_timeline = 2;
-  GV1 value = 3;
 }
 message GKeyframeV2 {
   int32 id = 1;
