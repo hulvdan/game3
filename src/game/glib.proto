@@ -96,18 +96,6 @@ message GProgression {
   GV2i pos = 3;
 }
 
-message GAttackPolygon {
-  float distance_min = 1;
-  float distance_max = 2;
-  float angle = 3;
-  float anchor_x = 4;
-}
-
-message GAttackCircle {
-  float radius = 1;
-  float anchor_x = 2;
-}
-
 message GCreatureDrop {
   int32 item_type = 1;
   int32 min = 2;
@@ -213,10 +201,10 @@ message GCollider {
   repeated GKeyframeFloat capsule__spread = 8;
   repeated GKeyframeFloat capsule__rotation = 9;
 
-  repeated GKeyframeFloat polygon__distance_min = 10;
-  repeated GKeyframeFloat polygon__distance_max = 11;
+  repeated GKeyframeFloat polygon__dist_min = 10;
+  repeated GKeyframeFloat polygon__dist_max = 11;
   repeated GKeyframeFloat polygon__rotation = 12;
-  repeated GKeyframeFloat polygon__anchor_x = 13;
+  repeated GKeyframeFloat polygon__spread_angle = 13;
 }
 
 message GAttackMelee {

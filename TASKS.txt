@@ -36,21 +36,17 @@ x HH НАПИСАТЬ ИП МАМЗЕЛЬ HH БОТ
 x mark: fix crashes
 x mark: exporting
 x mark: proto export snake_case
+x HH НАПИСАТЬ TOO OIIYN
+x mark: polygon collider
 
-* HH НАПИСАТЬ TOO OIIYN
-*
+* renaming just added images inside docs/ (rename in README lol)
+* mark:
+* mark:
+* mark:
 * mark:
 * mark: impl support of abilities
 *
-*
-* mark:
-* mark:
-* mark: save attack to yaml file
-* mark: glib codegen: load attack data from yaml
-* mark:
-* mark:
-* mark:
-* mark:
+* game: make new melee colliders implementation
 *
 * devlog: post: name: Жоско Погромироваю Боевку
 * devlog: post:

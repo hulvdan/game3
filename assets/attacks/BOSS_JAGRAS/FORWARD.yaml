@@ -19,3 +19,58 @@ melee:
           value:
             x: 2.0
       type: 1
+    - capsule__radius:
+        - id: 3
+          value: 0.5
+      capsule__rotation:
+        - id: 5
+          value: 225.0
+      capsule__spread:
+        - id: 4
+          value: 1.0
+      id: 2
+      is_active:
+        - id: 1
+          value: true
+      tr:
+        - id: 2
+          value: {}
+      type: 2
+    - id: 3
+      is_active:
+        - id: 1
+          value: true
+      polygon__dist_max:
+        - id: 4
+          value: 2.5
+      polygon__dist_min:
+        - id: 3
+          value: 0.25
+      polygon__rotation:
+        - id: 5
+      polygon__spread_angle:
+        - id: 6
+          value: 70.0
+      tr:
+        - id: 2
+          value: {}
+      type: 3
+    - id: 4
+      is_active:
+        - id: 1
+          value: true
+      polygon__dist_max:
+        - id: 4
+          value: 0.5
+      polygon__dist_min:
+        - id: 3
+          value: 0.5
+      polygon__rotation:
+        - id: 5
+      polygon__spread_angle:
+        - id: 6
+          value: 45.0
+      tr:
+        - id: 2
+          value: {}
+      type: 3

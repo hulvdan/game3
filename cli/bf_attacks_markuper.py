@@ -1,3 +1,4 @@
+#
 ## Imports
 import math
 import random
@@ -12,7 +13,7 @@ from enum import IntEnum, unique
 from functools import partial
 from math import pi
 from pathlib import Path
-from typing import Any, Callable, Generator, Generic, Self, TypeAlias, TypeVar
+from typing import Any, Callable, Generator, Generic, Iterable, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
 import numpy as np
@@ -178,10 +179,10 @@ _gcollider_keyframe_fields = [
   "capsule__radius",
   "capsule__spread",
   "capsule__rotation",
-  "polygon__distance_min",
-  "polygon__distance_max",
+  "polygon__dist_min",
+  "polygon__dist_max",
   "polygon__rotation",
-  "polygon__anchor_x",
+  "polygon__spread_angle",
 ]
 # [[[end]]] ##
 
@@ -436,6 +437,7 @@ def tool_attacks_markuper() -> None:
   ## Filling g.keyframe_field_types_per_collider_type
   field_tr = _KeyframeTypeV2(step=_STEP_TRANSLATE)
   field_is_active = _KeyframeTypeBool(True)
+  _POLYGON_MIN_RADIUS = 0.125
   g.keyframe_field_types_per_collider_type = {
     _ColliderType.CIRCLE.value: {
       "is_active": field_is_active,
@@ -478,20 +480,25 @@ def tool_attacks_markuper() -> None:
     _ColliderType.POLYGON.value: {
       "is_active": field_is_active,
       "tr": field_tr,
-      "polygon__distance_min": _KeyframeTypeFloat(
+      "polygon__dist_min": _KeyframeTypeFloat(
         default=0.5, step=_STEP_TRANSLATE, step_fast=1, min=0, max=_MAX_OFFSET, fmt="%.2f"
       ),
-      "polygon__distance_max": _KeyframeTypeFloat(
+      "polygon__dist_max": _KeyframeTypeFloat(
         default=0.5,
         step=_STEP_TRANSLATE,
         step_fast=1,
-        min=0.125,
+        min=_POLYGON_MIN_RADIUS,
         max=_MAX_OFFSET,
         fmt="%.2f",
       ),
-      "polygon__angle": _KeyframeTypeFloat(default=0, step=_STEP_ROTATE, step_fast=90),
-      "polygon__anchor_x": _KeyframeTypeFloat(
-        default=0.5, step=_STEP_TRANSLATE, step_fast=1, min=-10, max=10
+      "polygon__rotation": _KeyframeTypeFloat(default=0, step=_STEP_ROTATE, step_fast=90),
+      "polygon__spread_angle": _KeyframeTypeFloat(
+        default=45,
+        step=5,
+        step_fast=15,
+        min=5,
+        max=165,
+        fmt="%.0f",
       ),
     },
   }
@@ -1385,10 +1392,10 @@ def _panel_attack_inspector() -> None:  ##
     atk.timeline_started_playing_at = min(atk.timeline_started_playing_at, frames)
 
   if atk.ref.melee:
-    for i, collider_type in enumerate(
-      (_ColliderType.CIRCLE, _ColliderType.CAPSULE, _ColliderType.POLYGON)
-    ):
-      if i:
+    for i, collider_type in enumerate(_ColliderType):
+      if not i:
+        continue
+      if i > 1:
         im.same_line()
       if im.button("+{}".format(collider_type.name.lower())):
         atk.scheduled_commands.append(
@@ -1490,7 +1497,7 @@ def _panel_visualizer() -> None:
     draw.add_line(_tuplify(world_to_screen(p1)), _tuplify(world_to_screen(p2)), color, 2)
 
   def draw_polyline(
-    points: list[vec3],
+    points: Iterable[vec3],
     color: int = COLOR_YELLOW_U32,
     flags: im.ImDrawFlags_ = im.ImDrawFlags_.none,
   ):
@@ -1538,13 +1545,13 @@ def _panel_visualizer() -> None:
     assert abs(glm.length(normal) - 1) < 0.00001
     m = glm.rotate(2.0 * pi / segments, normal)
 
-    plane_axis = vec4(plane[0], 0)  # type: ignore
-    capsule_dir = vec3(glm.rotate(angle, normal) * plane_axis)
-    spread_vector = capsule_dir * spread
+    plane_forward = vec4(plane[0], 0)  # type: ignore
+    capsule_forward = vec3(glm.rotate(angle, normal) * plane_forward)
+    spread_vector = capsule_forward * spread
     p1 = p + spread_vector / 2
     p2 = p - spread_vector / 2
 
-    cur = -glm.cross(normal, capsule_dir) * radius
+    cur = -glm.cross(normal, capsule_forward) * radius
     for _ in range(segments // 2 + 1):
       _draw_points.append(p1 + vec3(cur))
       cur = m * cur
@@ -1554,7 +1561,37 @@ def _panel_visualizer() -> None:
       cur = m * cur
     draw_polyline(_draw_points, color, flags=im.ImDrawFlags_.closed)
     _draw_points.clear()
-    draw_line(p1 + capsule_dir / 5, p2 - capsule_dir / 5, color)
+    draw_line(p1 + capsule_forward / 5, p2 - capsule_forward / 5, color)
+
+  def draw_polygon(
+    p: vec3,
+    dist_min: float,
+    dist_max: float,
+    spread_angle: float,
+    angle: float,
+    color: int = COLOR_YELLOW_U32,
+    plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
+  ) -> None:
+    assert dist_min >= 0
+    assert dist_max > 0
+    assert spread_angle > 0
+    normal = glm.cross(plane[1], plane[0])
+    polygon_forward = glm.rotate(plane[0], angle, normal)
+    assert isinstance(polygon_forward, vec3)
+    d1 = glm.rotate(polygon_forward, spread_angle / 2, normal)
+    d2 = glm.rotate(polygon_forward, -spread_angle / 2, normal)
+    assert isinstance(d1, vec3)
+    assert isinstance(d2, vec3)
+    _draw_points.append(d1 * dist_max)
+    _draw_points.append(polygon_forward * dist_max)
+    _draw_points.append(d2 * dist_max)
+    if dist_min > 0:
+      _draw_points.append(d2 * dist_min)
+      _draw_points.append(d1 * dist_min)
+    else:
+      _draw_points.append(vec3(0, 0, 0))
+    draw_polyline((x + p for x in _draw_points), color, flags=im.ImDrawFlags_.closed)
+    _draw_points.clear()
 
   gizmo.begin_frame()
   gizmo.set_drawlist()
@@ -1568,6 +1605,7 @@ def _panel_visualizer() -> None:
   hov_col = atk.ref_hovered_collider
   visual_collider = atk.get_visualization_collider()
   if atk.ref.melee:
+    make_value = lambda c, f: c.make_keyframe_value_at(f, atk.timeline_at)[1]
     for c in atk.colliders:
       color_ = COLOR_YELLOW
       if c is sel_col:
@@ -1580,7 +1618,7 @@ def _panel_visualizer() -> None:
       if fade_:
         color_ = imgui_fade_replace(color_, 0.25)
 
-      is_active = c.make_keyframe_value_at("is_active", atk.timeline_at)[1]
+      is_active = make_value(c, "is_active")
       if not is_active:
         if c is not visual_collider:
           continue
@@ -1588,20 +1626,32 @@ def _panel_visualizer() -> None:
 
       color = imgui_color_to_u32(color_)
 
-      c_pos = c.make_keyframe_value_at("tr", atk.timeline_at)[1]
+      c_pos = make_value(c, "tr")
       m = glm.translate(vec3(c_pos.x, 0, c_pos.y))
       center = vec3(m * vec4(0, 0, 0, 1))
 
       match c.ref.type:
         case _ColliderType.CIRCLE.value:
-          radius = c.make_keyframe_value_at("circle__radius", atk.timeline_at)[1]
-          draw_circle(center, radius, color)
+          draw_circle(center, make_value(c, "circle__radius"), color)
 
         case _ColliderType.CAPSULE.value:
-          radius = c.make_keyframe_value_at("capsule__radius", atk.timeline_at)[1]
-          spread = c.make_keyframe_value_at("capsule__spread", atk.timeline_at)[1]
-          rotation = c.make_keyframe_value_at("capsule__rotation", atk.timeline_at)[1]
-          draw_capsule(center, radius, spread, math.radians(rotation), color)
+          draw_capsule(
+            center,
+            make_value(c, "capsule__radius"),
+            make_value(c, "capsule__spread"),
+            radians(make_value(c, "capsule__rotation")),
+            color,
+          )
+
+        case _ColliderType.POLYGON.value:
+          draw_polygon(
+            center,
+            make_value(c, "polygon__dist_min"),
+            make_value(c, "polygon__dist_max"),
+            radians(make_value(c, "polygon__spread_angle")),
+            radians(make_value(c, "polygon__rotation")),
+            color,
+          )
 
         case _:
           assert 0
