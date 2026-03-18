@@ -1,4 +1,4 @@
-# godot-template
+# [godot-template](https://github.com/Hulvdan/godot-template)
 
 ## Setting Up The Machine
 
@@ -22,10 +22,6 @@
   ```
   go install github.com/mariomakdis/proto-renumber@v1.1.0
   ```
-- Optional. For web local testing:
-  ```
-  npm install -g serve
-  ```
 
 ## Bootstrap A New Repo
 
@@ -44,9 +40,7 @@ uv run pre-commit install --install-hooks
 
 <!-- [[[cog
 from pathlib import Path
-for filepath in sorted(
-  list(Path("docs").glob("*.png")), key=lambda x: -int(x.stem)
-):
+for filepath in sorted(Path("docs").glob("*.png"), key=lambda x: -int(x.stem)):
   print(f"![](docs/{filepath.name})")
 cog]]] -->
 ![](docs/13.png)
