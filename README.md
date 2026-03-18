@@ -44,9 +44,15 @@ uv run pre-commit install --install-hooks
 
 <!-- [[[cog
 from pathlib import Path
-for filepath in reversed(list(Path("docs").glob("*.png"))):
+for filepath in sorted(
+  list(Path("docs").glob("*.png")), key=lambda x: -int(x.stem)
+):
   print(f"![](docs/{filepath.name})")
 cog]]] -->
+![](docs/13.png)
+![](docs/12.png)
+![](docs/11.png)
+![](docs/10.png)
 ![](docs/9.png)
 ![](docs/8.png)
 ![](docs/7.png)
@@ -55,9 +61,5 @@ cog]]] -->
 ![](docs/4.png)
 ![](docs/3.png)
 ![](docs/2.png)
-![](docs/13.png)
-![](docs/12.png)
-![](docs/11.png)
-![](docs/10.png)
 ![](docs/1.png)
 <!-- [[[end]]] -->
