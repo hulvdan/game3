@@ -55,5 +55,9 @@ cog]]] -->
 ![](docs/4.png)
 ![](docs/3.png)
 ![](docs/2.png)
+![](docs/13.png)
+![](docs/12.png)
+![](docs/11.png)
+![](docs/10.png)
 ![](docs/1.png)
 <!-- [[[end]]] -->
