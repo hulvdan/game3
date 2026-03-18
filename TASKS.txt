@@ -38,21 +38,20 @@ x mark: exporting
 x mark: proto export snake_case
 x HH НАПИСАТЬ TOO OIIYN
 x mark: polygon collider
+- renaming just added images inside docs/ (rename in README lol)
 
-* renaming just added images inside docs/ (rename in README lol)
+* game: make new melee colliders implementation
+*
 * mark:
 * mark:
 * mark:
 * mark:
 * mark: impl support of abilities
 *
-* game: make new melee colliders implementation
-*
 * devlog: post: name: Жоско Погромироваю Боевку
 * devlog: post:
 * devlog: post:
 * devlog: post:
-*
 *
 * LATER
   * Docking Splits
