@@ -32,12 +32,11 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x mark: all attacks must have codename (for explorer panel)
-x sync imgui + mark: set creature attack names
-x mark: make changing tr work (proto crashes because i need to set .x .y .z etc ONE BY ONE DIRECTLY)
+x HH НАПИСАТЬ ИП МАМЗЕЛЬ HH БОТ
+x mark: fix crashes
 
 * HH НАПИСАТЬ TOO OIIYN
-* mark: fix crashes
+*
 * mark:
 * mark: impl support of abilities
 *

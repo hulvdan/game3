@@ -211,11 +211,12 @@ message GCollider {
 
   repeated GKeyframeFloat capsule__radius = 7;
   repeated GKeyframeFloat capsule__spread = 8;
+  repeated GKeyframeFloat capsule__rotation = 9;
 
-  repeated GKeyframeFloat polygon__distance_min = 9;
-  repeated GKeyframeFloat polygon__distance_max = 10;
-  repeated GKeyframeFloat polygon__angle = 11;
-  repeated GKeyframeFloat polygon__anchor_x = 12;
+  repeated GKeyframeFloat polygon__distance_min = 10;
+  repeated GKeyframeFloat polygon__distance_max = 11;
+  repeated GKeyframeFloat polygon__rotation = 12;
+  repeated GKeyframeFloat polygon__anchor_x = 13;
 }
 
 message GAttackMelee {

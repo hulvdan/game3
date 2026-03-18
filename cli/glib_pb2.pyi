@@ -291,7 +291,7 @@ class GKeyframeV4(_message.Message):
     def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV4, _Mapping]] = ...) -> None: ...
 
 class GCollider(_message.Message):
-    __slots__ = ("id", "type", "debug_name", "tr", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "polygon__distance_min", "polygon__distance_max", "polygon__angle", "polygon__anchor_x")
+    __slots__ = ("id", "type", "debug_name", "tr", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "capsule__rotation", "polygon__distance_min", "polygon__distance_max", "polygon__rotation", "polygon__anchor_x")
     ID_FIELD_NUMBER: _ClassVar[int]
     TYPE_FIELD_NUMBER: _ClassVar[int]
     DEBUG_NAME_FIELD_NUMBER: _ClassVar[int]
@@ -300,9 +300,10 @@ class GCollider(_message.Message):
     CIRCLE__RADIUS_FIELD_NUMBER: _ClassVar[int]
     CAPSULE__RADIUS_FIELD_NUMBER: _ClassVar[int]
     CAPSULE__SPREAD_FIELD_NUMBER: _ClassVar[int]
+    CAPSULE__ROTATION_FIELD_NUMBER: _ClassVar[int]
     POLYGON__DISTANCE_MIN_FIELD_NUMBER: _ClassVar[int]
     POLYGON__DISTANCE_MAX_FIELD_NUMBER: _ClassVar[int]
-    POLYGON__ANGLE_FIELD_NUMBER: _ClassVar[int]
+    POLYGON__ROTATION_FIELD_NUMBER: _ClassVar[int]
     POLYGON__ANCHOR_X_FIELD_NUMBER: _ClassVar[int]
     id: int
     type: int
@@ -312,11 +313,12 @@ class GCollider(_message.Message):
     circle__radius: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     capsule__radius: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     capsule__spread: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
+    capsule__rotation: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     polygon__distance_min: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     polygon__distance_max: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
-    polygon__angle: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
+    polygon__rotation: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
     polygon__anchor_x: _containers.RepeatedCompositeFieldContainer[GKeyframeFloat]
-    def __init__(self, id: _Optional[int] = ..., type: _Optional[int] = ..., debug_name: _Optional[str] = ..., tr: _Optional[_Iterable[_Union[GKeyframeV2, _Mapping]]] = ..., is_active: _Optional[_Iterable[_Union[GKeyframeBool, _Mapping]]] = ..., circle__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__spread: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_min: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_max: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__angle: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__anchor_x: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., type: _Optional[int] = ..., debug_name: _Optional[str] = ..., tr: _Optional[_Iterable[_Union[GKeyframeV2, _Mapping]]] = ..., is_active: _Optional[_Iterable[_Union[GKeyframeBool, _Mapping]]] = ..., circle__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__radius: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__spread: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., capsule__rotation: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_min: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__distance_max: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__rotation: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ..., polygon__anchor_x: _Optional[_Iterable[_Union[GKeyframeFloat, _Mapping]]] = ...) -> None: ...
 
 class GAttackMelee(_message.Message):
     __slots__ = ("damage", "damage_stamina", "evade_flags", "colliders", "hp_rally_recover")

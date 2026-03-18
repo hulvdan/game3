@@ -40,6 +40,7 @@ from glib_pb2 import (
 )
 from google.protobuf.internal import containers
 from google.protobuf.json_format import MessageToDict, ParseDict
+from google.protobuf.message import Message
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
@@ -138,6 +139,15 @@ _GKeyframe: TypeAlias = (
 )
 # [[[end]]] ##
 
+
+def _set_keyframe_value(field: _GKeyframe, value: Any) -> None:  ##
+  if isinstance(value, Message):
+    field.value.CopyFrom(value)  # ty:ignore[unresolved-attribute]
+  else:
+    field.value = value
+  ##
+
+
 ## _gcollider_keyframe_fields: list[str]
 # [[[cog
 # import ast, pathlib
@@ -159,9 +169,10 @@ _gcollider_keyframe_fields = [
   "circle__radius",
   "capsule__radius",
   "capsule__spread",
+  "capsule__rotation",
   "polygon__distance_min",
   "polygon__distance_max",
-  "polygon__angle",
+  "polygon__rotation",
   "polygon__anchor_x",
 ]
 # [[[end]]] ##
@@ -419,8 +430,8 @@ def tool_attacks_markuper() -> None:
   field_is_active = _KeyframeTypeBool(True)
   g.keyframe_field_types_per_collider_type = {
     _ColliderType.CIRCLE.value: {
-      "tr": field_tr,
       "is_active": field_is_active,
+      "tr": field_tr,
       "circle__radius": _KeyframeTypeFloat(
         default=0.5,
         step=_STEP_TRANSLATE,
@@ -431,8 +442,8 @@ def tool_attacks_markuper() -> None:
       ),
     },
     _ColliderType.CAPSULE.value: {
-      "tr": field_tr,
       "is_active": field_is_active,
+      "tr": field_tr,
       "capsule__radius": _KeyframeTypeFloat(
         default=0.5,
         step=_STEP_TRANSLATE,
@@ -449,10 +460,16 @@ def tool_attacks_markuper() -> None:
         max=_MAX_SPREAD,
         fmt="%.2f",
       ),
+      "capsule__rotation": _KeyframeTypeFloat(
+        default=0,
+        step=_STEP_ROTATE,
+        step_fast=90,
+        fmt="%.2f",
+      ),
     },
     _ColliderType.POLYGON.value: {
-      "tr": field_tr,
       "is_active": field_is_active,
+      "tr": field_tr,
       "polygon__distance_min": _KeyframeTypeFloat(
         default=0.5, step=_STEP_TRANSLATE, step_fast=1, min=0, max=_MAX_OFFSET, fmt="%.2f"
       ),
@@ -981,12 +998,12 @@ class _CommandAttackColliderAlterField(_CommandAttackCollider):
   def do(self) -> None:
     c = self.c(self.atk)
     k = _get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
-    k.value.CopyFrom(_to_proto(self.new))  # ty:ignore[unresolved-attribute]
+    _set_keyframe_value(k, _to_proto(self.new))
 
   def undo(self) -> None:
     c = self.c(self.atk)
     k = _get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
-    k.value.CopyFrom(_to_proto(self.old))  # ty:ignore[unresolved-attribute]
+    _set_keyframe_value(k, _to_proto(self.old))
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
     if newest.keyframe_field != self.keyframe_field:
@@ -2038,7 +2055,7 @@ def _panel_collider_inspector() -> None:  ##
       im.table_next_row()
       im.table_set_column_index(0)
 
-      im.text(f)
+      im.text(f.split("__", 1)[-1])
 
       im.table_set_column_index(1)
 
@@ -2298,7 +2315,7 @@ def _post_new_frame() -> None:  ##
       if sel_key := c.selected_keyframe:
         c.select_keyframe(
           sel_key.field,
-          _get_closest_keyframe(getattr(c, sel_key.field), atk.timeline_at)[0],
+          _get_closest_keyframe(getattr(c.ref, sel_key.field), atk.timeline_at)[0],
           update_timeline_playhead=False,
         )
 

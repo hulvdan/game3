@@ -18,10 +18,10 @@ melee:
           value: 0.5
       id: 1
       isActive:
-        - id: 2
+        - id: 1
           value: true
       tr:
-        - id: 1
+        - id: 2
           value: {}
       type: 1
 stopsTrackingAt: 0.4
