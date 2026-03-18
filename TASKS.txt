@@ -34,6 +34,7 @@ PLAN
 x clear
 x HH НАПИСАТЬ ИП МАМЗЕЛЬ HH БОТ
 x mark: fix crashes
+x mark: exporting
 
 * HH НАПИСАТЬ TOO OIIYN
 *

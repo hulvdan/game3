@@ -50,6 +50,14 @@ from pyglm.glm import mat4, radians, vec1, vec2, vec3, vec4
 ##
 
 
+class _ExportAttack(BaseModel):  ##
+  class _ExportMelee(BaseModel):
+    colliders: list[dict]
+
+  melee: _ExportMelee
+  ##
+
+
 ## def _into_proto(x)
 @t.overload
 def _to_proto(x: bool) -> bool: ...
@@ -190,7 +198,7 @@ T5 = t.TypeVar("T5")
 
 
 ## Consts
-_ATTACKS_DIR = bf.ASSETS_DIR / "attacks"
+ASSETS_ATTACKS_DIR = bf.ASSETS_DIR / "attacks"
 _FPS = 30
 _MAX_ATTACK_FRAMES_DURATION = 10 * _FPS
 _STEP_TRANSLATE = 0.25
@@ -1116,11 +1124,11 @@ class _TransientCollider:
   ##
 
   ## Protected
-  _next_keyframe_id_value: _KeyframeID = 1
-
   def _next_keyframe_id(self) -> _KeyframeID:
-    result = self._next_keyframe_id_value
-    self._next_keyframe_id_value += 1
+    result = 1
+    for f in g.keyframe_field_types_per_collider_type[self.ref.type]:
+      for fr in _get_keyframes(self, f):
+        result = max(result, fr.id + 1)
     return result
 
   ##
@@ -1179,7 +1187,9 @@ class _TransientAttack:  ##
   @property
   def export_path(self) -> Path:
     return (
-      _ATTACKS_DIR / self.parent.ref.debug_name / "{}.yaml".format(self.ref.debug_name)
+      ASSETS_ATTACKS_DIR
+      / self.parent.ref.debug_name
+      / "{}.yaml".format(self.ref.debug_name)
     )
 
   ##
@@ -2069,7 +2079,7 @@ def _panel_collider_inspector() -> None:  ##
         c.select_keyframe(
           new_field_to_select,
           _get_closest_keyframe(
-            getattr(c, new_field_to_select), c.selected_keyframe.index_timeline
+            getattr(c.ref, new_field_to_select), c.selected_keyframe.index_timeline
           )[0],
         )
 
@@ -2282,7 +2292,12 @@ def _post_new_frame() -> None:  ##
       export_path = atk.export_path
       bf.recursive_mkdir(export_path.parent)
       with bf.sane_writable_file(export_path) as out_file:
-        yaml.dump(MessageToDict(atk.ref), out_file, indent=2, line_break="\n")
+        yaml.dump(
+          _ExportAttack(**MessageToDict(atk.ref)).model_dump(),
+          out_file,
+          indent=2,
+          line_break="\n",
+        )
     atk.scheduled_commands.clear()
     if atk.collider_to_select:
       atk.ref_selected_collider = atk.collider_to_select

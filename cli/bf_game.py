@@ -20,12 +20,15 @@ import json
 from collections import defaultdict
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator
+from typing import Any, Generator
 
 import bf_lib as bf
 import numpy as np
+import yaml
 from bf_attacks_markuper import *  # noqa: F403
+from bf_attacks_markuper import ASSETS_ATTACKS_DIR
 from bf_typer import command, timing
+from deepmerge import always_merger
 from PIL import Image
 
 ##
@@ -335,6 +338,12 @@ def _process_glib(genline, glib) -> None:
 
   ## Creatures
   with push("creatures"):
+    creature_to_loaded_attacks: dict[str, dict[str, Any]] = defaultdict(dict)
+    for filepath in ASSETS_ATTACKS_DIR.rglob("*.yaml"):
+      with bf.sane_readable_file(filepath) as in_file:
+        creature_to_loaded_attacks[filepath.parent.name][filepath.stem] = yaml.safe_load(
+          in_file
+        )
     for x in glib["creatures"][1:]:
       creature_attack_names = []
       with push(x["type"]):
@@ -345,6 +354,11 @@ def _process_glib(genline, glib) -> None:
         with push("attacks"):
           mirrored_attacks = []
           for i, attack in enumerate(x.get("attacks", [])):
+            loaded_attack = creature_to_loaded_attacks[x["type"]].get(
+              attack.get("debug_name")
+            )
+            if loaded_attack is not None:
+              attack.update(always_merger.merge(loaded_attack, attack).items())
             with push(i):
               attack_debug_name = attack.get("debug_name")
               asserte(attack_debug_name)
