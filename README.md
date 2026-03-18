@@ -43,6 +43,7 @@ from pathlib import Path
 for filepath in sorted(Path("docs").glob("*.png"), key=lambda x: -int(x.stem)):
   print(f"![](docs/{filepath.name})")
 cog]]] -->
+![](docs/15.png)
 ![](docs/14.png)
 ![](docs/13.png)
 ![](docs/12.png)
