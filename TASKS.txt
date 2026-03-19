@@ -37,8 +37,11 @@ x wip
 x mark: can delete collider
 x mark: stamina consumption frame
 x game: make stamina consumption work on 0'th frame
+x game: make new melee colliders implementation
 
-* game: make new melee colliders implementation
+* game: fix jagras forward attack
+* game:
+* game:
 *
 * mark:
 * mark:
