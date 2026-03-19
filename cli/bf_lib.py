@@ -2494,13 +2494,15 @@ def show_imgui(
     io = im.get_io()
     FONT_SIZE = 20
     io.fonts.add_font_from_file_ttf(
-      str(PROJECT_DIR / "cli" / "ComicCode-Semibold.ttf"),
+      str(PROJECT_DIR / "cli" / "assets" / "ComicCode-Semibold.ttf"),
       FONT_SIZE,
     )
     cfg = im.ImFontConfig()
     cfg.merge_mode = True
     io.fonts.add_font_from_file_ttf(
-      str(PROJECT_DIR / "cli" / "Font Awesome 7 Free-Solid-900.otf"), FONT_SIZE, cfg
+      str(PROJECT_DIR / "cli" / "assets" / "Font Awesome 7 Free-Solid-900.otf"),
+      FONT_SIZE,
+      cfg,
     )
 
   runner_params.callbacks.setup_imgui_config = setup_imgui_config

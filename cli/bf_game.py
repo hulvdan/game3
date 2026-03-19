@@ -162,7 +162,7 @@ def _process_glib(genline, glib) -> None:
   genline(f"const ATTACKS_FPSf := {ATTACKS_FPS}.0")
 
   ## LDTK. Enums
-  ldtk_data = json.loads(Path("assets/level.ldtk").read_text(encoding="utf-8"))
+  ldtk_data = json.loads(Path("assets/level/level.ldtk").read_text(encoding="utf-8"))
   for enum in ldtk_data["defs"]["enums"]:
     identifier = enum["identifier"].lower()
     if identifier.startswith("codegen_"):
@@ -171,7 +171,7 @@ def _process_glib(genline, glib) -> None:
         for v in glib[identifier.removeprefix("codegen_")]
         if v["type"] != "INVALID"
       ]
-  Path("assets/level.ldtk").write_text(
+  Path("assets/level/level.ldtk").write_text(
     json.dumps(ldtk_data, ensure_ascii=False, indent=2) + "\n",
     encoding="utf-8",
   )
