@@ -357,12 +357,12 @@ def _process_glib(genline, glib) -> None:
         with push("attacks"):
           mirrored_attacks = []
           for i, attack in enumerate(x.get("attacks", [])):
-            attack["duration_frames"] = 1
             loaded_attack = creature_to_loaded_attacks[x["type"]].get(
               attack.get("debug_name")
             )
             if loaded_attack is not None:
               attack.update(always_merger.merge(loaded_attack, attack).items())
+            attack["duration_frames"] = attack.get("duration_frames", 1)
             with push(i):
               attack_debug_name = attack.get("debug_name")
               asserte(attack_debug_name)

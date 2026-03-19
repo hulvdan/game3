@@ -32,20 +32,12 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x HH НАПИСАТЬ ИП МАМЗЕЛЬ HH БОТ
-x mark: fix crashes
-x mark: exporting
-x mark: proto export snake_case
-x HH НАПИСАТЬ TOO OIIYN
-x mark: polygon collider
-- renaming just added images inside docs/ (rename in README lol)
-x game: implementing animated colliders
-x wip
+x mark: altering duration frames saves attack
 
+* mark: stamina consumption frame
 * game: make new melee colliders implementation
 *
 * mark: can delete collider
-* mark:
 * mark:
 * mark:
 * mark: impl support of abilities

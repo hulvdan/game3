@@ -869,13 +869,17 @@ def iterate_over_containers(
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackAlterFrames(_CommandAttack):
+class _CommandAttackAlterDurationFrames(_CommandAttack):
   old: int
   new: int
 
   def do(self) -> None:
     self.atk.ref.duration_frames = self.new
     self._validate()
+    self.atk.timeline_at = min(self.atk.timeline_at, self.new)
+    self.atk.timeline_started_playing_at = min(
+      self.atk.timeline_started_playing_at, self.new
+    )
 
   def undo(self) -> None:
     self.atk.ref.duration_frames = self.old
@@ -1378,9 +1382,11 @@ def _panel_attack_inspector() -> None:  ##
     _MAX_ATTACK_FRAMES_DURATION,
   )
   if changed:
-    atk.ref.duration_frames = frames
-    atk.timeline_at = min(atk.timeline_at, frames)
-    atk.timeline_started_playing_at = min(atk.timeline_started_playing_at, frames)
+    atk.scheduled_commands.append(
+      _CommandAttackAlterDurationFrames(
+        merge_id=g.action_id, atk=atk, old=atk.ref.duration_frames, new=frames
+      )
+    )
 
   if atk.ref.melee:
     for i, collider_type in enumerate(_ColliderType):
@@ -2335,7 +2341,11 @@ def _post_new_frame() -> None:  ##
       with bf.sane_writable_file(export_path) as out_file:
         yaml.dump(
           _ExportAttack(
-            **MessageToDict(atk.ref, preserving_proto_field_name=True)
+            **MessageToDict(
+              atk.ref,
+              preserving_proto_field_name=True,
+              always_print_fields_with_no_presence=True,
+            )
           ).model_dump(),
           out_file,
           indent=2,

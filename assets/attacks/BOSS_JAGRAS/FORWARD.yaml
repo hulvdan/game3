@@ -1,92 +1,165 @@
+duration_frames: 58
 melee:
   colliders:
-    - circle__radius:
+    - capsule__radius: []
+      capsule__rotation: []
+      capsule__spread: []
+      circle__radius:
         - id: 3
+          index_timeline: 0
           value: 0.5
+      debug_name: ''
       id: 1
       is_active:
         - id: 1
+          index_timeline: 0
+          value: false
         - id: 5
           index_timeline: 21
           value: true
         - id: 4
           index_timeline: 33
+          value: false
+      polygon__dist_max: []
+      polygon__dist_min: []
+      polygon__rotation: []
+      polygon__spread_angle: []
       tr:
         - id: 2
-          value: {}
+          index_timeline: 0
+          value:
+            x: 0.0
+            y: 0.0
         - id: 6
           index_timeline: 45
           value:
             x: 2.0
+            y: 0.0
       type: 1
     - capsule__radius:
         - id: 3
+          index_timeline: 0
           value: 0.5
       capsule__rotation:
         - id: 5
+          index_timeline: 0
           value: 225.0
       capsule__spread:
         - id: 4
+          index_timeline: 0
           value: 1.0
+      circle__radius: []
+      debug_name: ''
       id: 2
       is_active:
         - id: 1
+          index_timeline: 0
           value: true
+      polygon__dist_max: []
+      polygon__dist_min: []
+      polygon__rotation: []
+      polygon__spread_angle: []
       tr:
         - id: 2
-          value: {}
+          index_timeline: 0
+          value:
+            x: 0.0
+            y: 0.0
       type: 2
-    - id: 3
+    - capsule__radius: []
+      capsule__rotation: []
+      capsule__spread: []
+      circle__radius: []
+      debug_name: ''
+      id: 3
       is_active:
         - id: 1
+          index_timeline: 0
           value: true
       polygon__dist_max:
         - id: 4
+          index_timeline: 0
           value: 2.5
       polygon__dist_min:
         - id: 3
+          index_timeline: 0
           value: 0.25
       polygon__rotation:
         - id: 5
+          index_timeline: 0
+          value: 0.0
       polygon__spread_angle:
         - id: 6
+          index_timeline: 0
           value: 70.0
       tr:
         - id: 2
-          value: {}
+          index_timeline: 0
+          value:
+            x: 0.0
+            y: 0.0
       type: 3
-    - id: 4
+    - capsule__radius: []
+      capsule__rotation: []
+      capsule__spread: []
+      circle__radius: []
+      debug_name: ''
+      id: 4
       is_active:
         - id: 1
+          index_timeline: 0
           value: true
       polygon__dist_max:
         - id: 4
+          index_timeline: 0
           value: 0.5
       polygon__dist_min:
         - id: 3
+          index_timeline: 0
           value: 0.5
       polygon__rotation:
         - id: 5
+          index_timeline: 0
+          value: 0.0
       polygon__spread_angle:
         - id: 6
+          index_timeline: 0
           value: 45.0
       tr:
         - id: 2
-          value: {}
+          index_timeline: 0
+          value:
+            x: 0.0
+            y: 0.0
       type: 3
     - capsule__radius:
         - id: 3
+          index_timeline: 0
           value: 0.5
       capsule__rotation:
         - id: 5
+          index_timeline: 0
+          value: 0.0
       capsule__spread:
         - id: 4
+          index_timeline: 0
           value: 1.0
+      circle__radius: []
+      debug_name: ''
       id: 5
       is_active:
         - id: 1
+          index_timeline: 0
           value: true
+      polygon__dist_max: []
+      polygon__dist_min: []
+      polygon__rotation: []
+      polygon__spread_angle: []
       tr:
         - id: 2
-          value: {}
+          index_timeline: 0
+          value:
+            x: 0.0
+            y: 0.0
       type: 2
+stamina_consumption_frame: 0
