@@ -45,14 +45,14 @@ static func explicit_update_attack(
 		)
 	##
 
-	c.attack_elapsed += dt
-	c.attack_elapsed_frames += 1
-
 	## Player consuming stamina
 	if is_player:
 		if c.attack_elapsed_frames == attack.get_stamina_consumption_frame():
 			Room.v.player.consume_stamina(attack.get_stamina_cost())
 	##
+
+	c.attack_elapsed += dt
+	c.attack_elapsed_frames += 1
 
 	# Processing tags
 	for tag in attack.get_tags():
