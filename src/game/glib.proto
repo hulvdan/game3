@@ -209,12 +209,12 @@ message GStaminaCost {
 }
 
 message GProjectileSpawn {
-  float at = 1;
+  int32 at = 1;
   float angle = 2;
 }
 
 message GImpulseData {
-  float at = 1;
+  int32 at = 1;
   float distance = 2;
   float dur = 3;
   float pow = 4;

@@ -105,11 +105,8 @@ static func explicit_update_attack(
 
 	## Spawning projectiles
 	if attack.get_projectile_type():
-		var i: int = 0
 		for spawn in attack.get_projectile_spawns():
-			i += 1
-			if (c.attack_projectiles_spawned < i) && (spawn.get_at() < c.attack_elapsed):
-				c.attack_projectiles_spawned += 1
+			if spawn.get_at() == c.attack_elapsed_frames:
 				var d := Projectile.Data.new()
 				d.type = attack.get_projectile_type() as glib.GProjectileType
 				d.owner_type = c.type

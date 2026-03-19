@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any, Callable, Generic, Iterable, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
+import glib_pb2
 import numpy as np
 import toml
 import yaml
@@ -545,7 +546,7 @@ def tool_attacks_markuper() -> None:
 
   if atk := g.ref_selected_attack:
     if atk.ref.melee and atk.ref.melee.colliders:
-      atk.collider_to_select = atk.colliders[0]
+      atk.collider.to_select = atk.colliders[0]
 
   def setup_imgui_style():
     if loaded_state:
@@ -862,7 +863,7 @@ class _CommandAttackCreateCollider(_CommandAttack):  ##
       c.make_default_keyframe_at(field_name, 0)
     self.atk.colliders.append(c)
     self.atk.ref.melee.colliders.append(self.atk.colliders[-1].ref)
-    self.atk.collider_to_select = self.atk.colliders[-1]
+    self.atk.collider.to_select = self.atk.colliders[-1]
 
   def undo(self) -> None:
     index = next(
@@ -878,20 +879,41 @@ class _CommandAttackCreateCollider(_CommandAttack):  ##
 @t.final
 class _CommandAttackDeleteCollider(_CommandAttack):  ##
   index: int
-  collider: "_TransientCollider"
+  instance: "_TransientCollider"
 
   def do(self) -> None:
     c = self.atk.colliders[self.index]
     del self.atk.colliders[self.index]
     del self.atk.ref.melee.colliders[self.index]
-    if self.atk.ref_selected_collider is c:
-      self.atk.ref_selected_collider = None
-      self.atk.collider_to_select = next(iter(self.atk.colliders), None)
+    if self.atk.collider.ref_selected is c:
+      self.atk.collider.ref_selected = None
+      self.atk.collider.to_select = next(iter(self.atk.colliders), None)
 
   def undo(self) -> None:
-    self.atk.colliders.insert(self.index, self.collider)
-    self.atk.ref.melee.colliders.insert(self.index, self.collider.ref)
-    self.atk.collider_to_select = self.collider
+    self.atk.colliders.insert(self.index, self.instance)
+    self.atk.ref.melee.colliders.insert(self.index, self.instance.ref)
+    self.atk.collider.to_select = self.instance
+
+  ##
+
+
+@dataclass(slots=True)
+@t.final
+class _CommandAttackDeleteImpulse(_CommandAttack):  ##
+  index: int
+  instance: glib_pb2.GImpulseData
+
+  def do(self) -> None:
+    c = self.atk.colliders[self.index]
+    del self.atk.colliders[self.index]
+    del self.atk.ref.melee.colliders[self.index]
+    if self.atk.collider.ref_selected is c:
+      self.atk.collider.ref_selected = None
+      self.atk.collider.to_select = next(iter(self.atk.colliders), None)
+
+  def undo(self) -> None:
+    self.atk.ref.impulses.insert(self.index, self.instance)
+    self.atk.impulse.to_select = self.instance
 
   ##
 
@@ -1215,16 +1237,22 @@ class _TransientCollider:
 
 
 @dataclass(slots=True)
+class _ListItem(Generic[T]):
+  deselection_scheduled: bool = False
+  to_select: T | None = None
+  to_hover: T | None = None
+  ref_selected: T | None = None
+  ref_hovered: T | None = None
+
+
+@dataclass(slots=True)
 class _TransientAttack:  ##
   ref: GAttack
   parent: "_TransientCreature"
   colliders: list[_TransientCollider] = field(default_factory=list)
 
-  collider_deselection_scheduled: bool = False
-  collider_to_select: _TransientCollider | None = None
-  collider_to_hover: _TransientCollider | None = None
-  ref_selected_collider: _TransientCollider | None = None
-  ref_hovered_collider: _TransientCollider | None = None
+  collider: _ListItem[_TransientCollider] = field(default_factory=_ListItem)
+  impulse: _ListItem[glib_pb2.GImpulseData] = field(default_factory=_ListItem)
 
   timeline_at: float = 0
   timeline_started_playing_at: float = 0
@@ -1241,9 +1269,9 @@ class _TransientAttack:  ##
     return result
 
   def get_visualization_collider(self) -> _TransientCollider | None:
-    if self.ref_hovered_collider:
-      return self.ref_hovered_collider
-    return self.ref_selected_collider
+    if self.collider.ref_hovered:
+      return self.collider.ref_hovered
+    return self.collider.ref_selected
 
   def validate(self):
     assert self.ref.duration_frames > 0
@@ -1484,43 +1512,76 @@ def _panel_attack_inspector() -> None:  ##
         )
       )
 
-  if atk.ref.melee:
-    for i, collider_type in enumerate(_ColliderType):
-      if not i:
-        continue
-      if i > 1:
-        im.same_line()
-      if im.button("+{}".format(collider_type.name.lower())):
-        atk.scheduled_commands.append(
-          _CommandAttackCreateCollider(
-            merge_id=g.action_id,
-            atk=atk,
-            collider_id=atk.next_collider_id(),
-            collider_type=collider_type,
-          )
-        )
-
-    for i, collider in enumerate(atk.colliders):
-      flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
-      if atk.ref_selected_collider is collider:
-        flags |= im.TreeNodeFlags_.selected
-      if im.tree_node_ex(
-        "{} {}".format(i, _ColliderType.get_name(collider.ref.type)), flags
-      ):
-        if im.is_item_hovered():
-          atk.collider_to_hover = collider
-        if im.is_item_clicked():
-          if atk.ref_selected_collider is collider:
-            atk.collider_deselection_scheduled = True
-          else:
-            atk.collider_to_select = collider
-        if im.is_item_clicked(im.MouseButton_.right):
-          atk.scheduled_commands.append(
-            _CommandAttackDeleteCollider(
-              merge_id=g.action_id, atk=atk, index=i, collider=collider
+  if im.begin_tab_bar("attack_tab_bar", im.TabBarFlags_.none):
+    if im.begin_tab_item("Colliders")[0]:
+      if atk.ref.melee:
+        for i, collider_type in enumerate(_ColliderType):
+          if not i:
+            continue
+          if i > 1:
+            im.same_line()
+          if im.button("+{}".format(collider_type.name.lower())):
+            atk.scheduled_commands.append(
+              _CommandAttackCreateCollider(
+                merge_id=g.action_id,
+                atk=atk,
+                collider_id=atk.next_collider_id(),
+                collider_type=collider_type,
+              )
             )
+
+        for i, collider in enumerate(atk.colliders):
+          flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
+          if atk.collider.ref_selected is collider:
+            flags |= im.TreeNodeFlags_.selected
+          if im.tree_node_ex(
+            "{} {}".format(i, _ColliderType.get_name(collider.ref.type)), flags
+          ):
+            if im.is_item_hovered():
+              atk.collider.to_hover = collider
+            if im.is_item_clicked():
+              if atk.collider.ref_selected is collider:
+                atk.collider.deselection_scheduled = True
+              else:
+                atk.collider.to_select = collider
+            if im.is_item_clicked(im.MouseButton_.right):
+              atk.scheduled_commands.append(
+                _CommandAttackDeleteCollider(
+                  merge_id=g.action_id, atk=atk, index=i, instance=collider
+                )
+              )
+            im.tree_pop()
+      im.end_tab_item()
+
+    if im.begin_tab_item("Impulses")[0]:
+      for impulse in atk.ref.impulses:
+        if im.tree_node_ex(
+          "{} {:.2f} {:.2f} {:.2f} {}".format(
+            impulse.at,
+            impulse.distance,
+            impulse.dur,
+            impulse.pow,
+            impulse.rotation,
           )
-        im.tree_pop()
+        ):
+          if im.is_item_hovered():
+            atk.impulse.to_hover = impulse
+          if im.is_item_clicked():
+            if atk.impulse.ref_selected is impulse:
+              atk.impulse.deselection_scheduled = True
+            else:
+              atk.impulse.to_select = impulse
+          if im.is_item_clicked(im.MouseButton_.right):
+            atk.scheduled_commands.append(
+              _CommandAttackDeleteImpulse(
+                merge_id=g.action_id, atk=atk, index=i, instance=impulse
+              )
+            )
+          im.tree_pop()
+        # atk.ref.impulses.append(glib_pb2.GImpulseData())
+      im.end_tab_item()
+
+    im.end_tab_bar()
 
   ##
 
@@ -1700,8 +1761,8 @@ def _panel_visualizer() -> None:
   ##
 
   ## Actual logic
-  sel_col = atk.ref_selected_collider
-  hov_col = atk.ref_hovered_collider
+  sel_col = atk.collider.ref_selected
+  hov_col = atk.collider.ref_hovered
   visual_collider = atk.get_visualization_collider()
   if atk.ref.melee:
     make_value = lambda c, f: c.make_keyframe_value_at(f, atk.timeline_at)[1]
@@ -1762,7 +1823,7 @@ def _panel_visualizer() -> None:
   # elif im.is_key_pressed(im.Key.s) or im.is_key_pressed(im.Key._3):
   #   vis.gizmo_mode = GizmoMode.SCALE
 
-  if c := atk.ref_selected_collider:
+  if c := atk.collider.ref_selected:
     delta = Matrix16()
     man_kwargs: dict = {
       "view": vis.camera_view,
@@ -2404,14 +2465,14 @@ def _post_new_frame() -> None:  ##
 
   atk = g.ref_selected_attack
   if atk:
-    if atk.collider_deselection_scheduled:
-      atk.ref_selected_collider = None
-      atk.collider_deselection_scheduled = False
+    if atk.collider.deselection_scheduled:
+      atk.collider.ref_selected = None
+      atk.collider.deselection_scheduled = False
 
-    atk.ref_hovered_collider = None
-    if atk.collider_to_hover:
-      atk.ref_hovered_collider = atk.collider_to_hover
-      atk.collider_to_hover = None
+    atk.collider.ref_hovered = None
+    if atk.collider.to_hover:
+      atk.collider.ref_hovered = atk.collider.to_hover
+      atk.collider.to_hover = None
 
     # Executing commands.
     if atk.scheduled_commands:
@@ -2440,9 +2501,9 @@ def _post_new_frame() -> None:  ##
               atk.history_head -= 1
               atk.history.pop()
     atk.scheduled_commands.clear()
-    if atk.collider_to_select:
-      atk.ref_selected_collider = atk.collider_to_select
-      atk.collider_to_select = None
+    if atk.collider.to_select:
+      atk.collider.ref_selected = atk.collider.to_select
+      atk.collider.to_select = None
 
     # Handling undo.
     g.attack_undo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.z)

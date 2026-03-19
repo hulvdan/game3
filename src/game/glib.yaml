@@ -234,7 +234,7 @@ abilities:
   attack:
     projectile_type: HOOK
     projectile_spawns:
-    - at: 0.2
+    - at: 12
     stamina_cost:
       flat: 0
       rally: 15
@@ -243,7 +243,7 @@ abilities:
   attack:
     projectile_type: AREA_KAZUHA
     projectile_spawns:
-    - at: 0.1
+    - at: 6
     stamina_cost:
       flat: 25
       rally: 5
@@ -266,7 +266,7 @@ creatures:
   #     evade_flags: *evade_flags_default
   # - projectile_type: AREA_SPEEDUP
   #   projectile_spawns:
-  #     - at: 0.1
+  #     - at: 6
   #   cooldown_min: 30.0
   #   cooldown_max: 30.0
   #   distance: 4
@@ -276,37 +276,37 @@ creatures:
   - debug_name: SHOT1
     projectile_type: ARROW
     projectile_spawns:
-    - at: 0.1
+    - at: 6
     stamina_cost:
       flat: 25
       rally: 3
     impulses:
-    - at: 0.0
+    - at: 0
       distance: -0.2
       dur: 0.4
       pow: 1
   - debug_name: SHOT2
     projectile_type: ARROW
     projectile_spawns:
-    - at: 0.1
+    - at: 6
     stamina_cost:
       flat: 15
       rally: 6
     impulses:
-    - at: 0.0
+    - at: 0
       distance: -0.1
       dur: 0.4
       pow: 1
   - debug_name: SHOT3
     projectile_type: ARROW
     projectile_spawns:
-    - at: 0.15
-    - at: 0.25
+    - at: 9
+    - at: 15
     stamina_cost:
       flat: 8
       rally: 2
     impulses:
-    - at: 0.0
+    - at: 0
       distance: -0.7
       dur: 0.4
       pow: 1
@@ -321,7 +321,7 @@ creatures:
   - debug_name: ATK1
     projectile_type: BOMB
     projectile_spawns:
-    - at: 0.5
+    - at: 30
     cooldown_min: 0.7
     cooldown_max: 1.2
     condition:
@@ -337,9 +337,9 @@ creatures:
   - debug_name: ATK1
     projectile_type: BALL
     projectile_spawns:
-    - at: 0.5
-    - at: 1.0
-    - at: 1.5
+    - at: 30
+    - at: 60
+    - at: 90
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
@@ -355,11 +355,11 @@ creatures:
   - debug_name: ATK1
     projectile_type: HOMING
     projectile_spawns:
-    - at: 0.5
+    - at: 30
       angle_degrees: 45
-    - at: 0.5
+    - at: 30
       angle_degrees: 0
-    - at: 0.5
+    - at: 30
       angle_degrees: -45
     cooldown_min: 2.0
     cooldown_max: 3.0
@@ -376,7 +376,7 @@ creatures:
   - debug_name: ATK1
     projectile_type: HOMING
     projectile_spawns:
-    - at: 0.8
+    - at: 48
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
@@ -392,7 +392,7 @@ creatures:
   - debug_name: ATK1
     projectile_type: STAR_HIVE
     projectile_spawns:
-    - at: 0.8
+    - at: 48
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
@@ -408,7 +408,7 @@ creatures:
   - debug_name: ATK1
     projectile_type: STAR_HIVE_INSIDE
     projectile_spawns:
-    - at: 0.5
+    - at: 30
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
@@ -424,7 +424,7 @@ creatures:
   - debug_name: ATK1
     projectile_type: BOMB_BLOCKABLE
     projectile_spawns:
-    - at: 0.5
+    - at: 30
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
@@ -468,7 +468,7 @@ creatures:
     cooldown_max: 2.2
     projectile_type: BLINK
     projectile_spawns:
-    - at: 0.2
+    - at: 12
     condition:
       attackcondition_type: CAPSULE_RADIUS_EXTENDED
       distance_max: 0
@@ -536,7 +536,7 @@ creatures:
   - debug_name: ATK1
     projectile_type: SUMMON
     projectile_spawns:
-    - at: 0.5
+    - at: 30
     cooldown_min: 8.0
     cooldown_max: 12.0
     condition:
@@ -553,7 +553,7 @@ creatures:
   - debug_name: ATK1
     projectile_type: AREA_SLOWDOWN
     projectile_spawns:
-    - at: 0.5
+    - at: 30
     cooldown_min: 30.0
     cooldown_max: 30.0
     condition:
@@ -574,7 +574,7 @@ creatures:
     cooldown_max: 5.0
     stops_tracking_at: 0.4
     impulses:
-    - at: 0.4
+    - at: 24
       dur: 2
       distance: 4
       pow: 1
@@ -593,7 +593,7 @@ creatures:
     stops_tracking_at: 0.0
     mirrorable: true
     impulses:
-    - at: 0.4
+    - at: 24
       distance: 4
       dur: 2
       pow: 1

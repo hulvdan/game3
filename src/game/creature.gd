@@ -17,7 +17,6 @@ var hp_bar: Bar
 var controller: Controller = Controller.new()
 var attack_elapsed: float
 var attack_elapsed_frames: int
-var attack_projectiles_spawned: int
 var attack_impulses_applied: int
 var attack_blinked: bool
 var attack_dashed: bool

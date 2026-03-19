@@ -1,3 +1,28 @@
 duration_frames: 16
-melee: null
+melee:
+  colliders:
+  - capsule__radius: []
+    capsule__rotation: []
+    capsule__spread: []
+    circle__radius:
+    - id: 3
+      index_timeline: 0
+      value: 0.5
+    debug_name: ''
+    id: 1
+    is_active:
+    - id: 1
+      index_timeline: 0
+      value: true
+    polygon__dist_max: []
+    polygon__dist_min: []
+    polygon__rotation: []
+    polygon__spread_angle: []
+    tr:
+    - id: 2
+      index_timeline: 0
+      value:
+        x: 0.0
+        y: 0.0
+    type: 1
 stamina_consumption_frame: 8

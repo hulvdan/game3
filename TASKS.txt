@@ -41,6 +41,7 @@ x game: make new melee colliders implementation
 x game: fix jagras forward attack
 x mark: hide stamina consumption frames if it's not player
 x mark: undo/redo save attacks
+x wip impulses
 
 * mark: attack impulses
 * mark: attack tracking keyframes
