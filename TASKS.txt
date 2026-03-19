@@ -38,10 +38,9 @@ x mark: can delete collider
 x mark: stamina consumption frame
 x game: make stamina consumption work on 0'th frame
 x game: make new melee colliders implementation
+x game: fix jagras forward attack
+x mark: hide stamina consumption frames if it's not player
 
-* game: fix jagras forward attack
-*
-* mark: hide stamina consumption frames if it's not player
 * mark: fix pressing enter upon changing "duration frames" doesn't start playing timeline
 * game:
 * game:

@@ -1,4 +1,4 @@
-duration_frames: 30
+duration_frames: 64
 melee:
   colliders:
     - capsule__radius: []
@@ -15,7 +15,7 @@ melee:
           index_timeline: 7
           value: true
         - id: 9
-          index_timeline: 21
+          index_timeline: 52
           value: false
       polygon__dist_max:
         - id: 4

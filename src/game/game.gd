@@ -371,13 +371,13 @@ func _physics_process(dt: float) -> void:
 		for collider in attack.get_melee().get_colliders():
 			var is_active := false
 			for k in collider.get_is_active():
-				if k.get_index_timeline() > creature.attack_elapsed_frames:
+				if k.get_index_timeline() > e:
 					break
 				is_active = k.get_value()
 			if !is_active:
 				continue
 
-			var off: Vector2 = _make_keyframe_value_at(collider.get_tr(), creature.attack_elapsed_frames)
+			var off: Vector2 = _make_keyframe_value_at(collider.get_tr(), e)
 			var collider_pos := attacker_pos + off
 
 			Game.set_gizmos_color_according_to_evade_flags(apply_damage_melee_data.evade_flags)
@@ -393,11 +393,11 @@ func _physics_process(dt: float) -> void:
 						q = Collisions.query_circle(collider_pos, radius, mask, true, false, 12)
 					2: # Capsule
 						var radius: float = _make_keyframe_value_at(collider.get_capsule__radius(), e)
-						var rotation: float = deg_to_rad(_make_keyframe_value_at(collider.get_capsule__rotation(), e))
+						var rotation: float = _make_keyframe_value_at(collider.get_capsule__rotation(), e)
 						var spread: float = _make_keyframe_value_at(collider.get_capsule__spread(), e)
 						q = Collisions.query_capsule(
 							collider_pos,
-							-creature.attack_target_dir.angle() + rotation,
+							-creature.attack_target_dir.angle() + deg_to_rad(rotation),
 							radius * 2 + spread,
 							radius,
 							mask,
@@ -408,14 +408,14 @@ func _physics_process(dt: float) -> void:
 					3: # Polygon
 						var dist_max: float = _make_keyframe_value_at(collider.get_polygon__dist_max(), e)
 						var dist_min: float = _make_keyframe_value_at(collider.get_polygon__dist_min(), e)
-						var rotation: float = deg_to_rad(_make_keyframe_value_at(collider.get_polygon__rotation(), e))
-						var spread_angle: float = deg_to_rad(_make_keyframe_value_at(collider.get_polygon__spread_angle(), e))
+						var rotation: float = _make_keyframe_value_at(collider.get_polygon__rotation(), e)
+						var spread_angle: float = _make_keyframe_value_at(collider.get_polygon__spread_angle(), e)
 						q = Collisions.query_circle_segment(
 							collider_pos,
 							dist_min,
 							dist_max,
-							-creature.attack_target_dir.angle() + rotation,
-							spread_angle,
+							-creature.attack_target_dir.angle() + deg_to_rad(rotation),
+							deg_to_rad(spread_angle),
 							mask,
 							true,
 							false,
@@ -802,13 +802,15 @@ func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: 
 		var right = item[3]
 
 		@warning_ignore_start("unsafe_method_access")
+
 		if left and right:
 			if (
 				(left.get_index_timeline() < index_timeline)
 				&& (index_timeline < right.get_index_timeline())
 			):
-				var t: float = (index_timeline - left.get_index_timeline()) / (
-					right.get_index_timeline() - left.get_index_timeline()
+				var t := (
+					float(index_timeline - left.get_index_timeline())
+					/ float(right.get_index_timeline() - left.get_index_timeline())
 				)
 				return _keyframe_make_lerp(left.get_value(), right.get_value(), t)
 
@@ -819,6 +821,7 @@ func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: 
 		elif right:
 			if index_timeline < right.get_index_timeline():
 				return _from_proto(right.get_value())
+
 		@warning_ignore_restore("unsafe_method_access")
 
 	bf.invalid_path()
