@@ -392,11 +392,11 @@ func _physics_process(dt: float) -> void:
 						q = Collisions.query_circle(collider_pos, radius, mask, true, false, 12)
 					2: # Capsule
 						var radius: float = _make_keyframe_value_at(collider.get_capsule__radius(), e)
-						var rotation: float = _make_keyframe_value_at(collider.get_capsule__rotation(), e)
+						var rotation: float = deg_to_rad(_make_keyframe_value_at(collider.get_capsule__rotation(), e))
 						var spread: float = _make_keyframe_value_at(collider.get_capsule__spread(), e)
 						q = Collisions.query_capsule(
 							collider_pos,
-							-creature.attack_target_dir.angle() + rotation * PI / 180,
+							-creature.attack_target_dir.angle() + rotation,
 							radius * 2 + spread,
 							radius,
 							mask,
@@ -407,14 +407,14 @@ func _physics_process(dt: float) -> void:
 					3: # Polygon
 						var dist_max: float = _make_keyframe_value_at(collider.get_polygon__dist_max(), e)
 						var dist_min: float = _make_keyframe_value_at(collider.get_polygon__dist_min(), e)
-						var rotation: float = _make_keyframe_value_at(collider.get_polygon__rotation(), e)
-						var spread_angle: float = _make_keyframe_value_at(collider.get_polygon__spread_angle(), e)
+						var rotation: float = deg_to_rad(_make_keyframe_value_at(collider.get_polygon__rotation(), e))
+						var spread_angle: float = deg_to_rad(_make_keyframe_value_at(collider.get_polygon__spread_angle(), e))
 						q = Collisions.query_circle_segment(
 							collider_pos,
 							dist_min,
 							dist_max,
-							-creature.attack_target_dir.angle() + rotation * PI / 180,
-							spread_angle * PI / 180,
+							-creature.attack_target_dir.angle() + rotation,
+							spread_angle,
 							mask,
 							true,
 							false,

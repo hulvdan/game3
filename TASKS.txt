@@ -34,11 +34,11 @@ PLAN
 x clear
 x mark: altering duration frames saves attack
 x wip
+x mark: can delete collider
 
 * mark: stamina consumption frame
 * game: make new melee colliders implementation
 *
-* mark: can delete collider
 * mark:
 * mark:
 * mark: impl support of abilities

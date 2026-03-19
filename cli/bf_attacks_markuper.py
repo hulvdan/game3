@@ -875,6 +875,28 @@ class _CommandAttackCreateCollider(_CommandAttack):  ##
 
 @dataclass(slots=True)
 @t.final
+class _CommandAttackDeleteCollider(_CommandAttack):  ##
+  index: int
+  collider: "_TransientCollider"
+
+  def do(self) -> None:
+    c = self.atk.colliders[self.index]
+    del self.atk.colliders[self.index]
+    del self.atk.ref.melee.colliders[self.index]
+    if self.atk.ref_selected_collider is c:
+      self.atk.ref_selected_collider = None
+      self.atk.collider_to_select = next(iter(self.atk.colliders), None)
+
+  def undo(self) -> None:
+    self.atk.colliders.insert(self.index, self.collider)
+    self.atk.ref.melee.colliders.insert(self.index, self.collider.ref)
+    self.atk.collider_to_select = self.collider
+
+  ##
+
+
+@dataclass(slots=True)
+@t.final
 class _CommandAttackAlterDurationFrames(_CommandAttack):  ##
   old: int
   old_stamina_consumption_frame: int
@@ -1490,6 +1512,12 @@ def _panel_attack_inspector() -> None:  ##
             atk.collider_deselection_scheduled = True
           else:
             atk.collider_to_select = collider
+        if im.is_item_clicked(im.MouseButton_.right):
+          atk.scheduled_commands.append(
+            _CommandAttackDeleteCollider(
+              merge_id=g.action_id, atk=atk, index=i, collider=collider
+            )
+          )
         im.tree_pop()
 
   ##
