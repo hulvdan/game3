@@ -371,8 +371,9 @@ func _physics_process(dt: float) -> void:
 		for collider in attack.get_melee().get_colliders():
 			var is_active := false
 			for k in collider.get_is_active():
-				if k.get_index_timeline() <= creature.attack_elapsed_frames:
-					is_active = k.get_value()
+				if k.get_index_timeline() > creature.attack_elapsed_frames:
+					break
+				is_active = k.get_value()
 			if !is_active:
 				continue
 
@@ -812,7 +813,7 @@ func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: 
 				return _keyframe_make_lerp(left.get_value(), right.get_value(), t)
 
 		elif left:
-			if left.get_index_timeline() < index_timeline:
+			if left.get_index_timeline() <= index_timeline:
 				return _from_proto(left.get_value())
 
 		elif right:

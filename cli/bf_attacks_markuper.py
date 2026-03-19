@@ -1464,24 +1464,25 @@ def _panel_attack_inspector() -> None:  ##
       )
     )
 
-  im.text("stamina_consumption_frame")
-  im.same_line()
-  im.set_next_item_width(im.get_content_region_avail()[0])
-  changed, frames = im.slider_int(
-    bf.imgui_id("", "atk__stamina_consumption_frame"),
-    atk.ref.stamina_consumption_frame,
-    0,
-    atk.ref.duration_frames - 1,
-  )
-  if changed:
-    atk.scheduled_commands.append(
-      _CommandAttackAlterStaminaConsumptionFrame(
-        merge_id=g.action_id,
-        atk=atk,
-        old=atk.ref.stamina_consumption_frame,
-        new=frames,
-      )
+  if atk.parent.ref.debug_name == "PLAYER":
+    im.text("stamina_consumption_frame")
+    im.same_line()
+    im.set_next_item_width(im.get_content_region_avail()[0])
+    changed, frames = im.slider_int(
+      bf.imgui_id("", "atk__stamina_consumption_frame"),
+      atk.ref.stamina_consumption_frame,
+      0,
+      atk.ref.duration_frames - 1,
     )
+    if changed:
+      atk.scheduled_commands.append(
+        _CommandAttackAlterStaminaConsumptionFrame(
+          merge_id=g.action_id,
+          atk=atk,
+          old=atk.ref.stamina_consumption_frame,
+          new=frames,
+        )
+      )
 
   if atk.ref.melee:
     for i, collider_type in enumerate(_ColliderType):

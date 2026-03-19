@@ -1,4 +1,4 @@
 duration_frames: 16
 melee:
   colliders: []
-stamina_consumption_frame: 0
+stamina_consumption_frame: 8

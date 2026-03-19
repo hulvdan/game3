@@ -1,4 +1,4 @@
-duration_frames: 15
+duration_frames: 30
 melee:
   colliders:
     - capsule__radius: []
@@ -8,20 +8,32 @@ melee:
       debug_name: ''
       id: 3
       is_active:
-        - id: 1
+        - id: 8
           index_timeline: 0
+          value: false
+        - id: 1
+          index_timeline: 7
           value: true
+        - id: 9
+          index_timeline: 21
+          value: false
       polygon__dist_max:
         - id: 4
           index_timeline: 0
+          value: 1.0
+        - id: 7
+          index_timeline: 29
           value: 2.5
       polygon__dist_min:
         - id: 3
           index_timeline: 0
-          value: 0.25
+          value: 0.5
       polygon__rotation:
         - id: 5
           index_timeline: 0
+          value: 0.0
+        - id: 10
+          index_timeline: 18
           value: 0.0
       polygon__spread_angle:
         - id: 6
@@ -34,4 +46,4 @@ melee:
             x: 0.0
             y: 0.0
       type: 3
-stamina_consumption_frame: 12
+stamina_consumption_frame: 0
