@@ -40,6 +40,7 @@ x game: make stamina consumption work on 0'th frame
 x game: make new melee colliders implementation
 x game: fix jagras forward attack
 x mark: hide stamina consumption frames if it's not player
+x mark: undo/redo save attacks
 
 * mark: attack impulses
 * mark: attack tracking keyframes

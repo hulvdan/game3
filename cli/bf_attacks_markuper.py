@@ -2417,6 +2417,9 @@ def _post_new_frame() -> None:  ##
     if atk.scheduled_commands:
       while atk.history_head + 1 < len(atk.history):
         atk.history.pop()
+
+    atk_should_be_saved = bool(atk.scheduled_commands)
+
     for command in atk.scheduled_commands:
       command.do()
       atk.history_head += 1
@@ -2436,7 +2439,30 @@ def _post_new_frame() -> None:  ##
             if h_latest.merge_id != g.action_id:
               atk.history_head -= 1
               atk.history.pop()
-    if atk.scheduled_commands:
+    atk.scheduled_commands.clear()
+    if atk.collider_to_select:
+      atk.ref_selected_collider = atk.collider_to_select
+      atk.collider_to_select = None
+
+    # Handling undo.
+    g.attack_undo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.z)
+    if g.attack_undo_scheduled:
+      g.attack_undo_scheduled = False
+      if atk.history_head >= 0:
+        atk.history[atk.history_head].undo()
+        atk.history_head -= 1
+        atk_should_be_saved = True
+
+    # Handling redo.
+    g.attack_redo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.r)
+    if g.attack_redo_scheduled:
+      g.attack_redo_scheduled = False
+      if atk.history_head < len(atk.history) - 1:
+        atk.history_head += 1
+        atk.history[atk.history_head].do()
+        atk_should_be_saved = True
+
+    if atk_should_be_saved:
       assert g.ref_selected_attack_creature
       export_path = atk.export_path
       bf.recursive_mkdir(export_path.parent)
@@ -2453,26 +2479,6 @@ def _post_new_frame() -> None:  ##
           indent=2,
           line_break="\n",
         )
-    atk.scheduled_commands.clear()
-    if atk.collider_to_select:
-      atk.ref_selected_collider = atk.collider_to_select
-      atk.collider_to_select = None
-
-    # Handling undo.
-    g.attack_undo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.z)
-    if g.attack_undo_scheduled:
-      g.attack_undo_scheduled = False
-      if atk.history_head >= 0:
-        atk.history[atk.history_head].undo()
-        atk.history_head -= 1
-
-    # Handling redo.
-    g.attack_redo_scheduled = io.key_ctrl and im.is_key_pressed(im.Key.r)
-    if g.attack_redo_scheduled:
-      g.attack_redo_scheduled = False
-      if atk.history_head < len(atk.history) - 1:
-        atk.history_head += 1
-        atk.history[atk.history_head].do()
 
     if c := atk.get_visualization_collider():
       if c.keyframe_to_select:
