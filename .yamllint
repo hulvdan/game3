@@ -1,8 +1,8 @@
 yaml-files:
-  - '*.yaml'
-  - '*.yml'
-  - '.yamlfmt'
-  - '.yamllint'
+- '*.yaml'
+- '*.yml'
+- '.yamlfmt'
+- '.yamllint'
 
 rules:
   anchors: enable
@@ -24,7 +24,7 @@ rules:
   empty-values: disable
   float-values: disable
   hyphens: enable
-  indentation: enable
+  indentation: disable
   key-duplicates: enable
   key-ordering: disable
   line-length: disable

@@ -5,5 +5,5 @@ formatter:
   trim_trailing_whitespace: true
   eof_newline: true
   force_quote_style: double
-  indentless_arrays: false
+  indentless_arrays: true
   drop_merge_tag: true

@@ -41,6 +41,13 @@ x game: make new melee colliders implementation
 x game: fix jagras forward attack
 x mark: hide stamina consumption frames if it's not player
 
+* mark: attack impulses
+* mark: attack tracking keyframes
+* mark: attack mirrorable bool
+* mark: attack condition
+* mark:
+* mark:
+*
 * mark: fix pressing enter upon changing "duration frames" doesn't start playing timeline
 * game:
 * game:
