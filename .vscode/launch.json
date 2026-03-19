@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "build",
+      "name": "game",
       "type": "debugpy",
       "request": "launch",
       "program": "cli/bf_cli.py",

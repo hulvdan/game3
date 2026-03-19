@@ -43,6 +43,7 @@ from google.protobuf.message import Message
 from imgui_bundle import ImVec2, ImVec2_Pydantic, hello_imgui, imguizmo
 from imgui_bundle import imgui as im
 from pydantic import BaseModel
+from pydantic import Field as PydanticField
 from pyglm import glm
 from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
@@ -55,7 +56,7 @@ class _ExportAttack(BaseModel):  ##
 
   duration_frames: int
   stamina_consumption_frame: int
-  melee: _ExportMelee | None
+  melee: _ExportMelee | None = PydanticField(None)
   ##
 
 

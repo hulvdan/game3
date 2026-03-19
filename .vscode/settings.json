@@ -96,5 +96,8 @@
     "cli"
   ],
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true
+  "python.testing.pytestEnabled": true,
+  "launches": {
+    "run_f4": "tool_attacks_markuper"
+  }
 }

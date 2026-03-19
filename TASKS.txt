@@ -35,8 +35,9 @@ x clear
 x mark: altering duration frames saves attack
 x wip
 x mark: can delete collider
+x mark: stamina consumption frame
 
-* mark: stamina consumption frame
+* game: make stamina consumption frame work
 * game: make new melee colliders implementation
 *
 * mark:
