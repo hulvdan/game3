@@ -737,7 +737,7 @@ func make_projectile(d: Projectile.Data) -> void: ##
 	##
 
 
-func _keyframe_make_lerp(v1, v2, t: float) -> Variant: ##
+func _keyframe_make_lerp(v1: Variant, v2: Variant, t: float) -> Variant: ##
 	assert(typeof(v1) == typeof(v2))
 	assert(t >= 0)
 	assert(t <= 1)
@@ -784,7 +784,7 @@ func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: 
 
 		if left and right:
 			if (left.index_timeline < index_timeline) && (index_timeline < right.index_timeline):
-				var t = (index_timeline - left.index_timeline) / (
+				var t: float = (index_timeline - left.index_timeline) / (
 					right.index_timeline - left.index_timeline
 				)
 				return _keyframe_make_lerp(left.value, right.value, t)
