@@ -376,8 +376,7 @@ func _physics_process(dt: float) -> void:
 			if !is_active:
 				continue
 
-			var off_: glib.GV2 = _make_keyframe_value_at(collider.get_tr(), creature.attack_elapsed_frames)
-			var off: Vector2 = glib.ToV2(off_)
+			var off: Vector2 = _make_keyframe_value_at(collider.get_tr(), creature.attack_elapsed_frames)
 			var collider_pos := attacker_pos + off
 
 			Game.set_gizmos_color_according_to_evade_flags(apply_damage_melee_data.evade_flags)
@@ -397,7 +396,7 @@ func _physics_process(dt: float) -> void:
 						var spread: float = _make_keyframe_value_at(collider.get_capsule__spread(), e)
 						q = Collisions.query_capsule(
 							collider_pos,
-							-creature.attack_target_dir.angle() + rotation,
+							-creature.attack_target_dir.angle() + rotation * PI / 180,
 							radius * 2 + spread,
 							radius,
 							mask,
@@ -414,13 +413,15 @@ func _physics_process(dt: float) -> void:
 							collider_pos,
 							dist_min,
 							dist_max,
-							-creature.attack_target_dir.angle() + rotation,
-							spread_angle,
+							-creature.attack_target_dir.angle() + rotation * PI / 180,
+							spread_angle * PI / 180,
 							mask,
 							true,
 							false,
 							12,
 						)
+					_:
+						bf.invalid_path()
 
 				if mask == 2 ** glib.GMaskType.INTERACTABLES:
 					for d: Dictionary in q:
@@ -737,6 +738,23 @@ func make_projectile(d: Projectile.Data) -> void: ##
 	##
 
 
+func _from_proto(val: Variant) -> Variant: ##
+	if val is glib.GV2:
+		var v_: glib.GV2 = val
+		return Vector2(v_.get_x(), v_.get_y())
+
+	if val is glib.GV3:
+		var v_: glib.GV3 = val
+		return Vector3(v_.get_x(), v_.get_y(), v_.get_z())
+
+	if val is glib.GV4:
+		var v_: glib.GV4 = val
+		return Vector4(v_.get_x(), v_.get_y(), v_.get_z(), v_.get_w())
+
+	return val
+	##
+
+
 func _keyframe_make_lerp(v1: Variant, v2: Variant, t: float) -> Variant: ##
 	assert(typeof(v1) == typeof(v2))
 	assert(t >= 0)
@@ -782,20 +800,25 @@ func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: 
 		var left = item[1]
 		var right = item[3]
 
+		@warning_ignore_start("unsafe_method_access")
 		if left and right:
-			if (left.index_timeline < index_timeline) && (index_timeline < right.index_timeline):
-				var t: float = (index_timeline - left.index_timeline) / (
-					right.index_timeline - left.index_timeline
+			if (
+				(left.get_index_timeline() < index_timeline)
+				&& (index_timeline < right.get_index_timeline())
+			):
+				var t: float = (index_timeline - left.get_index_timeline()) / (
+					right.get_index_timeline() - left.get_index_timeline()
 				)
-				return _keyframe_make_lerp(left.value, right.value, t)
+				return _keyframe_make_lerp(left.get_value(), right.get_value(), t)
 
 		elif left:
-			if left.index_timeline < index_timeline:
-				return left.value
+			if left.get_index_timeline() < index_timeline:
+				return _from_proto(left.get_value())
 
 		elif right:
-			if index_timeline < right.index_timeline:
-				return right.value
+			if index_timeline < right.get_index_timeline():
+				return _from_proto(right.get_value())
+		@warning_ignore_restore("unsafe_method_access")
 
 	bf.invalid_path()
 	return null

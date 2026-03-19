@@ -178,7 +178,7 @@ def _process_glib(genline, glib) -> None:
   ##
 
   ## LDTK. Levels
-  world = bf.ldtk_load("assets/level.ldtk")
+  world = bf.ldtk_load("assets/level/level.ldtk")
   rooms = []
   for level in world.levels:
     if level.field("disable_export"):

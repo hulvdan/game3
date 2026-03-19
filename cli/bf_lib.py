@@ -344,12 +344,14 @@ def _test_only_one_is_not_none() -> None:  ##
   ##
 
 
-def all_are_not_none(values: Iterator | list | tuple) -> bool:
+def all_are_not_none(values: Iterator | list | tuple) -> bool:  ##
   return all(v is not None for v in values)
+  ##
 
 
-def all_are_none(values: Iterator | list | tuple) -> bool:
+def all_are_none(values: Iterator | list | tuple) -> bool:  ##
   return all(v is None for v in values)
+  ##
 
 
 def get_local_ip() -> str:  ##

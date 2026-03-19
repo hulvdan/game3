@@ -33,6 +33,7 @@ PLAN
 ============================================================
 x clear
 x mark: altering duration frames saves attack
+x wip
 
 * mark: stamina consumption frame
 * game: make new melee colliders implementation

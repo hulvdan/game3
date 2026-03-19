@@ -13,7 +13,7 @@ from enum import IntEnum, unique
 from functools import partial
 from math import pi
 from pathlib import Path
-from typing import Any, Callable, Generator, Generic, Iterable, Self, TypeAlias, TypeVar
+from typing import Any, Callable, Generic, Iterable, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
 import numpy as np
@@ -806,6 +806,15 @@ class _KeyframeTypeV2(_KeyframeType[GV2, GKeyframeV2]):  ##
   ##
 
 
+# !banner: commands
+#  ██████╗ ██████╗ ███╗   ███╗███╗   ███╗ █████╗ ███╗   ██╗██████╗ ███████╗
+# ██╔════╝██╔═══██╗████╗ ████║████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝
+# ██║     ██║   ██║██╔████╔██║██╔████╔██║███████║██╔██╗ ██║██║  ██║███████╗
+# ██║     ██║   ██║██║╚██╔╝██║██║╚██╔╝██║██╔══██║██║╚██╗██║██║  ██║╚════██║
+# ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║██║  ██║██║ ╚████║██████╔╝███████║
+#  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝
+
+
 @unique
 class _CommandMergeType(IntEnum):  ##
   NONE = 1
@@ -814,9 +823,8 @@ class _CommandMergeType(IntEnum):  ##
   ##
 
 
-## Commands
 @dataclass(slots=True)
-class _Command(ABC):
+class _Command(ABC):  ##
   merge_id: int
 
   @abstractmethod
@@ -828,15 +836,18 @@ class _Command(ABC):
   def try_merge(self, _newest, /) -> _CommandMergeType:
     return _CommandMergeType.NONE
 
+  ##
+
 
 @dataclass(slots=True)
-class _CommandAttack(_Command):
+class _CommandAttack(_Command):  ##
   atk: "_TransientAttack"
+  ##
 
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackCreateCollider(_CommandAttack):
+class _CommandAttackCreateCollider(_CommandAttack):  ##
   collider_id: int
   collider_type: _ColliderType
 
@@ -859,18 +870,14 @@ class _CommandAttackCreateCollider(_CommandAttack):
     del self.atk.colliders[index]
     del self.atk.ref.melee.colliders[index]
 
-
-def iterate_over_containers(
-  collider: GCollider,
-) -> Generator[tuple[str, _GKeyframesContainer], None, None]:
-  for f in _gcollider_keyframe_fields:
-    yield (f, getattr(collider, f))
+  ##
 
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackAlterDurationFrames(_CommandAttack):
+class _CommandAttackAlterDurationFrames(_CommandAttack):  ##
   old: int
+  old_stamina_consumption_frame: int
   new: int
 
   def do(self) -> None:
@@ -880,9 +887,13 @@ class _CommandAttackAlterDurationFrames(_CommandAttack):
     self.atk.timeline_started_playing_at = min(
       self.atk.timeline_started_playing_at, self.new
     )
+    self.atk.ref.stamina_consumption_frame = min(
+      self.atk.ref.stamina_consumption_frame, self.new - 1
+    )
 
   def undo(self) -> None:
     self.atk.ref.duration_frames = self.old
+    self.atk.ref.stamina_consumption_frame = self.old_stamina_consumption_frame
     self._validate()
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
@@ -900,26 +911,60 @@ class _CommandAttackAlterDurationFrames(_CommandAttack):
     assert self.old > 0
     assert self.new > 0
     if self.atk.ref.melee:
-      for c in self.atk.ref.melee.colliders:
-        for _, frames in iterate_over_containers(c):
-          for frame in frames:
+      for c in self.atk.colliders:
+        for field_name in g.keyframe_field_types_per_collider_type[c.ref.type]:
+          for frame in c.get_keyframes(field_name):
             assert self.new > frame.index_timeline
+
+  ##
 
 
 @dataclass(slots=True)
-class _CommandAttackCollider(_CommandAttack):
+@t.final
+class _CommandAttackAlterStaminaConsumptionFrame(_CommandAttack):  ##
+  old: int
+  new: int
+
+  def do(self) -> None:
+    self.atk.ref.stamina_consumption_frame = self.new
+    self._validate()
+
+  def undo(self) -> None:
+    self.atk.ref.stamina_consumption_frame = self.old
+    self._validate()
+
+  def try_merge(self, newest: Self, /) -> _CommandMergeType:
+    if newest.atk is not self.atk:
+      return _CommandMergeType.NONE
+
+    self.new = newest.new
+    return (
+      _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
+      if (self.old == self.new)
+      else _CommandMergeType.MERGED_OKAY
+    )
+
+  def _validate(self):
+    assert self.old >= 0
+    assert self.new >= 0
+    self.atk.validate()
+
+  ##
+
+
+@dataclass(slots=True)
+class _CommandAttackCollider(_CommandAttack):  ##
   collider_id: _ColliderID
 
   def c(self, atk: "_TransientAttack") -> "_TransientCollider":
     return next(c for c in atk.colliders if c.ref.id == self.collider_id)
 
-
-ATTACK_COMMAND_COLLIDER_REGISTRY: dict[str, type[_CommandAttackCollider]] = {}
+  ##
 
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackColliderKeyframeAdd(_CommandAttackCollider):
+class _CommandAttackColliderKeyframeAdd(_CommandAttackCollider):  ##
   keyframe_field: str
   keyframe_index_timeline: int
 
@@ -930,7 +975,7 @@ class _CommandAttackColliderKeyframeAdd(_CommandAttackCollider):
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    frames = _get_keyframes(c, self.keyframe_field)
+    frames = c.get_keyframes(self.keyframe_field)
     assert len(frames) > 1
     for i, fr in enumerate(frames):
       if fr.index_timeline == self.keyframe_index_timeline:
@@ -938,24 +983,26 @@ class _CommandAttackColliderKeyframeAdd(_CommandAttackCollider):
         return
     raise ValueError
 
+  ##
+
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackColliderKeyframeMove(_CommandAttackCollider):
+class _CommandAttackColliderKeyframeMove(_CommandAttackCollider):  ##
   keyframe_field: str
   keyframe_index_timeline_from: int
   keyframe_index_timeline_to: int
 
   def do(self) -> None:
     c = self.c(self.atk)
-    frames = _get_keyframes(c, self.keyframe_field)
+    frames = c.get_keyframes(self.keyframe_field)
     fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_from)
     fr.index_timeline = self.keyframe_index_timeline_to
     self.atk.timeline_at = self.keyframe_index_timeline_to
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    frames = _get_keyframes(c, self.keyframe_field)
+    frames = c.get_keyframes(self.keyframe_field)
     fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_to)
     fr.index_timeline = self.keyframe_index_timeline_from
     self.atk.timeline_at = self.keyframe_index_timeline_from
@@ -971,17 +1018,19 @@ class _CommandAttackColliderKeyframeMove(_CommandAttackCollider):
       else _CommandMergeType.MERGED_OKAY
     )
 
+  ##
+
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackColliderKeyframeRemove(_CommandAttackCollider):
+class _CommandAttackColliderKeyframeRemove(_CommandAttackCollider):  ##
   keyframe_field: str
   keyframe_index_timeline: int
   keyframe_value: Any
 
   def do(self) -> None:
     c = self.c(self.atk)
-    frames = _get_keyframes(c, self.keyframe_field)
+    frames = c.get_keyframes(self.keyframe_field)
     assert len(frames) > 1
     for i, k in enumerate(frames):
       if k.index_timeline == self.keyframe_index_timeline:
@@ -996,10 +1045,12 @@ class _CommandAttackColliderKeyframeRemove(_CommandAttackCollider):
     k.value = self.keyframe_value
     self.atk.timeline_at = self.keyframe_index_timeline
 
+  ##
+
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackColliderAlterField(_CommandAttackCollider):
+class _CommandAttackColliderAlterField(_CommandAttackCollider):  ##
   keyframe_field: str
   keyframe_index_inside_list: int
   old: Any
@@ -1007,12 +1058,12 @@ class _CommandAttackColliderAlterField(_CommandAttackCollider):
 
   def do(self) -> None:
     c = self.c(self.atk)
-    k = _get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
+    k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
     _set_keyframe_value(k, _to_proto(self.new))
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    k = _get_keyframes(c, self.keyframe_field)[self.keyframe_index_inside_list]
+    k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
     _set_keyframe_value(k, _to_proto(self.old))
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
@@ -1028,8 +1079,7 @@ class _CommandAttackColliderAlterField(_CommandAttackCollider):
       else _CommandMergeType.MERGED_OKAY
     )
 
-
-##
+  ##
 
 
 @dataclass(slots=True)
@@ -1054,7 +1104,7 @@ class _TransientCollider:
   def make_keyframe_value_at(
     self, field: str, index_timeline: float
   ) -> tuple[int, t.Any]:  ##
-    frames = _get_keyframes(self, field)
+    frames = self.get_keyframes(field)
     keyframe_type = self.get_keyframe_type(field)
 
     for i, fr in enumerate(frames):
@@ -1086,7 +1136,7 @@ class _TransientCollider:
   def make_default_keyframe_at(
     self, field_name: str, index_timeline: int
   ) -> tuple[int, _GKeyframe]:  ##
-    frames = _get_keyframes(self, field_name)
+    frames = self.get_keyframes(field_name)
     for fr in frames:
       assert fr.index_timeline != index_timeline
     with _override_keyframe_round_to_step(True):
@@ -1103,6 +1153,11 @@ class _TransientCollider:
     return (insert_index, k)
     ##
 
+  def get_keyframes(self, field_name: str) -> _GKeyframesContainer:  ##
+    assert field_name in g.keyframe_field_types_per_collider_type[self.ref.type]
+    return getattr(self.ref, field_name)
+    ##
+
   def select_keyframe(
     self,
     field_name: str,
@@ -1110,7 +1165,7 @@ class _TransientCollider:
     *,
     update_timeline_playhead: bool = True,
   ) -> None:  ##
-    frames = _get_keyframes(self, field_name)
+    frames = self.get_keyframes(field_name)
     fr = frames[index_inside_list]
     self.keyframe_to_select = (
       _SelectedKeyframe(
@@ -1129,7 +1184,7 @@ class _TransientCollider:
   def _next_keyframe_id(self) -> _KeyframeID:
     result = 1
     for f in g.keyframe_field_types_per_collider_type[self.ref.type]:
-      for fr in _get_keyframes(self, f):
+      for fr in self.get_keyframes(f):
         result = max(result, fr.id + 1)
     return result
 
@@ -1169,6 +1224,7 @@ class _TransientAttack:  ##
 
   def validate(self):
     assert self.ref.duration_frames > 0
+    assert 0 <= self.ref.stamina_consumption_frame < self.ref.duration_frames
     assert self.timeline_at >= 0
     assert self.timeline_at <= self.ref.duration_frames
     assert self.timeline_started_playing_at >= 0
@@ -1177,8 +1233,7 @@ class _TransientAttack:  ##
     if self.ref.melee:
       for c in self.colliders:
         for frames in (
-          _get_keyframes(c, x)
-          for x in g.keyframe_field_types_per_collider_type[c.ref.type]
+          c.get_keyframes(x) for x in g.keyframe_field_types_per_collider_type[c.ref.type]
         ):
           for fr in frames:
             assert fr.index_timeline >= 0
@@ -1194,12 +1249,6 @@ class _TransientAttack:  ##
       / "{}.yaml".format(self.ref.debug_name)
     )
 
-  ##
-
-
-def _get_keyframes(c: _TransientCollider, field_name: str) -> _GKeyframesContainer:  ##
-  assert field_name in g.keyframe_field_types_per_collider_type[c.ref.type]
-  return getattr(c.ref, field_name)
   ##
 
 
@@ -1364,19 +1413,19 @@ def _panel_attack_inspector() -> None:  ##
   if not atk:
     return
 
-  im.text("Frames")
+  im.text("duration_frames")
   im.same_line()
   min_attack_frames = 1
   if atk.ref.melee:
     for c in atk.colliders:
       for frames in (
-        _get_keyframes(c, x) for x in g.keyframe_field_types_per_collider_type[c.ref.type]
+        c.get_keyframes(x) for x in g.keyframe_field_types_per_collider_type[c.ref.type]
       ):
         for frame in frames:
           min_attack_frames = max(min_attack_frames, frame.index_timeline + 1)
   im.set_next_item_width(im.get_content_region_avail()[0])
   changed, frames = im.slider_int(
-    bf.imgui_id("", "attack_duration_frames"),
+    bf.imgui_id("", "atk__duration_frames"),
     atk.ref.duration_frames,
     min_attack_frames,
     _MAX_ATTACK_FRAMES_DURATION,
@@ -1384,7 +1433,30 @@ def _panel_attack_inspector() -> None:  ##
   if changed:
     atk.scheduled_commands.append(
       _CommandAttackAlterDurationFrames(
-        merge_id=g.action_id, atk=atk, old=atk.ref.duration_frames, new=frames
+        merge_id=g.action_id,
+        atk=atk,
+        old=atk.ref.duration_frames,
+        old_stamina_consumption_frame=atk.ref.stamina_consumption_frame,
+        new=frames,
+      )
+    )
+
+  im.text("stamina_consumption_frame")
+  im.same_line()
+  im.set_next_item_width(im.get_content_region_avail()[0])
+  changed, frames = im.slider_int(
+    bf.imgui_id("", "atk__stamina_consumption_frame"),
+    atk.ref.stamina_consumption_frame,
+    0,
+    atk.ref.duration_frames - 1,
+  )
+  if changed:
+    atk.scheduled_commands.append(
+      _CommandAttackAlterStaminaConsumptionFrame(
+        merge_id=g.action_id,
+        atk=atk,
+        old=atk.ref.stamina_consumption_frame,
+        new=frames,
       )
     )
 
@@ -1679,7 +1751,7 @@ def _panel_visualizer() -> None:
       "delta_matrix": delta,
     }
 
-    frames_tr = _get_keyframes(c, "tr")
+    frames_tr = c.get_keyframes("tr")
     tr_closest_index, poss_ = _get_closest_keyframe(frames_tr, atk.timeline_at)
     tr_pos = poss_.value
     assert isinstance(tr_pos, GV2)
@@ -1878,7 +1950,7 @@ def _panel_timeline() -> None:  ##
     ("", None),
     *(
       (
-        (x, _get_keyframes(c, x))
+        (x, c.get_keyframes(x))
         for x in g.keyframe_field_types_per_collider_type[c.ref.type]
       )
       if c
@@ -1934,7 +2006,7 @@ def _panel_timeline() -> None:  ##
           if (
             (not tim.dragging_keyframe)
             and (im.is_mouse_clicked(1) or im.is_key_pressed(im.Key.delete))
-            and (len(frames := _get_keyframes(c, field_name)) > 1)
+            and (len(frames := c.get_keyframes(field_name)) > 1)
           ):
             hov = imgui_timeline_line_out.hovered_index_half_cell_offset
             for k in frames:
@@ -2078,7 +2150,7 @@ def _panel_collider_inspector() -> None:  ##
   assert current_frame >= 0
 
   def closest_keyframe_list_index(field_name: str) -> int:
-    return _get_closest_keyframe(_get_keyframes(c, field_name), atk.timeline_at)[0]
+    return _get_closest_keyframe(c.get_keyframes(field_name), atk.timeline_at)[0]
 
   # im.dummy((1, im.get_frame_height()))
   im.dummy((1, im.get_text_line_height()))
@@ -2106,7 +2178,7 @@ def _panel_collider_inspector() -> None:  ##
           if (not disabled) and im.is_key_pressed(key):
             vertical_off = voff
 
-      frames = _get_keyframes(c, f)
+      frames = c.get_keyframes(f)
       keyframe_type = c.get_keyframe_type(f)
 
       im.table_next_row()
