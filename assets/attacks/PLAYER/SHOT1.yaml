@@ -1,9 +1,4 @@
 duration_frames: 16
-impulses:
-- at: 2
-  distance: 0.2
-  dur: 6
-  id: 1
-  pow: 1.0
-  rotation: 180
+impulses: []
+melee: null
 stamina_consumption_frame: 8

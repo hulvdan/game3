@@ -914,12 +914,11 @@ class _CommandAttackDeleteImpulse(_CommandAttack):  ##
   instance: glib_pb2.GImpulseData
 
   def do(self) -> None:
-    c = self.atk.colliders[self.index]
-    del self.atk.colliders[self.index]
-    del self.atk.ref.melee.colliders[self.index]
-    if self.atk.collider.ref_selected is c:
-      self.atk.collider.ref_selected = None
-      self.atk.collider.to_select = next(iter(self.atk.colliders), None)
+    i = self.atk.ref.impulses[self.index]
+    del self.atk.ref.impulses[self.index]
+    if self.atk.impulse.ref_selected is i:
+      self.atk.impulse.ref_selected = None
+      self.atk.impulse.to_select = next(iter(self.atk.ref.impulses), None)
 
   def undo(self) -> None:
     self.atk.ref.impulses.insert(self.index, self.instance)
@@ -1617,7 +1616,10 @@ def _panel_attack_inspector() -> None:  ##
       im.end_tab_item()
 
     if im.begin_tab_item("Impulses")[0]:
-      for impulse in atk.ref.impulses:
+      for i, impulse in enumerate(atk.ref.impulses):
+        flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
+        if impulse is atk.impulse.ref_selected:
+          flags |= im.TreeNodeFlags_.selected
         if im.tree_node_ex(
           "{} {:.2f} {:.2f} {:.2f} {}".format(
             impulse.at,
@@ -1625,7 +1627,8 @@ def _panel_attack_inspector() -> None:  ##
             impulse.dur,
             impulse.pow,
             impulse.rotation,
-          )
+          ),
+          flags,
         ):
           if im.is_item_hovered():
             atk.impulse.to_hover = impulse
