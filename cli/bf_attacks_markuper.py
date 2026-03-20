@@ -56,9 +56,9 @@ class _ExportAttack(BaseModel):  ##
     id: int
     at: int
     distance: float
-    dur: float
+    dur: int
     pow: float
-    rotation: float
+    rotation: int
 
   class _ExportMelee(BaseModel):
     colliders: list[dict]

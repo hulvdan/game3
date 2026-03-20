@@ -280,13 +280,6 @@ creatures:
     stamina_cost:
       flat: 25
       rally: 3
-    impulses:
-    - id: 1
-      at: 0
-      distance: 0.2
-      dur: 0.4
-      pow: 1
-      rotation: 180
   - debug_name: SHOT2
     projectile_type: ARROW
     projectile_spawns:
@@ -294,13 +287,6 @@ creatures:
     stamina_cost:
       flat: 15
       rally: 6
-    impulses:
-    - id: 1
-      at: 0
-      distance: 0.1
-      dur: 0.4
-      pow: 1
-      rotation: 180
   - debug_name: SHOT3
     projectile_type: ARROW
     projectile_spawns:
@@ -309,13 +295,6 @@ creatures:
     stamina_cost:
       flat: 8
       rally: 2
-    impulses:
-    - id: 1
-      at: 0
-      distance: 0.7
-      dur: 0.4
-      pow: 1
-      rotation: 180
   ability_types:
   - HOOK
 ##

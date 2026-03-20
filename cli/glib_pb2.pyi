@@ -323,10 +323,10 @@ class GImpulseData(_message.Message):
     id: int
     at: int
     distance: float
-    dur: float
+    dur: int
     pow: float
     rotation: float
-    def __init__(self, id: _Optional[int] = ..., at: _Optional[int] = ..., distance: _Optional[float] = ..., dur: _Optional[float] = ..., pow: _Optional[float] = ..., rotation: _Optional[float] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., at: _Optional[int] = ..., distance: _Optional[float] = ..., dur: _Optional[int] = ..., pow: _Optional[float] = ..., rotation: _Optional[float] = ...) -> None: ...
 
 class GAttackCondition(_message.Message):
     __slots__ = ("type", "debug_name")

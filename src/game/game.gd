@@ -808,10 +808,9 @@ func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: 
 				(left.get_index_timeline() < index_timeline)
 				&& (index_timeline < right.get_index_timeline())
 			):
-				var t := (
-					float(index_timeline - left.get_index_timeline())
-					/ float(right.get_index_timeline() - left.get_index_timeline())
-				)
+				var l: int = left.get_index_timeline()
+				var r: int = right.get_index_timeline()
+				var t := float(l - index_timeline) / float(r - l)
 				return _keyframe_make_lerp(left.get_value(), right.get_value(), t)
 
 		elif left:

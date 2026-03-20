@@ -217,7 +217,7 @@ message GImpulseData {
   int32 id = 1;
   int32 at = 2;
   float distance = 3;
-  float dur = 4;
+  int32 dur = 4;
   float pow = 5;
   float rotation = 6;
 }
