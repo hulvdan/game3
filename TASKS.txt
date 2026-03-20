@@ -33,11 +33,14 @@ PLAN
 ============================================================
 x clear
 x wip impulses
+x mark: impulses: show body red circle
+x mark: impulses: body is offsetted correctly by impulses
+x mark: impulses: changing impulse value moves body
 
-* mark: impulses: show body red circle
-* mark: impulses: body is offsetted correctly by impulses
-* mark: impulses: changing impulse value moves body
 * mark: impulses: show selected impulse red arrow
+* mark: impulses: can change impulse `at` and `dur` in the timeline
+* mark: impulses:
+* mark: impulses:
 * mark: impulses:
 * mark: impulses:
 *

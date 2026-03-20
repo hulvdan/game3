@@ -1874,6 +1874,26 @@ def _panel_visualizer() -> None:
   ##
 
   ## Actual logic
+  # Drawing body
+  body_pos = vec2()
+  for impulse in atk.ref.impulses:
+    e = atk.timeline_at - impulse.at
+    if e <= 0:
+      continue
+    elif e < impulse.dur:
+      t = e / impulse.dur
+      assert 0 <= t <= 1
+      A = impulse.distance / (1 - 1 / (impulse.pow + 1))
+      dist = A * (t - (t ** (impulse.pow + 1)) / (impulse.pow + 1))
+      body_pos += glm.rotate(vec2(dist, 0), radians(impulse.rotation))
+    else:
+      body_pos += glm.rotate(vec2(impulse.distance, 0), radians(impulse.rotation))
+
+  draw_circle(
+    vec3(body_pos.x, 0, body_pos.y), atk.parent.ref.collider_size / 2, COLOR_RED_U32
+  )
+
+  # Drawing colliders
   sel_col = atk.collider.ref_selected
   hov_col = atk.collider.ref_hovered
   visual_collider = atk.get_visualization_collider()
@@ -1901,7 +1921,7 @@ def _panel_visualizer() -> None:
 
       c_pos = make_value(c, "tr")
       m = glm.translate(vec3(c_pos.x, 0, c_pos.y))
-      center = vec3(m * vec4(0, 0, 0, 1))
+      center = vec3(m * vec4(0, 0, 0, 1)) + vec3(body_pos.x, 0, body_pos.y)
 
       match c.ref.type:
         case _ColliderType.CIRCLE.value:
