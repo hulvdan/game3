@@ -45,8 +45,9 @@ x mark: play rate
 x ahk better godot closing
 x mark: impulses: draw impulse red arrow
 x upd colliders
+x game: fix crash
 
-* game: fix crash
+* game: abiblities
 * mark: attack condition
 * mark: projectile spawn frames
 *

@@ -203,13 +203,13 @@ def iter_neighbors(
   seq: t.Iterable[T],
 ) -> t.Generator[tuple[int, T | None, int, T | None], None, None]:  ##
   it = iter(seq)
-  prev_i, prev_val = -1, None
-  i = 0
+  i = -1
+  prev_val = None
   for val in it:
-    yield (prev_i, prev_val, i, val)
-    prev_i, prev_val = i, val
+    yield (i, prev_val, i + 1, val)
+    prev_val = val
     i += 1
-  yield (prev_i, prev_val, i, None)
+  yield (i, prev_val, i + 1, None)
   ##
 
 
