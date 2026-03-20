@@ -19,21 +19,19 @@ case "activate":
         }
     }
 
-case "run_in_godot":
+case "close_in_godot":
     WinGet, id, List
     Loop, %id% {
         this_id := id%A_Index%
         WinGetTitle, title, ahk_id %this_id%
         WinGet, exe, ProcessName, ahk_id %this_id%
         if RegExMatch(exe, "Godot_.*_win64\.exe") {
-            WinActivate, ahk_id %this_id%
-            Send, {f8}
+            ControlSend,, {f8}, ahk_id %this_id%
             break
         }
     }
 
-    sleep 500
-
+case "run_in_godot":
     WinGet, id, List
     Loop, %id% {
         this_id := id%A_Index%

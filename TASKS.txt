@@ -42,6 +42,7 @@ x mark: impulses: fix can delete
 x mark: impulses: can add
 x mark: play once checkbox
 x mark: play rate
+x ahk better godot closing
 
 * mark: make it unable to drag playhead when started dragging outside of timeline
 * mark: impulses: show selected impulse red arrow

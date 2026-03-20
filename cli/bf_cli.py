@@ -144,6 +144,11 @@ def do_activate_godot_ahk() -> None:  ##
   ##
 
 
+def do_close_in_godot_ahk() -> None:  ##
+  bf.run_command(r"autohotkey cli\cli.ahk close_in_godot")
+  ##
+
+
 def do_run_in_godot_ahk() -> None:  ##
   bf.run_command(r"autohotkey cli\cli.ahk run_in_godot")
   ##
@@ -255,6 +260,7 @@ def build(
 
 @command
 def run():  ##
+  do_close_in_godot_ahk()
   platform = bf.BuildPlatform.Win
   build_type = bf.BuildType.Debug
   regenerate_python_glib_proto()
