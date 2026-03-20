@@ -1,4 +1,38 @@
-duration_frames: 16
+duration_frames: 34
 impulses: []
-melee: null
-stamina_consumption_frame: 8
+melee:
+  colliders:
+  - capsule__radius: []
+    capsule__rotation: []
+    capsule__spread: []
+    circle__radius: []
+    debug_name: ''
+    id: 1
+    is_active:
+    - id: 1
+      index_timeline: 0
+      value: true
+    polygon__dist_max:
+    - id: 4
+      index_timeline: 0
+      value: 0.5
+    polygon__dist_min:
+    - id: 3
+      index_timeline: 0
+      value: 0.5
+    polygon__rotation:
+    - id: 5
+      index_timeline: 0
+      value: 0.0
+    polygon__spread_angle:
+    - id: 6
+      index_timeline: 0
+      value: 45.0
+    tr:
+    - id: 2
+      index_timeline: 0
+      value:
+        x: 0.0
+        y: 0.0
+    type: 3
+stamina_consumption_frame: 0

@@ -859,7 +859,7 @@ class _CommandAttack(_Command):  ##
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackCreateCollider(_CommandAttack):  ##
+class _CommandAttackColliderCreate(_CommandAttack):  ##
   collider_id: int
   collider_type: _ColliderType
 
@@ -909,7 +909,34 @@ class _CommandAttackDeleteCollider(_CommandAttack):  ##
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackDeleteImpulse(_CommandAttack):  ##
+class _CommandAttackImpulseCreate(_CommandAttack):  ##
+  impulse_id: int
+
+  def do(self) -> None:
+    for impulse in self.atk.ref.impulses:
+      assert impulse.id < self.impulse_id
+    self.atk.ref.impulses.append(
+      glib_pb2.GImpulseData(
+        id=self.impulse_id,
+        distance=1,
+        dur=min(self.atk.ref.duration_frames - 1, ATTACKS_FPS),
+        pow=1,
+      )
+    )
+    self.atk.impulse.to_select = self.atk.ref.impulses[-1]
+
+  def undo(self) -> None:
+    index = next(
+      i for i, c in enumerate(self.atk.ref.impulses) if c.id == self.impulse_id
+    )
+    del self.atk.ref.impulses[index]
+
+  ##
+
+
+@dataclass(slots=True)
+@t.final
+class _CommandAttackImpulseDelete(_CommandAttack):  ##
   index: int
   instance: glib_pb2.GImpulseData
 
@@ -1536,6 +1563,8 @@ def _panel_attack_inspector() -> None:  ##
       ):
         for frame in frames:
           min_attack_frames = max(min_attack_frames, frame.index_timeline + 1)
+  for impulse in atk.ref.impulses:
+    min_attack_frames = max(min_attack_frames, impulse.at + impulse.dur)
   im.set_next_item_width(im.get_content_region_avail()[0])
   changed, frames = im.slider_int(
     bf.imgui_id("", "atk__duration_frames"),
@@ -1584,7 +1613,7 @@ def _panel_attack_inspector() -> None:  ##
             im.same_line()
           if im.button("+{}".format(collider_type.name.lower())):
             atk.scheduled_commands.append(
-              _CommandAttackCreateCollider(
+              _CommandAttackColliderCreate(
                 merge_id=g.action_id,
                 atk=atk,
                 collider_id=atk.next_collider_id(),
@@ -1616,17 +1645,26 @@ def _panel_attack_inspector() -> None:  ##
       im.end_tab_item()
 
     if im.begin_tab_item("Impulses")[0]:
+      if im.button("+impulse"):
+        atk.scheduled_commands.append(
+          _CommandAttackImpulseCreate(
+            merge_id=g.action_id, atk=atk, impulse_id=atk.next_impulse_id()
+          )
+        )
       for i, impulse in enumerate(atk.ref.impulses):
         flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
         if impulse is atk.impulse.ref_selected:
           flags |= im.TreeNodeFlags_.selected
         if im.tree_node_ex(
-          "{} {:.2f} {:.2f} {:.2f} {}".format(
-            impulse.at,
-            impulse.distance,
-            impulse.dur,
-            impulse.pow,
-            impulse.rotation,
+          bf.imgui_id(
+            "{} {:.2f} {} {:.1f} {}".format(
+              impulse.at,
+              impulse.distance,
+              impulse.dur,
+              impulse.pow,
+              impulse.rotation,
+            ),
+            f"impulse_{impulse.id}",
           ),
           flags,
         ):
@@ -1639,7 +1677,7 @@ def _panel_attack_inspector() -> None:  ##
               atk.impulse.to_select = impulse
           if im.is_item_clicked(im.MouseButton_.right):
             atk.scheduled_commands.append(
-              _CommandAttackDeleteImpulse(
+              _CommandAttackImpulseDelete(
                 merge_id=g.action_id, atk=atk, index=i, instance=impulse
               )
             )
@@ -1650,7 +1688,7 @@ def _panel_attack_inspector() -> None:  ##
 
             for field_name, min_, max_, step, step_fast, fmt in (
               ("at", 0, atk.ref.duration_frames - 1, 1, 5, "%.0f"),
-              ("distance", 0, _MAX_OFFSET, _STEP_TRANSLATE, 1, "%.0f"),
+              ("distance", 0, _MAX_OFFSET, _STEP_TRANSLATE, 1, "%.2f"),
               (
                 "dur",
                 ATTACKS_FPS // 10,
