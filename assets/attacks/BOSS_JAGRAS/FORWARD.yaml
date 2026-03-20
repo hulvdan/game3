@@ -1,7 +1,7 @@
 duration_frames: 64
 impulses:
 - at: 16
-  distance: 3.5
+  distance: 3.75
   dur: 42
   id: 1
   pow: 1.0
@@ -22,7 +22,7 @@ melee:
       index_timeline: 15
       value: true
     - id: 9
-      index_timeline: 52
+      index_timeline: 41
       value: false
     polygon__dist_max:
     - id: 4

@@ -1841,6 +1841,7 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
+    assert not _draw_points
     assert segments >= 8
     assert radius > 0
     assert isinstance(p, vec3)
@@ -1864,6 +1865,7 @@ def _panel_visualizer() -> None:
     segments: int = 24,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
+    assert not _draw_points
     assert segments >= 8
     assert spread >= 0
     assert radius > 0
@@ -1901,6 +1903,7 @@ def _panel_visualizer() -> None:
     color: int = COLOR_YELLOW_U32,
     plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
   ) -> None:
+    assert not _draw_points
     assert dist_min >= 0
     assert dist_max > 0
     assert spread_angle > 0
@@ -1922,6 +1925,28 @@ def _panel_visualizer() -> None:
     draw_polyline((x + p for x in _draw_points), color, flags=im.ImDrawFlags_.closed)
     _draw_points.clear()
 
+  def draw_arrow(
+    p1: vec3,
+    p2: vec3,
+    color: int = COLOR_YELLOW_U32,
+    plane: tuple[vec3, vec3] = (vec3_right, vec3_forward),
+  ):
+    if p1 == p2:
+      return
+    assert not _draw_points
+    arrow_tip_length = 0.2
+    normal = glm.cross(plane[1], plane[0])
+    d = glm.normalize(p2 - p1) * arrow_tip_length
+    p3 = p2 - glm.rotate(d, pi * 1 / 6, normal)
+    p4 = p2 - glm.rotate(d, -pi * 1 / 6, normal)
+    _draw_points.append(p1)
+    _draw_points.append(p2)
+    _draw_points.append(p3)
+    _draw_points.append(p4)
+    _draw_points.append(p2)
+    draw_polyline(_draw_points, color)
+    _draw_points.clear()
+
   gizmo.begin_frame()
   gizmo.set_drawlist()
   gizmo.set_rect(pos_.x, pos_.y, size_.x, size_.y)
@@ -1933,6 +1958,10 @@ def _panel_visualizer() -> None:
   # Drawing body
   body_pos = vec2()
   for impulse in atk.ref.impulses:
+    tip = vec3(impulse.distance, 0, 0)
+    tip: vec2 = glm.rotate(vec2(impulse.distance, 0), radians(impulse.rotation))  # ty:ignore[invalid-assignment]
+    draw_arrow(vec3(0, 0, 0), vec3(tip.x, 0, tip.y), COLOR_RED_FADED_U32)
+
     e = atk.timeline_at - impulse.at
     if e <= 0:
       continue
