@@ -1411,6 +1411,7 @@ class _AppSaveState(BaseModel):  ##
   font_scale_main: float = 1
   creature: str | None = None
   attack: str | None = None
+  play_once: bool = False
   visualizer__gizmo_mode: int = _GizmoMode.TRANSLATE
   ##
 
@@ -1469,6 +1470,7 @@ class _State:
   attack_to_select: _TransientAttack | None = None
   ref_selected_attack_creature: _TransientCreature | None = None
   ref_selected_attack: _TransientAttack | None = None
+  play_once: bool = False
 
   attack_undo_scheduled: bool = False
   attack_redo_scheduled: bool = False
@@ -1487,11 +1489,13 @@ class _State:
       attack=(
         self.ref_selected_attack.ref.debug_name if self.ref_selected_attack else None
       ),
+      play_once=self.play_once,
       visualizer__gizmo_mode=vis.gizmo_mode,
     )
     ##
 
   def load(self, value: _AppSaveState) -> None:  ##
+    self.play_once = value.play_once
     for c in self.creatures:
       if c.ref.debug_name == value.creature:
         for atk in c.attacks:
@@ -2144,6 +2148,9 @@ def _panel_timeline() -> None:  ##
     atk.timeline_at += im.get_io().delta_time * ATTACKS_FPS
     if atk.timeline_at > atk.ref.duration_frames:
       atk.timeline_at -= atk.ref.duration_frames
+      if g.play_once:
+        atk.timeline_at = 0
+        tim.is_playing = False
   else:
     atk.timeline_at = min(atk.timeline_at, atk.ref.duration_frames)
 
@@ -2209,6 +2216,11 @@ def _panel_timeline() -> None:  ##
     atk.timeline_at = atk.ref.duration_frames
     atk.timeline_started_playing_at = atk.ref.duration_frames
   im.set_item_tooltip("Key: $")
+
+  im.same_line()
+  changed, value = im.checkbox("Play once", g.play_once)
+  if changed:
+    g.play_once = value
 
   lines_top_left: ImVec2 | None = None
   lines_bottom_right = ImVec2()

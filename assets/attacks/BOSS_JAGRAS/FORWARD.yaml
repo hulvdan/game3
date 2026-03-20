@@ -1,10 +1,11 @@
 duration_frames: 64
 impulses:
-- id: 1
-  at: 24
-  dur: 120
-  distance: 4
-  pow: 1
+- at: 16
+  distance: 3.5
+  dur: 42
+  id: 1
+  pow: 1.0
+  rotation: 0
 melee:
   colliders:
   - capsule__radius: []
@@ -18,18 +19,18 @@ melee:
       index_timeline: 0
       value: false
     - id: 1
-      index_timeline: 7
+      index_timeline: 15
       value: true
     - id: 9
       index_timeline: 52
       value: false
     polygon__dist_max:
     - id: 4
-      index_timeline: 0
+      index_timeline: 15
       value: 1.0
     - id: 7
       index_timeline: 29
-      value: 2.5
+      value: 1.0
     polygon__dist_min:
     - id: 3
       index_timeline: 0
@@ -43,8 +44,11 @@ melee:
       value: 0.0
     polygon__spread_angle:
     - id: 6
-      index_timeline: 0
+      index_timeline: 15
       value: 70.0
+    - id: 11
+      index_timeline: 29
+      value: 75.0
     tr:
     - id: 2
       index_timeline: 0

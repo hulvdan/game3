@@ -40,10 +40,12 @@ x mark: impulses: fix impulse radians
 x wip impulses
 x mark: impulses: fix can delete
 x mark: impulses: can add
+x mark: play once checkbox
 
+* mark: play rate
 * mark: impulses: show selected impulse red arrow
 * mark: impulses: can change impulse `at` and `dur` in the timeline
-* mark: impulses:
+* mark: impulses: projectile
 * mark: impulses:
 *
 * mark: attack tracking keyframes
