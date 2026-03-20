@@ -1,10 +1,10 @@
-duration_frames: 16
+duration_frames: 30
 impulses:
 - at: 5
-  distance: 0.1
+  distance: 0.25
   dur: 6
   id: 1
   pow: 1.0
   rotation: 180
 melee: null
-stamina_consumption_frame: 8
+stamina_consumption_frame: 2

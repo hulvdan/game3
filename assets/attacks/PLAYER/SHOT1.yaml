@@ -1,11 +1,11 @@
 duration_frames: 34
 impulses:
 - at: 5
-  distance: 1.0
-  dur: 6
+  distance: 0.25
+  dur: 24
   id: 1
   pow: 1.0
-  rotation: 0
+  rotation: 180
 melee:
   colliders: []
 stamina_consumption_frame: 0

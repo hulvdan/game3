@@ -22,15 +22,12 @@ melee:
       index_timeline: 15
       value: true
     - id: 9
-      index_timeline: 41
+      index_timeline: 35
       value: false
     polygon__dist_max:
     - id: 4
-      index_timeline: 15
-      value: 1.0
-    - id: 7
-      index_timeline: 29
-      value: 1.0
+      index_timeline: 0
+      value: 1.25
     polygon__dist_min:
     - id: 3
       index_timeline: 0
@@ -44,11 +41,8 @@ melee:
       value: 0.0
     polygon__spread_angle:
     - id: 6
-      index_timeline: 15
-      value: 70.0
-    - id: 11
-      index_timeline: 29
-      value: 75.0
+      index_timeline: 0
+      value: 95.0
     tr:
     - id: 2
       index_timeline: 0

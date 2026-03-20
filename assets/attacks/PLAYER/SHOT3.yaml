@@ -1,9 +1,16 @@
-duration_frames: 24
+duration_frames: 40
 impulses:
 - at: 5
-  distance: 0.5
-  dur: 12
+  distance: 0.25
+  dur: 24
   id: 1
   pow: 0.3
   rotation: 180
+- at: 20
+  distance: 0.5
+  dur: 18
+  id: 2
+  pow: 0.3
+  rotation: 180
+melee: null
 stamina_consumption_frame: 2
