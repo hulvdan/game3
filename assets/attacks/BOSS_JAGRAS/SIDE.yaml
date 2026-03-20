@@ -17,11 +17,20 @@ melee:
     is_active:
     - id: 1
       index_timeline: 0
+      value: false
+    - id: 7
+      index_timeline: 12
       value: true
+    - id: 8
+      index_timeline: 33
+      value: false
     polygon__dist_max:
     - id: 4
-      index_timeline: 0
+      index_timeline: 12
       value: 0.5
+    - id: 9
+      index_timeline: 24
+      value: 1.25
     polygon__dist_min:
     - id: 3
       index_timeline: 0
@@ -29,11 +38,11 @@ melee:
     polygon__rotation:
     - id: 5
       index_timeline: 0
-      value: 0.0
+      value: 270.0
     polygon__spread_angle:
     - id: 6
       index_timeline: 0
-      value: 45.0
+      value: 80.0
     tr:
     - id: 2
       index_timeline: 0

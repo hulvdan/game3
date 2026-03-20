@@ -471,6 +471,7 @@ creatures:
       damage: 10
       evade_flags: *evade_flags_default
       damage_stamina: 20
+      hp_rally_recover: 5
     stops_tracking_at: 0.2
     tags:
     - tag_type: DASH_LIMITED
@@ -568,6 +569,11 @@ creatures:
       evade_flags: *evade_flags_default
       hp_rally_recover: 5
   - debug_name: SIDE
+    melee:
+      damage: 10
+      damage_stamina: 20
+      evade_flags: *evade_flags_default
+      hp_rally_recover: 5
     cooldown_min: 3.0
     cooldown_max: 5.0
     stops_tracking_at: 0.0

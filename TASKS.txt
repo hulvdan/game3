@@ -44,17 +44,19 @@ x mark: play once checkbox
 x mark: play rate
 x ahk better godot closing
 x mark: impulses: draw impulse red arrow
+x upd colliders
 
+* game: fix crash
+* mark: attack condition
+* mark: projectile spawn frames
+*
+* mark: make it unable to drag playhead when started dragging outside of timeline
+*
 * mark: impulses: draw impulse arrow progress
 * mark: impulses: can change impulse `at` and `dur` in the timeline
-* game: fix crash
-* mark: impulses: projectile
-* mark: impulses:
-* mark: make it unable to drag playhead when started dragging outside of timeline
 *
 * mark: attack tracking keyframes
 * mark: attack mirrorable bool
-* mark: attack condition
 *
 * mark: fix pressing enter upon changing "duration frames" doesn't start playing timeline
   USE `not io.want_capture_keyboard`

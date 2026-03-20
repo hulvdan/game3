@@ -328,10 +328,9 @@ def _process_glib(genline, glib) -> None:
     with push("tags"):
       validate_tags(x.get("tags", []), "attack")
     if melee := x.get("melee"):
-      if polygon := melee.get("polygon"):
-        assert polygon["angle_degrees"] < 180, _context
-      if not is_player:
-        assert "damage_stamina" in melee, _context
+      if not is_player and melee.get("colliders"):
+        for f in ("damage", "damage_stamina", "evade_flags", "hp_rally_recover"):
+          assert f in melee, _context
     ##
 
   def mirror_sign(value, setter) -> None:  ##
