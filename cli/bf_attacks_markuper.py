@@ -52,11 +52,20 @@ from pyglm.glm import mat4, radians, vec2, vec3, vec4
 
 
 class _ExportAttack(BaseModel):  ##
+  class _Impulse(BaseModel):
+    id: int
+    at: int
+    distance: float
+    dur: float
+    pow: float
+    rotation: float
+
   class _ExportMelee(BaseModel):
     colliders: list[dict]
 
   duration_frames: int
   stamina_consumption_frame: int
+  impulses: list[_Impulse] = PydanticField(default_factory=list)
   melee: _ExportMelee | None = PydanticField(None)
   ##
 
@@ -142,11 +151,11 @@ _GKeyframe: TypeAlias = (
 # [[[end]]] ##
 
 
-def _set_keyframe_value(field: _GKeyframe, value: Any) -> None:  ##
-  if isinstance(value, Message):
-    field.value.CopyFrom(value)  # ty:ignore[unresolved-attribute]
+def _set_proto_value(instance, field: str, value: Any) -> None:  ##
+  if isinstance(f := getattr(instance, field), Message):
+    f.CopyFrom(value)
   else:
-    field.value = value
+    setattr(instance, field, value)
   ##
 
 
@@ -206,6 +215,7 @@ _MAX_SPREAD: float = 10.0
 
 
 ## Setup
+_ImpulseID: TypeAlias = int
 _ColliderID: TypeAlias = int
 _KeyframeID: TypeAlias = int
 
@@ -998,11 +1008,21 @@ class _CommandAttackAlterStaminaConsumptionFrame(_CommandAttack):  ##
 
 
 @dataclass(slots=True)
+class _CommandAttackImpulse(_CommandAttack):  ##
+  impulse_id: _ImpulseID
+
+  def i(self, atk: "_TransientAttack") -> glib_pb2.GImpulseData:
+    return next(x for x in atk.ref.impulses if x.id == self.impulse_id)
+
+  ##
+
+
+@dataclass(slots=True)
 class _CommandAttackCollider(_CommandAttack):  ##
   collider_id: _ColliderID
 
   def c(self, atk: "_TransientAttack") -> "_TransientCollider":
-    return next(c for c in atk.colliders if c.ref.id == self.collider_id)
+    return next(x for x in atk.colliders if x.ref.id == self.collider_id)
 
   ##
 
@@ -1104,17 +1124,46 @@ class _CommandAttackColliderAlterField(_CommandAttackCollider):  ##
   def do(self) -> None:
     c = self.c(self.atk)
     k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
-    _set_keyframe_value(k, _to_proto(self.new))
+    _set_proto_value(k, "value", _to_proto(self.new))
 
   def undo(self) -> None:
     c = self.c(self.atk)
     k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
-    _set_keyframe_value(k, _to_proto(self.old))
+    _set_proto_value(k, "value", _to_proto(self.old))
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
     if newest.keyframe_field != self.keyframe_field:
       return _CommandMergeType.NONE
     if newest.keyframe_index_inside_list != self.keyframe_index_inside_list:
+      return _CommandMergeType.NONE
+
+    self.new = newest.new
+    return (
+      _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
+      if (self.old == self.new)
+      else _CommandMergeType.MERGED_OKAY
+    )
+
+  ##
+
+
+@dataclass(slots=True)
+@t.final
+class _CommandAttackImpulseAlterField(_CommandAttackImpulse):  ##
+  field: str
+  old: Any
+  new: Any
+
+  def do(self) -> None:
+    i = self.i(self.atk)
+    _set_proto_value(i, self.field, _to_proto(self.new))
+
+  def undo(self) -> None:
+    i = self.i(self.atk)
+    _set_proto_value(i, self.field, _to_proto(self.old))
+
+  def try_merge(self, newest: Self, /) -> _CommandMergeType:
+    if newest.field != self.field:
       return _CommandMergeType.NONE
 
     self.new = newest.new
@@ -1268,6 +1317,13 @@ class _TransientAttack:  ##
         result = max(result, c.id + 1)
     return result
 
+  def next_impulse_id(self) -> _ImpulseID:
+    result = 1
+    if self.ref:
+      for x in self.ref.impulses:
+        result = max(result, x.id + 1)
+    return result
+
   def get_visualization_collider(self) -> _TransientCollider | None:
     if self.collider.ref_hovered:
       return self.collider.ref_hovered
@@ -1280,6 +1336,13 @@ class _TransientAttack:  ##
     assert self.timeline_at <= self.ref.duration_frames
     assert self.timeline_started_playing_at >= 0
     assert self.timeline_started_playing_at <= self.ref.duration_frames
+
+    for impulse in self.ref.impulses:
+      assert impulse.id > 0
+      assert impulse.at >= 0
+      assert impulse.distance >= 0
+      assert impulse.dur > 0
+      assert impulse.pow > 0
 
     if self.ref.melee:
       for c in self.colliders:
@@ -1577,8 +1640,58 @@ def _panel_attack_inspector() -> None:  ##
                 merge_id=g.action_id, atk=atk, index=i, instance=impulse
               )
             )
+
+          if im.begin_table("impulse_table", 2):
+            im.table_setup_column("", im.TableColumnFlags_.width_fixed)
+            im.table_setup_column("", im.TableColumnFlags_.width_stretch)
+
+            for field_name, min_, max_, step, step_fast, fmt in (
+              ("at", 0, atk.ref.duration_frames - 1, 1, 5, "%.0f"),
+              ("distance", 0, _MAX_OFFSET, _STEP_TRANSLATE, 1, "%.0f"),
+              (
+                "dur",
+                ATTACKS_FPS // 10,
+                ATTACKS_FPS * 10,
+                ATTACKS_FPS // 10,
+                ATTACKS_FPS,
+                "%.0f",
+              ),
+              ("pow", 0.3, 10, 0.1, 1, "%.1f"),
+              ("rotation", bf.FLOAT_INF_NEG, bf.FLOAT_INF_POS, _STEP_ROTATE, 90, "%.0f"),
+            ):
+              im.table_next_row()
+              im.table_set_column_index(0)
+              im.text(field_name)
+
+              im.table_set_column_index(1)
+              field_ = getattr(impulse, field_name)
+              _inspector_input_float(
+                bf.imgui_id("", f"impulse_{impulse.id}_{field_name}"),
+                lambda: _from_proto(field_),
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackImpulseAlterField(
+                      merge_id=g.action_id,
+                      atk=atk,
+                      impulse_id=impulse.id,
+                      field=field_name,
+                      old=_from_proto(field_),
+                      new=x,
+                    )
+                  )
+                  if _from_proto(field_) != x
+                  else None
+                ),
+                min_,
+                max_,
+                step,
+                step_fast,
+                fmt,
+              )
+
+          im.end_table()
           im.tree_pop()
-        # atk.ref.impulses.append(glib_pb2.GImpulseData())
+
       im.end_tab_item()
 
     im.end_tab_bar()

@@ -32,18 +32,15 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x mark: altering duration frames saves attack
-x wip
-x mark: can delete collider
-x mark: stamina consumption frame
-x game: make stamina consumption work on 0'th frame
-x game: make new melee colliders implementation
-x game: fix jagras forward attack
-x mark: hide stamina consumption frames if it's not player
-x mark: undo/redo save attacks
 x wip impulses
 
-* mark: attack impulses
+* mark: impulses: show body red circle
+* mark: impulses: body is offsetted correctly by impulses
+* mark: impulses: changing impulse value moves body
+* mark: impulses: show selected impulse red arrow
+* mark: impulses:
+* mark: impulses:
+*
 * mark: attack tracking keyframes
 * mark: attack mirrorable bool
 * mark: attack condition

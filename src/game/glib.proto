@@ -214,11 +214,12 @@ message GProjectileSpawn {
 }
 
 message GImpulseData {
-  int32 at = 1;
-  float distance = 2;
-  float dur = 3;
-  float pow = 4;
-  float rotation = 5;
+  int32 id = 1;
+  int32 at = 2;
+  float distance = 3;
+  float dur = 4;
+  float pow = 5;
+  float rotation = 6;
 }
 
 message GAttackCondition {

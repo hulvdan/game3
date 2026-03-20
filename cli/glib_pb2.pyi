@@ -313,18 +313,20 @@ class GProjectileSpawn(_message.Message):
     def __init__(self, at: _Optional[int] = ..., angle: _Optional[float] = ...) -> None: ...
 
 class GImpulseData(_message.Message):
-    __slots__ = ("at", "distance", "dur", "pow", "rotation")
+    __slots__ = ("id", "at", "distance", "dur", "pow", "rotation")
+    ID_FIELD_NUMBER: _ClassVar[int]
     AT_FIELD_NUMBER: _ClassVar[int]
     DISTANCE_FIELD_NUMBER: _ClassVar[int]
     DUR_FIELD_NUMBER: _ClassVar[int]
     POW_FIELD_NUMBER: _ClassVar[int]
     ROTATION_FIELD_NUMBER: _ClassVar[int]
+    id: int
     at: int
     distance: float
     dur: float
     pow: float
     rotation: float
-    def __init__(self, at: _Optional[int] = ..., distance: _Optional[float] = ..., dur: _Optional[float] = ..., pow: _Optional[float] = ..., rotation: _Optional[float] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., at: _Optional[int] = ..., distance: _Optional[float] = ..., dur: _Optional[float] = ..., pow: _Optional[float] = ..., rotation: _Optional[float] = ...) -> None: ...
 
 class GAttackCondition(_message.Message):
     __slots__ = ("type", "debug_name")

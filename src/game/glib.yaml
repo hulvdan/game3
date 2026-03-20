@@ -281,10 +281,12 @@ creatures:
       flat: 25
       rally: 3
     impulses:
-    - at: 0
-      distance: -0.2
+    - id: 1
+      at: 0
+      distance: 0.2
       dur: 0.4
       pow: 1
+      rotation: 180
   - debug_name: SHOT2
     projectile_type: ARROW
     projectile_spawns:
@@ -293,10 +295,12 @@ creatures:
       flat: 15
       rally: 6
     impulses:
-    - at: 0
-      distance: -0.1
+    - id: 1
+      at: 0
+      distance: 0.1
       dur: 0.4
       pow: 1
+      rotation: 180
   - debug_name: SHOT3
     projectile_type: ARROW
     projectile_spawns:
@@ -306,10 +310,12 @@ creatures:
       flat: 8
       rally: 2
     impulses:
-    - at: 0
-      distance: -0.7
+    - id: 1
+      at: 0
+      distance: 0.7
       dur: 0.4
       pow: 1
+      rotation: 180
   ability_types:
   - HOOK
 ##
@@ -574,7 +580,8 @@ creatures:
     cooldown_max: 5.0
     stops_tracking_at: 0.4
     impulses:
-    - at: 24
+    - id: 1
+      at: 24
       dur: 2
       distance: 4
       pow: 1
@@ -593,7 +600,8 @@ creatures:
     stops_tracking_at: 0.0
     mirrorable: true
     impulses:
-    - at: 24
+    - id: 1
+      at: 24
       distance: 4
       dur: 2
       pow: 1

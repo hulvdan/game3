@@ -1,4 +1,17 @@
 duration_frames: 16
+impulses:
+- at: 2
+  distance: 0.2
+  dur: 6.0
+  id: 1
+  pow: 1.0
+  rotation: 180.0
+- at: 0
+  distance: 0.2
+  dur: 0.4
+  id: 1
+  pow: 1.0
+  rotation: 180.0
 melee:
   colliders:
   - capsule__radius: []
@@ -13,6 +26,9 @@ melee:
     is_active:
     - id: 1
       index_timeline: 0
+      value: true
+    - id: 4
+      index_timeline: 5
       value: true
     polygon__dist_max: []
     polygon__dist_min: []
