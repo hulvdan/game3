@@ -1,0 +1,10 @@
+duration_frames: 15
+impulses:
+- at: 24
+  distance: 4.0
+  dur: 2
+  id: 1
+  pow: 1.0
+  rotation: 90
+melee: null
+stamina_consumption_frame: 0

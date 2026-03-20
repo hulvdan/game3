@@ -91,7 +91,7 @@ func get_roll_speed(dist: float, dur: float, elapsed: float, x: float) -> float:
 	assert(dur > 0)
 	assert(elapsed >= 0)
 	assert(elapsed <= 2 * dur) # Слабый assert. Откидываю только заоблачные значения.
-	#assert(x > 0)
+	assert(x > 0)
 
 	return dist * (x + 1) / (x * pow(dur, x) * dur) * (pow(dur, x) - pow(elapsed, x))
 	##

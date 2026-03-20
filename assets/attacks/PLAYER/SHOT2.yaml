@@ -2,10 +2,8 @@ duration_frames: 16
 impulses:
 - at: 0
   distance: 0.1
-  dur: 24
+  dur: 6
   id: 1
   pow: 1.0
   rotation: 180
-melee:
-  colliders: []
 stamina_consumption_frame: 8

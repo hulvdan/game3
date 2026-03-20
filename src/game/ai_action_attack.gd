@@ -51,6 +51,21 @@ static func explicit_update_attack(
 			Room.v.player.consume_stamina(attack.get_stamina_cost())
 	##
 
+	## Applying impulses
+	for impulse in attack.get_impulses():
+		if impulse.get_at() == c.attack_elapsed_frames:
+			var impulse_dir := c.looking_dir
+			if impulse.get_rotation():
+				impulse_dir = impulse_dir.rotated(deg_to_rad(impulse.get_rotation()))
+			Game.add_impulse(
+				c.impulses,
+				impulse_dir,
+				impulse.get_distance(),
+				float(impulse.get_dur()) / glib.ATTACKS_FPS,
+				impulse.get_pow(),
+			)
+	##
+
 	c.attack_elapsed += dt
 	c.attack_elapsed_frames += 1
 
@@ -118,32 +133,12 @@ static func explicit_update_attack(
 				Game.v.make_projectile(d)
 	##
 
-	## Applying impulses
-	var impulse_index: int = 0
-	for impulse in attack.get_impulses():
-		impulse_index += 1
-		if (c.attack_impulses_applied < impulse_index) && (impulse.get_at() < c.attack_elapsed):
-			c.attack_impulses_applied += 1
-			var impulse_dir := c.looking_dir
-			if impulse.get_rotation():
-				impulse_dir = impulse_dir.rotated(impulse.get_rotation())
-			Game.add_impulse(
-				c.impulses,
-				impulse_dir,
-				impulse.get_distance(),
-				impulse.get_dur(),
-				impulse.get_pow(),
-			)
-	##
-
 	## Attack finish
 	if c.attack_elapsed_frames >= c.current_attack.get_duration_frames():
 		c.attack_blinked = false
 		c.attack_dashed = false
 		c.attack_elapsed = 0.0
 		c.attack_elapsed_frames = 0
-		c.attack_projectiles_spawned = 0
-		c.attack_impulses_applied = 0
 		c.attack_id = 0
 		c.attack_damaged_creatures.clear()
 		c.attack_damaged_interactables.clear()

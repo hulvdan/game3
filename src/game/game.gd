@@ -758,6 +758,7 @@ func _from_proto(val: Variant) -> Variant: ##
 
 func _keyframe_make_lerp(v1: Variant, v2: Variant, t: float) -> Variant: ##
 	assert(typeof(v1) == typeof(v2))
+
 	assert(t >= 0)
 	assert(t <= 1)
 	if v1 is int:
@@ -810,7 +811,7 @@ func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: 
 			):
 				var l: int = left.get_index_timeline()
 				var r: int = right.get_index_timeline()
-				var t := float(l - index_timeline) / float(r - l)
+				var t := float(index_timeline - l) / float(r - l)
 				return _keyframe_make_lerp(left.get_value(), right.get_value(), t)
 
 		elif left:

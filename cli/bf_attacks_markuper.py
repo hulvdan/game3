@@ -1657,7 +1657,14 @@ def _panel_attack_inspector() -> None:  ##
                 "%.0f",
               ),
               ("pow", 0.3, 10, 0.1, 1, "%.1f"),
-              ("rotation", bf.FLOAT_INF_NEG, bf.FLOAT_INF_POS, _STEP_ROTATE, 90, "%.0f"),
+              (
+                "rotation",
+                bf.FLOAT_INF_NEG,
+                bf.FLOAT_INF_POS,
+                _STEP_ROTATE,
+                90,
+                "%.0f",
+              ),
             ):
               im.table_next_row()
               im.table_set_column_index(0)
