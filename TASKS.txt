@@ -32,21 +32,9 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x wip impulses
-x mark: impulses: show body red circle
-x mark: impulses: body is offsetted correctly by impulses
-x mark: impulses: changing impulse value moves body
-x mark: impulses: fix impulse radians
-x wip impulses
-x mark: impulses: fix can delete
-x mark: impulses: can add
-x mark: play once checkbox
-x mark: play rate
-x ahk better godot closing
-x mark: impulses: draw impulse red arrow
-x upd colliders
-x game: fix crash
 
+* fix jagras cooldown
+*
 * game: abiblities
 * mark: attack condition
 * mark: projectile spawn frames
