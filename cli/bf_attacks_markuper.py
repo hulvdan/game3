@@ -1539,11 +1539,7 @@ def _panel_explorer() -> None:  ##
       creature_flags |= im.TreeNodeFlags_.selected
     if im.tree_node_ex(creature.ref.debug_name, creature_flags):
       for attack in creature.attacks:
-        flags = (
-          im.TreeNodeFlags_.leaf
-          | im.TreeNodeFlags_.span_avail_width
-          | im.TreeNodeFlags_.default_open
-        )
+        flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
         if attack is g.ref_selected_attack:
           flags |= im.TreeNodeFlags_.selected
         if im.tree_node_ex(attack.ref.debug_name, flags):
