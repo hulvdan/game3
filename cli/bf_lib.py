@@ -180,6 +180,10 @@ AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".aac", ".m4a", ".wma", ".ogg"}
 #  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
 
 
+def eprint(*args, **kwargs):
+  print(*args, file=sys.stderr, **kwargs)
+
+
 @contextmanager
 def sane_writable_file(path: PathLike) -> t.Generator[TextIO, None, None]:  ##
   with open(path, "w", encoding="utf-8", newline="\n") as f:

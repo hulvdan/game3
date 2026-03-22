@@ -32,6 +32,7 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x better godot linting - python re problem matching
 
 * fix jagras cooldown
 *
