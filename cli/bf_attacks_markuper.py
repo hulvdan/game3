@@ -2259,7 +2259,7 @@ def _panel_visualizer() -> None:
             center,
             c.capsule__radius,
             c.capsule__spread,
-            c.capsule__rotation,
+            radians(c.capsule__rotation),
             condition_color,
           )
         case _ColliderType.POLYGON:
@@ -2267,8 +2267,8 @@ def _panel_visualizer() -> None:
             center,
             c.polygon__dist_min,
             c.polygon__dist_max,
-            c.polygon__spread_angle,
-            c.polygon__rotation,
+            radians(c.polygon__spread_angle),
+            radians(c.polygon__rotation),
             condition_color,
           )
         case _:

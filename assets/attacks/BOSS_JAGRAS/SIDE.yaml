@@ -1,3 +1,19 @@
+conditions:
+- capsule__radius: 0.5
+  capsule__rotation: 90.0
+  capsule__spread: 2.25
+  circle__radius: 0.0
+  debug_name: ''
+  id: 1
+  is_active: true
+  polygon__dist_max: 0.0
+  polygon__dist_min: 0.0
+  polygon__rotation: 0.0
+  polygon__spread_angle: 0.0
+  tr:
+    x: 0.0
+    y: 1.5
+  type: 2
 duration_frames: 86
 impulses:
 - at: 12

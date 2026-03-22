@@ -50,8 +50,8 @@ x enabled pyright
 x mark: condition: draw it in visualizer
 x mark: condition: display fields + can alter fields
 x mark: condition: show field labels
+x mark: set all attack conditions
 
-* mark: set all attack conditions
 * mark: projectile spawn frames
 * game: abilities
 *

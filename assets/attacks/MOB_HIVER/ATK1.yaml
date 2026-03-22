@@ -1,0 +1,20 @@
+conditions:
+- capsule__radius: 2.0
+  capsule__rotation: 0.0
+  capsule__spread: 5.0
+  circle__radius: 0.0
+  debug_name: ''
+  id: 1
+  is_active: true
+  polygon__dist_max: 0.0
+  polygon__dist_min: 0.0
+  polygon__rotation: 0.0
+  polygon__spread_angle: 0.0
+  tr:
+    x: 4.5
+    y: 0.0
+  type: 2
+duration_frames: 1
+impulses: []
+melee: null
+stamina_consumption_frame: 0
