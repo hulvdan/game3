@@ -45,8 +45,10 @@ x mark: remove always-shown scrollbar
 x mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)
 x wip attack conditions
 x ref
+x pass `is_game` into glib processor
 
 * mark: attack condition
+* mark: set all attack conditions
 * mark: projectile spawn frames
 * game: abilities
 *

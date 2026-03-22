@@ -232,7 +232,7 @@ def profiles() -> None:  ##
 @command
 def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
   regenerate_python_glib_proto()
-  do_generate(platform, build_type)
+  do_generate(platform, build_type, is_game=True)
   do_activate_godot_ahk()
   ##
 
@@ -240,7 +240,7 @@ def codegen(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
 @command
 def codegen_and_lint(platform: bf.BuildPlatform, build_type: bf.BuildType):  ##
   regenerate_python_glib_proto()
-  do_generate(platform, build_type)
+  do_generate(platform, build_type, is_game=True)
   do_godot_lint()
   do_godot_check_errors()
   do_activate_godot_ahk()
@@ -252,7 +252,7 @@ def build(
   target: bf.BuildTarget, platform: bf.BuildPlatform, build_type: bf.BuildType
 ):  ##
   regenerate_python_glib_proto()
-  do_generate(platform, build_type)
+  do_generate(platform, build_type, is_game=True)
   do_godot_lint()
   do_godot_check_errors()
   do_build(target, platform, build_type)
@@ -266,7 +266,7 @@ def build(
 #     for target, platform, build_type in bf.ALLOWED_BUILDS:
 #         if target != bf.BuildTarget.game:
 #             continue
-#         do_generate(platform, build_type)
+#         do_generate(platform, build_type, is_game=True)
 #         build(bf.BuildTarget.game, platform, build_type)
 #         bf._glib = None
 #     ##
@@ -278,7 +278,7 @@ def run():  ##
   platform = bf.BuildPlatform.Win
   build_type = bf.BuildType.Debug
   regenerate_python_glib_proto()
-  do_generate(platform, build_type)
+  do_generate(platform, build_type, is_game=True)
   do_godot_lint()
   do_godot_check_errors()
   do_run_in_godot_ahk()
@@ -290,7 +290,7 @@ def test():  ##
   platform = bf.BuildPlatform.Win
   build_type = bf.BuildType.Debug
   regenerate_python_glib_proto()
-  do_generate(platform, build_type)
+  do_generate(platform, build_type, is_game=True)
   do_godot_lint()
   do_godot_check_errors()
   do_test()

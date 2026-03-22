@@ -309,10 +309,10 @@ creatures:
     - at: 30
     cooldown_min: 0.7
     cooldown_max: 1.2
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 4
-      capsule__radius: 0.8
+    # condition:
+    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+    #   distance_max: 4
+    #   capsule__radius: 0.8
 ##
 - type: MOB_MAGE ##
   hp: 20
@@ -327,10 +327,10 @@ creatures:
     - at: 90
     cooldown_min: 2.0
     cooldown_max: 3.0
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 5
-      capsule__radius: 0.3
+    # condition:
+    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+    #   distance_max: 5
+    #   capsule__radius: 0.3
 ##
 - type: MOB_MAGE_TRIPLE ##
   hp: 20
@@ -348,10 +348,10 @@ creatures:
       angle_degrees: -45
     cooldown_min: 2.0
     cooldown_max: 3.0
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 5
-      capsule__radius: 0.3
+    # condition:
+    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+    #   distance_max: 5
+    #   capsule__radius: 0.3
 ##
 - type: MOB_HOMER ##
   hp: 30
@@ -364,10 +364,10 @@ creatures:
     - at: 48
     cooldown_min: 2.0
     cooldown_max: 3.0
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 7
-      capsule__radius: 0.3
+    # condition:
+    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+    #   distance_max: 7
+    #   capsule__radius: 0.3
 ##
 - type: MOB_HIVER ##
   hp: 30
@@ -380,10 +380,10 @@ creatures:
     - at: 48
     cooldown_min: 2.0
     cooldown_max: 3.0
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 5
-      capsule__radius: 2
+    # condition:
+    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+    #   distance_max: 5
+    #   capsule__radius: 2
 ##
 - type: MOB_HIVER_INSIDE ##
   hp: 30
@@ -396,10 +396,10 @@ creatures:
     - at: 30
     cooldown_min: 2.0
     cooldown_max: 3.0
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 0
-      capsule__radius: 3
+    # condition:
+    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+    #   distance_max: 0
+    #   capsule__radius: 3
 ##
 - type: MOB_BOMB_INSIDE ##
   hp: 30
@@ -412,10 +412,10 @@ creatures:
     - at: 30
     cooldown_min: 2.0
     cooldown_max: 3.0
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 0
-      capsule__radius: 2
+    # condition:
+    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+    #   distance_max: 0
+    #   capsule__radius: 2
 ##
 - type: MOB_JUMPER ##
   hp: 50
@@ -438,10 +438,10 @@ creatures:
       f4: 0.2 # distance_delta
       f5: 1 # pow
       f6_degrees: 0 # rotation
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 0
-      capsule__radius: 2
+      # condition:
+      #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+      #   distance_max: 0
+      #   capsule__radius: 2
 ##
 - type: MOB_BLINKER ##
   hp: 50
@@ -454,10 +454,10 @@ creatures:
     projectile_type: BLINK
     projectile_spawns:
     - at: 12
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_max: 0
-      capsule__radius: 2
+      # condition:
+      #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+      #   distance_max: 0
+      #   capsule__radius: 2
 ##
 - type: MOB_BONKER ##
   hp: 50
@@ -481,11 +481,11 @@ creatures:
       f4: 0.2 # distance_delta
       f5: 1 # pow
       f6_degrees: 0 # rotation
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_min: 0
-      distance_max: 0
-      capsule__radius: 2
+      # condition:
+      #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+      #   distance_min: 0
+      #   distance_max: 0
+      #   capsule__radius: 2
 ##
 - type: MOB_SPEAR ##
   hp: 50
@@ -508,11 +508,11 @@ creatures:
       f4: 0.2 # distance_delta
       f5: 1 # pow
       f6_degrees: 0 # rotation
-    condition:
-      attackcondition_type: CAPSULE
-      distance_min: 0
-      distance_max: 4
-      capsule__radius: 0.5
+      # condition:
+      #   attackcondition_type: CAPSULE
+      #   distance_min: 0
+      #   distance_max: 4
+      #   capsule__radius: 0.5
       ##
 - type: MOB_SUMMONER ##
   hp: 20
@@ -525,12 +525,12 @@ creatures:
     - at: 30
     cooldown_min: 8.0
     cooldown_max: 12.0
-    condition:
-      attackcondition_type: CAPSULE
-      distance_min: 0
-      distance_max: 7
-      capsule__radius: 2
-      ##
+    # condition:
+    #   attackcondition_type: CAPSULE
+    #   distance_min: 0
+    #   distance_max: 7
+    #   capsule__radius: 2
+    ##
 - type: MOB_SLOWDOWNER ##
   hp: 30
   speed: 0.4
@@ -542,12 +542,12 @@ creatures:
     - at: 30
     cooldown_min: 30.0
     cooldown_max: 30.0
-    condition:
-      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-      distance_min: 0
-      distance_max: 4
-      capsule__radius: 1.8
-      ##
+    # condition:
+    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
+    #   distance_min: 0
+    #   distance_max: 4
+    #   capsule__radius: 1.8
+    ##
 - type: BOSS_JAGRAS ##
   hp: 300
   speed: 0.4
@@ -559,10 +559,10 @@ creatures:
     cooldown_min: 3.0
     cooldown_max: 5.0
     stops_tracking_at: 0.4
-    condition:
-      attackcondition_type: CAPSULE
-      distance_max: 4
-      capsule__radius: 0.4
+    # condition:
+    #   attackcondition_type: CAPSULE
+    #   distance_max: 4
+    #   capsule__radius: 0.4
     melee:
       damage: 10
       damage_stamina: 20
@@ -578,12 +578,12 @@ creatures:
     cooldown_max: 5.0
     stops_tracking_at: 0.0
     mirrorable: true
-    condition:
-      attackcondition_type: CAPSULE
-      distance_max: 2.5
-      capsule__radius: 0.4
-      rotation: 90
-      ##
+    # condition:
+    #   attackcondition_type: CAPSULE
+    #   distance_max: 2.5
+    #   capsule__radius: 0.4
+    #   rotation: 90
+    ##
 
 items: ##
 - type: INVALID

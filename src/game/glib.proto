@@ -227,14 +227,6 @@ message GAttackCondition {
   string debug_name = 2;
 }
 
-message GAttackConditionValue {
-  int32 attackcondition_type = 1;
-  float distance_min = 2;
-  float distance_max = 3;
-  float rotation = 4;
-  float capsule__radius = 5;
-}
-
 message GAttack {
   string debug_name = 1;
   bool debug_mirrored = 2;
@@ -257,7 +249,7 @@ message GAttack {
   repeated GTagValue tags = 13;
   repeated GImpulseData impulses = 14;
 
-  GAttackConditionValue condition = 15;
+  repeated GCollider conditions = 15;
 }
 
 message GAbility {

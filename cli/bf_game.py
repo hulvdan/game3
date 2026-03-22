@@ -123,7 +123,7 @@ def _test_outer_transpose_pos() -> None:  ##
   ##
 
 
-def _process_glib(genline, glib) -> None:
+def _process_glib(genline, glib, is_game: bool) -> None:
   _test_outer_transpose_pos()
 
   # def enumerate_table(field: str): ##
@@ -369,7 +369,8 @@ def _process_glib(genline, glib) -> None:
                 asserte(attack_debug_name not in creature_attack_names)
               validate_attack(attack, is_player)
               if not is_player:
-                asserte("condition" in attack)
+                if is_game:
+                  asserte("condition" in attack)
               if attack.pop("mirrorable", False):
                 copied_attack = copy.deepcopy(attack)
                 copied_attack["debug_mirrored"] = True

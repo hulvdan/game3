@@ -526,7 +526,7 @@ def tool_attacks_markuper() -> None:
   ##
 
   ##
-  glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug)
+  glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug, is_game=False)
   g.glib = t.cast("Lib", ParseDict(glib, Lib()))
 
   for creature_ in g.glib.creatures[1:]:
@@ -1783,7 +1783,10 @@ def _panel_attack_inspector() -> None:
 
     if not is_player:
       ## Conditions
-      pass
+      if not atk.ref.conditions:
+        for collider_type in _ColliderType:
+          if im.button(f"+{collider_type.name}"):
+            pass
       ##
 
 

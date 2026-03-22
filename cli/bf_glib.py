@@ -103,7 +103,9 @@ def regenerate_python_glib_proto() -> None:  ##
   ##
 
 
-def load_glib(platform: bf.BuildPlatform, _build_type: bf.BuildType) -> dict:  ##
+def load_glib(
+  platform: bf.BuildPlatform, _build_type: bf.BuildType, *, is_game: bool
+) -> dict:  ##
   bf.run_command("uv run yamllint src/game/glib.yaml -s -f parsable")
   with open("src/game/glib.yaml", encoding="utf-8") as glib_file:
     glib = yaml.safe_load(glib_file)
@@ -176,7 +178,7 @@ func _physics_process(_dt: float) -> void:
 
     do_audio(platform)
     for func in bf.glib_processing_functions:
-      func(genline, glib)
+      func(genline, glib, is_game)
 
   bf.run_command("gdscript-formatter src/codegen/nolint/glib.gd")
 
@@ -186,8 +188,10 @@ func _physics_process(_dt: float) -> void:
 
 
 @timing
-def do_generate(platform: bf.BuildPlatform, build_type: bf.BuildType) -> None:
-  glib = load_glib(platform, build_type)
+def do_generate(
+  platform: bf.BuildPlatform, build_type: bf.BuildType, is_game: bool
+) -> None:
+  glib = load_glib(platform, build_type, is_game=is_game)
 
   ## Validating no invalid fields specified in glib
   import glib_pb2  # noqa: PLC0415

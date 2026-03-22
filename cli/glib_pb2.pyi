@@ -336,22 +336,8 @@ class GAttackCondition(_message.Message):
     debug_name: str
     def __init__(self, type: _Optional[int] = ..., debug_name: _Optional[str] = ...) -> None: ...
 
-class GAttackConditionValue(_message.Message):
-    __slots__ = ("attackcondition_type", "distance_min", "distance_max", "rotation", "capsule__radius")
-    ATTACKCONDITION_TYPE_FIELD_NUMBER: _ClassVar[int]
-    DISTANCE_MIN_FIELD_NUMBER: _ClassVar[int]
-    DISTANCE_MAX_FIELD_NUMBER: _ClassVar[int]
-    ROTATION_FIELD_NUMBER: _ClassVar[int]
-    CAPSULE__RADIUS_FIELD_NUMBER: _ClassVar[int]
-    attackcondition_type: int
-    distance_min: float
-    distance_max: float
-    rotation: float
-    capsule__radius: float
-    def __init__(self, attackcondition_type: _Optional[int] = ..., distance_min: _Optional[float] = ..., distance_max: _Optional[float] = ..., rotation: _Optional[float] = ..., capsule__radius: _Optional[float] = ...) -> None: ...
-
 class GAttack(_message.Message):
-    __slots__ = ("debug_name", "debug_mirrored", "duration_frames", "stamina_consumption_frame", "cooldown_min", "cooldown_max", "movement_scale", "stamina_cost", "stops_tracking_at", "projectile_type", "projectile_spawns", "melee", "tags", "impulses", "condition")
+    __slots__ = ("debug_name", "debug_mirrored", "duration_frames", "stamina_consumption_frame", "cooldown_min", "cooldown_max", "movement_scale", "stamina_cost", "stops_tracking_at", "projectile_type", "projectile_spawns", "melee", "tags", "impulses", "conditions")
     DEBUG_NAME_FIELD_NUMBER: _ClassVar[int]
     DEBUG_MIRRORED_FIELD_NUMBER: _ClassVar[int]
     DURATION_FRAMES_FIELD_NUMBER: _ClassVar[int]
@@ -366,7 +352,7 @@ class GAttack(_message.Message):
     MELEE_FIELD_NUMBER: _ClassVar[int]
     TAGS_FIELD_NUMBER: _ClassVar[int]
     IMPULSES_FIELD_NUMBER: _ClassVar[int]
-    CONDITION_FIELD_NUMBER: _ClassVar[int]
+    CONDITIONS_FIELD_NUMBER: _ClassVar[int]
     debug_name: str
     debug_mirrored: bool
     duration_frames: int
@@ -381,8 +367,8 @@ class GAttack(_message.Message):
     melee: GAttackMelee
     tags: _containers.RepeatedCompositeFieldContainer[GTagValue]
     impulses: _containers.RepeatedCompositeFieldContainer[GImpulseData]
-    condition: GAttackConditionValue
-    def __init__(self, debug_name: _Optional[str] = ..., debug_mirrored: _Optional[bool] = ..., duration_frames: _Optional[int] = ..., stamina_consumption_frame: _Optional[int] = ..., cooldown_min: _Optional[float] = ..., cooldown_max: _Optional[float] = ..., movement_scale: _Optional[float] = ..., stamina_cost: _Optional[_Union[GStaminaCost, _Mapping]] = ..., stops_tracking_at: _Optional[float] = ..., projectile_type: _Optional[int] = ..., projectile_spawns: _Optional[_Iterable[_Union[GProjectileSpawn, _Mapping]]] = ..., melee: _Optional[_Union[GAttackMelee, _Mapping]] = ..., tags: _Optional[_Iterable[_Union[GTagValue, _Mapping]]] = ..., impulses: _Optional[_Iterable[_Union[GImpulseData, _Mapping]]] = ..., condition: _Optional[_Union[GAttackConditionValue, _Mapping]] = ...) -> None: ...
+    conditions: _containers.RepeatedCompositeFieldContainer[GCollider]
+    def __init__(self, debug_name: _Optional[str] = ..., debug_mirrored: _Optional[bool] = ..., duration_frames: _Optional[int] = ..., stamina_consumption_frame: _Optional[int] = ..., cooldown_min: _Optional[float] = ..., cooldown_max: _Optional[float] = ..., movement_scale: _Optional[float] = ..., stamina_cost: _Optional[_Union[GStaminaCost, _Mapping]] = ..., stops_tracking_at: _Optional[float] = ..., projectile_type: _Optional[int] = ..., projectile_spawns: _Optional[_Iterable[_Union[GProjectileSpawn, _Mapping]]] = ..., melee: _Optional[_Union[GAttackMelee, _Mapping]] = ..., tags: _Optional[_Iterable[_Union[GTagValue, _Mapping]]] = ..., impulses: _Optional[_Iterable[_Union[GImpulseData, _Mapping]]] = ..., conditions: _Optional[_Iterable[_Union[GCollider, _Mapping]]] = ...) -> None: ...
 
 class GAbility(_message.Message):
     __slots__ = ("type", "debug_name", "attack", "recovering_attacks")
