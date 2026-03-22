@@ -32,10 +32,9 @@ PLAN
 x clear
 x better godot linting - python re problem matching
 x fix _pb2 proto generation
+x fix jagras cooldown
 
-* fix jagras cooldown
-*
-* game: abiblities
+* game: abilities
 * mark: attack condition
 * mark: projectile spawn frames
 *

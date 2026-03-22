@@ -26,12 +26,11 @@ static func explicit_update_attack(
 		c.attack_damaged_creatures.clear()
 		c.attack_damaged_interactables.clear()
 
-		var dur := c.current_attack.get_duration_frames()
 		if c.type != glib.GCreatureType.PLAYER:
 			Game.v.enemy_started_attack.emit(c.transform.origin)
 			if action_cooldown:
-				action_cooldown.cooldown_min = c.current_attack.get_cooldown_min() + dur
-				action_cooldown.cooldown_min = c.current_attack.get_cooldown_max() + dur
+				action_cooldown.cooldown_min = c.current_attack.get_cooldown_min()
+				action_cooldown.cooldown_min = c.current_attack.get_cooldown_max()
 	##
 
 	var attack := c.current_attack
