@@ -159,11 +159,11 @@ def _set_proto_value(instance, field: str, value: Any) -> None:  ##
   ##
 
 
-## _GColliderAnimated_keyframe_fields: list[str]
+## _gcollider_keyframe_fields: list[str]
 # [[[cog
 # import ast, pathlib
 # tree = ast.parse(pathlib.Path("cli/glib_pb2.pyi").read_text(encoding="utf-8"))
-# _GColliderAnimated_keyframe_fields = [
+# _gcollider_keyframe_fields = [
 #     a.target.id
 #     for cls in tree.body if (isinstance(cls, ast.ClassDef) and cls.name == "GColliderAnimated")
 #     for a in cls.body if isinstance(a, ast.AnnAssign)
@@ -172,9 +172,9 @@ def _set_proto_value(instance, field: str, value: Any) -> None:  ##
 #     and (a.annotation.value.attr == "RepeatedCompositeFieldContainer")
 #     and a.annotation.slice.id.startswith("GKeyframe")
 # ]
-# print(f"{_GColliderAnimated_keyframe_fields=}")
+# print(f"{_gcollider_keyframe_fields=}")
 # cog]]]
-_GColliderAnimated_keyframe_fields = [
+_gcollider_keyframe_fields = [
   "tr",
   "is_active",
   "circle__radius",
