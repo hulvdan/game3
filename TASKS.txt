@@ -44,6 +44,7 @@ x mark: correct clipping (make timeline line draw on top of sticked row)
 x mark: remove always-shown scrollbar
 x mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)
 x wip attack conditions
+x ref
 
 * mark: attack condition
 * mark: projectile spawn frames

@@ -2255,6 +2255,9 @@ def _panel_timeline() -> None:
     im.set_cursor_screen_pos(remembered_pos)
     return im.is_item_clicked()
 
+  were_dragging_keyframe_this_frame = False
+  created_keyframe_this_frame = False
+  hovered_frame_index = -1
   ##
 
   if im.begin_table(  ##
@@ -2372,12 +2375,6 @@ def _panel_timeline() -> None:
     ##
 
     # Drawing selected collider
-    ## Setup
-    were_dragging_keyframe_this_frame = False
-    created_keyframe_this_frame = False
-    hovered_frame_index = -1
-    ##
-
     if c:
       ## Setup
 
@@ -2671,7 +2668,9 @@ def _panel_timeline() -> None:
             hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
         ##
 
+        ## Teardown
         im.dummy((0, 0))
+        ##
 
     im.end_table()
 

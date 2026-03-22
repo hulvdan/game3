@@ -36,9 +36,9 @@ func _is_condition_satisfied(
 
 	var cond := condition.get_attackcondition_type()
 	match cond:
-		glib.GAttackConditionType.CAPSULE_CONTAINED, glib.GAttackConditionType.CAPSULE_RADIUS_EXTENDED:
+		glib.GAttackConditionType.CAPSULE, glib.GAttackConditionType.CAPSULE_WITH_RADIUS_EXTENDED:
 			var dist := condition.get_distance_max() - condition.get_distance_min()
-			if cond == glib.GAttackConditionType.CAPSULE_RADIUS_EXTENDED:
+			if cond == glib.GAttackConditionType.CAPSULE_WITH_RADIUS_EXTENDED:
 				dist += condition.get_capsule__radius() * 2.0
 			for d: Dictionary in Collisions.query_capsule(
 				capsule_center_pos,

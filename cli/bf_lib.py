@@ -2353,7 +2353,7 @@ def imgui_set_idling(enabled: bool) -> None:  ##
 
 def show_imgui(
   window_title: str,
-  panels: list[ImGuiPanel],
+  panels: t.Iterable[ImGuiPanel],
   setup_imgui_style: hello_imgui.VoidFunction | None = None,
   post_new_frame: hello_imgui.VoidFunction | None = None,
   before_exit: hello_imgui.VoidFunction | None = None,

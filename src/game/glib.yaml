@@ -224,9 +224,9 @@ teams: ##
 ##
 
 attack_conditions: ##
-- type: TUNNEL
-- type: CAPSULE_RADIUS_EXTENDED
-- type: CAPSULE_CONTAINED
+- type: INVALID
+- type: CAPSULE
+- type: CAPSULE_WITH_RADIUS_EXTENDED
 ##
 
 abilities:
@@ -310,7 +310,7 @@ creatures:
     cooldown_min: 0.7
     cooldown_max: 1.2
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 4
       capsule__radius: 0.8
 ##
@@ -328,7 +328,7 @@ creatures:
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 5
       capsule__radius: 0.3
 ##
@@ -349,7 +349,7 @@ creatures:
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 5
       capsule__radius: 0.3
 ##
@@ -365,7 +365,7 @@ creatures:
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 7
       capsule__radius: 0.3
 ##
@@ -381,7 +381,7 @@ creatures:
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 5
       capsule__radius: 2
 ##
@@ -397,7 +397,7 @@ creatures:
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 0
       capsule__radius: 3
 ##
@@ -413,7 +413,7 @@ creatures:
     cooldown_min: 2.0
     cooldown_max: 3.0
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 0
       capsule__radius: 2
 ##
@@ -439,7 +439,7 @@ creatures:
       f5: 1 # pow
       f6_degrees: 0 # rotation
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 0
       capsule__radius: 2
 ##
@@ -455,7 +455,7 @@ creatures:
     projectile_spawns:
     - at: 12
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_max: 0
       capsule__radius: 2
 ##
@@ -482,7 +482,7 @@ creatures:
       f5: 1 # pow
       f6_degrees: 0 # rotation
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_min: 0
       distance_max: 0
       capsule__radius: 2
@@ -509,7 +509,7 @@ creatures:
       f5: 1 # pow
       f6_degrees: 0 # rotation
     condition:
-      attackcondition_type: CAPSULE_CONTAINED
+      attackcondition_type: CAPSULE
       distance_min: 0
       distance_max: 4
       capsule__radius: 0.5
@@ -526,7 +526,7 @@ creatures:
     cooldown_min: 8.0
     cooldown_max: 12.0
     condition:
-      attackcondition_type: CAPSULE_CONTAINED
+      attackcondition_type: CAPSULE
       distance_min: 0
       distance_max: 7
       capsule__radius: 2
@@ -543,7 +543,7 @@ creatures:
     cooldown_min: 30.0
     cooldown_max: 30.0
     condition:
-      attackcondition_type: CAPSULE_RADIUS_EXTENDED
+      attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
       distance_min: 0
       distance_max: 4
       capsule__radius: 1.8
@@ -560,7 +560,7 @@ creatures:
     cooldown_max: 5.0
     stops_tracking_at: 0.4
     condition:
-      attackcondition_type: CAPSULE_CONTAINED
+      attackcondition_type: CAPSULE
       distance_max: 4
       capsule__radius: 0.4
     melee:
@@ -579,7 +579,7 @@ creatures:
     stops_tracking_at: 0.0
     mirrorable: true
     condition:
-      attackcondition_type: CAPSULE_CONTAINED
+      attackcondition_type: CAPSULE
       distance_max: 2.5
       capsule__radius: 0.4
       rotation: 90
