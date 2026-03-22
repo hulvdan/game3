@@ -64,6 +64,7 @@
       "label": "5_lint",
       "type": "shell",
       "dependsOn": [
+        "regenerate_python_glib_proto",
         "ty",
         "ruff"
       ],
@@ -140,7 +141,6 @@
       "label": "tool_attacks_markuper",
       "type": "shell",
       "dependsOn": [
-        "regenerate_python_glib_proto",
         "5_lint"
       ],
       "hide": true

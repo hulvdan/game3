@@ -393,7 +393,7 @@ func _physics_process(dt: float) -> void:
 						q = Collisions.query_circle(collider_pos, radius, mask, true, false, 12)
 					2: # Capsule
 						var radius: float = _make_keyframe_value_at(collider.get_capsule__radius(), e)
-						var rotation = _make_keyframe_value_at(collider.get_capsule__rotation(), e)
+						var rotation: float = _make_keyframe_value_at(collider.get_capsule__rotation(), e)
 						var spread: float = _make_keyframe_value_at(collider.get_capsule__spread(), e)
 						q = Collisions.query_capsule(
 							collider_pos,
