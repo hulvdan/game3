@@ -568,7 +568,6 @@ def tool_attacks_markuper() -> None:
       bf.ImGuiPanel("Visualizer", _panel_visualizer),
       bf.ImGuiPanel("Explorer", _panel_explorer),
       bf.ImGuiPanel("Attack", _panel_attack_inspector),
-      bf.ImGuiPanel("Collider", _panel_collider_inspector),
       bf.ImGuiPanel("Timeline", _panel_timeline),
       bf.ImGuiPanel("Logs", hello_imgui.log_gui),
     ],
@@ -2173,7 +2172,8 @@ def imgui_timeline_line(indices_width: int, rows: int, color: int) -> None:  ##
   ##
 
 
-def _panel_timeline() -> None:  ##
+def _panel_timeline() -> None:
+  ## Setup
   tim = g.timeline
   atk = g.ref_selected_attack
   if not atk:
@@ -2229,213 +2229,458 @@ def _panel_timeline() -> None:  ##
     im.set_cursor_screen_pos(remembered_pos)
     return im.is_item_clicked()
 
-  if (
-    im.button("<<")
-    or im.is_key_pressed(im.Key._0)
-    or (im.is_key_pressed(im.Key._6) and io.key_shift)
-  ):
-    atk.timeline_at = 0
-    atk.timeline_started_playing_at = 0
-  im.set_item_tooltip("Key: 0 / ^")
+  ##
 
-  im.same_line()
-  if (
-    im.button("⏸" if tim.is_playing else "▶")
-    or im.is_key_pressed(im.Key.space)
-    or im.is_key_pressed(im.Key.enter)
-  ):
-    tim.is_playing = not tim.is_playing
-    if tim.is_playing:
-      atk.timeline_started_playing_at = atk.timeline_at
-    elif im.is_key_pressed(im.Key.space):
-      atk.timeline_at = atk.timeline_started_playing_at
-  im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
+  if im.begin_table("timeline_table", 4, flags=im.TableFlags_.resizable):
+    ## Table setup
+    im.table_setup_column(
+      "", im.TableColumnFlags_.width_fixed | im.TableColumnFlags_.no_direct_resize_
+    )
+    im.table_setup_column(
+      "", im.TableColumnFlags_.width_fixed | im.TableColumnFlags_.no_direct_resize_
+    )
+    im.table_setup_column("", im.TableColumnFlags_.width_fixed)
+    im.table_setup_column(
+      "", im.TableColumnFlags_.width_stretch | im.TableColumnFlags_.no_resize
+    )
+    ##
 
-  im.same_line()
-  if im.button(">>") or (im.is_key_pressed(im.Key._4) and io.key_shift):
-    atk.timeline_at = atk.ref.duration_frames
-    atk.timeline_started_playing_at = atk.ref.duration_frames
-  im.set_item_tooltip("Key: $")
+    ## Drawing top row (go to start/end, play button, play rate)
+    im.table_next_row()
+    im.table_set_column_index(3)
+    if (
+      im.button("<<")
+      or im.is_key_pressed(im.Key._0)
+      or (im.is_key_pressed(im.Key._6) and io.key_shift)
+    ):
+      atk.timeline_at = 0
+      atk.timeline_started_playing_at = 0
+    im.set_item_tooltip("Key: 0 / ^")
 
-  im.same_line()
-  changed, value = im.checkbox("Play once", g.play_once)
-  if changed:
-    g.play_once = value
-    g.schedule_dump()
+    im.same_line()
+    if (
+      im.button("⏸" if tim.is_playing else "▶")
+      or im.is_key_pressed(im.Key.space)
+      or im.is_key_pressed(im.Key.enter)
+    ):
+      tim.is_playing = not tim.is_playing
+      if tim.is_playing:
+        atk.timeline_started_playing_at = atk.timeline_at
+      elif im.is_key_pressed(im.Key.space):
+        atk.timeline_at = atk.timeline_started_playing_at
+    im.set_item_tooltip("Key: space (resets to start) / enter (continues)")
 
-  im.same_line()
-  changed, value = im.slider_float(
-    "Play rate",
-    g.play_rate,
-    0.25,
-    4,
-    "%.2f",
-    im.SliderFlags_.logarithmic | im.SliderFlags_.always_clamp,
-  )
-  if changed:
-    g.play_rate = value
-    g.schedule_dump()
+    im.same_line()
+    if im.button(">>") or (im.is_key_pressed(im.Key._4) and io.key_shift):
+      atk.timeline_at = atk.ref.duration_frames
+      atk.timeline_started_playing_at = atk.ref.duration_frames
+    im.set_item_tooltip("Key: $")
 
-  lines_top_left: ImVec2 | None = None
-  lines_bottom_right = ImVec2()
+    im.same_line()
+    changed, value = im.checkbox("Play once", g.play_once)
+    if changed:
+      g.play_once = value
+      g.schedule_dump()
 
-  were_dragging_keyframe_this_frame = False
-  created_keyframe_this_frame = False
+    im.same_line()
+    changed, value = im.slider_float(
+      "Play rate",
+      g.play_rate,
+      0.25,
+      4,
+      "%.2f",
+      im.SliderFlags_.logarithmic | im.SliderFlags_.always_clamp,
+    )
+    if changed:
+      g.play_rate = value
+      g.schedule_dump()
 
-  hovered_frame_index = -1
+    im.dummy((0, 0))
+    ##
 
-  for field_name, frames in (
-    ("", None),
-    *(
-      (
-        (x, c.get_keyframes(x))
-        for x in g.keyframe_field_types_per_collider_type[c.ref.type]
-      )
-      if c
-      else ()
-    ),
-  ):
-    line_spanning_rows = 1
-    if c and field_name:
-      line_spanning_rows = c.get_keyframe_type(field_name).line_spanning_rows
-
-    line_color = im.get_color_u32(im.Col_.frame_bg)
-    if c and field_name:
-      if c.selected_keyframe and (field_name == c.selected_keyframe.field):
-        line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
-    else:
-      line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
-
-    imgui_timeline_line(atk.ref.duration_frames, line_spanning_rows, line_color)
-
-    if not lines_top_left:
-      lines_top_left = imgui_timeline_line_out.pos_top_left
+    ## Drawing line with playhead
+    im.table_next_row()
+    im.table_set_column_index(3)
+    imgui_timeline_line(atk.ref.duration_frames, 1, im.get_color_u32(im.Col_.frame_bg))
+    lines_top_left = imgui_timeline_line_out.pos_top_left
     lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
+    if im.is_mouse_down(0) and (
+      imgui_timeline_line_out.hovered or g.timeline.dragging_playhead
+    ):
+      atk.timeline_at = imgui_timeline_line_out.hovered_indexf
+      g.timeline.dragging_playhead = True
+    elif not im.is_mouse_down(0):
+      g.timeline.dragging_playhead = False
+    im.dummy((0, 0))
+    ##
 
-    if frames is None:
-      if im.is_mouse_down(0) and (
-        imgui_timeline_line_out.hovered or g.timeline.dragging_playhead
-      ):
-        atk.timeline_at = imgui_timeline_line_out.hovered_indexf
-        g.timeline.dragging_playhead = True
-      elif not im.is_mouse_down(0):
-        g.timeline.dragging_playhead = False
+    ## Drawing impulses
+    for impulse in atk.ref.impulses:
+      im.table_next_row()
+      im.table_set_column_index(3)
+      line_color = im.get_color_u32(im.Col_.frame_bg)
+      if impulse == atk.impulse.ref_selected:
+        line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
+      imgui_timeline_line(atk.ref.duration_frames, 1, line_color)
+      lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
+      out = imgui_timeline_line_out
+      w_per_frame = (
+        out.pos_bottom_right.x - out.pos_top_left.x
+      ) / atk.ref.duration_frames
+      draw.add_rect_filled(
+        ImVec2(
+          impulse.at * w_per_frame + out.pos_top_left.x,
+          out.pos_top_left.y,
+        ),
+        ImVec2(
+          (impulse.at + impulse.dur) * w_per_frame + out.pos_top_left.x,
+          out.pos_bottom_right.y,
+        ),
+        COLOR_RED_U32 if out.hovered else COLOR_RED_FADED_U32,
+      )
+      im.dummy((0, 0))
+    ##
 
-    elif c:
-      # Keyframe lines
-      closest_index = _get_closest_keyframe(frames, atk.timeline_at)[0]
-      for fr_index, fr in enumerate(frames):
-        key = _keyframe_id(field_name, fr.id)
-        is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
-        imgui_keyframe(
-          key,
-          imgui_timeline_line_out.pos_top_left
-          + ImVec2(
-            fr.index_timeline * imgui_timeline_line_out.width_per_index,
-            imgui_timeline_line_out.height / 2,
-          ),
-          selected=is_selected,
-          closest=closest_index == fr_index,
-        )
-        if im.is_item_hovered():
-          if im.is_mouse_clicked(0):
-            c.select_keyframe(field_name, fr_index)
-            tim.dragging_keyframe = key
-          if (
-            (not tim.dragging_keyframe)
-            and (im.is_mouse_clicked(1) or im.is_key_pressed(im.Key.delete))
-            and (len(frames := c.get_keyframes(field_name)) > 1)
+    # Drawing selected collider
+    ## Setup
+    were_dragging_keyframe_this_frame = False
+    created_keyframe_this_frame = False
+    hovered_frame_index = -1
+    ##
+
+    if c:
+      ## Setup
+
+      def closest_keyframe_list_index(field_name: str) -> int:
+        return _get_closest_keyframe(c.get_keyframes(field_name), atk.timeline_at)[0]
+
+      c_keyframe_fields = g.keyframe_field_types_per_collider_type[c.ref.type]
+      c_keyframe_fields_list = list(c_keyframe_fields)
+
+      vertical_off_field = None
+      if c.selected_keyframe:
+        vertical_off_field = c.selected_keyframe.field
+      ##
+
+      for field_index, field_name, frames in (  ##
+        (i, x, c.get_keyframes(x))
+        for i, x in enumerate(g.keyframe_field_types_per_collider_type[c.ref.type])
+      ):  ##
+        im.table_next_row()
+
+        ## Setup
+        vertical_off = 0
+        if field_name == vertical_off_field:
+          for disabled, key, voff in (
+            ((field_index <= 0), im.Key.w, -1),
+            ((field_index >= len(c_keyframe_fields) - 1), im.Key.s, 1),
           ):
-            hov = imgui_timeline_line_out.hovered_index_half_cell_offset
-            for k in frames:
-              if k.index_timeline == hov:
+            if (not disabled) and im.is_key_pressed(key):
+              vertical_off = voff
+
+        keyframe_type = c.get_keyframe_type(field_name)
+        ##
+
+        ## Column 0. Label
+        im.table_set_column_index(0)
+        im.text(field_name.split("__", 1)[-1])
+        ##
+
+        ## Column 1. `<` and `>` buttons
+        im.table_set_column_index(1)
+
+        index_f = closest_keyframe_list_index(field_name)
+        field_is_the_same_as_of_selected_keyframe = c.selected_keyframe and (
+          c.selected_keyframe.field == field_name
+        )
+
+        if vertical_off and (c.selected_keyframe is not None):
+          new_field_to_select = c_keyframe_fields_list[field_index + vertical_off]
+          c.select_keyframe(
+            new_field_to_select,
+            _get_closest_keyframe(
+              getattr(c.ref, new_field_to_select), c.selected_keyframe.index_timeline
+            )[0],
+          )
+
+        if not len(frames):
+          bf.imgui_begin_disabled()
+        if index_f <= 0:
+          bf.imgui_begin_disabled()
+        if im.button(bf.imgui_id("<", field_name)) or (
+          (not bf.imgui_is_disabled())
+          and im.is_key_pressed(im.Key.a)
+          and field_is_the_same_as_of_selected_keyframe
+        ):
+          c.select_keyframe(field_name, index_f - 1)
+        if field_is_the_same_as_of_selected_keyframe:
+          im.set_item_tooltip("Key: A")
+        if index_f == 0:
+          bf.imgui_end_disabled()
+        im.same_line()
+        if index_f >= len(frames) - 1:
+          bf.imgui_begin_disabled()
+        if im.button(bf.imgui_id(">", field_name)) or (
+          (not bf.imgui_is_disabled())
+          and im.is_key_pressed(im.Key.d)
+          and c.selected_keyframe
+          and field_is_the_same_as_of_selected_keyframe
+        ):
+          c.select_keyframe(field_name, index_f + 1)
+        if field_is_the_same_as_of_selected_keyframe:
+          im.set_item_tooltip("Key: D")
+        if index_f >= len(frames) - 1:
+          bf.imgui_end_disabled()
+        if not len(frames):
+          bf.imgui_end_disabled()
+        ##
+
+        ## Column 2. Field input
+        im.table_set_column_index(2)
+
+        match keyframe_type:
+          case _KeyframeTypeBool():
+            _inspector_checkbox(
+              bf.imgui_id("", f"checkbox_{field_name}"),
+              lambda: frames[index_f].value,
+              lambda x: (
                 atk.scheduled_commands.append(
-                  _CommandAttackColliderKeyframeRemove(
+                  _CommandAttackColliderAlterField(
                     merge_id=g.action_id,
                     atk=atk,
                     collider_id=c.ref.id,
                     keyframe_field=field_name,
-                    keyframe_index_timeline=hov,
-                    keyframe_value=k.value,
+                    keyframe_index_inside_list=index_f,
+                    old=frames[index_f].value,
+                    new=x,
                   )
                 )
-                break
-
-        if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
-          were_dragging_keyframe_this_frame = True
-          min_left = 0
-          max_right = atk.ref.duration_frames - 1
-          if fr_index > 0:
-            min_left = frames[fr_index - 1].index_timeline + 1
-          if fr_index < len(frames) - 1:
-            max_right = frames[fr_index + 1].index_timeline - 1
-
-          atk.scheduled_commands.append(
-            _CommandAttackColliderKeyframeMove(
-              merge_id=g.action_id,
-              atk=atk,
-              collider_id=c.ref.id,
-              keyframe_field=field_name,
-              keyframe_index_timeline_from=fr.index_timeline,
-              keyframe_index_timeline_to=bf.clamp(
-                imgui_timeline_line_out.hovered_index_half_cell_offset,
-                min_left,
-                max_right,
+                if frames[index_f].value != x
+                else None
               ),
             )
-          )
 
-        if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
-          if imgui_timeline_line_out.double_clicked:
-            idx = imgui_timeline_line_out.hovered_index_half_cell_offset
-            if not any(x.index_timeline == idx for x in frames):
-              created_keyframe_this_frame = True
-              atk.scheduled_commands.append(
-                _CommandAttackColliderKeyframeAdd(
-                  merge_id=g.action_id,
-                  atk=atk,
-                  collider_id=c.ref.id,
-                  keyframe_field=field_name,
-                  keyframe_index_timeline=idx,
+          case _KeyframeTypeFloat():
+            _inspector_input_float(
+              bf.imgui_id("", f"slider_{field_name}"),
+              lambda: frames[index_f].value,
+              lambda x: (
+                atk.scheduled_commands.append(
+                  _CommandAttackColliderAlterField(
+                    merge_id=g.action_id,
+                    atk=atk,
+                    collider_id=c.ref.id,
+                    keyframe_field=field_name,
+                    keyframe_index_inside_list=index_f,
+                    old=frames[index_f].value,
+                    new=x,
+                  )
                 )
+                if frames[index_f].value != x
+                else None
+              ),
+              keyframe_type.min,
+              keyframe_type.max,
+              keyframe_type.step,
+              keyframe_type.step_fast,
+              keyframe_type.fmt,
+            )
+
+          case _KeyframeTypeV2():
+            _inspector_input_float(
+              bf.imgui_id("", f"slider_{field_name}_x"),
+              lambda: frames[index_f].value.x,  # ty:ignore[unresolved-attribute]
+              lambda x: (
+                atk.scheduled_commands.append(
+                  _CommandAttackColliderAlterField(
+                    merge_id=g.action_id,
+                    atk=atk,
+                    collider_id=c.ref.id,
+                    keyframe_field=field_name,
+                    keyframe_index_inside_list=index_f,
+                    old=frames[index_f].value,
+                    new=vec2(x, frames[index_f].value.y),  # ty:ignore[unresolved-attribute]
+                  )
+                )
+                if frames[index_f].value.x != x  # ty:ignore[unresolved-attribute]
+                else None
+              ),
+              -_MAX_OFFSET,
+              _MAX_OFFSET,
+              keyframe_type.step,
+              1,
+              "%.2f",
+            )
+            _inspector_input_float(
+              bf.imgui_id("", f"slider_{field_name}_y"),
+              lambda: frames[index_f].value.y,  # ty:ignore[unresolved-attribute]
+              lambda x: (
+                atk.scheduled_commands.append(
+                  _CommandAttackColliderAlterField(
+                    merge_id=g.action_id,
+                    atk=atk,
+                    collider_id=c.ref.id,
+                    keyframe_field=field_name,
+                    keyframe_index_inside_list=index_f,
+                    old=frames[index_f].value,
+                    new=vec2(frames[index_f].value.x, x),  # ty:ignore[unresolved-attribute]
+                  )
+                )
+                if frames[index_f].value.y != x  # ty:ignore[unresolved-attribute]
+                else None
+              ),
+              -_MAX_OFFSET,
+              _MAX_OFFSET,
+              keyframe_type.step,
+              1,
+              "%.2f",
+            )
+
+          case _:
+            assert 0
+        ##
+
+        ## Column 3. Timeline line
+        im.table_set_column_index(3)
+
+        line_spanning_rows = 1
+        if c and field_name:
+          line_spanning_rows = c.get_keyframe_type(field_name).line_spanning_rows
+
+        line_color = im.get_color_u32(im.Col_.frame_bg)
+        if c and field_name:
+          if c.selected_keyframe and (field_name == c.selected_keyframe.field):
+            line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
+        else:
+          line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
+
+        imgui_timeline_line(atk.ref.duration_frames, line_spanning_rows, line_color)
+        lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
+
+        # Keyframes
+        closest_index = _get_closest_keyframe(frames, atk.timeline_at)[0]
+        for fr_index, fr in enumerate(frames):
+          key = _keyframe_id(field_name, fr.id)
+          is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
+          imgui_keyframe(
+            key,
+            imgui_timeline_line_out.pos_top_left
+            + ImVec2(
+              fr.index_timeline * imgui_timeline_line_out.width_per_index,
+              imgui_timeline_line_out.height / 2,
+            ),
+            selected=is_selected,
+            closest=closest_index == fr_index,
+          )
+          if im.is_item_hovered():
+            if im.is_mouse_clicked(0):
+              c.select_keyframe(field_name, fr_index)
+              tim.dragging_keyframe = key
+            if (
+              (not tim.dragging_keyframe)
+              and (im.is_mouse_clicked(1) or im.is_key_pressed(im.Key.delete))
+              and (len(frames := c.get_keyframes(field_name)) > 1)
+            ):
+              hov = imgui_timeline_line_out.hovered_index_half_cell_offset
+              for k in frames:
+                if k.index_timeline == hov:
+                  atk.scheduled_commands.append(
+                    _CommandAttackColliderKeyframeRemove(
+                      merge_id=g.action_id,
+                      atk=atk,
+                      collider_id=c.ref.id,
+                      keyframe_field=field_name,
+                      keyframe_index_timeline=hov,
+                      keyframe_value=k.value,
+                    )
+                  )
+                  break
+
+          if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
+            were_dragging_keyframe_this_frame = True
+            min_left = 0
+            max_right = atk.ref.duration_frames - 1
+            if fr_index > 0:
+              min_left = frames[fr_index - 1].index_timeline + 1
+            if fr_index < len(frames) - 1:
+              max_right = frames[fr_index + 1].index_timeline - 1
+
+            atk.scheduled_commands.append(
+              _CommandAttackColliderKeyframeMove(
+                merge_id=g.action_id,
+                atk=atk,
+                collider_id=c.ref.id,
+                keyframe_field=field_name,
+                keyframe_index_timeline_from=fr.index_timeline,
+                keyframe_index_timeline_to=bf.clamp(
+                  imgui_timeline_line_out.hovered_index_half_cell_offset,
+                  min_left,
+                  max_right,
+                ),
               )
+            )
 
-        if imgui_timeline_line_out.hovered:
-          hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
+          if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
+            if imgui_timeline_line_out.double_clicked:
+              idx = imgui_timeline_line_out.hovered_index_half_cell_offset
+              if not any(x.index_timeline == idx for x in frames):
+                created_keyframe_this_frame = True
+                atk.scheduled_commands.append(
+                  _CommandAttackColliderKeyframeAdd(
+                    merge_id=g.action_id,
+                    atk=atk,
+                    collider_id=c.ref.id,
+                    keyframe_field=field_name,
+                    keyframe_index_timeline=idx,
+                  )
+                )
 
-  assert lines_top_left
+          if imgui_timeline_line_out.hovered:
+            hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
+        ##
 
-  for i in range(atk.ref.duration_frames):
-    posx = lines_top_left.x + i * imgui_timeline_line_out.width / atk.ref.duration_frames
-    draw.add_line(
-      ImVec2(posx, lines_top_left.y),
-      ImVec2(posx, lines_bottom_right.y),
-      im.get_color_u32(im.Col_.text if hovered_frame_index == i else im.Col_.border),
+        im.dummy((0, 0))
+
+    ## Drawing cell lines
+    assert lines_top_left
+
+    for i in range(atk.ref.duration_frames):
+      posx = (
+        lines_top_left.x + i * imgui_timeline_line_out.width / atk.ref.duration_frames
+      )
+      draw.add_line(
+        ImVec2(posx, lines_top_left.y),
+        ImVec2(posx, lines_bottom_right.y),
+        im.get_color_u32(im.Col_.text if hovered_frame_index == i else im.Col_.border),
+      )
+    ##
+
+    ## Drawing playhead
+    playhead_top = lines_top_left + ImVec2(
+      atk.timeline_at / atk.ref.duration_frames * imgui_timeline_line_out.width, 0
     )
+    playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
+    line_height = imgui_timeline_line_out.height
+    draw.add_triangle_filled(
+      playhead_top + ImVec2(0, line_height / 2),
+      playhead_top + ImVec2(line_height / 4, 0),
+      playhead_top + ImVec2(-line_height / 4, 0),
+      im.get_color_u32(im.Col_.button_active),
+    )
+    draw.add_line(
+      playhead_top,
+      playhead_bottom,
+      im.get_color_u32(im.Col_.button_active),
+      2 * im.get_window_dpi_scale(),
+    )
+    ##
 
-  playhead_top = lines_top_left + ImVec2(
-    atk.timeline_at / atk.ref.duration_frames * imgui_timeline_line_out.width, 0
-  )
-  playhead_bottom = ImVec2(playhead_top.x, lines_bottom_right.y)
-  line_height = imgui_timeline_line_out.height
-  draw.add_triangle_filled(
-    playhead_top + ImVec2(0, line_height / 2),
-    playhead_top + ImVec2(line_height / 4, 0),
-    playhead_top + ImVec2(-line_height / 4, 0),
-    im.get_color_u32(im.Col_.button_active),
-  )
-  draw.add_line(
-    playhead_top,
-    playhead_bottom,
-    im.get_color_u32(im.Col_.button_active),
-    2 * im.get_window_dpi_scale(),
-  )
+    im.end_table()
 
+  ## Teardown
   if not were_dragging_keyframe_this_frame:
     tim.dragging_keyframe = None
-
   im.dummy((0, 0))
-
   ##
 
 
@@ -2469,219 +2714,6 @@ def _get_closest_keyframe(
   keyframes: _GKeyframesContainer, to: float = 0
 ) -> tuple[int, _GKeyframe]:  ##
   return min(enumerate(keyframes), key=lambda x: abs(x[1].index_timeline - to))
-  ##
-
-
-def _panel_collider_inspector() -> None:  ##
-  atk = g.ref_selected_attack
-  if not atk:
-    imgui_draw_cross()
-    return
-  c = atk.get_visualization_collider()
-  if not c:
-    imgui_draw_cross()
-    return
-  c_keyframe_fields = g.keyframe_field_types_per_collider_type[c.ref.type]
-  c_keyframe_fields_list = list(c_keyframe_fields)
-
-  current_frame = min(int(atk.timeline_at + 0.5), atk.ref.duration_frames - 1)
-  assert current_frame >= 0
-
-  def closest_keyframe_list_index(field_name: str) -> int:
-    return _get_closest_keyframe(c.get_keyframes(field_name), atk.timeline_at)[0]
-
-  # im.dummy((1, im.get_frame_height()))
-  im.dummy((1, im.get_text_line_height()))
-  im.dummy((1, im.get_text_line_height_with_spacing()))
-
-  if g.timeline.is_playing:
-    im.begin_disabled()
-
-  if im.begin_table("collider_table", 3):
-    im.table_setup_column("", im.TableColumnFlags_.width_fixed)
-    im.table_setup_column("", im.TableColumnFlags_.width_fixed)
-    im.table_setup_column("", im.TableColumnFlags_.width_stretch)
-
-    vertical_off_field = None
-    if c.selected_keyframe:
-      vertical_off_field = c.selected_keyframe.field
-
-    for field_index, f in enumerate(c_keyframe_fields):
-      vertical_off = 0
-      if f == vertical_off_field:
-        for disabled, key, voff in (
-          ((field_index <= 0), im.Key.w, -1),
-          ((field_index >= len(c_keyframe_fields) - 1), im.Key.s, 1),
-        ):
-          if (not disabled) and im.is_key_pressed(key):
-            vertical_off = voff
-
-      frames = c.get_keyframes(f)
-      keyframe_type = c.get_keyframe_type(f)
-
-      im.table_next_row()
-      im.table_set_column_index(0)
-
-      im.text(f.split("__", 1)[-1])
-
-      im.table_set_column_index(1)
-
-      index_f = closest_keyframe_list_index(f)
-      field_is_the_same_as_of_selected_keyframe = c.selected_keyframe and (
-        c.selected_keyframe.field == f
-      )
-
-      if vertical_off and (c.selected_keyframe is not None):
-        new_field_to_select = c_keyframe_fields_list[field_index + vertical_off]
-        c.select_keyframe(
-          new_field_to_select,
-          _get_closest_keyframe(
-            getattr(c.ref, new_field_to_select), c.selected_keyframe.index_timeline
-          )[0],
-        )
-
-      if not len(frames):
-        bf.imgui_begin_disabled()
-      if index_f <= 0:
-        bf.imgui_begin_disabled()
-      if im.button(bf.imgui_id("<", f)) or (
-        (not bf.imgui_is_disabled())
-        and im.is_key_pressed(im.Key.a)
-        and field_is_the_same_as_of_selected_keyframe
-      ):
-        c.select_keyframe(f, index_f - 1)
-      if field_is_the_same_as_of_selected_keyframe:
-        im.set_item_tooltip("Key: A")
-      if index_f == 0:
-        bf.imgui_end_disabled()
-      im.same_line()
-      if index_f >= len(frames) - 1:
-        bf.imgui_begin_disabled()
-      if im.button(bf.imgui_id(">", f)) or (
-        (not bf.imgui_is_disabled())
-        and im.is_key_pressed(im.Key.d)
-        and c.selected_keyframe
-        and field_is_the_same_as_of_selected_keyframe
-      ):
-        c.select_keyframe(f, index_f + 1)
-      if field_is_the_same_as_of_selected_keyframe:
-        im.set_item_tooltip("Key: D")
-      if index_f >= len(frames) - 1:
-        bf.imgui_end_disabled()
-      if not len(frames):
-        bf.imgui_end_disabled()
-
-      im.table_set_column_index(2)
-
-      match keyframe_type:
-        case _KeyframeTypeBool():
-          frames = t.cast("_GContainer[GKeyframeBool]", frames)
-          _inspector_checkbox(
-            bf.imgui_id("", f"checkbox_{f}"),
-            lambda: frames[index_f].value,
-            lambda x: (
-              atk.scheduled_commands.append(
-                _CommandAttackColliderAlterField(
-                  merge_id=g.action_id,
-                  atk=atk,
-                  collider_id=c.ref.id,
-                  keyframe_field=f,
-                  keyframe_index_inside_list=index_f,
-                  old=frames[index_f].value,
-                  new=x,
-                )
-              )
-              if frames[index_f].value != x
-              else None
-            ),
-          )
-
-        case _KeyframeTypeFloat():
-          frames = t.cast("_GContainer[GKeyframeFloat]", frames)
-          _inspector_input_float(
-            bf.imgui_id("", f"slider_{f}"),
-            lambda: frames[index_f].value,
-            lambda x: (
-              atk.scheduled_commands.append(
-                _CommandAttackColliderAlterField(
-                  merge_id=g.action_id,
-                  atk=atk,
-                  collider_id=c.ref.id,
-                  keyframe_field=f,
-                  keyframe_index_inside_list=index_f,
-                  old=frames[index_f].value,
-                  new=x,
-                )
-              )
-              if frames[index_f].value != x
-              else None
-            ),
-            keyframe_type.min,
-            keyframe_type.max,
-            keyframe_type.step,
-            keyframe_type.step_fast,
-            keyframe_type.fmt,
-          )
-
-        case _KeyframeTypeV2():
-          frames = t.cast("_GContainer[GKeyframeV2]", frames)
-          _inspector_input_float(
-            bf.imgui_id("", f"slider_{f}_x"),
-            lambda: frames[index_f].value.x,
-            lambda x: (
-              atk.scheduled_commands.append(
-                _CommandAttackColliderAlterField(
-                  merge_id=g.action_id,
-                  atk=atk,
-                  collider_id=c.ref.id,
-                  keyframe_field=f,
-                  keyframe_index_inside_list=index_f,
-                  old=frames[index_f].value,
-                  new=vec2(x, frames[index_f].value.y),
-                )
-              )
-              if frames[index_f].value.x != x
-              else None
-            ),
-            -_MAX_OFFSET,
-            _MAX_OFFSET,
-            keyframe_type.step,
-            1,
-            "%.2f",
-          )
-          _inspector_input_float(
-            bf.imgui_id("", f"slider_{f}_y"),
-            lambda: frames[index_f].value.y,
-            lambda x: (
-              atk.scheduled_commands.append(
-                _CommandAttackColliderAlterField(
-                  merge_id=g.action_id,
-                  atk=atk,
-                  collider_id=c.ref.id,
-                  keyframe_field=f,
-                  keyframe_index_inside_list=index_f,
-                  old=frames[index_f].value,
-                  new=vec2(frames[index_f].value.x, x),
-                )
-              )
-              if frames[index_f].value.y != x
-              else None
-            ),
-            -_MAX_OFFSET,
-            _MAX_OFFSET,
-            keyframe_type.step,
-            1,
-            "%.2f",
-          )
-
-        case _:
-          assert 0
-
-    im.end_table()
-
-  if g.timeline.is_playing:
-    im.end_disabled()
-
   ##
 
 
