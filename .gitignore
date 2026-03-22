@@ -3,6 +3,7 @@
 *.rpp-PROX
 *.rpp-bak
 *.tmp
+*_pb2.py
 .godot/
 /*.node_editor.json
 /.export/
