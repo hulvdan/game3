@@ -39,7 +39,12 @@ x ref IterNeighbors -> iter_neighbors
 x mark: draw impulse duration rects
 x mark: ref timeline panel into table
 x docs
+x mark: sticked play / timeline rows
 
+* mark: correct clipping
+* mark: remove always-shown scrollbar
+* mark:
+* mark:
 * mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)
 *
 * game: abilities

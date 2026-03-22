@@ -2231,8 +2231,11 @@ def _panel_timeline() -> None:
 
   ##
 
-  if im.begin_table("timeline_table", 4, flags=im.TableFlags_.resizable):
+  if im.begin_table(  ##
+    "timeline_table", 4, flags=im.TableFlags_.scroll_y | im.TableFlags_.resizable
+  ):  ##
     ## Table setup
+    im.table_setup_scroll_freeze(0, 2)  # Freezing 2 first rows
     im.table_setup_column(
       "", im.TableColumnFlags_.width_fixed | im.TableColumnFlags_.no_direct_resize_
     )
