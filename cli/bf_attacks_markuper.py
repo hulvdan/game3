@@ -2320,6 +2320,7 @@ def _panel_timeline() -> None:
     ## Drawing impulses
     for impulse in atk.ref.impulses:
       im.table_next_row()
+      draw = im.get_window_draw_list()
       im.table_set_column_index(3)
       line_color = im.get_color_u32(im.Col_.frame_bg)
       if impulse == atk.impulse.ref_selected:
@@ -2383,6 +2384,8 @@ def _panel_timeline() -> None:
 
         keyframe_type = c.get_keyframe_type(field_name)
         ##
+
+        draw = im.get_window_draw_list()
 
         ## Column 0. Label
         im.table_set_column_index(0)
@@ -2644,8 +2647,11 @@ def _panel_timeline() -> None:
 
         im.dummy((0, 0))
 
+    im.end_table()
+
     ## Drawing cell lines
     assert lines_top_left
+    draw = im.get_window_draw_list()
 
     for i in range(atk.ref.duration_frames):
       posx = (
@@ -2677,8 +2683,6 @@ def _panel_timeline() -> None:
       2 * im.get_window_dpi_scale(),
     )
     ##
-
-    im.end_table()
 
   ## Teardown
   if not were_dragging_keyframe_this_frame:
