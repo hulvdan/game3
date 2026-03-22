@@ -1570,11 +1570,11 @@ def _panel_attack_inspector() -> None:  ##
   for impulse in atk.ref.impulses:
     min_attack_frames = max(min_attack_frames, impulse.at + impulse.dur)
   im.set_next_item_width(im.get_content_region_avail()[0])
-  changed, frames = im.slider_int(
+  changed, frames = im.input_int(
     bf.imgui_id("", "atk__duration_frames"),
     atk.ref.duration_frames,
-    min_attack_frames,
-    _MAX_ATTACK_FRAMES_DURATION,
+    ATTACKS_FPS // 10,
+    ATTACKS_FPS,
   )
   if changed:
     atk.scheduled_commands.append(
@@ -1583,7 +1583,7 @@ def _panel_attack_inspector() -> None:  ##
         atk=atk,
         old=atk.ref.duration_frames,
         old_stamina_consumption_frame=atk.ref.stamina_consumption_frame,
-        new=frames,
+        new=min(_MAX_ATTACK_FRAMES_DURATION, max(min_attack_frames, frames)),
       )
     )
 
@@ -1591,11 +1591,11 @@ def _panel_attack_inspector() -> None:  ##
     im.text("stamina_consumption_frame")
     im.same_line()
     im.set_next_item_width(im.get_content_region_avail()[0])
-    changed, frames = im.slider_int(
+    changed, frames = im.input_int(
       bf.imgui_id("", "atk__stamina_consumption_frame"),
       atk.ref.stamina_consumption_frame,
-      0,
-      atk.ref.duration_frames - 1,
+      ATTACKS_FPS // 10,
+      ATTACKS_FPS,
     )
     if changed:
       atk.scheduled_commands.append(
@@ -1603,7 +1603,7 @@ def _panel_attack_inspector() -> None:  ##
           merge_id=g.action_id,
           atk=atk,
           old=atk.ref.stamina_consumption_frame,
-          new=frames,
+          new=min(atk.ref.duration_frames - 1, max(0, frames)),
         )
       )
 
@@ -1659,90 +1659,101 @@ def _panel_attack_inspector() -> None:  ##
         flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
         if impulse is atk.impulse.ref_selected:
           flags |= im.TreeNodeFlags_.selected
-        if im.tree_node_ex(
-          bf.imgui_id(
-            "{} {:.2f} {} {:.1f} {}".format(
-              impulse.at,
-              impulse.distance,
-              impulse.dur,
-              impulse.pow,
-              impulse.rotation,
+
+        im.separator()
+        im.text(
+          "{} {:.2f} {} {:.1f} {}".format(
+            impulse.at,
+            impulse.distance,
+            impulse.dur,
+            impulse.pow,
+            impulse.rotation,
+          )
+        )
+        # if im.tree_node_ex(
+        #   bf.imgui_id(
+        #     "{} {:.2f} {} {:.1f} {}".format(
+        #       impulse.at,
+        #       impulse.distance,
+        #       impulse.dur,
+        #       impulse.pow,
+        #       impulse.rotation,
+        #     ),
+        #     f"impulse_{impulse.id}",
+        #   ),
+        #   flags,
+        # ):
+        if im.is_item_hovered():
+          atk.impulse.to_hover = impulse
+        if im.is_item_clicked():
+          if atk.impulse.ref_selected is impulse:
+            atk.impulse.deselection_scheduled = True
+          else:
+            atk.impulse.to_select = impulse
+        if im.is_item_clicked(im.MouseButton_.right):
+          atk.scheduled_commands.append(
+            _CommandAttackImpulseDelete(
+              merge_id=g.action_id, atk=atk, index=i, instance=impulse
+            )
+          )
+
+        if im.begin_table("impulse_table", 2):
+          im.table_setup_column("", im.TableColumnFlags_.width_fixed)
+          im.table_setup_column("", im.TableColumnFlags_.width_stretch)
+
+          for field_name, min_, max_, step, step_fast, fmt in (
+            ("at", 0, atk.ref.duration_frames - 1, 1, 5, "%.0f"),
+            ("distance", 0, _MAX_OFFSET, _STEP_TRANSLATE, 1, "%.2f"),
+            (
+              "dur",
+              ATTACKS_FPS // 10,
+              ATTACKS_FPS * 10,
+              ATTACKS_FPS // 10,
+              ATTACKS_FPS,
+              "%.0f",
             ),
-            f"impulse_{impulse.id}",
-          ),
-          flags,
-        ):
-          if im.is_item_hovered():
-            atk.impulse.to_hover = impulse
-          if im.is_item_clicked():
-            if atk.impulse.ref_selected is impulse:
-              atk.impulse.deselection_scheduled = True
-            else:
-              atk.impulse.to_select = impulse
-          if im.is_item_clicked(im.MouseButton_.right):
-            atk.scheduled_commands.append(
-              _CommandAttackImpulseDelete(
-                merge_id=g.action_id, atk=atk, index=i, instance=impulse
-              )
+            ("pow", 0.3, 10, 0.1, 1, "%.1f"),
+            (
+              "rotation",
+              bf.FLOAT_INF_NEG,
+              bf.FLOAT_INF_POS,
+              _STEP_ROTATE,
+              90,
+              "%.0f",
+            ),
+          ):
+            im.table_next_row()
+            im.table_set_column_index(0)
+            im.text(field_name)
+
+            im.table_set_column_index(1)
+            field_ = getattr(impulse, field_name)
+            _inspector_input_float(
+              bf.imgui_id("", f"impulse_{impulse.id}_{field_name}"),
+              lambda: _from_proto(field_),
+              lambda x: (
+                atk.scheduled_commands.append(
+                  _CommandAttackImpulseAlterField(
+                    merge_id=g.action_id,
+                    atk=atk,
+                    impulse_id=impulse.id,
+                    field=field_name,
+                    old=_from_proto(field_),
+                    new=x,
+                  )
+                )
+                if _from_proto(field_) != x
+                else None
+              ),
+              min_,
+              max_,
+              step,
+              step_fast,
+              fmt,
             )
 
-          if im.begin_table("impulse_table", 2):
-            im.table_setup_column("", im.TableColumnFlags_.width_fixed)
-            im.table_setup_column("", im.TableColumnFlags_.width_stretch)
-
-            for field_name, min_, max_, step, step_fast, fmt in (
-              ("at", 0, atk.ref.duration_frames - 1, 1, 5, "%.0f"),
-              ("distance", 0, _MAX_OFFSET, _STEP_TRANSLATE, 1, "%.2f"),
-              (
-                "dur",
-                ATTACKS_FPS // 10,
-                ATTACKS_FPS * 10,
-                ATTACKS_FPS // 10,
-                ATTACKS_FPS,
-                "%.0f",
-              ),
-              ("pow", 0.3, 10, 0.1, 1, "%.1f"),
-              (
-                "rotation",
-                bf.FLOAT_INF_NEG,
-                bf.FLOAT_INF_POS,
-                _STEP_ROTATE,
-                90,
-                "%.0f",
-              ),
-            ):
-              im.table_next_row()
-              im.table_set_column_index(0)
-              im.text(field_name)
-
-              im.table_set_column_index(1)
-              field_ = getattr(impulse, field_name)
-              _inspector_input_float(
-                bf.imgui_id("", f"impulse_{impulse.id}_{field_name}"),
-                lambda: _from_proto(field_),
-                lambda x: (
-                  atk.scheduled_commands.append(
-                    _CommandAttackImpulseAlterField(
-                      merge_id=g.action_id,
-                      atk=atk,
-                      impulse_id=impulse.id,
-                      field=field_name,
-                      old=_from_proto(field_),
-                      new=x,
-                    )
-                  )
-                  if _from_proto(field_) != x
-                  else None
-                ),
-                min_,
-                max_,
-                step,
-                step_fast,
-                fmt,
-              )
-
-          im.end_table()
-          im.tree_pop()
+        im.end_table()
+        # im.tree_pop()
 
       im.end_tab_item()
 

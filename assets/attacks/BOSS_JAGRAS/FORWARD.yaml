@@ -1,6 +1,6 @@
 duration_frames: 64
 impulses:
-- at: 16
+- at: 13
   distance: 3.75
   dur: 42
   id: 1
