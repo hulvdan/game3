@@ -1,7 +1,7 @@
 conditions:
 - capsule__radius: 0.5
   capsule__rotation: 0.0
-  capsule__spread: 1.0
+  capsule__spread: 2.75
   circle__radius: 0.0
   debug_name: ''
   id: 1
@@ -11,7 +11,7 @@ conditions:
   polygon__rotation: 0.0
   polygon__spread_angle: 0.0
   tr:
-    x: 0.0
+    x: 2.0
     y: 0.0
   type: 2
 duration_frames: 96

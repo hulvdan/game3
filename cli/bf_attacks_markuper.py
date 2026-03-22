@@ -1097,6 +1097,16 @@ class _CommandAttackCollider(_CommandAttack):  ##
 
 
 @dataclass(slots=True)
+class _CommandAttackCondition(_CommandAttack):  ##
+  condition_id: _ConditionID
+
+  def c(self, atk: "_TransientAttack") -> GCollider:
+    return next(x for x in atk.ref.conditions if x.id == self.condition_id)
+
+  ##
+
+
+@dataclass(slots=True)
 @t.final
 class _CommandAttackColliderKeyframeAdd(_CommandAttackCollider):  ##
   keyframe_field: str
@@ -1204,6 +1214,35 @@ class _CommandAttackColliderAlterField(_CommandAttackCollider):  ##
     if newest.keyframe_field != self.keyframe_field:
       return _CommandMergeType.NONE
     if newest.keyframe_index_inside_list != self.keyframe_index_inside_list:
+      return _CommandMergeType.NONE
+
+    self.new = newest.new
+    return (
+      _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
+      if (self.old == self.new)
+      else _CommandMergeType.MERGED_OKAY
+    )
+
+  ##
+
+
+@dataclass(slots=True)
+@t.final
+class _CommandAttackConditionAlterField(_CommandAttackCondition):  ##
+  field: str
+  old: Any
+  new: Any
+
+  def do(self) -> None:
+    c = self.c(self.atk)
+    _set_proto_field(c, self.field, _to_proto(self.new))
+
+  def undo(self) -> None:
+    c = self.c(self.atk)
+    _set_proto_field(c, self.field, _to_proto(self.old))
+
+  def try_merge(self, newest: Self, /) -> _CommandMergeType:
+    if newest.field != self.field:
       return _CommandMergeType.NONE
 
     self.new = newest.new
@@ -1852,7 +1891,6 @@ def _panel_attack_inspector() -> None:
               )
 
         for i, condition in enumerate(atk.ref.conditions):
-          # for i, condition in enumerate(atk.ref.conditions):
           im.text("{} {}".format(condition.id, _ColliderType.get_name(condition.type)))
           if im.is_item_clicked(im.MouseButton_.right):
             atk.scheduled_commands.append(
@@ -1860,6 +1898,107 @@ def _panel_attack_inspector() -> None:
                 merge_id=g.action_id, atk=atk, index=i, instance=condition
               )
             )
+
+          for field_name, keyframe_type in g.keyframe_field_types_per_collider_type[
+            condition.type
+          ].items():
+            getter = lambda: _from_proto(getattr(condition, field_name))
+            match keyframe_type:
+              case _KeyframeTypeBool():
+                _inspector_checkbox(
+                  bf.imgui_id("", f"condition_checkbox_{field_name}"),
+                  getter,
+                  lambda x: (
+                    atk.scheduled_commands.append(
+                      _CommandAttackConditionAlterField(
+                        merge_id=g.action_id,
+                        atk=atk,
+                        condition_id=condition.id,
+                        field=field_name,
+                        old=getter(),
+                        new=x,
+                      )
+                    )
+                    if getter() != x
+                    else None
+                  ),
+                )
+
+              case _KeyframeTypeFloat():
+                _inspector_input_float(
+                  bf.imgui_id("", f"condition_slider_{field_name}"),
+                  getter,
+                  lambda x: (
+                    atk.scheduled_commands.append(
+                      _CommandAttackConditionAlterField(
+                        merge_id=g.action_id,
+                        atk=atk,
+                        condition_id=condition.id,
+                        field=field_name,
+                        old=getter(),
+                        new=x,
+                      )
+                    )
+                    if getter() != x
+                    else None
+                  ),
+                  keyframe_type.min,
+                  keyframe_type.max,
+                  keyframe_type.step,
+                  keyframe_type.step_fast,
+                  keyframe_type.fmt,
+                )
+
+              case _KeyframeTypeV2():
+                _inspector_input_float(
+                  bf.imgui_id("", f"condition_slider_{field_name}_x"),
+                  lambda: getter().x,
+                  lambda x: (
+                    atk.scheduled_commands.append(
+                      _CommandAttackConditionAlterField(
+                        merge_id=g.action_id,
+                        atk=atk,
+                        condition_id=condition.id,
+                        field=field_name,
+                        old=getter(),
+                        new=vec2(x, getter().y),
+                      )
+                    )
+                    if getter().x != x
+                    else None
+                  ),
+                  -_MAX_OFFSET,
+                  _MAX_OFFSET,
+                  keyframe_type.step,
+                  1,
+                  "%.2f",
+                )
+                _inspector_input_float(
+                  bf.imgui_id("", f"condition_slider_{field_name}_y"),
+                  lambda: getter().y,
+                  lambda y: (
+                    atk.scheduled_commands.append(
+                      _CommandAttackConditionAlterField(
+                        merge_id=g.action_id,
+                        atk=atk,
+                        condition_id=condition.id,
+                        field=field_name,
+                        old=getter(),
+                        new=vec2(getter().x, y),
+                      )
+                    )
+                    if getter().y != y
+                    else None
+                  ),
+                  -_MAX_OFFSET,
+                  _MAX_OFFSET,
+                  keyframe_type.step,
+                  1,
+                  "%.2f",
+                )
+
+              case _:
+                assert 0
 
         im.end_tab_item()
       ##
@@ -2583,7 +2722,7 @@ def _panel_timeline() -> None:
         match keyframe_type:
           case _KeyframeTypeBool():
             _inspector_checkbox(
-              bf.imgui_id("", f"checkbox_{field_name}"),
+              bf.imgui_id("", f"collider_checkbox_{field_name}"),
               lambda: frames[index_f].value,
               lambda x: (
                 atk.scheduled_commands.append(
@@ -2604,7 +2743,7 @@ def _panel_timeline() -> None:
 
           case _KeyframeTypeFloat():
             _inspector_input_float(
-              bf.imgui_id("", f"slider_{field_name}"),
+              bf.imgui_id("", f"collider_slider_{field_name}"),
               lambda: frames[index_f].value,
               lambda x: (
                 atk.scheduled_commands.append(
@@ -2630,7 +2769,7 @@ def _panel_timeline() -> None:
 
           case _KeyframeTypeV2():
             _inspector_input_float(
-              bf.imgui_id("", f"slider_{field_name}_x"),
+              bf.imgui_id("", f"collider_slider_{field_name}_x"),
               lambda: frames[index_f].value.x,  # ty:ignore[unresolved-attribute]
               lambda x: (
                 atk.scheduled_commands.append(
@@ -2654,7 +2793,7 @@ def _panel_timeline() -> None:
               "%.2f",
             )
             _inspector_input_float(
-              bf.imgui_id("", f"slider_{field_name}_y"),
+              bf.imgui_id("", f"collider_slider_{field_name}_y"),
               lambda: frames[index_f].value.y,  # ty:ignore[unresolved-attribute]
               lambda x: (
                 atk.scheduled_commands.append(
