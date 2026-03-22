@@ -69,6 +69,7 @@ class _ExportAttack(BaseModel):  ##
   stamina_consumption_frame: int
   impulses: list[_Impulse] = PydanticField(default_factory=list)
   melee: _ExportMelee | None = PydanticField(None)
+  conditions: list[dict]
   ##
 
 
@@ -916,7 +917,7 @@ class _CommandAttackConditionCreate(_CommandAttack):  ##
   def do(self) -> None:
     for x in self.atk.ref.conditions:
       assert x.id < self.id
-    c = GCollider(id=self.id)
+    c = GCollider(id=self.id, type=self.type)
     for field_name, ktype in g.keyframe_field_types_per_collider_type[
       self.type.value
     ].items():
@@ -2065,9 +2066,9 @@ def _panel_visualizer() -> None:
   gizmo.draw_grid(vis.camera_view, vis.camera_projection, identity_matrix(), cells / 2)
   ##
 
-  ## Actual logic
-  # Drawing body
   body_pos = vec2()
+
+  ## Drawing impulses
   for impulse in atk.ref.impulses:
     tip = vec3(impulse.distance, 0, 0)
     tip: vec2 = glm.rotate(vec2(impulse.distance, 0), radians(impulse.rotation))  # ty:ignore[invalid-assignment]
@@ -2084,12 +2085,45 @@ def _panel_visualizer() -> None:
       body_pos += glm.rotate(vec2(dist, 0), radians(impulse.rotation))
     else:
       body_pos += glm.rotate(vec2(impulse.distance, 0), radians(impulse.rotation))
+  ##
 
+  ## Drawing body
   draw_circle(
     vec3(body_pos.x, 0, body_pos.y), atk.parent.ref.collider_size / 2, COLOR_RED_U32
   )
+  ##
 
-  # Drawing colliders
+  ## Drawing condition (on the first frame)
+  if atk.timeline_at < 1:
+    condition_color = COLOR_GREEN_U32
+    for c in atk.ref.conditions:
+      center_ = _from_proto(c.tr)
+      center = vec3(center_.x, 0, center_.y)
+      match c.type:
+        case _ColliderType.CIRCLE:
+          draw_circle(center, c.circle__radius, condition_color)
+        case _ColliderType.CAPSULE:
+          draw_capsule(
+            center,
+            c.capsule__radius,
+            c.capsule__spread,
+            c.capsule__rotation,
+            condition_color,
+          )
+        case _ColliderType.POLYGON:
+          draw_polygon(
+            center,
+            c.polygon__dist_min,
+            c.polygon__dist_max,
+            c.polygon__spread_angle,
+            c.polygon__rotation,
+            condition_color,
+          )
+        case _:
+          assert 0
+  ##
+
+  ## Drawing colliders
   sel_col = atk.collider.ref_selected
   hov_col = atk.collider.ref_hovered
   visual_collider = atk.get_visualization_collider()

@@ -1,5 +1,27 @@
+conditions:
+- capsule__radius: 0.5
+  capsule__rotation: 0.0
+  capsule__spread: 1.0
+  circle__radius: 0.0
+  debug_name: ''
+  id: 1
+  is_active: true
+  polygon__dist_max: 0.0
+  polygon__dist_min: 0.0
+  polygon__rotation: 0.0
+  polygon__spread_angle: 0.0
+  tr:
+    x: 0.0
+    y: 0.0
+  type: 2
 duration_frames: 96
-impulses: []
+impulses:
+- at: 12
+  distance: 3.75
+  dur: 72
+  id: 1
+  pow: 1.5
+  rotation: 0
 melee:
   colliders:
   - capsule__radius: []

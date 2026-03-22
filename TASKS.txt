@@ -47,8 +47,13 @@ x ref
 x pass `is_game` into glib processor
 x wip attack conditions
 x enabled pyright
+x mark: condition: draw it in visualizer
 
-* mark: attack condition
+* mark: condition: display fields
+* mark: condition: can alter fields
+* mark: condition:
+* mark: condition:
+* mark: condition:
 * mark: set all attack conditions
 * mark: projectile spawn frames
 * game: abilities
