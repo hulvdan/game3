@@ -1575,14 +1575,15 @@ def _panel_attack_inspector() -> None:  ##
     ATTACKS_FPS // 10,
     ATTACKS_FPS,
   )
-  if changed:
+  new_value = min(_MAX_ATTACK_FRAMES_DURATION, max(min_attack_frames, frames))
+  if changed and (new_value != atk.ref.duration_frames):
     atk.scheduled_commands.append(
       _CommandAttackAlterDurationFrames(
         merge_id=g.action_id,
         atk=atk,
         old=atk.ref.duration_frames,
         old_stamina_consumption_frame=atk.ref.stamina_consumption_frame,
-        new=min(_MAX_ATTACK_FRAMES_DURATION, max(min_attack_frames, frames)),
+        new=new_value,
       )
     )
 
@@ -1596,13 +1597,22 @@ def _panel_attack_inspector() -> None:  ##
       ATTACKS_FPS // 10,
       ATTACKS_FPS,
     )
-    if changed:
+    max_stamina_consumption_frame = atk.ref.duration_frames - 1
+    for c in atk.colliders:
+      for fr in c.get_keyframes("is_active"):
+        if fr.value:
+          max_stamina_consumption_frame = min(
+            max_stamina_consumption_frame, fr.index_timeline
+          )
+          break
+    new_value = min(max_stamina_consumption_frame, max(0, frames))
+    if changed and (new_value != atk.ref.stamina_consumption_frame):
       atk.scheduled_commands.append(
         _CommandAttackAlterStaminaConsumptionFrame(
           merge_id=g.action_id,
           atk=atk,
           old=atk.ref.stamina_consumption_frame,
-          new=min(atk.ref.duration_frames - 1, max(0, frames)),
+          new=new_value,
         )
       )
 
