@@ -66,6 +66,7 @@
       "dependsOn": [
         "regenerate_python_glib_proto",
         "ty",
+        "pyright",
         "ruff"
       ],
       "group": {
@@ -96,6 +97,32 @@
         "pattern": [
           {
             "regexp": "^(.*\\.py):(\\d+):(\\d+): (.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "message": 4
+          }
+        ]
+      }
+    },
+    {
+      "label": "pyright",
+      "type": "shell",
+      "command": "pyright",
+      "args": [
+        "cli"
+      ],
+      "presentation": {
+        "revealProblems": "onProblem",
+        "reveal": "never"
+      },
+      "hide": true,
+      "problemMatcher": {
+        "owner": "python",
+        "fileLocation": "absolute",
+        "pattern": [
+          {
+            "regexp": "^  (.*\\.py):(\\d+):(\\d+) - (.*)$",
             "file": 1,
             "line": 2,
             "column": 3,

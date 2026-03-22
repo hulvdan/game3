@@ -223,12 +223,6 @@ teams: ##
   enum__value: 0b111
 ##
 
-attack_conditions: ##
-- type: INVALID
-- type: CAPSULE
-- type: CAPSULE_WITH_RADIUS_EXTENDED
-##
-
 abilities:
 - type: HOOK ##
   attack:

@@ -1,11 +1,5 @@
 duration_frames: 96
-impulses:
-- at: 12
-  distance: 3.75
-  dur: 72
-  id: 1
-  pow: 1.5
-  rotation: 0
+impulses: []
 melee:
   colliders:
   - capsule__radius: []

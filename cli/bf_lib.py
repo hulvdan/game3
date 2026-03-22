@@ -393,7 +393,7 @@ class DataclassSerializer:
           to = t.get_args(type_)[i]
           break
       assert not isinstance(to, Field)  # Avoiding setting type hints same as type names
-      self.validate_serializable(to)  # ty:ignore[invalid-argument-type]
+      self.validate_serializable(to)  # type: ignore
     ##
 
   def register(
@@ -446,7 +446,7 @@ class DataclassSerializer:
     return result
     ##
 
-  def deserialize_root(self, value, as_) -> Any:  ##
+  def deserialize_root(self, value, as_: type) -> Any:  ##
     is_dc = is_dataclass(as_)
     tt = t.get_origin(as_) or as_
     if (not is_dc) or (is_dc and (tt in self._variant_ser_types)):
@@ -471,7 +471,7 @@ class DataclassSerializer:
         if param is to:
           to = arg
           break
-      value_[x.name] = self.deserialize_root(value[x.name], to)
+      value_[x.name] = self.deserialize_root(value[x.name], to)  # type: ignore
 
     return as_(**value_)
     ##
@@ -480,8 +480,8 @@ class DataclassSerializer:
 
   _VariantSerialized = TypedDict("_VariantSerialized", {"%": str, "value": Any})
 
-  _variant_ser_types: dict[type | str, tuple[str, SerFunc]] = field(default_factory=dict)
-  _variant_deser_types: dict[str, tuple[type, DeserFunc]] = field(default_factory=dict)
+  _variant_ser_types: dict[Any, tuple[str, SerFunc]] = field(default_factory=dict)
+  _variant_deser_types: dict[str, tuple[Any, DeserFunc]] = field(default_factory=dict)
   _registries: dict[type, dict[Any, type]] = field(default_factory=dict)
 
   def _serialize_variant(self, value, as_) -> _VariantSerialized:
@@ -560,7 +560,7 @@ class DataclassSerializer:
       # "dict": _serialize_dict,
     }
     self._variant_ser_types.update(
-      {k.__name__: v for k, v in self._variant_ser_types.items()}  # ty:ignore[unresolved-attribute]
+      {k.__name__: v for k, v in self._variant_ser_types.items()}
     )
     self._variant_deser_types = {
       "None": (type(None), self._deserialize_primitive),
@@ -800,7 +800,7 @@ def _test_serializer():  ##
     class_ = COLLIDER_REGISTRY[x["type"]]
     return class_(
       **{
-        k: ser.deserialize_root(v, class_.__dataclass_fields__[k].type)
+        k: ser.deserialize_root(v, class_.__dataclass_fields__[k].type)  # type: ignore
         for k, v in x.items()
         if k != "type"
       }

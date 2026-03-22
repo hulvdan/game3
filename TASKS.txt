@@ -46,6 +46,7 @@ x mark: max stamina consumption frame is min(active collider frame, projectile s
 x ref
 x pass `is_game` into glib processor
 x wip attack conditions
+x enabled pyright
 
 * mark: attack condition
 * mark: set all attack conditions

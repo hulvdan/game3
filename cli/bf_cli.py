@@ -82,8 +82,9 @@ def do_godot_check_errors() -> None:  ##
   process = subprocess.Popen(
     "godot --quit --headless --check-only --debug", stderr=subprocess.PIPE, text=True
   )
+  assert process.stderr is not None
   errors = []
-  for line in process.stderr:  # ty:ignore[not-iterable]
+  for line in process.stderr:
     bf.eprint(line)
     if m := re.match(r" +at: \(res:\/\/(.*:\d+)\)", line):
       errors.append(m.group(1))

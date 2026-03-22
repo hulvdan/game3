@@ -150,7 +150,7 @@ def _colors(fd):  ##
   ##
 
 
-def _dict_for_chunk(fd):  ##
+def _dict_for_chunk(fd) -> dict:  ##
   chunk_length = struct.unpack(">I", fd.read(4))[0]
   data = fd.read(chunk_length)
 
@@ -158,7 +158,7 @@ def _dict_for_chunk(fd):  ##
   title = data[2 : 2 + title_length].decode("utf-16be").strip("\0")
   color_data = data[2 + title_length :]
 
-  output = {
+  output: dict = {
     "name": str(title),
     "type": "Color Group",  # default to color group
   }
@@ -172,7 +172,7 @@ def _dict_for_chunk(fd):  ##
     swatch_type_index = struct.unpack(">h", color_data[-2:])[0]
     swatch_type = color_types[swatch_type_index]
 
-    output.update(  # type: ignore
+    output.update(
       {
         "data": {"mode": color_mode.decode("utf-8"), "values": color_values},
         "type": str(swatch_type),
