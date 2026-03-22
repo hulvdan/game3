@@ -798,7 +798,7 @@ func _keyframe_make_lerp(v1: Variant, v2: Variant, t: float) -> Variant: ##
 
 func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: ##
 	assert(len(keyframes))
-	for item in bf.IterNeighbors.new(keyframes):
+	for item in bf.iter_neighbors.new(keyframes):
 		var left = item[1]
 		var right = item[3]
 

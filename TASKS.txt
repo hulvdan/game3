@@ -35,6 +35,7 @@ x fix _pb2 proto generation
 x fix jagras cooldown
 x mark: fix impulse stoopid flashing upon changing values
 x mark: use float inputs everywhere
+x ref IterNeighbors -> iter_neighbors
 
 * mark: draw impulse duration rects
 * mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)
