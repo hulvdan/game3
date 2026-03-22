@@ -1891,7 +1891,7 @@ def _panel_attack_inspector() -> None:
               )
 
         for i, condition in enumerate(atk.ref.conditions):
-          im.text("{} {}".format(condition.id, _ColliderType.get_name(condition.type)))
+          im.text(_ColliderType.get_name(condition.type))
           if im.is_item_clicked(im.MouseButton_.right):
             atk.scheduled_commands.append(
               _CommandAttackConditionDelete(
@@ -1899,106 +1899,119 @@ def _panel_attack_inspector() -> None:
               )
             )
 
-          for field_name, keyframe_type in g.keyframe_field_types_per_collider_type[
-            condition.type
-          ].items():
-            getter = lambda: _from_proto(getattr(condition, field_name))
-            match keyframe_type:
-              case _KeyframeTypeBool():
-                _inspector_checkbox(
-                  bf.imgui_id("", f"condition_checkbox_{field_name}"),
-                  getter,
-                  lambda x: (
-                    atk.scheduled_commands.append(
-                      _CommandAttackConditionAlterField(
-                        merge_id=g.action_id,
-                        atk=atk,
-                        condition_id=condition.id,
-                        field=field_name,
-                        old=getter(),
-                        new=x,
-                      )
-                    )
-                    if getter() != x
-                    else None
-                  ),
-                )
+          if im.begin_table("condition", 2):
+            im.table_setup_column("", im.TableColumnFlags_.width_fixed)
+            im.table_setup_column("", im.TableColumnFlags_.width_stretch)
 
-              case _KeyframeTypeFloat():
-                _inspector_input_float(
-                  bf.imgui_id("", f"condition_slider_{field_name}"),
-                  getter,
-                  lambda x: (
-                    atk.scheduled_commands.append(
-                      _CommandAttackConditionAlterField(
-                        merge_id=g.action_id,
-                        atk=atk,
-                        condition_id=condition.id,
-                        field=field_name,
-                        old=getter(),
-                        new=x,
-                      )
-                    )
-                    if getter() != x
-                    else None
-                  ),
-                  keyframe_type.min,
-                  keyframe_type.max,
-                  keyframe_type.step,
-                  keyframe_type.step_fast,
-                  keyframe_type.fmt,
-                )
+            for field_name, keyframe_type in g.keyframe_field_types_per_collider_type[
+              condition.type
+            ].items():
+              if field_name == "is_active":
+                continue
 
-              case _KeyframeTypeV2():
-                _inspector_input_float(
-                  bf.imgui_id("", f"condition_slider_{field_name}_x"),
-                  lambda: getter().x,
-                  lambda x: (
-                    atk.scheduled_commands.append(
-                      _CommandAttackConditionAlterField(
-                        merge_id=g.action_id,
-                        atk=atk,
-                        condition_id=condition.id,
-                        field=field_name,
-                        old=getter(),
-                        new=vec2(x, getter().y),
-                      )
-                    )
-                    if getter().x != x
-                    else None
-                  ),
-                  -_MAX_OFFSET,
-                  _MAX_OFFSET,
-                  keyframe_type.step,
-                  1,
-                  "%.2f",
-                )
-                _inspector_input_float(
-                  bf.imgui_id("", f"condition_slider_{field_name}_y"),
-                  lambda: getter().y,
-                  lambda y: (
-                    atk.scheduled_commands.append(
-                      _CommandAttackConditionAlterField(
-                        merge_id=g.action_id,
-                        atk=atk,
-                        condition_id=condition.id,
-                        field=field_name,
-                        old=getter(),
-                        new=vec2(getter().x, y),
-                      )
-                    )
-                    if getter().y != y
-                    else None
-                  ),
-                  -_MAX_OFFSET,
-                  _MAX_OFFSET,
-                  keyframe_type.step,
-                  1,
-                  "%.2f",
-                )
+              im.table_next_row()
+              im.table_set_column_index(0)
+              im.text(field_name.split("__", 1)[-1])
 
-              case _:
-                assert 0
+              im.table_set_column_index(1)
+              getter = lambda: _from_proto(getattr(condition, field_name))
+              match keyframe_type:
+                case _KeyframeTypeBool():
+                  _inspector_checkbox(
+                    bf.imgui_id("", f"condition_checkbox_{field_name}"),
+                    getter,
+                    lambda x: (
+                      atk.scheduled_commands.append(
+                        _CommandAttackConditionAlterField(
+                          merge_id=g.action_id,
+                          atk=atk,
+                          condition_id=condition.id,
+                          field=field_name,
+                          old=getter(),
+                          new=x,
+                        )
+                      )
+                      if getter() != x
+                      else None
+                    ),
+                  )
+
+                case _KeyframeTypeFloat():
+                  _inspector_input_float(
+                    bf.imgui_id("", f"condition_slider_{field_name}"),
+                    getter,
+                    lambda x: (
+                      atk.scheduled_commands.append(
+                        _CommandAttackConditionAlterField(
+                          merge_id=g.action_id,
+                          atk=atk,
+                          condition_id=condition.id,
+                          field=field_name,
+                          old=getter(),
+                          new=x,
+                        )
+                      )
+                      if getter() != x
+                      else None
+                    ),
+                    keyframe_type.min,
+                    keyframe_type.max,
+                    keyframe_type.step,
+                    keyframe_type.step_fast,
+                    keyframe_type.fmt,
+                  )
+
+                case _KeyframeTypeV2():
+                  _inspector_input_float(
+                    bf.imgui_id("", f"condition_slider_{field_name}_x"),
+                    lambda: getter().x,
+                    lambda x: (
+                      atk.scheduled_commands.append(
+                        _CommandAttackConditionAlterField(
+                          merge_id=g.action_id,
+                          atk=atk,
+                          condition_id=condition.id,
+                          field=field_name,
+                          old=getter(),
+                          new=vec2(x, getter().y),
+                        )
+                      )
+                      if getter().x != x
+                      else None
+                    ),
+                    -_MAX_OFFSET,
+                    _MAX_OFFSET,
+                    keyframe_type.step,
+                    1,
+                    "%.2f",
+                  )
+                  _inspector_input_float(
+                    bf.imgui_id("", f"condition_slider_{field_name}_y"),
+                    lambda: getter().y,
+                    lambda y: (
+                      atk.scheduled_commands.append(
+                        _CommandAttackConditionAlterField(
+                          merge_id=g.action_id,
+                          atk=atk,
+                          condition_id=condition.id,
+                          field=field_name,
+                          old=getter(),
+                          new=vec2(getter().x, y),
+                        )
+                      )
+                      if getter().y != y
+                      else None
+                    ),
+                    -_MAX_OFFSET,
+                    _MAX_OFFSET,
+                    keyframe_type.step,
+                    1,
+                    "%.2f",
+                  )
+
+                case _:
+                  assert 0
+            im.end_table()
 
         im.end_tab_item()
       ##

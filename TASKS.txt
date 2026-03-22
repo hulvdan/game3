@@ -49,10 +49,8 @@ x wip attack conditions
 x enabled pyright
 x mark: condition: draw it in visualizer
 x mark: condition: display fields + can alter fields
+x mark: condition: show field labels
 
-* mark: condition: show field labels
-* mark: condition:
-* mark: condition:
 * mark: set all attack conditions
 * mark: projectile spawn frames
 * game: abilities
