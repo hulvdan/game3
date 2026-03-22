@@ -47,7 +47,7 @@ melee:
     - id: 2
       index_timeline: 0
       value:
-        x: 0.0
+        x: 0.25
         y: 0.0
     type: 3
 stamina_consumption_frame: 0

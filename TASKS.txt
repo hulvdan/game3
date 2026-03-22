@@ -38,6 +38,7 @@ x mark: use float inputs everywhere
 x ref IterNeighbors -> iter_neighbors
 x mark: draw impulse duration rects
 x mark: ref timeline panel into table
+x docs
 
 * mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)
 *

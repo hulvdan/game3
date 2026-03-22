@@ -2366,9 +2366,9 @@ def _panel_timeline() -> None:
         (i, x, c.get_keyframes(x))
         for i, x in enumerate(g.keyframe_field_types_per_collider_type[c.ref.type])
       ):  ##
+        ## Setup
         im.table_next_row()
 
-        ## Setup
         vertical_off = 0
         if field_name == vertical_off_field:
           for disabled, key, voff in (
