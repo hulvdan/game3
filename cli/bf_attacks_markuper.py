@@ -568,7 +568,7 @@ def tool_attacks_markuper() -> None:
       bf.ImGuiPanel("Visualizer", _panel_visualizer),
       bf.ImGuiPanel("Explorer", _panel_explorer),
       bf.ImGuiPanel("Attack", _panel_attack_inspector),
-      bf.ImGuiPanel("Timeline", _panel_timeline),
+      bf.ImGuiPanel("Timeline", _panel_timeline, scrollable=False),
       bf.ImGuiPanel("Logs", hello_imgui.log_gui),
     ],
     setup_imgui_style=setup_imgui_style,

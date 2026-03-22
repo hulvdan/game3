@@ -41,8 +41,8 @@ x mark: ref timeline panel into table
 x docs
 x mark: sticked play / timeline rows
 x mark: correct clipping (make timeline line draw on top of sticked row)
+x mark: remove always-shown scrollbar
 
-* mark: remove always-shown scrollbar
 * mark:
 * mark:
 * mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)

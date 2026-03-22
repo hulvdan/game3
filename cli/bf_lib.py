@@ -2338,6 +2338,7 @@ def ldtk_load(filepath: Path | str) -> Ldtk:  ##
 class ImGuiPanel:  ##
   label: str
   gui_function: Callable[[], None]
+  scrollable: bool = True
   ##
 
 
@@ -2461,6 +2462,8 @@ def show_imgui(
     window.label = panel.label
     window.dock_space_name = "MainDockSpace"
     window.gui_function = panel.gui_function
+    if not panel.scrollable:
+      window.imgui_window_flags |= im.WindowFlags_.no_scrollbar
     dockable_windows.append(window)
 
   runner_params.docking_params.dockable_windows = dockable_windows
