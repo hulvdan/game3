@@ -1311,12 +1311,13 @@ class _TransientCollider:
 
 
 @dataclass(slots=True)
-class _ListItem(Generic[T]):
+class _ListItem(Generic[T]):  ##
   deselection_scheduled: bool = False
   to_select: T | None = None
   to_hover: T | None = None
   ref_selected: T | None = None
   ref_hovered: T | None = None
+  ##
 
 
 @dataclass(slots=True)
@@ -1551,11 +1552,16 @@ def _panel_explorer() -> None:  ##
   ##
 
 
-def _panel_attack_inspector() -> None:  ##
+def _panel_attack_inspector() -> None:
+  ## Setup
   atk = g.ref_selected_attack
   if not atk:
     return
 
+  is_player = atk.parent.ref.debug_name == "PLAYER"
+  ##
+
+  ## duration_frames
   im.text("duration_frames")
   im.same_line()
   min_attack_frames = 1
@@ -1586,8 +1592,10 @@ def _panel_attack_inspector() -> None:  ##
         new=new_value,
       )
     )
+  ##
 
-  if atk.parent.ref.debug_name == "PLAYER":
+  if is_player:
+    ## stamina_consumption_frame
     im.text("stamina_consumption_frame")
     im.same_line()
     im.set_next_item_width(im.get_content_region_avail()[0])
@@ -1615,8 +1623,10 @@ def _panel_attack_inspector() -> None:  ##
           new=new_value,
         )
       )
+    ##
 
   if im.begin_tab_bar("attack_tab_bar", im.TabBarFlags_.none):
+    ## Colliders
     if im.begin_tab_item("Colliders")[0]:
       if atk.ref.melee:
         for i, collider_type in enumerate(_ColliderType):
@@ -1656,7 +1666,9 @@ def _panel_attack_inspector() -> None:  ##
               )
             im.tree_pop()
       im.end_tab_item()
+    ##
 
+    ## Impulses
     if im.begin_tab_item("Impulses")[0]:
       if im.button("+impulse"):
         atk.scheduled_commands.append(
@@ -1767,8 +1779,12 @@ def _panel_attack_inspector() -> None:  ##
       im.end_tab_item()
 
     im.end_tab_bar()
+    ##
 
-  ##
+    if not is_player:
+      ## Conditions
+      pass
+      ##
 
 
 def _panel_visualizer() -> None:

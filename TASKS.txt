@@ -43,13 +43,11 @@ x mark: sticked play / timeline rows
 x mark: correct clipping (make timeline line draw on top of sticked row)
 x mark: remove always-shown scrollbar
 x mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)
+x wip attack conditions
 
-* mark:
-* mark:
-*
-* game: abilities
 * mark: attack condition
 * mark: projectile spawn frames
+* game: abilities
 *
 * mark: make it unable to drag playhead when started dragging outside of timeline
 *
