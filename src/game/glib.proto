@@ -178,6 +178,26 @@ message GCollider {
   int32 type = 2;
   string debug_name = 3;
 
+  GV2 tr = 4;
+  bool is_active = 5;
+
+  float circle__radius = 6;
+
+  float capsule__radius = 7;
+  float capsule__spread = 8;
+  float capsule__rotation = 9;
+
+  float polygon__dist_min = 10;
+  float polygon__dist_max = 11;
+  float polygon__rotation = 12;
+  float polygon__spread_angle = 13;
+}
+
+message GColliderAnimated {
+  int32 id = 1;
+  int32 type = 2;
+  string debug_name = 3;
+
   repeated GKeyframeV2 tr = 4;
   repeated GKeyframeBool is_active = 5;
 
@@ -197,7 +217,7 @@ message GAttackMelee {
   int32 damage = 1;
   GStaminaCost damage_stamina = 2;
   int32 evade_flags = 3;
-  repeated GCollider colliders = 4;
+  repeated GColliderAnimated colliders = 4;
   int32 hp_rally_recover = 5;
 }
 
@@ -220,11 +240,6 @@ message GImpulseData {
   int32 dur = 4;
   float pow = 5;
   float rotation = 6;
-}
-
-message GAttackCondition {
-  int32 type = 1;
-  string debug_name = 2;
 }
 
 message GAttack {
@@ -453,6 +468,5 @@ message Lib {
   repeated GMask masks = 31;
   repeated GTag tags = 32;
   repeated GImpulse impulses = 33;
-  repeated GAttackCondition attack_conditions = 34;
   // TABLE_GEN_END
 }

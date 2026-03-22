@@ -370,7 +370,7 @@ def _process_glib(genline, glib, is_game: bool) -> None:
               validate_attack(attack, is_player)
               if not is_player:
                 if is_game:
-                  asserte("condition" in attack)
+                  asserte(attack.get("conditions", []))
               if attack.pop("mirrorable", False):
                 copied_attack = copy.deepcopy(attack)
                 copied_attack["debug_mirrored"] = True

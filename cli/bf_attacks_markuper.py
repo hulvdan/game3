@@ -27,7 +27,7 @@ from glib_pb2 import (
   GV3,
   GV4,
   GAttack,
-  GCollider,
+  GColliderAnimated,
   GCreature,
   GKeyframeBool,
   GKeyframeFloat,
@@ -159,22 +159,22 @@ def _set_proto_value(instance, field: str, value: Any) -> None:  ##
   ##
 
 
-## _gcollider_keyframe_fields: list[str]
+## _GColliderAnimated_keyframe_fields: list[str]
 # [[[cog
 # import ast, pathlib
 # tree = ast.parse(pathlib.Path("cli/glib_pb2.pyi").read_text(encoding="utf-8"))
-# _gcollider_keyframe_fields = [
+# _GColliderAnimated_keyframe_fields = [
 #     a.target.id
-#     for cls in tree.body if (isinstance(cls, ast.ClassDef) and cls.name == "GCollider")
+#     for cls in tree.body if (isinstance(cls, ast.ClassDef) and cls.name == "GColliderAnimated")
 #     for a in cls.body if isinstance(a, ast.AnnAssign)
 #     and isinstance(a.annotation, ast.Subscript)
 #     and isinstance(a.annotation.value, ast.Attribute)
 #     and (a.annotation.value.attr == "RepeatedCompositeFieldContainer")
 #     and a.annotation.slice.id.startswith("GKeyframe")
 # ]
-# print(f"{_gcollider_keyframe_fields=}")
+# print(f"{_GColliderAnimated_keyframe_fields=}")
 # cog]]]
-_gcollider_keyframe_fields = [
+_GColliderAnimated_keyframe_fields = [
   "tr",
   "is_active",
   "circle__radius",
@@ -217,6 +217,7 @@ _MAX_SPREAD: float = 10.0
 ## Setup
 _ImpulseID: TypeAlias = int
 _ColliderID: TypeAlias = int
+_ConditionID: TypeAlias = int
 _KeyframeID: TypeAlias = int
 
 
@@ -506,7 +507,7 @@ def tool_attacks_markuper() -> None:
     },
   }
 
-  for field_name, field_type in GCollider.__annotations__:
+  for field_name, field_type in GColliderAnimated.__annotations__:
     if t.get_origin(field_type) is not containers.RepeatedCompositeFieldContainer:
       continue
     args = t.get_args(field_type)
@@ -539,7 +540,7 @@ def tool_attacks_markuper() -> None:
       attack = _TransientAttack(ref=attack_, parent=creature, colliders=colliders)
       if attack_.melee:
         for collider_ in attack_.melee.colliders:
-          colliders.append(_TransientCollider(ref=collider_))
+          colliders.append(_TransientColliderAnimated(ref=collider_))
       attacks.append(attack)
     g.creatures.append(creature)
 
@@ -865,8 +866,8 @@ class _CommandAttackColliderCreate(_CommandAttack):  ##
   def do(self) -> None:
     for collider in self.atk.colliders:
       assert collider.ref.id < self.collider_id
-    c = _TransientCollider(
-      ref=GCollider(id=self.collider_id, type=self.collider_type.value)
+    c = _TransientColliderAnimated(
+      ref=GColliderAnimated(id=self.collider_id, type=self.collider_type.value)
     )
     for field_name in g.keyframe_field_types_per_collider_type[self.collider_type.value]:
       c.make_default_keyframe_at(field_name, 0)
@@ -886,9 +887,59 @@ class _CommandAttackColliderCreate(_CommandAttack):  ##
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackDeleteCollider(_CommandAttack):  ##
+class _CommandAttackColliderDelete(_CommandAttack):  ##
   index: int
-  instance: "_TransientCollider"
+  instance: "_TransientColliderAnimated"
+
+  def do(self) -> None:
+    c = self.atk.colliders[self.index]
+    del self.atk.colliders[self.index]
+    del self.atk.ref.melee.colliders[self.index]
+    if self.atk.collider.ref_selected is c:
+      self.atk.collider.ref_selected = None
+      self.atk.collider.to_select = next(iter(self.atk.colliders), None)
+
+  def undo(self) -> None:
+    self.atk.colliders.insert(self.index, self.instance)
+    self.atk.ref.melee.colliders.insert(self.index, self.instance.ref)
+    self.atk.collider.to_select = self.instance
+
+  ##
+
+
+@dataclass(slots=True)
+@t.final
+class _CommandAttackConditionCreate(_CommandAttack):  ##
+  collider_id: int
+  collider_type: _ColliderType
+
+  def do(self) -> None:
+    for collider in self.atk.colliders:
+      assert collider.ref.id < self.collider_id
+    c = _TransientColliderAnimated(
+      ref=GColliderAnimated(id=self.collider_id, type=self.collider_type.value)
+    )
+    for field_name in g.keyframe_field_types_per_collider_type[self.collider_type.value]:
+      c.make_default_keyframe_at(field_name, 0)
+    self.atk.colliders.append(c)
+    self.atk.ref.melee.colliders.append(self.atk.colliders[-1].ref)
+    self.atk.collider.to_select = self.atk.colliders[-1]
+
+  def undo(self) -> None:
+    index = next(
+      i for i, c in enumerate(self.atk.ref.melee.colliders) if c.id == self.collider_id
+    )
+    del self.atk.colliders[index]
+    del self.atk.ref.melee.colliders[index]
+
+  ##
+
+
+@dataclass(slots=True)
+@t.final
+class _CommandAttackConditionDelete(_CommandAttack):  ##
+  index: int
+  instance: "_TransientColliderAnimated"
 
   def do(self) -> None:
     c = self.atk.colliders[self.index]
@@ -1046,7 +1097,7 @@ class _CommandAttackImpulse(_CommandAttack):  ##
 class _CommandAttackCollider(_CommandAttack):  ##
   collider_id: _ColliderID
 
-  def c(self, atk: "_TransientAttack") -> "_TransientCollider":
+  def c(self, atk: "_TransientAttack") -> "_TransientColliderAnimated":
     return next(x for x in atk.colliders if x.ref.id == self.collider_id)
 
   ##
@@ -1203,8 +1254,8 @@ class _CommandAttackImpulseAlterField(_CommandAttackImpulse):  ##
 
 @dataclass(slots=True)
 @t.final
-class _TransientCollider:
-  ref: GCollider
+class _TransientColliderAnimated:
+  ref: GColliderAnimated
   selected_keyframe: _SelectedKeyframe | None = None
   keyframe_to_select: tuple[_SelectedKeyframe, bool] | None = None
 
@@ -1213,8 +1264,8 @@ class _TransientCollider:
     ##
 
   @staticmethod
-  def make(id_: int, type_: _ColliderType) -> "_TransientCollider":  ##
-    result = _TransientCollider(ref=GCollider(id=id_, type=type_))
+  def make(id_: int, type_: _ColliderType) -> "_TransientColliderAnimated":  ##
+    result = _TransientColliderAnimated(ref=GColliderAnimated(id=id_, type=type_))
     for f in g.keyframe_field_types_per_collider_type[type_]:
       result.make_default_keyframe_at(f, 0)
     return result
@@ -1324,9 +1375,9 @@ class _ListItem(Generic[T]):  ##
 class _TransientAttack:  ##
   ref: GAttack
   parent: "_TransientCreature"
-  colliders: list[_TransientCollider] = field(default_factory=list)
+  colliders: list[_TransientColliderAnimated] = field(default_factory=list)
 
-  collider: _ListItem[_TransientCollider] = field(default_factory=_ListItem)
+  collider: _ListItem[_TransientColliderAnimated] = field(default_factory=_ListItem)
   impulse: _ListItem[glib_pb2.GImpulseData] = field(default_factory=_ListItem)
 
   timeline_at: float = 0
@@ -1336,13 +1387,6 @@ class _TransientAttack:  ##
   history: list[_CommandAttack] = field(default_factory=list)
   scheduled_commands: list[_CommandAttack] = field(default_factory=list)
 
-  def next_collider_id(self) -> _ColliderID:
-    result = 1
-    if self.ref.melee:
-      for c in self.ref.melee.colliders:
-        result = max(result, c.id + 1)
-    return result
-
   def next_impulse_id(self) -> _ImpulseID:
     result = 1
     if self.ref:
@@ -1350,7 +1394,20 @@ class _TransientAttack:  ##
         result = max(result, x.id + 1)
     return result
 
-  def get_visualization_collider(self) -> _TransientCollider | None:
+  def next_collider_id(self) -> _ColliderID:
+    result = 1
+    if self.ref.melee:
+      for c in self.ref.melee.colliders:
+        result = max(result, c.id + 1)
+    return result
+
+  def next_condition_id(self) -> _ConditionID:
+    result = 1
+    for c in self.ref.conditions:
+      result = max(result, c.id + 1)
+    return result
+
+  def get_visualization_collider(self) -> _TransientColliderAnimated | None:
     if self.collider.ref_hovered:
       return self.collider.ref_hovered
     return self.collider.ref_selected
@@ -1660,7 +1717,7 @@ def _panel_attack_inspector() -> None:
                 atk.collider.to_select = collider
             if im.is_item_clicked(im.MouseButton_.right):
               atk.scheduled_commands.append(
-                _CommandAttackDeleteCollider(
+                _CommandAttackColliderDelete(
                   merge_id=g.action_id, atk=atk, index=i, instance=collider
                 )
               )
@@ -1777,17 +1834,31 @@ def _panel_attack_inspector() -> None:
         # im.tree_pop()
 
       im.end_tab_item()
-
-    im.end_tab_bar()
     ##
 
     if not is_player:
       ## Conditions
-      if not atk.ref.conditions:
-        for collider_type in _ColliderType:
-          if im.button(f"+{collider_type.name}"):
-            pass
+      if im.begin_tab_item("Conditions")[0]:
+        if not atk.ref.conditions:
+          for i, collider_type in enumerate(_ColliderType):
+            if not i:
+              continue
+            if i > 1:
+              im.same_line()
+            if im.button(f"+{collider_type.name.lower()}"):
+              atk.scheduled_commands.append(
+                _CommandAttackConditionCreate(
+                  merge_id=g.action_id,
+                  atk=atk,
+                  collider_id=atk.next_condition_id(),
+                  collider_type=collider_type,
+                )
+              )
+
+        im.end_tab_item()
       ##
+
+    im.end_tab_bar()
 
 
 def _panel_visualizer() -> None:
@@ -2874,7 +2945,7 @@ def _post_new_frame() -> None:  ##
 
 
 def _test_make_default_keyframe_at():  ##
-  c = _TransientCollider.make(1, _ColliderType.CIRCLE)
+  c = _TransientColliderAnimated.make(1, _ColliderType.CIRCLE)
   c.ref.circle__radius[0].index_timeline = 10
   for v in (5, 15, 9, 11):
     c.make_default_keyframe_at("circle__radius", v)
@@ -2886,7 +2957,7 @@ def _test_make_default_keyframe_at():  ##
 
 
 def _test_first_keyframe_yields_correct_values():  ##
-  c = _TransientCollider.make(1, _ColliderType.CAPSULE)
+  c = _TransientColliderAnimated.make(1, _ColliderType.CAPSULE)
   c.ref.tr[0].value = GV2(random.uniform(-100, 100), random.uniform(-100, 100))
   c.ref.capsule__radius[0].value = random.uniform(0.25, 2)
 

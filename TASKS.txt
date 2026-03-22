@@ -43,9 +43,9 @@ x mark: sticked play / timeline rows
 x mark: correct clipping (make timeline line draw on top of sticked row)
 x mark: remove always-shown scrollbar
 x mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)
-x wip attack conditions
 x ref
 x pass `is_game` into glib processor
+x wip attack conditions
 
 * mark: attack condition
 * mark: set all attack conditions
