@@ -4,6 +4,7 @@
 *.rpp-bak
 *.tmp
 *_pb2.py
+*_pb2.pyi
 .godot/
 /*.node_editor.json
 /.export/
