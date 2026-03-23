@@ -225,7 +225,8 @@ teams: ##
 
 abilities:
 - type: HOOK ##
-  attack:
+  attacks:
+  - debug_name: ATK1
     projectile_type: HOOK
     projectile_spawns:
     - at: 12
@@ -234,7 +235,8 @@ abilities:
       rally: 15
       ##
 - type: KAZUHA ##
-  attack:
+  attacks:
+  - debug_name: ATK1
     projectile_type: AREA_KAZUHA
     projectile_spawns:
     - at: 6

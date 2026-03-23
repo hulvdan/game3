@@ -270,7 +270,7 @@ message GAttack {
 message GAbility {
   int32 type = 1;
   string debug_name = 2;
-  GAttack attack = 3;
+  repeated GAttack attacks = 3;
   int32 recovering_attacks = 4;
 }
 

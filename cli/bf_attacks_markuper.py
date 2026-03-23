@@ -26,6 +26,7 @@ from glib_pb2 import (
   GV2,
   GV3,
   GV4,
+  GAbility,
   GAttack,
   GCollider,
   GColliderAnimated,
@@ -533,18 +534,30 @@ def tool_attacks_markuper() -> None:
   glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug, is_game=False)
   g.glib = t.cast("Lib", ParseDict(glib, Lib()))
 
+  def transform_gattack(attack_: GAttack) -> _TransientAttack:
+    colliders = []
+    attack = _TransientAttack(
+      ref=attack_, parent_ability=ability, parent_creature=None, colliders=colliders
+    )
+    if attack_.melee:
+      for collider_ in attack_.melee.colliders:
+        colliders.append(_TransientColliderAnimated(ref=collider_))
+    return attack
+
+  for ability_ in g.glib.abilities:
+    attacks = []
+    ability = _TransientAbility(ref=ability_, attacks=attacks)
+    for attack in ability_.attacks:
+      if not attack.debug_mirrored:
+        attacks.append(transform_gattack(attack))
+    g.abilities.append(ability)
+
   for creature_ in g.glib.creatures[1:]:
     attacks = []
     creature = _TransientCreature(ref=creature_, attacks=attacks)
-    for attack_ in creature_.attacks:
-      if attack_.debug_mirrored:
-        continue
-      colliders = []
-      attack = _TransientAttack(ref=attack_, parent=creature, colliders=colliders)
-      if attack_.melee:
-        for collider_ in attack_.melee.colliders:
-          colliders.append(_TransientColliderAnimated(ref=collider_))
-      attacks.append(attack)
+    for attack in creature_.attacks:
+      if not attack.debug_mirrored:
+        attacks.append(transform_gattack(attack))
     g.creatures.append(creature)
 
   g.validate()
@@ -1406,7 +1419,8 @@ class _ListItem(Generic[T]):  ##
 @dataclass(slots=True)
 class _TransientAttack:  ##
   ref: GAttack
-  parent: "_TransientCreature"
+  parent_ability: t.Optional["_TransientAbility"]
+  parent_creature: t.Optional["_TransientCreature"]
   colliders: list[_TransientColliderAnimated] = field(default_factory=list)
 
   impulse: _ListItem[GImpulseData] = field(default_factory=lambda: _ListItem())
@@ -1475,12 +1489,30 @@ class _TransientAttack:  ##
 
   @property
   def export_path(self) -> Path:
-    return (
-      ASSETS_ATTACKS_DIR
-      / self.parent.ref.debug_name
-      / "{}.yaml".format(self.ref.debug_name)
-    )
+    if self.parent_ability:
+      return (
+        ASSETS_ATTACKS_DIR
+        / "abilities"
+        / self.parent_ability.ref.debug_name
+        / "{}.yaml".format(self.ref.debug_name)
+      )
+    elif self.parent_creature:
+      return (
+        ASSETS_ATTACKS_DIR
+        / "creatures"
+        / self.parent_creature.ref.debug_name
+        / "{}.yaml".format(self.ref.debug_name)
+      )
+    else:
+      raise AssertionError
 
+  ##
+
+
+@dataclass(slots=True)
+class _TransientAbility:  ##
+  ref: GAbility
+  attacks: list[_TransientAttack] = field(default_factory=list)
   ##
 
 
@@ -1501,6 +1533,7 @@ class _GizmoMode(IntEnum):  ##
 
 class _AppSaveState(BaseModel):  ##
   font_scale_main: float = 1
+  ability: str | None = None
   creature: str | None = None
   attack: str | None = None
   play_once: bool = False
@@ -1548,8 +1581,8 @@ class _State:
 
   glib: Lib = None  # type: ignore
 
+  abilities: list[_TransientAbility] = field(default_factory=list)
   creatures: list[_TransientCreature] = field(default_factory=list)
-  attacks: list[_TransientAttack] = field(default_factory=list)
 
   exiting: bool = False
   count: int = 0
@@ -1561,6 +1594,7 @@ class _State:
   )
 
   attack_to_select: _TransientAttack | None = None
+  ref_selected_attack_ability: _TransientAbility | None = None
   ref_selected_attack_creature: _TransientCreature | None = None
   ref_selected_attack: _TransientAttack | None = None
   play_once: bool = False
@@ -1575,6 +1609,11 @@ class _State:
     vis = self.visualizer
     return _AppSaveState(
       font_scale_main=im.get_style().font_scale_main,
+      ability=(
+        self.ref_selected_attack_ability.ref.debug_name
+        if self.ref_selected_attack_ability
+        else None
+      ),
       creature=(
         self.ref_selected_attack_creature.ref.debug_name
         if self.ref_selected_attack_creature
@@ -1592,6 +1631,12 @@ class _State:
   def load(self, value: _AppSaveState) -> None:  ##
     self.play_once = value.play_once
     self.play_rate = value.play_rate
+    for a in self.abilities:
+      if a.ref.debug_name == value.ability:
+        for atk in a.attacks:
+          if atk.ref.debug_name == value.attack:
+            self.ref_selected_attack_ability = a
+            self.ref_selected_attack = atk
     for c in self.creatures:
       if c.ref.debug_name == value.creature:
         for atk in c.attacks:
@@ -1623,19 +1668,45 @@ def _override_keyframe_round_to_step(v: bool):  ##
   ##
 
 
-def _panel_explorer() -> None:  ##
+def _panel_explorer() -> None:
+  ## Abilities
+  im.text("ABILITIES")
+  for ability in g.abilities:
+    group_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
+    if ability is g.ref_selected_attack_ability:
+      group_flags |= im.TreeNodeFlags_.selected
+    if im.tree_node_ex(ability.ref.debug_name, group_flags):
+      for attack in ability.attacks:
+        flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
+        if attack is g.ref_selected_attack:
+          flags |= im.TreeNodeFlags_.selected
+        if im.tree_node_ex(attack.ref.debug_name, flags):
+          if im.is_item_clicked():
+            g.ref_selected_attack_ability = ability
+            g.ref_selected_attack_creature = None
+            g.ref_selected_attack = attack
+            g.schedule_dump()
+          im.tree_pop()
+      im.tree_pop()
+  ##
+
+  im.separator()
+
+  ## Creatures
+  im.text("CREATURES")
   for creature in g.creatures:
     # for creature in g.creatures:
-    creature_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
+    group_flags = im.TreeNodeFlags_.span_avail_width | im.TreeNodeFlags_.default_open
     if creature is g.ref_selected_attack_creature:
-      creature_flags |= im.TreeNodeFlags_.selected
-    if im.tree_node_ex(creature.ref.debug_name, creature_flags):
+      group_flags |= im.TreeNodeFlags_.selected
+    if im.tree_node_ex(creature.ref.debug_name, group_flags):
       for attack in creature.attacks:
         flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
         if attack is g.ref_selected_attack:
           flags |= im.TreeNodeFlags_.selected
         if im.tree_node_ex(attack.ref.debug_name, flags):
           if im.is_item_clicked():
+            g.ref_selected_attack_ability = None
             g.ref_selected_attack_creature = creature
             g.ref_selected_attack = attack
             g.schedule_dump()
@@ -1650,7 +1721,9 @@ def _panel_attack_inspector() -> None:
   if not atk:
     return
 
-  is_player = atk.parent.ref.debug_name == "PLAYER"
+  is_player = atk.parent_ability or (
+    atk.parent_creature and (atk.parent_creature.ref.debug_name == "PLAYER")
+  )
   ##
 
   ## duration_frames
@@ -2020,12 +2093,12 @@ def _panel_attack_inspector() -> None:
 
 
 def _panel_visualizer() -> None:
+  ## Setup
   atk = g.ref_selected_attack
   if atk is None:
     assert g.ref_selected_attack_creature is None
     return
 
-  ## Setup
   cells = 10
   draw = im.get_window_draw_list()
   size_ = im.get_content_region_avail()
@@ -2240,9 +2313,12 @@ def _panel_visualizer() -> None:
   ##
 
   ## Drawing body
-  draw_circle(
-    vec3(body_pos.x, 0, body_pos.y), atk.parent.ref.collider_size / 2, COLOR_RED_U32
+  parent_radius = next(
+    x.ref.collider_size / 2 for x in g.creatures if x.ref.debug_name == "PLAYER"
   )
+  if atk.parent_creature:
+    parent_radius = atk.parent_creature.ref.collider_size / 2
+  draw_circle(vec3(body_pos.x, 0, body_pos.y), parent_radius, COLOR_RED_U32)
   ##
 
   ## Drawing condition (on the first frame)
@@ -3100,7 +3176,6 @@ def _post_new_frame() -> None:  ##
         atk_should_be_saved = True
 
     if atk_should_be_saved:
-      assert g.ref_selected_attack_creature
       export_path = atk.export_path
       bf.recursive_mkdir(export_path.parent)
       with bf.sane_writable_file(export_path) as out_file:

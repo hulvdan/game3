@@ -338,14 +338,33 @@ def _process_glib(genline, glib, is_game: bool) -> None:
       setter(-value)
     ##
 
+  def process_attack(attack, loaded_attack):  ##
+    if loaded_attack is not None:
+      attack.update(always_merger.merge(loaded_attack, attack).items())
+    attack["duration_frames"] = attack.get("duration_frames", 1)
+    ##
+
+  ## Abilities
+  with push("abilities"):
+    loaded_attacks: dict[str, dict[str, Any]] = defaultdict(dict)
+    for filepath in (ASSETS_ATTACKS_DIR / "abilities").rglob("*.yaml"):
+      with bf.sane_readable_file(filepath) as in_file:
+        loaded_attacks[filepath.parent.name][filepath.stem] = yaml.safe_load(in_file)
+    for i, x in enumerate(glib["abilities"]):
+      with push(i), push(x["type"]), push("attacks"):
+        for k, attack in enumerate(x["attacks"]):
+          with push(k), push(attack["debug_name"]):
+            loaded_attack = loaded_attacks[x["type"]].get(attack.get("debug_name"))
+            x["debug_name"] = x["type"]
+            process_attack(attack, loaded_attack)
+  ##
+
   ## Creatures
   with push("creatures"):
-    creature_to_loaded_attacks: dict[str, dict[str, Any]] = defaultdict(dict)
-    for filepath in ASSETS_ATTACKS_DIR.rglob("*.yaml"):
+    loaded_attacks: dict[str, dict[str, Any]] = defaultdict(dict)
+    for filepath in (ASSETS_ATTACKS_DIR / "creatures").rglob("*.yaml"):
       with bf.sane_readable_file(filepath) as in_file:
-        creature_to_loaded_attacks[filepath.parent.name][filepath.stem] = yaml.safe_load(
-          in_file
-        )
+        loaded_attacks[filepath.parent.name][filepath.stem] = yaml.safe_load(in_file)
     for x in glib["creatures"][1:]:
       creature_attack_names = []
       with push(x["type"]):
@@ -356,12 +375,8 @@ def _process_glib(genline, glib, is_game: bool) -> None:
         with push("attacks"):
           mirrored_attacks = []
           for i, attack in enumerate(x.get("attacks", [])):
-            loaded_attack = creature_to_loaded_attacks[x["type"]].get(
-              attack.get("debug_name")
-            )
-            if loaded_attack is not None:
-              attack.update(always_merger.merge(loaded_attack, attack).items())
-            attack["duration_frames"] = attack.get("duration_frames", 1)
+            loaded_attack = loaded_attacks[x["type"]].get(attack.get("debug_name"))
+            process_attack(attack, loaded_attack)
             with push(i):
               attack_debug_name = attack.get("debug_name")
               asserte(attack_debug_name)
@@ -381,18 +396,11 @@ def _process_glib(genline, glib, is_game: bool) -> None:
             x["attacks"].extend(mirrored_attacks)
         with push("abilities"):
           for i, ability in enumerate(x.get("abilities", [])):
-            with push(i):
+            with push(i), push("type"):
               if attack := ability.get("attack"):
                 with push("attack"):
                   validate_tags(attack.get("tags", []), "attack")
   ##
-
-  # ## Abilities
-  # with push("abilities"):
-  #   for i, x in enumerate(glib["abilities"]):
-  #     with push(i), push("attack"):
-  #       validate_attack(x["attack"], True)
-  # ##
 
   ## Projectiles
   need_to_have_damage_stamina = []

@@ -393,16 +393,16 @@ class GAttack(_message.Message):
     def __init__(self, debug_name: _Optional[str] = ..., debug_mirrored: _Optional[bool] = ..., duration_frames: _Optional[int] = ..., stamina_consumption_frame: _Optional[int] = ..., cooldown_min: _Optional[float] = ..., cooldown_max: _Optional[float] = ..., movement_scale: _Optional[float] = ..., stamina_cost: _Optional[_Union[GStaminaCost, _Mapping]] = ..., stops_tracking_at: _Optional[float] = ..., projectile_type: _Optional[int] = ..., projectile_spawns: _Optional[_Iterable[_Union[GProjectileSpawn, _Mapping]]] = ..., melee: _Optional[_Union[GAttackMelee, _Mapping]] = ..., tags: _Optional[_Iterable[_Union[GTagValue, _Mapping]]] = ..., impulses: _Optional[_Iterable[_Union[GImpulseData, _Mapping]]] = ..., conditions: _Optional[_Iterable[_Union[GCollider, _Mapping]]] = ...) -> None: ...
 
 class GAbility(_message.Message):
-    __slots__ = ("type", "debug_name", "attack", "recovering_attacks")
+    __slots__ = ("type", "debug_name", "attacks", "recovering_attacks")
     TYPE_FIELD_NUMBER: _ClassVar[int]
     DEBUG_NAME_FIELD_NUMBER: _ClassVar[int]
-    ATTACK_FIELD_NUMBER: _ClassVar[int]
+    ATTACKS_FIELD_NUMBER: _ClassVar[int]
     RECOVERING_ATTACKS_FIELD_NUMBER: _ClassVar[int]
     type: int
     debug_name: str
-    attack: GAttack
+    attacks: _containers.RepeatedCompositeFieldContainer[GAttack]
     recovering_attacks: int
-    def __init__(self, type: _Optional[int] = ..., debug_name: _Optional[str] = ..., attack: _Optional[_Union[GAttack, _Mapping]] = ..., recovering_attacks: _Optional[int] = ...) -> None: ...
+    def __init__(self, type: _Optional[int] = ..., debug_name: _Optional[str] = ..., attacks: _Optional[_Iterable[_Union[GAttack, _Mapping]]] = ..., recovering_attacks: _Optional[int] = ...) -> None: ...
 
 class GCreature(_message.Message):
     __slots__ = ("type", "debug_name", "res", "creature_type", "hp", "speed", "rotation_speed", "mass", "collider_size", "drops", "attacks", "ability_types")

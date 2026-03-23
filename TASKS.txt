@@ -30,11 +30,12 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x .dotfiles vscode settings
+x mark: abilities
 
-* .dotfiles vscode settings
+* game: fix abilities
 * mark: projectile spawn frames
 * mark: display player stamina consumption frame on timeline
-* game: abilities
 *
 * mark: make it unable to drag playhead when started dragging outside of timeline
 *
