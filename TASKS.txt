@@ -33,6 +33,7 @@ x clear
 x .dotfiles vscode settings
 x mark: abilities
 x game: fix abilities
+x mark: ref _CommandAttackAlterField
 
 * mark: stops tracking at
   FIX JAGRAS

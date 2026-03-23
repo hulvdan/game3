@@ -68,6 +68,7 @@ class _ExportAttack(BaseModel):  ##
 
   duration_frames: int
   stamina_consumption_frame: int
+  tracking_enabled: list[dict]
   impulses: list[_Impulse] = PydanticField(default_factory=list)
   melee: _ExportMelee | None = PydanticField(None)
   conditions: list[dict]
@@ -1017,79 +1018,29 @@ class _CommandAttackImpulseDelete(_CommandAttack):  ##
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackAlterDurationFrames(_CommandAttack):  ##
-  old: int
-  old_stamina_consumption_frame: int
-  new: int
+class _CommandAttackAlterField(_CommandAttack):  ##
+  field: str
+  old: Any
+  new: Any
 
   def do(self) -> None:
-    self.atk.ref.duration_frames = self.new
-    self._validate()
-    self.atk.timeline_at = min(self.atk.timeline_at, self.new)
-    self.atk.timeline_started_playing_at = min(
-      self.atk.timeline_started_playing_at, self.new
-    )
-    self.atk.ref.stamina_consumption_frame = min(
-      self.atk.ref.stamina_consumption_frame, self.new - 1
-    )
-
-  def undo(self) -> None:
-    self.atk.ref.duration_frames = self.old
-    self.atk.ref.stamina_consumption_frame = self.old_stamina_consumption_frame
-    self._validate()
-
-  def try_merge(self, newest: Self, /) -> _CommandMergeType:
-    if newest.atk is not self.atk:
-      return _CommandMergeType.NONE
-
-    self.new = newest.new
-    return (
-      _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
-      if (self.old == self.new)
-      else _CommandMergeType.MERGED_OKAY
-    )
-
-  def _validate(self):
-    assert self.old > 0
-    assert self.new > 0
-    if self.atk.ref.melee:
-      for c in self.atk.colliders:
-        for field_name in g.keyframe_field_types_per_collider_type[c.ref.type]:
-          for frame in c.get_keyframes(field_name):
-            assert self.new > frame.index_timeline
-
-  ##
-
-
-@dataclass(slots=True)
-@t.final
-class _CommandAttackAlterStaminaConsumptionFrame(_CommandAttack):  ##
-  old: int
-  new: int
-
-  def do(self) -> None:
-    self.atk.ref.stamina_consumption_frame = self.new
-    self._validate()
-
-  def undo(self) -> None:
-    self.atk.ref.stamina_consumption_frame = self.old
-    self._validate()
-
-  def try_merge(self, newest: Self, /) -> _CommandMergeType:
-    if newest.atk is not self.atk:
-      return _CommandMergeType.NONE
-
-    self.new = newest.new
-    return (
-      _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
-      if (self.old == self.new)
-      else _CommandMergeType.MERGED_OKAY
-    )
-
-  def _validate(self):
-    assert self.old >= 0
-    assert self.new >= 0
+    _set_proto_field(self.atk.ref, self.field, _to_proto(self.new))
     self.atk.validate()
+
+  def undo(self) -> None:
+    _set_proto_field(self.atk.ref, self.field, _to_proto(self.old))
+    self.atk.validate()
+
+  def try_merge(self, newest: Self, /) -> _CommandMergeType:
+    if newest.atk is not self.atk:
+      return _CommandMergeType.NONE
+
+    self.new = newest.new
+    return (
+      _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
+      if (self.old == self.new)
+      else _CommandMergeType.MERGED_OKAY
+    )
 
   ##
 
@@ -1734,7 +1685,7 @@ def _panel_attack_inspector() -> None:
   ## duration_frames
   im.text("duration_frames")
   im.same_line()
-  min_attack_frames = 1
+  min_attack_frames = atk.ref.stamina_consumption_frame + 1
   if atk.ref.melee:
     for c in atk.colliders:
       for frames in (
@@ -1754,11 +1705,11 @@ def _panel_attack_inspector() -> None:
   new_value = min(_MAX_ATTACK_FRAMES_DURATION, max(min_attack_frames, frames))
   if changed and (new_value != atk.ref.duration_frames):
     atk.scheduled_commands.append(
-      _CommandAttackAlterDurationFrames(
+      _CommandAttackAlterField(
         merge_id=g.action_id,
         atk=atk,
+        field="duration_frames",
         old=atk.ref.duration_frames,
-        old_stamina_consumption_frame=atk.ref.stamina_consumption_frame,
         new=new_value,
       )
     )
@@ -1786,9 +1737,10 @@ def _panel_attack_inspector() -> None:
     new_value = min(max_stamina_consumption_frame, max(0, frames))
     if changed and (new_value != atk.ref.stamina_consumption_frame):
       atk.scheduled_commands.append(
-        _CommandAttackAlterStaminaConsumptionFrame(
+        _CommandAttackAlterField(
           merge_id=g.action_id,
           atk=atk,
+          field="stamina_consumption_frame",
           old=atk.ref.stamina_consumption_frame,
           new=new_value,
         )

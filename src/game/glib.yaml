@@ -263,7 +263,6 @@ creatures:
   # - stamina_cost:
   #     flat: 0
   #     rally: 0
-  #   stops_tracking_at: 0.1
   #   melee:
   #     damage: 10
   #     evade_flags: *evade_flags_default
@@ -404,7 +403,6 @@ creatures:
       damage: 10
       evade_flags: *evade_flags_default
       damage_stamina: 20
-    stops_tracking_at: 0.2
     tags:
     - tag_type: DASH_LIMITED
       f1: 0.2 # starts_at
@@ -439,7 +437,6 @@ creatures:
       evade_flags: *evade_flags_default
       damage_stamina: 20
       hp_rally_recover: 5
-    stops_tracking_at: 0.2
     tags:
     - tag_type: DASH_LIMITED
       f1: 0.2 # starts_at
@@ -461,7 +458,6 @@ creatures:
       damage: 10
       evade_flags: *evade_flags_default
       damage_stamina: 20
-    stops_tracking_at: 0.3
     tags:
     - tag_type: DASH_LIMITED
       f1: 0.4 # starts_at
@@ -504,7 +500,6 @@ creatures:
   - debug_name: FORWARD
     cooldown_min: 3.0
     cooldown_max: 5.0
-    stops_tracking_at: 0.4
     melee:
       damage: 10
       damage_stamina: 20
@@ -518,7 +513,6 @@ creatures:
       hp_rally_recover: 5
     cooldown_min: 3.0
     cooldown_max: 5.0
-    stops_tracking_at: 0.0
     mirrorable: true
     ##
 

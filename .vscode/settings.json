@@ -45,11 +45,7 @@
     },
     {
       "match": ".proto$",
-      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && proto-renumber -replace ${file} && buf format -w ${file}"
-    },
-    {
-      "match": "glib.proto$",
-      "command": "uv run python cli/bf_cli.py codegen windows debug",
+      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && proto-renumber -replace ${file} && buf format -w ${file} && uv run python cli/bf_cli.py codegen windows debug",
       "runningStatusMessage": "glibbing..."
     },
     {
