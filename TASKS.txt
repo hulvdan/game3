@@ -30,29 +30,10 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x better godot linting - python re problem matching
-x fix _pb2 proto generation
-x fix jagras cooldown
-x mark: fix impulse stoopid flashing upon changing values
-x mark: use float inputs everywhere
-x ref IterNeighbors -> iter_neighbors
-x mark: draw impulse duration rects
-x mark: ref timeline panel into table
-x docs
-x mark: sticked play / timeline rows
-x mark: correct clipping (make timeline line draw on top of sticked row)
-x mark: remove always-shown scrollbar
-x mark: max stamina consumption frame is min(active collider frame, projectile spawn frame)
-x ref
-x pass `is_game` into glib processor
-x wip attack conditions
-x enabled pyright
-x mark: condition: draw it in visualizer
-x mark: condition: display fields + can alter fields
-x mark: condition: show field labels
-x mark: set all attack conditions
 
+* .dotfiles vscode settings
 * mark: projectile spawn frames
+* mark: display player stamina consumption frame on timeline
 * game: abilities
 *
 * mark: make it unable to drag playhead when started dragging outside of timeline

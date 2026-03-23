@@ -197,7 +197,7 @@ func unstable_remove_all_by_key(arr: Array, key: Callable) -> void: ##
 	##
 
 
-class iter_neighbors: ##
+class IterNeighbors: ##
 	var _seq: Array
 	var _i: int
 	var _prev_i: int

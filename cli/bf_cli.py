@@ -1,8 +1,6 @@
 ## Imports
 import os
-import re
 import shutil
-import subprocess
 import zipfile
 from collections import Counter
 from pathlib import Path
@@ -79,20 +77,9 @@ def do_godot_lint() -> None:  ##
 
 @timing
 def do_godot_check_errors() -> None:  ##
-  process = subprocess.Popen(
-    "godot --quit --headless --check-only --debug", stderr=subprocess.PIPE, text=True
+  bf.run_command(
+    "godot --headless --check-only --debug --quit --no-header", timeout_seconds=5
   )
-  assert process.stderr is not None
-  errors = []
-  for line in process.stderr:
-    bf.eprint(line)
-    if m := re.match(r" +at: \(res:\/\/(.*:\d+)\)", line):
-      errors.append(m.group(1))
-      bf.eprint("ERROR AT:", errors[-1])
-  if errors:
-    for x in errors:
-      bf.eprint("ERROR AT:", x)
-    assert 0, "\n".join(f"Error {i + 1}: {x}" for i, x in enumerate(errors))
   ##
 
 

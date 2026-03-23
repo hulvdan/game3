@@ -11,22 +11,19 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
 	var dpos: Vector2 = target_pos - pos
 
 	for attack: glib.GAttack in data.get_attacks():
-		if _is_condition_satisfied(c, attack.get_condition()):
-			c.change_attack_to = attack
-			c.controller.move = Vector2(0, 0)
-			return SUCCESS
+		for condition in attack.get_conditions():
+			if _is_condition_satisfied(c, condition):
+				c.change_attack_to = attack
+				c.controller.move = Vector2(0, 0)
+				return SUCCESS
 
 	c.controller.move = dpos.normalized()
 	return RUNNING
 	##
 
 
-func _is_condition_satisfied(
-		creature: Creature,
-		condition: glib.GAttackConditionValue,
-) -> bool: ##
-	if !condition:
-		return true
+func _is_condition_satisfied(creature: Creature, condition: glib.GCollider) -> bool: ##
+	assert(condition)
 
 	var dir = creature.looking_dir.rotated(condition.get_rotation())
 	var capsule_center_pos: Vector2 = (

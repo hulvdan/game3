@@ -485,12 +485,6 @@ creatures:
     - at: 30
     cooldown_min: 30.0
     cooldown_max: 30.0
-    # condition:
-    #   attackcondition_type: CAPSULE_WITH_RADIUS_EXTENDED
-    #   distance_min: 0
-    #   distance_max: 4
-    #   capsule__radius: 1.8
-    ##
 - type: BOSS_JAGRAS ##
   hp: 300
   speed: 0.4
@@ -502,10 +496,6 @@ creatures:
     cooldown_min: 3.0
     cooldown_max: 5.0
     stops_tracking_at: 0.4
-    # condition:
-    #   attackcondition_type: CAPSULE
-    #   distance_max: 4
-    #   capsule__radius: 0.4
     melee:
       damage: 10
       damage_stamina: 20
@@ -521,11 +511,6 @@ creatures:
     cooldown_max: 5.0
     stops_tracking_at: 0.0
     mirrorable: true
-    # condition:
-    #   attackcondition_type: CAPSULE
-    #   distance_max: 2.5
-    #   capsule__radius: 0.4
-    #   rotation: 90
     ##
 
 items: ##
