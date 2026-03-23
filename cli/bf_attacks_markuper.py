@@ -534,10 +534,15 @@ def tool_attacks_markuper() -> None:
   glib = load_glib(bf.BuildPlatform.Win, bf.BuildType.Debug, is_game=False)
   g.glib = t.cast("Lib", ParseDict(glib, Lib()))
 
-  def transform_gattack(attack_: GAttack) -> _TransientAttack:
+  def transform_gattack(
+    attack_: GAttack, parent_ability, parent_creature
+  ) -> _TransientAttack:
     colliders = []
     attack = _TransientAttack(
-      ref=attack_, parent_ability=ability, parent_creature=None, colliders=colliders
+      ref=attack_,
+      parent_ability=parent_ability,
+      parent_creature=parent_creature,
+      colliders=colliders,
     )
     if attack_.melee:
       for collider_ in attack_.melee.colliders:
@@ -549,7 +554,7 @@ def tool_attacks_markuper() -> None:
     ability = _TransientAbility(ref=ability_, attacks=attacks)
     for attack in ability_.attacks:
       if not attack.debug_mirrored:
-        attacks.append(transform_gattack(attack))
+        attacks.append(transform_gattack(attack, ability, None))
     g.abilities.append(ability)
 
   for creature_ in g.glib.creatures[1:]:
@@ -557,7 +562,7 @@ def tool_attacks_markuper() -> None:
     creature = _TransientCreature(ref=creature_, attacks=attacks)
     for attack in creature_.attacks:
       if not attack.debug_mirrored:
-        attacks.append(transform_gattack(attack))
+        attacks.append(transform_gattack(attack, None, creature))
     g.creatures.append(creature)
 
   g.validate()

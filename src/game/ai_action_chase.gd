@@ -22,25 +22,32 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
 	##
 
 
-func _is_condition_satisfied(creature: Creature, condition: glib.GCollider) -> bool: ##
+func _is_condition_satisfied(creature: Creature, condition: glib.GCollider) -> bool:
+	## Setup
 	assert(condition)
+	var creature_pos := bf.xz(creature.transform.origin)
+	var cond := condition.get_type() as glib.GColType
+	##
 
-	var dir = creature.looking_dir.rotated(condition.get_rotation())
-	var capsule_center_pos: Vector2 = (
-		bf.xz(creature.transform.origin)
-		+ dir * ((condition.get_distance_min() + condition.get_distance_max()) / 2.0)
-	)
-
-	var cond := condition.get_attackcondition_type()
 	match cond:
-		glib.GAttackConditionType.CAPSULE, glib.GAttackConditionType.CAPSULE_WITH_RADIUS_EXTENDED:
-			var dist := condition.get_distance_max() - condition.get_distance_min()
-			if cond == glib.GAttackConditionType.CAPSULE_WITH_RADIUS_EXTENDED:
-				dist += condition.get_capsule__radius() * 2.0
+		glib.GColType.CIRCLE: ##
+			for d: Dictionary in Collisions.query_circle(
+				creature_pos + glib.ToV2(condition.get_tr()).rotated(creature.looking_angle),
+				condition.get_circle__radius(),
+				2 ** glib.GMaskType.CREATURES,
+				true,
+				false,
+				12,
+			):
+				var v: Creature = d.collider
+				if v.type == glib.GCreatureType.PLAYER:
+					return true
+			##
+		glib.GColType.CAPSULE: ##
 			for d: Dictionary in Collisions.query_capsule(
-				capsule_center_pos,
-				creature.looking_angle + condition.get_rotation(),
-				dist,
+				creature_pos + glib.ToV2(condition.get_tr()).rotated(creature.looking_angle),
+				deg_to_rad(condition.get_capsule__rotation()) + creature.looking_angle,
+				condition.get_capsule__spread(),
 				condition.get_capsule__radius(),
 				2 ** glib.GMaskType.CREATURES,
 				true,
@@ -50,7 +57,25 @@ func _is_condition_satisfied(creature: Creature, condition: glib.GCollider) -> b
 				var v: Creature = d.collider
 				if v.type == glib.GCreatureType.PLAYER:
 					return true
+			##
+		glib.GColType.POLYGON: ##
+			for d: Dictionary in Collisions.query_circle_segment(
+				creature_pos + glib.ToV2(condition.get_tr()).rotated(creature.looking_angle),
+				condition.get_polygon__dist_min(),
+				condition.get_polygon__dist_max(),
+				deg_to_rad(condition.get_capsule__rotation()) + creature.looking_angle,
+				deg_to_rad(condition.get_polygon__spread_angle()),
+				2 ** glib.GMaskType.CREATURES,
+				true,
+				false,
+				12,
+			):
+				var v: Creature = d.collider
+				if v.type == glib.GCreatureType.PLAYER:
+					return true
+			##
 		_:
 			bf.invalid_path()
+
 	return false
 	##

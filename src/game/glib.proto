@@ -173,6 +173,11 @@ message GKeyframeV4 {
 }
 // [[[end]]]
 
+message GCol {
+  int32 type = 1;
+  string debug_name = 2;
+}
+
 message GCollider {
   int32 id = 1;
   int32 type = 2;
@@ -454,19 +459,20 @@ message Lib {
   GV2i progression_size = 19;
 
   // TABLE_GEN_START
-  repeated GDamage damages = 20;
-  repeated GEvade evades = 21;
-  repeated GTeam teams = 22;
-  repeated GProgression progression = 23;
-  repeated GAbility abilities = 24;
-  repeated GCreature creatures = 25;
-  repeated GItem items = 26;
-  repeated GCollectible collectibles = 27;
-  repeated GProjectileFly projectile_fly_types = 28;
-  repeated GProjectile projectiles = 29;
-  repeated GInteractable interactables = 30;
-  repeated GMask masks = 31;
-  repeated GTag tags = 32;
-  repeated GImpulse impulses = 33;
+  repeated GCol colliders = 20;
+  repeated GDamage damages = 21;
+  repeated GEvade evades = 22;
+  repeated GTeam teams = 23;
+  repeated GProgression progression = 24;
+  repeated GAbility abilities = 25;
+  repeated GCreature creatures = 26;
+  repeated GItem items = 27;
+  repeated GCollectible collectibles = 28;
+  repeated GProjectileFly projectile_fly_types = 29;
+  repeated GProjectile projectiles = 30;
+  repeated GInteractable interactables = 31;
+  repeated GMask masks = 32;
+  repeated GTag tags = 33;
+  repeated GImpulse impulses = 34;
   // TABLE_GEN_END
 }

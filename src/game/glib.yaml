@@ -20,6 +20,13 @@ world_size: ##
   y: 4
 ##
 
+colliders: ##
+- type: INVALID
+- type: CIRCLE
+- type: CAPSULE
+- type: POLYGON
+##
+
 damages: ##
 - type: DEFAULT
 - type: SPIKE

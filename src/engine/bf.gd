@@ -103,7 +103,7 @@ func invalid_path() -> void: ##
 	##
 
 
-# arr: Array[T], value: T
+# arr: Array[T], value: Taaaaaaa
 func remove_single(arr: Array, value: Variant) -> void: ##
 	assert(len(arr))
 	var index := arr.find(value)

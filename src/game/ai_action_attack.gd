@@ -18,7 +18,7 @@ static func explicit_update_attack(
 		if c.change_attack_to:
 			c.current_attack = c.change_attack_to
 		elif c.change_ability_to:
-			c.current_attack = c.change_ability_to.get_attack()
+			c.current_attack = c.change_ability_to.get_attacks()[0]
 		else:
 			bf.invalid_path()
 

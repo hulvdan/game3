@@ -388,10 +388,10 @@ func _physics_process(dt: float) -> void:
 				var q: Array[Dictionary]
 
 				match collider.get_type():
-					1: # Circle
+					glib.GColType.CIRCLE:
 						var radius: float = _make_keyframe_value_at(collider.get_circle__radius(), e)
 						q = Collisions.query_circle(collider_pos, radius, mask, true, false, 12)
-					2: # Capsule
+					glib.GColType.CAPSULE:
 						var radius: float = _make_keyframe_value_at(collider.get_capsule__radius(), e)
 						var rotation: float = _make_keyframe_value_at(collider.get_capsule__rotation(), e)
 						var spread: float = _make_keyframe_value_at(collider.get_capsule__spread(), e)
@@ -405,7 +405,7 @@ func _physics_process(dt: float) -> void:
 							false,
 							12,
 						)
-					3: # Polygon
+					glib.GColType.POLYGON:
 						var dist_max: float = _make_keyframe_value_at(collider.get_polygon__dist_max(), e)
 						var dist_min: float = _make_keyframe_value_at(collider.get_polygon__dist_min(), e)
 						var rotation: float = _make_keyframe_value_at(collider.get_polygon__rotation(), e)
@@ -819,7 +819,7 @@ func _make_keyframe_value_at(keyframes: Array, index_timeline: int) -> Variant: 
 				return _from_proto(left.get_value())
 
 		elif right:
-			if index_timeline < right.get_index_timeline():
+			if index_timeline <= right.get_index_timeline():
 				return _from_proto(right.get_value())
 
 		@warning_ignore_restore("unsafe_method_access")

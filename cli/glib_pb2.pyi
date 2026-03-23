@@ -248,6 +248,14 @@ class GKeyframeV4(_message.Message):
     value: GV4
     def __init__(self, id: _Optional[int] = ..., index_timeline: _Optional[int] = ..., value: _Optional[_Union[GV4, _Mapping]] = ...) -> None: ...
 
+class GCol(_message.Message):
+    __slots__ = ("type", "debug_name")
+    TYPE_FIELD_NUMBER: _ClassVar[int]
+    DEBUG_NAME_FIELD_NUMBER: _ClassVar[int]
+    type: int
+    debug_name: str
+    def __init__(self, type: _Optional[int] = ..., debug_name: _Optional[str] = ...) -> None: ...
+
 class GCollider(_message.Message):
     __slots__ = ("id", "type", "debug_name", "tr", "is_active", "circle__radius", "capsule__radius", "capsule__spread", "capsule__rotation", "polygon__dist_min", "polygon__dist_max", "polygon__rotation", "polygon__spread_angle")
     ID_FIELD_NUMBER: _ClassVar[int]
@@ -643,7 +651,7 @@ class GConfigPlayer(_message.Message):
     def __init__(self, speed_scale__shooting: _Optional[float] = ..., speed_scale__blocking: _Optional[float] = ..., speed_scale__inside_enemies: _Optional[float] = ..., roll_distance: _Optional[float] = ..., roll_pow: _Optional[float] = ..., roll_invincibility_start: _Optional[float] = ..., roll_invincibility_end: _Optional[float] = ..., roll_duration_seconds: _Optional[float] = ..., roll_control_return_starts_at: _Optional[float] = ..., stamina: _Optional[float] = ..., stamina_regen_per_second: _Optional[float] = ..., roll_stamina_cost: _Optional[_Union[GStaminaCost, _Mapping]] = ..., dodge_stamina_retrieve_percent: _Optional[float] = ..., stamina_rally_decay_after: _Optional[float] = ..., stamina_rally_decay_per_second: _Optional[float] = ..., stamina_attack_cost: _Optional[float] = ..., stamina_attack_rally_scale: _Optional[float] = ..., stamina_roll_rally_scale: _Optional[float] = ..., stamina_regen_on_kill: _Optional[float] = ..., stamina_ki_decay_after: _Optional[float] = ..., stamina_ki_decay_speed: _Optional[float] = ..., stamina_regen_scale__blocking: _Optional[float] = ..., stamina_regen_scale__shooting: _Optional[float] = ..., block__activation_start: _Optional[float] = ..., ki__rally_increase_per_second: _Optional[float] = ..., block__min_duration: _Optional[float] = ..., block__idle_after_block: _Optional[float] = ..., cooldown__block: _Optional[float] = ..., cooldown__roll: _Optional[float] = ..., block__perfect_end: _Optional[float] = ..., stamina_depletion_regen_delay: _Optional[float] = ..., invincibility_after_hit_seconds: _Optional[float] = ...) -> None: ...
 
 class Lib(_message.Message):
-    __slots__ = ("controls", "player", "spikes", "debug_collisions", "debug_collisions__chase", "hp_damage_rally_percent", "hp_rally_decays_after", "hp_rally_decay_speed", "rooms", "mob_invincibility_spikes_seconds", "blocked_attack_damages_again_after", "creatures_push_radius", "creatures_push_force", "mob_arc_throw_distance_delta", "default_impulse_duration_seconds", "default_impulse_pow", "impulse_block_scale", "world_size", "progression_size", "damages", "evades", "teams", "progression", "abilities", "creatures", "items", "collectibles", "projectile_fly_types", "projectiles", "interactables", "masks", "tags", "impulses")
+    __slots__ = ("controls", "player", "spikes", "debug_collisions", "debug_collisions__chase", "hp_damage_rally_percent", "hp_rally_decays_after", "hp_rally_decay_speed", "rooms", "mob_invincibility_spikes_seconds", "blocked_attack_damages_again_after", "creatures_push_radius", "creatures_push_force", "mob_arc_throw_distance_delta", "default_impulse_duration_seconds", "default_impulse_pow", "impulse_block_scale", "world_size", "progression_size", "colliders", "damages", "evades", "teams", "progression", "abilities", "creatures", "items", "collectibles", "projectile_fly_types", "projectiles", "interactables", "masks", "tags", "impulses")
     CONTROLS_FIELD_NUMBER: _ClassVar[int]
     PLAYER_FIELD_NUMBER: _ClassVar[int]
     SPIKES_FIELD_NUMBER: _ClassVar[int]
@@ -663,6 +671,7 @@ class Lib(_message.Message):
     IMPULSE_BLOCK_SCALE_FIELD_NUMBER: _ClassVar[int]
     WORLD_SIZE_FIELD_NUMBER: _ClassVar[int]
     PROGRESSION_SIZE_FIELD_NUMBER: _ClassVar[int]
+    COLLIDERS_FIELD_NUMBER: _ClassVar[int]
     DAMAGES_FIELD_NUMBER: _ClassVar[int]
     EVADES_FIELD_NUMBER: _ClassVar[int]
     TEAMS_FIELD_NUMBER: _ClassVar[int]
@@ -696,6 +705,7 @@ class Lib(_message.Message):
     impulse_block_scale: float
     world_size: GV2i
     progression_size: GV2i
+    colliders: _containers.RepeatedCompositeFieldContainer[GCol]
     damages: _containers.RepeatedCompositeFieldContainer[GDamage]
     evades: _containers.RepeatedCompositeFieldContainer[GEvade]
     teams: _containers.RepeatedCompositeFieldContainer[GTeam]
@@ -710,4 +720,4 @@ class Lib(_message.Message):
     masks: _containers.RepeatedCompositeFieldContainer[GMask]
     tags: _containers.RepeatedCompositeFieldContainer[GTag]
     impulses: _containers.RepeatedCompositeFieldContainer[GImpulse]
-    def __init__(self, controls: _Optional[_Union[GConfigControls, _Mapping]] = ..., player: _Optional[_Union[GConfigPlayer, _Mapping]] = ..., spikes: _Optional[_Union[GConfigSpikes, _Mapping]] = ..., debug_collisions: _Optional[int] = ..., debug_collisions__chase: _Optional[int] = ..., hp_damage_rally_percent: _Optional[float] = ..., hp_rally_decays_after: _Optional[float] = ..., hp_rally_decay_speed: _Optional[float] = ..., rooms: _Optional[_Iterable[_Union[GRoom, _Mapping]]] = ..., mob_invincibility_spikes_seconds: _Optional[float] = ..., blocked_attack_damages_again_after: _Optional[float] = ..., creatures_push_radius: _Optional[float] = ..., creatures_push_force: _Optional[float] = ..., mob_arc_throw_distance_delta: _Optional[float] = ..., default_impulse_duration_seconds: _Optional[float] = ..., default_impulse_pow: _Optional[float] = ..., impulse_block_scale: _Optional[float] = ..., world_size: _Optional[_Union[GV2i, _Mapping]] = ..., progression_size: _Optional[_Union[GV2i, _Mapping]] = ..., damages: _Optional[_Iterable[_Union[GDamage, _Mapping]]] = ..., evades: _Optional[_Iterable[_Union[GEvade, _Mapping]]] = ..., teams: _Optional[_Iterable[_Union[GTeam, _Mapping]]] = ..., progression: _Optional[_Iterable[_Union[GProgression, _Mapping]]] = ..., abilities: _Optional[_Iterable[_Union[GAbility, _Mapping]]] = ..., creatures: _Optional[_Iterable[_Union[GCreature, _Mapping]]] = ..., items: _Optional[_Iterable[_Union[GItem, _Mapping]]] = ..., collectibles: _Optional[_Iterable[_Union[GCollectible, _Mapping]]] = ..., projectile_fly_types: _Optional[_Iterable[_Union[GProjectileFly, _Mapping]]] = ..., projectiles: _Optional[_Iterable[_Union[GProjectile, _Mapping]]] = ..., interactables: _Optional[_Iterable[_Union[GInteractable, _Mapping]]] = ..., masks: _Optional[_Iterable[_Union[GMask, _Mapping]]] = ..., tags: _Optional[_Iterable[_Union[GTag, _Mapping]]] = ..., impulses: _Optional[_Iterable[_Union[GImpulse, _Mapping]]] = ...) -> None: ...
+    def __init__(self, controls: _Optional[_Union[GConfigControls, _Mapping]] = ..., player: _Optional[_Union[GConfigPlayer, _Mapping]] = ..., spikes: _Optional[_Union[GConfigSpikes, _Mapping]] = ..., debug_collisions: _Optional[int] = ..., debug_collisions__chase: _Optional[int] = ..., hp_damage_rally_percent: _Optional[float] = ..., hp_rally_decays_after: _Optional[float] = ..., hp_rally_decay_speed: _Optional[float] = ..., rooms: _Optional[_Iterable[_Union[GRoom, _Mapping]]] = ..., mob_invincibility_spikes_seconds: _Optional[float] = ..., blocked_attack_damages_again_after: _Optional[float] = ..., creatures_push_radius: _Optional[float] = ..., creatures_push_force: _Optional[float] = ..., mob_arc_throw_distance_delta: _Optional[float] = ..., default_impulse_duration_seconds: _Optional[float] = ..., default_impulse_pow: _Optional[float] = ..., impulse_block_scale: _Optional[float] = ..., world_size: _Optional[_Union[GV2i, _Mapping]] = ..., progression_size: _Optional[_Union[GV2i, _Mapping]] = ..., colliders: _Optional[_Iterable[_Union[GCol, _Mapping]]] = ..., damages: _Optional[_Iterable[_Union[GDamage, _Mapping]]] = ..., evades: _Optional[_Iterable[_Union[GEvade, _Mapping]]] = ..., teams: _Optional[_Iterable[_Union[GTeam, _Mapping]]] = ..., progression: _Optional[_Iterable[_Union[GProgression, _Mapping]]] = ..., abilities: _Optional[_Iterable[_Union[GAbility, _Mapping]]] = ..., creatures: _Optional[_Iterable[_Union[GCreature, _Mapping]]] = ..., items: _Optional[_Iterable[_Union[GItem, _Mapping]]] = ..., collectibles: _Optional[_Iterable[_Union[GCollectible, _Mapping]]] = ..., projectile_fly_types: _Optional[_Iterable[_Union[GProjectileFly, _Mapping]]] = ..., projectiles: _Optional[_Iterable[_Union[GProjectile, _Mapping]]] = ..., interactables: _Optional[_Iterable[_Union[GInteractable, _Mapping]]] = ..., masks: _Optional[_Iterable[_Union[GMask, _Mapping]]] = ..., tags: _Optional[_Iterable[_Union[GTag, _Mapping]]] = ..., impulses: _Optional[_Iterable[_Union[GImpulse, _Mapping]]] = ...) -> None: ...
