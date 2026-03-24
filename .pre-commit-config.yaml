@@ -1,144 +1,144 @@
 # https://pre-commit.com/
 default_install_hook_types:
-  - pre-commit
-  - pre-push
+- pre-commit
+- pre-push
 
 repos:
-  - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.10.0
-    hooks:
-      - id: python-no-eval
-        name: 'Prohibited: "nocheckin"'
-        entry: "nocheckin"
-        language: pygrep
-        files: ^(?!.pre-commit-config).*\.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
-        exclude: ^addons/.*$
-        types: []
-      - id: python-no-eval
-        name: 'Prohibited: "def test_". Use "def _test_"'
-        entry: "def test_"
-        language: pygrep
-        files: ^.*\.py$
-        exclude: ^addons/.*$
-        types: []
-  - repo: https://github.com/google/yamlfmt
-    rev: v0.21.0
-    hooks:
-      - id: yamlfmt
-        language: system
-        exclude: ^addons/.*$
-  - repo: https://github.com/JohnnyMorganz/StyLua
-    rev: v2.3.1
-    hooks:
-      - id: stylua
-        exclude: ^addons/.*$
-  # - repo: https://github.com/Scony/godot-gdscript-toolkit
-  #   rev: 4.5.0
-  #   hooks:
-  #     - id: gdlint
-  #       # name: gdlint
-  #       # description: "gdlint - linter for GDScript"
-  #       # entry: gdlint
-  #       # language: python
-  #       # language_version: python3
-  #       # require_serial: true
-  #       # types: [gdscript]
-  - repo: local
-    hooks:
-      - id: gdscript-formatter
-        name: gdscript-formatter
-        entry: gdscript-formatter --reorder-code
-        stages: [pre-commit, pre-merge-commit, manual]
-        require_serial: true
-        always_run: true
-        language: system
-        types: [gdscript]
-        exclude: ^addons/.*$
-      - id: prettier
-        name: prettier
-        entry: prettier --parser json --write
-        language: system
-        require_serial: true
-        files: \.(json|ldtk)$
-        stages: [pre-commit, pre-merge-commit, manual]
-        exclude: ^addons/.*$
-      - id: proto-renumber
-        name: proto-renumber
-        entry: uv run python cli/bf_cli.py proto_renumber
-        language: system
-        require_serial: true
-        always_run: true
-        pass_filenames: false
-        stages: [pre-commit, pre-merge-commit, manual]
-      - id: buf-format
-        name: buf format
-        entry: buf format -w src
-        language: system
-        require_serial: true
-        always_run: true
-        pass_filenames: false
-        stages: [pre-commit, pre-merge-commit, manual]
-      - id: ruff-format
-        name: ruff format
-        entry: uv run ruff format
-        language: system
-        require_serial: true
-        files: \.py$
-        stages: [pre-commit, pre-merge-commit, manual]
-      - id: ruff-check
-        name: ruff check
-        entry: uv run ruff check --output-format=concise
-        language: system
-        require_serial: true
-        files: \.py$
-        stages: [pre-commit, pre-merge-commit, manual]
-      - id: ty-check
-        name: ty check
-        entry: ty check cli --output-format=concise --no-progress
-        language: system
-        require_serial: true
-        files: \.py$
-        stages: [pre-commit, pre-merge-commit, manual]
-      - id: tombi-format
-        name: tombi format
-        entry: uvx tombi format
-        language: system
-        require_serial: true
-        files: \.toml$
-        stages: [pre-commit, pre-merge-commit, manual]
-      - id: banner
-        name: banner
-        entry: uv run python cli/bf_cli.py banner
-        language: system
-        require_serial: true
-        files: \.(yml|yaml|gd|py|c|h|cxx|cpp|txt|md|proto|fbs|lua)$
-        stages: [pre-commit, pre-merge-commit, manual]
-      - id: yamllint
-        name: yamllint
-        entry: uv run yamllint
-        language: system
-        require_serial: true
-        files: \.(yml|yaml|yamlfmt|yamllint)$
-        stages: [pre-commit, pre-merge-commit, manual]
-      - id: cog-readme
-        name: cog-readme
-        entry: uv run cog -n utf-8 -U -r -P --markers="[[[cog cog]]] [[[end]]]" README.md
-        stages: [pre-commit, pre-merge-commit, manual]
-        require_serial: true
-        pass_filenames: false
-        always_run: true
-        language: system
-      - id: pytest-bf_lib
-        name: pytest-bf_lib
-        entry: uv run pytest cli/bf_lib.py
-        language: system
-        require_serial: true
-        always_run: true
-        pass_filenames: false
-        stages: [pre-commit, pre-merge-commit, manual]
-  - repo: https://github.com/editorconfig-checker/editorconfig-checker
-    rev: v3.6.1
-    hooks:
-      - id: editorconfig-checker
-        exclude: ^(addons|assets)/.*$
-        args: ["-disable-indent-size"]
+- repo: https://github.com/pre-commit/pygrep-hooks
+  rev: v1.10.0
+  hooks:
+  - id: python-no-eval
+    name: 'Prohibited: "nocheckin"'
+    entry: "nocheckin"
+    language: pygrep
+    files: ^(?!.pre-commit-config).*\.(h|c|hpp|cpp|json|jsonc|yaml|yml|txt|py|md|toml|cfg|gd)$
+    exclude: ^addons/.*$
+    types: []
+  - id: python-no-eval
+    name: 'Prohibited: "def test_". Use "def _test_"'
+    entry: "def test_"
+    language: pygrep
+    files: ^.*\.py$
+    exclude: ^addons/.*$
+    types: []
+- repo: https://github.com/google/yamlfmt
+  rev: v0.21.0
+  hooks:
+  - id: yamlfmt
+    language: system
+    exclude: ^addons/.*$
+- repo: https://github.com/JohnnyMorganz/StyLua
+  rev: v2.3.1
+  hooks:
+  - id: stylua
+    exclude: ^addons/.*$
+# - repo: https://github.com/Scony/godot-gdscript-toolkit
+#   rev: 4.5.0
+#   hooks:
+#     - id: gdlint
+#       # name: gdlint
+#       # description: "gdlint - linter for GDScript"
+#       # entry: gdlint
+#       # language: python
+#       # language_version: python3
+#       # require_serial: true
+#       # types: [gdscript]
+- repo: local
+  hooks:
+  - id: gdscript-formatter
+    name: gdscript-formatter
+    entry: gdscript-formatter --reorder-code
+    stages: [pre-commit, pre-merge-commit, manual]
+    require_serial: true
+    always_run: true
+    language: system
+    types: [gdscript]
+    exclude: ^addons/.*$
+  - id: prettier
+    name: prettier
+    entry: prettier --parser json --write
+    language: system
+    require_serial: true
+    files: \.(json|ldtk)$
+    stages: [pre-commit, pre-merge-commit, manual]
+    exclude: ^addons/.*$
+  - id: proto-renumber
+    name: proto-renumber
+    entry: uv run python cli/bf_cli.py proto_renumber
+    language: system
+    require_serial: true
+    always_run: true
+    pass_filenames: false
+    stages: [pre-commit, pre-merge-commit, manual]
+  - id: buf-format
+    name: buf format
+    entry: buf format -w src
+    language: system
+    require_serial: true
+    always_run: true
+    pass_filenames: false
+    stages: [pre-commit, pre-merge-commit, manual]
+  - id: ruff-format
+    name: ruff format
+    entry: uv run ruff format
+    language: system
+    require_serial: true
+    files: \.py$
+    stages: [pre-commit, pre-merge-commit, manual]
+  - id: ruff-check
+    name: ruff check
+    entry: uv run ruff check --output-format=concise
+    language: system
+    require_serial: true
+    files: \.py$
+    stages: [pre-commit, pre-merge-commit, manual]
+  - id: ty-check
+    name: ty check
+    entry: ty check cli --output-format=concise --no-progress
+    language: system
+    require_serial: true
+    files: \.py$
+    stages: [pre-commit, pre-merge-commit, manual]
+  - id: tombi-format
+    name: tombi format
+    entry: uvx tombi format
+    language: system
+    require_serial: true
+    files: \.toml$
+    stages: [pre-commit, pre-merge-commit, manual]
+  - id: banner
+    name: banner
+    entry: uv run python cli/bf_cli.py banner
+    language: system
+    require_serial: true
+    files: \.(yml|yaml|gd|py|c|h|cxx|cpp|txt|md|proto|fbs|lua)$
+    stages: [pre-commit, pre-merge-commit, manual]
+  - id: yamllint
+    name: yamllint
+    entry: uv run yamllint
+    language: system
+    require_serial: true
+    files: \.(yml|yaml|yamlfmt|yamllint)$
+    stages: [pre-commit, pre-merge-commit, manual]
+  - id: cog-readme
+    name: cog-readme
+    entry: uv run cog -n utf-8 -U -r -P --markers="[[[cog cog]]] [[[end]]]" README.md
+    stages: [pre-commit, pre-merge-commit, manual]
+    require_serial: true
+    pass_filenames: false
+    always_run: true
+    language: system
+  - id: pytest-bf_lib
+    name: pytest-bf_lib
+    entry: uv run pytest cli/bf_lib.py
+    language: system
+    require_serial: true
+    always_run: true
+    pass_filenames: false
+    stages: [pre-commit, pre-merge-commit, manual]
+- repo: https://github.com/editorconfig-checker/editorconfig-checker
+  rev: v3.6.1
+  hooks:
+  - id: editorconfig-checker
+    exclude: ^(addons|assets)/.*$
+    args: ["-disable-indent-size"]
