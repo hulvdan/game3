@@ -859,7 +859,7 @@ class _CommandMergeType(IntEnum):  ##
 
 @dataclass(slots=True)
 class _Command(ABC):  ##
-  merge_id: int
+  merge_id: int = field(init=False)
 
   @abstractmethod
   def do(self) -> None: ...
@@ -869,6 +869,9 @@ class _Command(ABC):  ##
 
   def try_merge(self, _newest, /) -> _CommandMergeType:
     return _CommandMergeType.NONE
+
+  def __post_init__(self):
+    self.merge_id = g.action_id
 
   ##
 
@@ -1257,8 +1260,6 @@ class _CommandAttackImpulseAlterField(_CommandAttackImpulse):  ##
 @t.final
 class _TransientColliderAnimated:
   ref: GColliderAnimated
-  selected_keyframe: _SelectedKeyframe | None = None
-  keyframe_to_select: tuple[_SelectedKeyframe, bool] | None = None
 
   def get_keyframe_type(self, field_name: str) -> _KeyframeType:  ##
     return g.keyframe_field_types_per_collider_type[self.ref.type][field_name]
@@ -1328,28 +1329,6 @@ class _TransientColliderAnimated:
     assert field_name in g.keyframe_field_types_per_collider_type[self.ref.type]
     return getattr(self.ref, field_name)
     ##
-
-  def select_keyframe(
-    self,
-    field_name: str,
-    index_inside_list: int,
-    *,
-    update_timeline_playhead: bool = True,
-  ) -> None:  ##
-    frames = self.get_keyframes(field_name)
-    fr = frames[index_inside_list]
-    self.keyframe_to_select = (
-      _SelectedKeyframe(
-        id=fr.id,
-        key=_keyframe_id(field_name, fr.id),
-        field=field_name,
-        index_timeline=fr.index_timeline,
-        index_inside_list=index_inside_list,
-      ),
-      update_timeline_playhead,
-    )
-
-  ##
 
   ## Protected
   def _next_keyframe_id(self) -> _KeyframeID:
@@ -1521,6 +1500,9 @@ class _State:
     is_playing: bool = False
     dragging_playhead: bool = False
     dragging_keyframe: str | None = None
+
+    selected_keyframe: _SelectedKeyframe | None = None
+    keyframe_to_select: tuple[_SelectedKeyframe, bool] | None = None
     ##
 
   @dataclass(slots=True)
@@ -1615,6 +1597,26 @@ class _State:
 g = _State()
 
 
+def _select_keyframe(
+  field_name: str,
+  index_inside_list: int,
+  frames: _GKeyframesContainer,
+  *,
+  update_timeline_playhead: bool = True,
+) -> None:  ##
+  fr = frames[index_inside_list]
+  g.timeline.keyframe_to_select = (
+    _SelectedKeyframe(
+      id=fr.id,
+      key=_keyframe_id(field_name, fr.id),
+      field=field_name,
+      index_timeline=fr.index_timeline,
+      index_inside_list=index_inside_list,
+    ),
+    update_timeline_playhead,
+  )
+
+
 @contextmanager
 def _override_keyframe_round_to_step(v: bool):  ##
   old = g.visualizer.round_to_step
@@ -1706,7 +1708,6 @@ def _panel_attack_inspector() -> None:
   if changed and (new_value != atk.ref.duration_frames):
     atk.scheduled_commands.append(
       _CommandAttackAlterField(
-        merge_id=g.action_id,
         atk=atk,
         field="duration_frames",
         old=atk.ref.duration_frames,
@@ -1738,7 +1739,6 @@ def _panel_attack_inspector() -> None:
     if changed and (new_value != atk.ref.stamina_consumption_frame):
       atk.scheduled_commands.append(
         _CommandAttackAlterField(
-          merge_id=g.action_id,
           atk=atk,
           field="stamina_consumption_frame",
           old=atk.ref.stamina_consumption_frame,
@@ -1759,7 +1759,6 @@ def _panel_attack_inspector() -> None:
           if im.button("+{}".format(collider_type.name.lower())):
             atk.scheduled_commands.append(
               _CommandAttackColliderCreate(
-                merge_id=g.action_id,
                 atk=atk,
                 id=atk.next_collider_id(),
                 type=collider_type,
@@ -1782,9 +1781,7 @@ def _panel_attack_inspector() -> None:
                 atk.collider.to_select = collider
             if im.is_item_clicked(im.MouseButton_.right):
               atk.scheduled_commands.append(
-                _CommandAttackColliderDelete(
-                  merge_id=g.action_id, atk=atk, index=i, instance=collider
-                )
+                _CommandAttackColliderDelete(atk=atk, index=i, instance=collider)
               )
             im.tree_pop()
       im.end_tab_item()
@@ -1794,9 +1791,7 @@ def _panel_attack_inspector() -> None:
     if im.begin_tab_item("Impulses")[0]:
       if im.button("+impulse"):
         atk.scheduled_commands.append(
-          _CommandAttackImpulseCreate(
-            merge_id=g.action_id, atk=atk, id=atk.next_impulse_id()
-          )
+          _CommandAttackImpulseCreate(atk=atk, id=atk.next_impulse_id())
         )
       for i, impulse in enumerate(atk.ref.impulses):
         flags = im.TreeNodeFlags_.leaf | im.TreeNodeFlags_.span_avail_width
@@ -1835,9 +1830,7 @@ def _panel_attack_inspector() -> None:
             atk.impulse.to_select = impulse
         if im.is_item_clicked(im.MouseButton_.right):
           atk.scheduled_commands.append(
-            _CommandAttackImpulseDelete(
-              merge_id=g.action_id, atk=atk, index=i, instance=impulse
-            )
+            _CommandAttackImpulseDelete(atk=atk, index=i, instance=impulse)
           )
 
         if im.begin_table("impulse_table", 2):
@@ -1877,7 +1870,6 @@ def _panel_attack_inspector() -> None:
               lambda x: (
                 atk.scheduled_commands.append(
                   _CommandAttackImpulseAlterField(
-                    merge_id=g.action_id,
                     atk=atk,
                     impulse_id=impulse.id,
                     field=field_name,
@@ -1913,7 +1905,6 @@ def _panel_attack_inspector() -> None:
             if im.button(f"+{collider_type.name.lower()}"):
               atk.scheduled_commands.append(
                 _CommandAttackConditionCreate(
-                  merge_id=g.action_id,
                   atk=atk,
                   id=atk.next_condition_id(),
                   type=collider_type,
@@ -1924,9 +1915,7 @@ def _panel_attack_inspector() -> None:
           im.text(_ColliderType.get_name(condition.type))
           if im.is_item_clicked(im.MouseButton_.right):
             atk.scheduled_commands.append(
-              _CommandAttackConditionDelete(
-                merge_id=g.action_id, atk=atk, index=i, instance=condition
-              )
+              _CommandAttackConditionDelete(atk=atk, index=i, instance=condition)
             )
 
           if im.begin_table("condition", 2):
@@ -1953,7 +1942,6 @@ def _panel_attack_inspector() -> None:
                     lambda x: (
                       atk.scheduled_commands.append(
                         _CommandAttackConditionAlterField(
-                          merge_id=g.action_id,
                           atk=atk,
                           condition_id=condition.id,
                           field=field_name,
@@ -1973,7 +1961,6 @@ def _panel_attack_inspector() -> None:
                     lambda x: (
                       atk.scheduled_commands.append(
                         _CommandAttackConditionAlterField(
-                          merge_id=g.action_id,
                           atk=atk,
                           condition_id=condition.id,
                           field=field_name,
@@ -1998,7 +1985,6 @@ def _panel_attack_inspector() -> None:
                     lambda x: (
                       atk.scheduled_commands.append(
                         _CommandAttackConditionAlterField(
-                          merge_id=g.action_id,
                           atk=atk,
                           condition_id=condition.id,
                           field=field_name,
@@ -2021,7 +2007,6 @@ def _panel_attack_inspector() -> None:
                     lambda y: (
                       atk.scheduled_commands.append(
                         _CommandAttackConditionAlterField(
-                          merge_id=g.action_id,
                           atk=atk,
                           condition_id=condition.id,
                           field=field_name,
@@ -2402,7 +2387,6 @@ def _panel_visualizer() -> None:
         off = bf.round_to_step(vec2(off3.x, off3.z), _STEP_TRANSLATE)
         atk.scheduled_commands.append(
           _CommandAttackColliderAlterField(
-            merge_id=g.action_id,
             atk=atk,
             collider_id=c.ref.id,
             keyframe_field="tr",
@@ -2558,6 +2542,76 @@ def _panel_timeline() -> None:
   hovered_frame_index = -1
   ##
 
+  def draw_and_handle_keyframes(
+    frames: _GKeyframesContainer,
+    on_keyframe_dragged: Callable[[int, int], None],
+    on_keyframe_created: Callable[[int], None],
+    on_keyframe_deleted: Callable[[int], None],
+  ):  ##
+    nonlocal were_dragging_keyframe_this_frame
+    nonlocal created_keyframe_this_frame
+    nonlocal hovered_frame_index
+
+    # Keyframes
+    closest_index = _get_closest_keyframe(frames, atk.timeline_at)[0]
+    for fr_index, fr in enumerate(frames):
+      key = _keyframe_id(field_name, fr.id)
+      is_selected = bool(tim.selected_keyframe) and (tim.selected_keyframe.key == key)
+      imgui_keyframe(
+        key,
+        imgui_timeline_line_out.pos_top_left
+        + ImVec2(
+          fr.index_timeline * imgui_timeline_line_out.width_per_index,
+          imgui_timeline_line_out.height / 2,
+        ),
+        selected=is_selected,
+        closest=closest_index == fr_index,
+      )
+      if im.is_item_hovered():
+        if im.is_mouse_clicked(0):
+          _select_keyframe(field_name, fr_index, frames)
+          tim.dragging_keyframe = key
+        if (
+          (not tim.dragging_keyframe)
+          and (im.is_mouse_clicked(1) or im.is_key_pressed(im.Key.delete))
+          and (len(frames) > 1)
+        ):
+          hov = imgui_timeline_line_out.hovered_index_half_cell_offset
+          for k in frames:
+            if k.index_timeline == hov:
+              on_keyframe_deleted(hov)
+              break
+
+      if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
+        were_dragging_keyframe_this_frame = True
+        min_left = 0
+        max_right = atk.ref.duration_frames - 1
+        if fr_index > 0:
+          min_left = frames[fr_index - 1].index_timeline + 1
+        if fr_index < len(frames) - 1:
+          max_right = frames[fr_index + 1].index_timeline - 1
+
+        on_keyframe_dragged(
+          fr.index_timeline,
+          bf.clamp(
+            imgui_timeline_line_out.hovered_index_half_cell_offset,
+            min_left,
+            max_right,
+          ),
+        )
+
+      if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
+        if imgui_timeline_line_out.double_clicked:
+          idx = imgui_timeline_line_out.hovered_index_half_cell_offset
+          if not any(x.index_timeline == idx for x in frames):
+            created_keyframe_this_frame = True
+            on_keyframe_created(idx)
+
+      if imgui_timeline_line_out.hovered:
+        hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
+
+  ##
+
   if im.begin_table(  ##
     "timeline_table", 4, flags=im.TableFlags_.scroll_y | im.TableFlags_.resizable
   ):  ##
@@ -2644,6 +2698,10 @@ def _panel_timeline() -> None:
     im.dummy((0, 0))
     ##
 
+    ## Drawing stops_tracking_at
+    imgui_timeline_line(atk.ref.duration_frames, 1, im.get_color_u32(im.Col_.frame_bg))
+    ##
+
     ## Drawing impulses
     for impulse in atk.ref.impulses:
       im.table_next_row()
@@ -2672,7 +2730,7 @@ def _panel_timeline() -> None:
       im.dummy((0, 0))
     ##
 
-    # Drawing selected collider
+    # Drawing properties of selected collider
     if c:
       ## Setup
 
@@ -2683,8 +2741,8 @@ def _panel_timeline() -> None:
       c_keyframe_fields_list = list(c_keyframe_fields)
 
       vertical_off_field = None
-      if c.selected_keyframe:
-        vertical_off_field = c.selected_keyframe.field
+      if tim.selected_keyframe:
+        vertical_off_field = tim.selected_keyframe.field
       ##
 
       for field_index, field_name, frames in (  ##
@@ -2717,17 +2775,17 @@ def _panel_timeline() -> None:
         im.table_set_column_index(1)
 
         index_f = closest_keyframe_list_index(field_name)
-        field_is_the_same_as_of_selected_keyframe = c.selected_keyframe and (
-          c.selected_keyframe.field == field_name
+        field_is_the_same_as_of_selected_keyframe = tim.selected_keyframe and (
+          tim.selected_keyframe.field == field_name
         )
 
-        if vertical_off and (c.selected_keyframe is not None):
+        if vertical_off and (tim.selected_keyframe is not None):
           new_field_to_select = c_keyframe_fields_list[field_index + vertical_off]
-          c.select_keyframe(
+          new_frames = getattr(c.ref, new_field_to_select)
+          _select_keyframe(
             new_field_to_select,
-            _get_closest_keyframe(
-              getattr(c.ref, new_field_to_select), c.selected_keyframe.index_timeline
-            )[0],
+            _get_closest_keyframe(new_frames, tim.selected_keyframe.index_timeline)[0],
+            new_frames,
           )
 
         if not len(frames):
@@ -2739,7 +2797,7 @@ def _panel_timeline() -> None:
           and im.is_key_pressed(im.Key.a)
           and field_is_the_same_as_of_selected_keyframe
         ):
-          c.select_keyframe(field_name, index_f - 1)
+          _select_keyframe(field_name, index_f - 1, frames)
         if field_is_the_same_as_of_selected_keyframe:
           im.set_item_tooltip("Key: A")
         if index_f == 0:
@@ -2750,10 +2808,10 @@ def _panel_timeline() -> None:
         if im.button(bf.imgui_id(">", field_name)) or (
           (not bf.imgui_is_disabled())
           and im.is_key_pressed(im.Key.d)
-          and c.selected_keyframe
+          and tim.selected_keyframe
           and field_is_the_same_as_of_selected_keyframe
         ):
-          c.select_keyframe(field_name, index_f + 1)
+          _select_keyframe(field_name, index_f + 1, frames)
         if field_is_the_same_as_of_selected_keyframe:
           im.set_item_tooltip("Key: D")
         if index_f >= len(frames) - 1:
@@ -2773,7 +2831,6 @@ def _panel_timeline() -> None:
               lambda x: (
                 atk.scheduled_commands.append(
                   _CommandAttackColliderAlterField(
-                    merge_id=g.action_id,
                     atk=atk,
                     collider_id=c.ref.id,
                     keyframe_field=field_name,
@@ -2794,7 +2851,6 @@ def _panel_timeline() -> None:
               lambda x: (
                 atk.scheduled_commands.append(
                   _CommandAttackColliderAlterField(
-                    merge_id=g.action_id,
                     atk=atk,
                     collider_id=c.ref.id,
                     keyframe_field=field_name,
@@ -2820,7 +2876,6 @@ def _panel_timeline() -> None:
               lambda x: (
                 atk.scheduled_commands.append(
                   _CommandAttackColliderAlterField(
-                    merge_id=g.action_id,
                     atk=atk,
                     collider_id=c.ref.id,
                     keyframe_field=field_name,
@@ -2844,7 +2899,6 @@ def _panel_timeline() -> None:
               lambda x: (
                 atk.scheduled_commands.append(
                   _CommandAttackColliderAlterField(
-                    merge_id=g.action_id,
                     atk=atk,
                     collider_id=c.ref.id,
                     keyframe_field=field_name,
@@ -2874,9 +2928,39 @@ def _panel_timeline() -> None:
         if c and field_name:
           line_spanning_rows = c.get_keyframe_type(field_name).line_spanning_rows
 
+        draw_and_handle_keyframes(
+          c.get_keyframes(field_name),
+          lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
+            _CommandAttackColliderKeyframeMove(
+              atk=atk,
+              collider_id=c.ref.id,
+              keyframe_field=field_name,
+              keyframe_index_timeline_from=old_tim_index,
+              keyframe_index_timeline_to=new_tim_index,
+            )
+          ),
+          lambda new_tim_index: atk.scheduled_commands.append(
+            _CommandAttackColliderKeyframeAdd(
+              atk=atk,
+              collider_id=c.ref.id,
+              keyframe_field=field_name,
+              keyframe_index_timeline=new_tim_index,
+            )
+          ),
+          lambda in_list_index: atk.scheduled_commands.append(
+            _CommandAttackColliderKeyframeRemove(
+              atk=atk,
+              collider_id=c.ref.id,
+              keyframe_field=field_name,
+              keyframe_index_timeline=frames[in_list_index].index_timeline,
+              keyframe_value=frames[in_list_index].value,
+            )
+          ),
+        )
+
         line_color = im.get_color_u32(im.Col_.frame_bg)
         if c and field_name:
-          if c.selected_keyframe and (field_name == c.selected_keyframe.field):
+          if tim.selected_keyframe and (field_name == tim.selected_keyframe.field):
             line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
         else:
           line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
@@ -2884,91 +2968,9 @@ def _panel_timeline() -> None:
         imgui_timeline_line(atk.ref.duration_frames, line_spanning_rows, line_color)
         lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
 
-        # Keyframes
-        closest_index = _get_closest_keyframe(frames, atk.timeline_at)[0]
-        for fr_index, fr in enumerate(frames):
-          key = _keyframe_id(field_name, fr.id)
-          is_selected = bool(c.selected_keyframe) and (c.selected_keyframe.key == key)
-          imgui_keyframe(
-            key,
-            imgui_timeline_line_out.pos_top_left
-            + ImVec2(
-              fr.index_timeline * imgui_timeline_line_out.width_per_index,
-              imgui_timeline_line_out.height / 2,
-            ),
-            selected=is_selected,
-            closest=closest_index == fr_index,
-          )
-          if im.is_item_hovered():
-            if im.is_mouse_clicked(0):
-              c.select_keyframe(field_name, fr_index)
-              tim.dragging_keyframe = key
-            if (
-              (not tim.dragging_keyframe)
-              and (im.is_mouse_clicked(1) or im.is_key_pressed(im.Key.delete))
-              and (len(frames := c.get_keyframes(field_name)) > 1)
-            ):
-              hov = imgui_timeline_line_out.hovered_index_half_cell_offset
-              for k in frames:
-                if k.index_timeline == hov:
-                  atk.scheduled_commands.append(
-                    _CommandAttackColliderKeyframeRemove(
-                      merge_id=g.action_id,
-                      atk=atk,
-                      collider_id=c.ref.id,
-                      keyframe_field=field_name,
-                      keyframe_index_timeline=hov,
-                      keyframe_value=k.value,
-                    )
-                  )
-                  break
-
-          if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
-            were_dragging_keyframe_this_frame = True
-            min_left = 0
-            max_right = atk.ref.duration_frames - 1
-            if fr_index > 0:
-              min_left = frames[fr_index - 1].index_timeline + 1
-            if fr_index < len(frames) - 1:
-              max_right = frames[fr_index + 1].index_timeline - 1
-
-            atk.scheduled_commands.append(
-              _CommandAttackColliderKeyframeMove(
-                merge_id=g.action_id,
-                atk=atk,
-                collider_id=c.ref.id,
-                keyframe_field=field_name,
-                keyframe_index_timeline_from=fr.index_timeline,
-                keyframe_index_timeline_to=bf.clamp(
-                  imgui_timeline_line_out.hovered_index_half_cell_offset,
-                  min_left,
-                  max_right,
-                ),
-              )
-            )
-
-          if not (were_dragging_keyframe_this_frame or created_keyframe_this_frame):
-            if imgui_timeline_line_out.double_clicked:
-              idx = imgui_timeline_line_out.hovered_index_half_cell_offset
-              if not any(x.index_timeline == idx for x in frames):
-                created_keyframe_this_frame = True
-                atk.scheduled_commands.append(
-                  _CommandAttackColliderKeyframeAdd(
-                    merge_id=g.action_id,
-                    atk=atk,
-                    collider_id=c.ref.id,
-                    keyframe_field=field_name,
-                    keyframe_index_timeline=idx,
-                  )
-                )
-
-          if imgui_timeline_line_out.hovered:
-            hovered_frame_index = imgui_timeline_line_out.hovered_index_half_cell_offset
         ##
 
-        ## Teardown
         im.dummy((0, 0))
-        ##
 
     im.end_table()
 
@@ -3063,6 +3065,7 @@ def _post_new_frame() -> None:  ##
     g.scheduled_dump = False
     _dump_app_state()
 
+  tim = g.timeline
   io = im.get_io()
 
   if any((im.is_mouse_clicked(x) or im.is_mouse_released(x)) for x in range(3)):
@@ -3150,17 +3153,19 @@ def _post_new_frame() -> None:  ##
         )
 
     if c := atk.get_visualization_collider():
-      if c.keyframe_to_select:
-        keyframe, update_timeline = c.keyframe_to_select
+      if tim.keyframe_to_select:
+        keyframe, update_timeline = tim.keyframe_to_select
         if update_timeline:
           atk.timeline_at = keyframe.index_timeline
-        c.selected_keyframe = keyframe
-        c.keyframe_to_select = None
+        tim.selected_keyframe = keyframe
+        tim.keyframe_to_select = None
 
-      if sel_key := c.selected_keyframe:
-        c.select_keyframe(
+      if sel_key := tim.selected_keyframe:
+        frames = getattr(c.ref, sel_key.field)
+        _select_keyframe(
           sel_key.field,
-          _get_closest_keyframe(getattr(c.ref, sel_key.field), atk.timeline_at)[0],
+          _get_closest_keyframe(frames, atk.timeline_at)[0],
+          frames,
           update_timeline_playhead=False,
         )
 

@@ -30,11 +30,10 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x .dotfiles vscode settings
-x mark: abilities
-x game: fix abilities
-x mark: ref _CommandAttackAlterField
+x mark: wip attack.tracking keyframes
 
+* mark: can select
+*
 * mark: stops tracking at
   FIX JAGRAS
 * mark: projectile spawn frames

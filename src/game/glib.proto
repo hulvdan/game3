@@ -260,7 +260,7 @@ message GAttack {
   float movement_scale = 7;
   GStaminaCost stamina_cost = 8;
 
-  repeated GKeyframeBool tracking_enabled = 9;
+  repeated GKeyframeBool tracking = 9;
 
   int32 projectile_type = 10;
   repeated GProjectileSpawn projectile_spawns = 11;

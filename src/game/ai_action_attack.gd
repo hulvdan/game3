@@ -36,7 +36,12 @@ static func explicit_update_attack(
 	var attack := c.current_attack
 
 	## Tracking target
-	if c.attack_elapsed <= attack.get_stops_tracking_at():
+	var tracking := false
+	for k in attack.get_tracking():
+		if k.get_index_timeline() > c.attack_elapsed_frames:
+			break
+		tracking = k.get_value()
+	if tracking:
 		c.attack_target_pos = tracking_pos
 		c.attack_target_dir = bf.vector2_direction_or_random(
 			bf.xz(c.transform.origin),
