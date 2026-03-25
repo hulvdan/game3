@@ -31,11 +31,13 @@ PLAN
 ============================================================
 x clear
 x mark: wip attack.tracking keyframes
+x mark: tracking: wip
 
-* mark: can select
+* mark: tracking:
+* mark: tracking:
+* mark: tracking:
+* mark: tracking:
 *
-* mark: stops tracking at
-  FIX JAGRAS
 * mark: projectile spawn frames
 * mark: display player stamina consumption frame on timeline
 *
