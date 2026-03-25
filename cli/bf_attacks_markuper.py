@@ -2736,47 +2736,47 @@ def _panel_timeline() -> None:
     ##
 
     ## Drawing tracking
-    im.table_next_row()
-    im.table_set_column_index(0)
-    im.text("tracking")
+    for f in ("tracking",):
+      im.table_next_row()
+      im.table_set_column_index(0)
+      im.text(f)
 
-    im.table_set_column_index(3)
-    imgui_timeline_line(atk.ref.duration_frames, 1, im.get_color_u32(im.Col_.frame_bg))
-    frames_, ktype = atk.get_keyframes("tracking")
-    draw_and_handle_keyframes(
-      "tracking",
-      frames_,
-      ktype,
-      lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
-        _CommandAttackKeyframeMove(
-          atk=atk,
-          keyframe_field=field_name,
-          keyframe_index_timeline_from=old_tim_index,
-          keyframe_index_timeline_to=new_tim_index,
-        )
-      ),
-      lambda new_tim_index: atk.scheduled_commands.append(
-        _CommandAttackKeyframeAdd(
-          atk=atk,
-          keyframe_field=field_name,
-          keyframe_index_timeline=new_tim_index,
-        )
-      ),
-      lambda in_list_index: atk.scheduled_commands.append(
-        _CommandAttackKeyframeRemove(
-          atk=atk,
-          keyframe_field=field_name,
-          keyframe_index_timeline=frames_[in_list_index].index_timeline,
-          keyframe_value=frames_[in_list_index].value,
-        )
-      ),
-    )
+      im.table_set_column_index(3)
+      imgui_timeline_line(atk.ref.duration_frames, 1, im.get_color_u32(im.Col_.frame_bg))
+      frames_, ktype = atk.get_keyframes(f)
+      draw_and_handle_keyframes(
+        f,
+        frames_,
+        ktype,
+        lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
+          _CommandAttackKeyframeMove(
+            atk=atk,
+            keyframe_field=field_name,
+            keyframe_index_timeline_from=old_tim_index,
+            keyframe_index_timeline_to=new_tim_index,
+          )
+        ),
+        lambda new_tim_index: atk.scheduled_commands.append(
+          _CommandAttackKeyframeAdd(
+            atk=atk,
+            keyframe_field=field_name,
+            keyframe_index_timeline=new_tim_index,
+          )
+        ),
+        lambda in_list_index: atk.scheduled_commands.append(
+          _CommandAttackKeyframeRemove(
+            atk=atk,
+            keyframe_field=field_name,
+            keyframe_index_timeline=frames_[in_list_index].index_timeline,
+            keyframe_value=frames_[in_list_index].value,
+          )
+        ),
+      )
     ##
 
     ## Drawing impulses
     for impulse in atk.ref.impulses:
       im.table_next_row()
-      draw = im.get_window_draw_list()
       im.table_set_column_index(3)
       line_color = im.get_color_u32(im.Col_.frame_bg)
       if impulse == atk.impulse.ref_selected:
@@ -2787,6 +2787,7 @@ def _panel_timeline() -> None:
       w_per_frame = (
         out.pos_bottom_right.x - out.pos_top_left.x
       ) / atk.ref.duration_frames
+      draw = im.get_window_draw_list()
       draw.add_rect_filled(
         ImVec2(
           impulse.at * w_per_frame + out.pos_top_left.x,
@@ -2798,6 +2799,7 @@ def _panel_timeline() -> None:
         ),
         COLOR_RED_FADED_U32,
       )
+      im.dummy((0, 0))
     ##
 
     # Drawing properties of selected collider
@@ -2998,6 +3000,16 @@ def _panel_timeline() -> None:
         if c and field_name:
           line_spanning_rows = frames_and_ktype[1].line_spanning_rows
 
+        line_color = im.get_color_u32(im.Col_.frame_bg)
+        if c and field_name:
+          if tim.selected_keyframe and (field_name == tim.selected_keyframe.field):
+            line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
+        else:
+          line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
+
+        imgui_timeline_line(atk.ref.duration_frames, line_spanning_rows, line_color)
+        lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
+
         draw_and_handle_keyframes(
           field_name,
           *frames_and_ktype,
@@ -3028,16 +3040,6 @@ def _panel_timeline() -> None:
             )
           ),
         )
-
-        line_color = im.get_color_u32(im.Col_.frame_bg)
-        if c and field_name:
-          if tim.selected_keyframe and (field_name == tim.selected_keyframe.field):
-            line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
-        else:
-          line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
-
-        imgui_timeline_line(atk.ref.duration_frames, line_spanning_rows, line_color)
-        lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
 
         ##
 

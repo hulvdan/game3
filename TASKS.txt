@@ -32,9 +32,9 @@ PLAN
 x clear
 x mark: wip attack.tracking keyframes
 x mark: tracking: wip
+x mark: tracking: fix is_active keyframes drawing on impulse line
 
-* mark: tracking: fix is_active keyframes drawing on impulse line
-* mark: tracking:
+* mark: tracking: wasd keyframes
 * mark: tracking:
 * mark: tracking:
 *
