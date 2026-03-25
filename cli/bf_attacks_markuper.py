@@ -2736,6 +2736,11 @@ def _panel_timeline() -> None:
     ##
 
     ## Drawing tracking
+    im.table_next_row()
+    im.table_set_column_index(0)
+    im.text("tracking")
+
+    im.table_set_column_index(3)
     imgui_timeline_line(atk.ref.duration_frames, 1, im.get_color_u32(im.Col_.frame_bg))
     frames_, ktype = atk.get_keyframes("tracking")
     draw_and_handle_keyframes(
@@ -2791,9 +2796,8 @@ def _panel_timeline() -> None:
           (impulse.at + impulse.dur) * w_per_frame + out.pos_top_left.x,
           out.pos_bottom_right.y,
         ),
-        COLOR_RED_U32 if out.hovered else COLOR_RED_FADED_U32,
+        COLOR_RED_FADED_U32,
       )
-      im.dummy((0, 0))
     ##
 
     # Drawing properties of selected collider

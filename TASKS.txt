@@ -33,7 +33,7 @@ x clear
 x mark: wip attack.tracking keyframes
 x mark: tracking: wip
 
-* mark: tracking:
+* mark: tracking: fix is_active keyframes drawing on impulse line
 * mark: tracking:
 * mark: tracking:
 * mark: tracking:
