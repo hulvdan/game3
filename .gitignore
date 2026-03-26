@@ -11,7 +11,7 @@
 /.mypy_cache/
 /.ruff_cache/
 /.temp/
-/Attacks_Markuper.ini
+/Attacks_Animator.ini
 /__MACOSX
 /android/
 /assets/art/src/main*.png
@@ -21,4 +21,4 @@
 /src/codegen/nolint/glib.gd
 __pycache__/
 node_modules/
-tool_attack_markuper_app_save_state.toml
+tool_attack_animator_app_save_state.toml

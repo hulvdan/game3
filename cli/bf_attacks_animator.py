@@ -357,7 +357,7 @@ COLOR_BLACK_FADED_U32 = imgui_color_to_u32(COLOR_BLACK_FADED)
 T = TypeVar("T")
 
 
-_APP_STATE_FILE_PATH = bf.PROJECT_DIR / "tool_attack_markuper_app_save_state.toml"
+_APP_STATE_FILE_PATH = bf.PROJECT_DIR / "tool_attack_animator_app_save_state.toml"
 
 
 def _log(level, *args):
@@ -504,7 +504,7 @@ def _to_mat4(m: Matrix16) -> mat4:
 
 
 @command
-def tool_attacks_markuper() -> None:
+def tool_attacks_animator() -> None:
   ## Filling g.keyframe_field_types_per_collider_type
   field_tr = _KeyframeTypeV2(step=_STEP_TRANSLATE)
   field_is_active = _KeyframeTypeBool(True)
@@ -651,7 +651,7 @@ def tool_attacks_markuper() -> None:
       im.get_style().font_scale_main = loaded_state.font_scale_main
 
   bf.show_imgui(
-    "Attacks Markuper",
+    "Attacks Animator",
     [
       bf.ImGuiPanel("Visualizer", _panel_visualizer),
       bf.ImGuiPanel("Explorer", _panel_explorer),

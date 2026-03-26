@@ -71,11 +71,41 @@ melee:
         x: 0.25
         y: 0.0
     type: 3
+  - capsule__radius:
+    - id: 1
+      index_timeline: 0
+      value: 0.5
+    capsule__rotation:
+    - id: 1
+      index_timeline: 0
+      value: 0.0
+    capsule__spread:
+    - id: 1
+      index_timeline: 0
+      value: 1.0
+    circle__radius: []
+    debug_name: ''
+    id: 4
+    is_active:
+    - id: 1
+      index_timeline: 0
+      value: true
+    polygon__dist_max: []
+    polygon__dist_min: []
+    polygon__rotation: []
+    polygon__spread_angle: []
+    tr:
+    - id: 1
+      index_timeline: 0
+      value:
+        x: 0.0
+        y: 0.0
+    type: 2
 stamina_consumption_frame: 0
 tracking:
 - id: 1
   index_timeline: 0
   value: false
 - id: 4
-  index_timeline: 58
+  index_timeline: 62
   value: true

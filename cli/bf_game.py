@@ -25,8 +25,8 @@ from typing import Any, Generator
 import bf_lib as bf
 import numpy as np
 import yaml
-from bf_attacks_markuper import *  # noqa: F403
-from bf_attacks_markuper import ASSETS_ATTACKS_DIR, ATTACKS_FPS
+from bf_attacks_animator import *  # noqa: F403
+from bf_attacks_animator import ASSETS_ATTACKS_DIR, ATTACKS_FPS
 from bf_typer import command, timing
 from deepmerge import always_merger
 from PIL import Image

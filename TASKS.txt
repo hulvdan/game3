@@ -22,7 +22,7 @@ PILLARS
 BIG PLAN
 ============================================================
 
-!!! «MARKUPER» ПОЗВОЛИТ:
+!!! «ATTACKS ANIMATOR» ПОЗВОЛИТ:
 !!! - создавать клевые мувсеты атак игрока вроде MH:W Insect Glaive
 !!! - создавать выразительные паттерны атак мобов в т.ч. боссов
 !!! Важно это? Да
@@ -41,6 +41,7 @@ x mark: tracking: fix vertical lines in timeline
 x mark: tracking: tracking keyframe removal works
 x mark: tracking: wasd keyframes
 x screenshot
+x ref markuper -> animator
 
 * game: different combo finalizers (l l r / l l l l / l r l r)
 *

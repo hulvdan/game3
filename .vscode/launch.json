@@ -16,15 +16,15 @@
       "preLaunchTask": "5_lint"
     },
     {
-      "name": "tool_attacks_markuper",
+      "name": "tool_attacks_animator",
       "type": "debugpy",
       "request": "launch",
       "program": "cli/bf_cli.py",
       "args": [
-        "tool_attacks_markuper"
+        "tool_attacks_animator"
       ],
       "console": "integratedTerminal",
-      "preLaunchTask": "tool_attacks_markuper",
+      "preLaunchTask": "tool_attacks_animator",
       "justMyCode": false
     },
     {
