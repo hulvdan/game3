@@ -13,7 +13,7 @@ from enum import IntEnum, unique
 from functools import partial
 from math import pi
 from pathlib import Path
-from typing import Any, Callable, Generic, Iterable, Self, TypeAlias, TypeVar
+from typing import Any, Callable, Generator, Generic, Iterable, Self, TypeAlias, TypeVar
 
 import bf_lib as bf
 import glib_pb2
@@ -1044,6 +1044,38 @@ class _CommandAttackAlterField(_CommandAttack):  ##
 
 
 @dataclass(slots=True)
+@t.final
+class _CommandAttackAlterKeyframeField(_CommandAttack):  ##
+  field: str
+  index_inside_list: int
+  old: Any
+  new: Any
+
+  def do(self) -> None:
+    k = self.atk.get_keyframes(self.field)[self.index_inside_list]
+    _set_proto_field(k, "value", _to_proto(self.new))
+
+  def undo(self) -> None:
+    k = self.atk.get_keyframes(self.field)[self.index_inside_list]
+    _set_proto_field(k, "value", _to_proto(self.old))
+
+  def try_merge(self, newest: Self, /) -> _CommandMergeType:
+    if newest.field != self.field:
+      return _CommandMergeType.NONE
+    if newest.index_inside_list != self.index_inside_list:
+      return _CommandMergeType.NONE
+
+    self.new = newest.new
+    return (
+      _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
+      if (self.old == self.new)
+      else _CommandMergeType.MERGED_OKAY
+    )
+
+  ##
+
+
+@dataclass(slots=True)
 class _CommandAttackImpulse(_CommandAttack):  ##
   impulse_id: _ImpulseID
 
@@ -1076,20 +1108,18 @@ class _CommandAttackCondition(_CommandAttack):  ##
 @dataclass(slots=True)
 @t.final
 class _CommandAttackKeyframeAdd(_CommandAttack):  ##
-  keyframe_field: str
-  keyframe_index_timeline: int
+  field: str
+  index_timeline: int
 
   def do(self) -> None:
-    _make_default_keyframe_at(
-      *self.atk.get_keyframes(self.keyframe_field), self.keyframe_index_timeline
-    )
-    self.atk.timeline_at = self.keyframe_index_timeline
+    _make_default_keyframe_at(*self.atk.get_keyframes(self.field), self.index_timeline)
+    self.atk.timeline_at = self.index_timeline
 
   def undo(self) -> None:
-    frames = self.atk.get_keyframes(self.keyframe_field)[0]
+    frames = self.atk.get_keyframes(self.field)[0]
     assert len(frames) > 1
     for i, fr in enumerate(frames):
-      if fr.index_timeline == self.keyframe_index_timeline:
+      if fr.index_timeline == self.index_timeline:
         del frames[i]
         return
     raise ValueError
@@ -1100,30 +1130,30 @@ class _CommandAttackKeyframeAdd(_CommandAttack):  ##
 @dataclass(slots=True)
 @t.final
 class _CommandAttackKeyframeMove(_CommandAttack):  ##
-  keyframe_field: str
-  keyframe_index_timeline_from: int
-  keyframe_index_timeline_to: int
+  field: str
+  index_timeline_from: int
+  index_timeline_to: int
 
   def do(self) -> None:
-    frames = self.atk.get_keyframes(self.keyframe_field)[0]
-    fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_from)
-    fr.index_timeline = self.keyframe_index_timeline_to
-    self.atk.timeline_at = self.keyframe_index_timeline_to
+    frames = self.atk.get_keyframes(self.field)[0]
+    fr = next(x for x in frames if x.index_timeline == self.index_timeline_from)
+    fr.index_timeline = self.index_timeline_to
+    self.atk.timeline_at = self.index_timeline_to
 
   def undo(self) -> None:
-    frames = self.atk.get_keyframes(self.keyframe_field)[0]
-    fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_to)
-    fr.index_timeline = self.keyframe_index_timeline_from
-    self.atk.timeline_at = self.keyframe_index_timeline_from
+    frames = self.atk.get_keyframes(self.field)[0]
+    fr = next(x for x in frames if x.index_timeline == self.index_timeline_to)
+    fr.index_timeline = self.index_timeline_from
+    self.atk.timeline_at = self.index_timeline_from
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
-    if newest.keyframe_field != self.keyframe_field:
+    if newest.field != self.field:
       return _CommandMergeType.NONE
 
-    self.keyframe_index_timeline_to = newest.keyframe_index_timeline_to
+    self.index_timeline_to = newest.index_timeline_to
     return (
       _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
-      if (self.keyframe_index_timeline_from == self.keyframe_index_timeline_to)
+      if (self.index_timeline_from == self.index_timeline_to)
       else _CommandMergeType.MERGED_OKAY
     )
 
@@ -1133,25 +1163,25 @@ class _CommandAttackKeyframeMove(_CommandAttack):  ##
 @dataclass(slots=True)
 @t.final
 class _CommandAttackKeyframeRemove(_CommandAttack):  ##
-  keyframe_field: str
-  keyframe_index_timeline: int
-  keyframe_value: Any
+  field: str
+  index_timeline: int
+  value: Any
 
   def do(self) -> None:
-    frames = self.atk.get_keyframes(self.keyframe_field)[0]
+    frames = self.atk.get_keyframes(self.field)[0]
     assert len(frames) > 1
     for i, k in enumerate(frames):
-      if k.index_timeline == self.keyframe_index_timeline:
+      if k.index_timeline == self.index_timeline:
         del frames[i]
         return
     assert 0
 
   def undo(self) -> None:
     _, k = _make_default_keyframe_at(
-      *self.atk.get_keyframes(self.keyframe_field), self.keyframe_index_timeline
+      *self.atk.get_keyframes(self.field), self.index_timeline
     )
-    k.value = self.keyframe_value
-    self.atk.timeline_at = self.keyframe_index_timeline
+    k.value = self.value
+    self.atk.timeline_at = self.index_timeline
 
   ##
 
@@ -1159,22 +1189,20 @@ class _CommandAttackKeyframeRemove(_CommandAttack):  ##
 @dataclass(slots=True)
 @t.final
 class _CommandAttackColliderKeyframeAdd(_CommandAttackCollider):  ##
-  keyframe_field: str
-  keyframe_index_timeline: int
+  field: str
+  index_timeline: int
 
   def do(self) -> None:
     c = self.c(self.atk)
-    _make_default_keyframe_at(
-      *c.get_keyframes(self.keyframe_field), self.keyframe_index_timeline
-    )
-    self.atk.timeline_at = self.keyframe_index_timeline
+    _make_default_keyframe_at(*c.get_keyframes(self.field), self.index_timeline)
+    self.atk.timeline_at = self.index_timeline
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    frames = c.get_keyframes(self.keyframe_field)[0]
+    frames = c.get_keyframes(self.field)[0]
     assert len(frames) > 1
     for i, fr in enumerate(frames):
-      if fr.index_timeline == self.keyframe_index_timeline:
+      if fr.index_timeline == self.index_timeline:
         del frames[i]
         return
     raise ValueError
@@ -1185,32 +1213,32 @@ class _CommandAttackColliderKeyframeAdd(_CommandAttackCollider):  ##
 @dataclass(slots=True)
 @t.final
 class _CommandAttackColliderKeyframeMove(_CommandAttackCollider):  ##
-  keyframe_field: str
-  keyframe_index_timeline_from: int
-  keyframe_index_timeline_to: int
+  field: str
+  index_timeline_from: int
+  index_timeline_to: int
 
   def do(self) -> None:
     c = self.c(self.atk)
-    frames = c.get_keyframes(self.keyframe_field)[0]
-    fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_from)
-    fr.index_timeline = self.keyframe_index_timeline_to
-    self.atk.timeline_at = self.keyframe_index_timeline_to
+    frames = c.get_keyframes(self.field)[0]
+    fr = next(x for x in frames if x.index_timeline == self.index_timeline_from)
+    fr.index_timeline = self.index_timeline_to
+    self.atk.timeline_at = self.index_timeline_to
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    frames = c.get_keyframes(self.keyframe_field)[0]
-    fr = next(x for x in frames if x.index_timeline == self.keyframe_index_timeline_to)
-    fr.index_timeline = self.keyframe_index_timeline_from
-    self.atk.timeline_at = self.keyframe_index_timeline_from
+    frames = c.get_keyframes(self.field)[0]
+    fr = next(x for x in frames if x.index_timeline == self.index_timeline_to)
+    fr.index_timeline = self.index_timeline_from
+    self.atk.timeline_at = self.index_timeline_from
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
-    if newest.keyframe_field != self.keyframe_field:
+    if newest.field != self.field:
       return _CommandMergeType.NONE
 
-    self.keyframe_index_timeline_to = newest.keyframe_index_timeline_to
+    self.index_timeline_to = newest.index_timeline_to
     return (
       _CommandMergeType.MERGED_SHOULD_BE_DESTROYED
-      if (self.keyframe_index_timeline_from == self.keyframe_index_timeline_to)
+      if (self.index_timeline_from == self.index_timeline_to)
       else _CommandMergeType.MERGED_OKAY
     )
 
@@ -1220,53 +1248,51 @@ class _CommandAttackColliderKeyframeMove(_CommandAttackCollider):  ##
 @dataclass(slots=True)
 @t.final
 class _CommandAttackColliderKeyframeRemove(_CommandAttackCollider):  ##
-  keyframe_field: str
-  keyframe_index_timeline: int
-  keyframe_value: Any
+  field: str
+  index_timeline: int
+  value: Any
 
   def do(self) -> None:
     c = self.c(self.atk)
-    frames = c.get_keyframes(self.keyframe_field)[0]
+    frames = c.get_keyframes(self.field)[0]
     assert len(frames) > 1
     for i, k in enumerate(frames):
-      if k.index_timeline == self.keyframe_index_timeline:
+      if k.index_timeline == self.index_timeline:
         del frames[i]
         return
     assert 0
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    _, k = _make_default_keyframe_at(
-      *c.get_keyframes(self.keyframe_field), self.keyframe_index_timeline
-    )
-    k.value = self.keyframe_value
-    self.atk.timeline_at = self.keyframe_index_timeline
+    _, k = _make_default_keyframe_at(*c.get_keyframes(self.field), self.index_timeline)
+    k.value = self.value
+    self.atk.timeline_at = self.index_timeline
 
   ##
 
 
 @dataclass(slots=True)
 @t.final
-class _CommandAttackColliderAlterField(_CommandAttackCollider):  ##
-  keyframe_field: str
-  keyframe_index_inside_list: int
+class _CommandAttackColliderAlterKeyframeField(_CommandAttackCollider):  ##
+  field: str
+  index_inside_list: int
   old: Any
   new: Any
 
   def do(self) -> None:
     c = self.c(self.atk)
-    k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
+    k = c.get_keyframes(self.field)[self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.new))
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    k = c.get_keyframes(self.keyframe_field)[self.keyframe_index_inside_list]
+    k = c.get_keyframes(self.field)[self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.old))
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
-    if newest.keyframe_field != self.keyframe_field:
+    if newest.field != self.field:
       return _CommandMergeType.NONE
-    if newest.keyframe_index_inside_list != self.keyframe_index_inside_list:
+    if newest.index_inside_list != self.index_inside_list:
       return _CommandMergeType.NONE
 
     self.new = newest.new
@@ -2419,11 +2445,11 @@ def _panel_visualizer() -> None:
         assert off3.y == 0
         off = bf.round_to_step(vec2(off3.x, off3.z), _STEP_TRANSLATE)
         atk.scheduled_commands.append(
-          _CommandAttackColliderAlterField(
+          _CommandAttackColliderAlterKeyframeField(
             atk=atk,
             collider_id=c.ref.id,
-            keyframe_field="tr",
-            keyframe_index_inside_list=tr_closest_index,
+            field="tr",
+            index_inside_list=tr_closest_index,
             old=_from_proto(c.ref.tr[tr_closest_index].value),
             new=_from_proto(c.ref.tr[tr_closest_index].value) + off,
           )
@@ -2513,6 +2539,29 @@ def imgui_timeline_line(indices_width: int, rows: int, color: int) -> None:  ##
   ##
 
 
+@unique
+class TimelineVisitType(IntEnum):
+  ATTACK = 1
+  COLLIDER_ANIMATED = 2
+
+
+def _timeline_visit_frames() -> Generator[
+  tuple[str, _GKeyframesContainer, _KeyframeType, TimelineVisitType], None, None
+]:  ##
+  atk = g.ref_selected_attack
+  assert atk
+
+  for f in g.attack_keyframe_field_types:
+    im.table_next_row()
+    im.table_set_column_index(0)
+    im.text(f)
+
+    im.table_set_column_index(3)
+    imgui_timeline_line(atk.ref.duration_frames, 1, im.get_color_u32(im.Col_.frame_bg))
+    yield f, *atk.get_keyframes(f), TimelineVisitType.ATTACK
+  ##
+
+
 def _panel_timeline() -> None:
   ## Setup
   tim = g.timeline
@@ -2575,8 +2624,10 @@ def _panel_timeline() -> None:
   hovered_frame_index = -1
   ##
 
+  keyframes_to_handle: list[tuple[str, _GKeyframesContainer]] = []
+
   def draw_and_handle_keyframes(
-    keyframe_field_name: str,
+    field_name: str,
     frames: _GKeyframesContainer,
     _ktype: _KeyframeType,
     on_keyframe_dragged: Callable[[int, int], None],
@@ -2587,10 +2638,12 @@ def _panel_timeline() -> None:
     nonlocal created_keyframe_this_frame
     nonlocal hovered_frame_index
 
+    keyframes_to_handle.append((field_name, frames))
+
     # Keyframes
     closest_index = _get_closest_keyframe(frames, atk.timeline_at)[0]
     for fr_index, fr in enumerate(frames):
-      key = _keyframe_id(keyframe_field_name, fr.id)
+      key = _keyframe_id(field_name, fr.id)
       is_selected = bool(tim.selected_keyframe) and (tim.selected_keyframe.key == key)
       imgui_keyframe(
         key,
@@ -2735,45 +2788,6 @@ def _panel_timeline() -> None:
     im.dummy((0, 0))
     ##
 
-    ## Drawing tracking
-    for f in ("tracking",):
-      im.table_next_row()
-      im.table_set_column_index(0)
-      im.text(f)
-
-      im.table_set_column_index(3)
-      imgui_timeline_line(atk.ref.duration_frames, 1, im.get_color_u32(im.Col_.frame_bg))
-      frames_, ktype = atk.get_keyframes(f)
-      draw_and_handle_keyframes(
-        f,
-        frames_,
-        ktype,
-        lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
-          _CommandAttackKeyframeMove(
-            atk=atk,
-            keyframe_field=field_name,
-            keyframe_index_timeline_from=old_tim_index,
-            keyframe_index_timeline_to=new_tim_index,
-          )
-        ),
-        lambda new_tim_index: atk.scheduled_commands.append(
-          _CommandAttackKeyframeAdd(
-            atk=atk,
-            keyframe_field=field_name,
-            keyframe_index_timeline=new_tim_index,
-          )
-        ),
-        lambda in_list_index: atk.scheduled_commands.append(
-          _CommandAttackKeyframeRemove(
-            atk=atk,
-            keyframe_field=field_name,
-            keyframe_index_timeline=frames_[in_list_index].index_timeline,
-            keyframe_value=frames_[in_list_index].value,
-          )
-        ),
-      )
-    ##
-
     ## Drawing impulses
     for impulse in atk.ref.impulses:
       im.table_next_row()
@@ -2802,250 +2816,359 @@ def _panel_timeline() -> None:
       im.dummy((0, 0))
     ##
 
-    # Drawing properties of selected collider
-    if c:
-      ## Setup
+    c = atk.get_visualization_collider()
 
-      def closest_keyframe_list_index(field_name: str) -> int:
-        return _get_closest_keyframe(c.get_keyframes(field_name)[0], atk.timeline_at)[0]
+    for f, frames, ktype, visit_type in _timeline_visit_frames():
+      im.table_next_row()
 
-      c_keyframe_fields = g.keyframe_field_types_per_collider_type[c.ref.type]
-      c_keyframe_fields_list = list(c_keyframe_fields)
-
-      vertical_off_field = None
-      if tim.selected_keyframe:
-        vertical_off_field = tim.selected_keyframe.field
+      ## Column 0. Label
+      im.table_set_column_index(0)
+      im.text(f.split("__", 1)[-1])
       ##
 
-      for field_index, field_name, frames, keyframe_type in (  ##
-        (i, x, *c.get_keyframes(x))
-        for i, x in enumerate(g.keyframe_field_types_per_collider_type[c.ref.type])
-      ):  ##
-        ## Setup
-        im.table_next_row()
+      ## Column 1. `<` and `>` buttons
+      im.table_set_column_index(1)
 
-        vertical_off = 0
-        if field_name == vertical_off_field:
-          for disabled, key, voff in (
-            ((field_index <= 0), im.Key.w, -1),
-            ((field_index >= len(c_keyframe_fields) - 1), im.Key.s, 1),
-          ):
-            if (not disabled) and im.is_key_pressed(key):
-              vertical_off = voff
-        ##
+      index_f = _get_closest_keyframe(frames, atk.timeline_at)[0]
+      field_is_the_same_as_of_selected_keyframe = tim.selected_keyframe and (
+        tim.selected_keyframe.field == f
+      )
 
-        draw = im.get_window_draw_list()
+      if not len(frames):
+        bf.imgui_begin_disabled()
+      if index_f <= 0:
+        bf.imgui_begin_disabled()
+      if im.button(bf.imgui_id("<", f)) or (
+        (not bf.imgui_is_disabled())
+        and im.is_key_pressed(im.Key.a)
+        and field_is_the_same_as_of_selected_keyframe
+      ):
+        _select_keyframe(f, index_f - 1, frames)
+      if field_is_the_same_as_of_selected_keyframe:
+        im.set_item_tooltip("Key: A")
+      if index_f == 0:
+        bf.imgui_end_disabled()
+      im.same_line()
+      if index_f >= len(frames) - 1:
+        bf.imgui_begin_disabled()
+      if im.button(bf.imgui_id(">", f)) or (
+        (not bf.imgui_is_disabled())
+        and im.is_key_pressed(im.Key.d)
+        and tim.selected_keyframe
+        and field_is_the_same_as_of_selected_keyframe
+      ):
+        _select_keyframe(f, index_f + 1, frames)
+      if field_is_the_same_as_of_selected_keyframe:
+        im.set_item_tooltip("Key: D")
+      if index_f >= len(frames) - 1:
+        bf.imgui_end_disabled()
+      if not len(frames):
+        bf.imgui_end_disabled()
+      ##
 
-        ## Column 0. Label
-        im.table_set_column_index(0)
-        im.text(field_name.split("__", 1)[-1])
-        ##
+      ## Column 2. Field input
+      im.table_set_column_index(2)
 
-        ## Column 1. `<` and `>` buttons
-        im.table_set_column_index(1)
-
-        index_f = closest_keyframe_list_index(field_name)
-        field_is_the_same_as_of_selected_keyframe = tim.selected_keyframe and (
-          tim.selected_keyframe.field == field_name
-        )
-
-        if vertical_off and (tim.selected_keyframe is not None):
-          new_field_to_select = c_keyframe_fields_list[field_index + vertical_off]
-          new_frames = getattr(c.ref, new_field_to_select)
-          _select_keyframe(
-            new_field_to_select,
-            _get_closest_keyframe(new_frames, tim.selected_keyframe.index_timeline)[0],
-            new_frames,
-          )
-
-        if not len(frames):
-          bf.imgui_begin_disabled()
-        if index_f <= 0:
-          bf.imgui_begin_disabled()
-        if im.button(bf.imgui_id("<", field_name)) or (
-          (not bf.imgui_is_disabled())
-          and im.is_key_pressed(im.Key.a)
-          and field_is_the_same_as_of_selected_keyframe
-        ):
-          _select_keyframe(field_name, index_f - 1, frames)
-        if field_is_the_same_as_of_selected_keyframe:
-          im.set_item_tooltip("Key: A")
-        if index_f == 0:
-          bf.imgui_end_disabled()
-        im.same_line()
-        if index_f >= len(frames) - 1:
-          bf.imgui_begin_disabled()
-        if im.button(bf.imgui_id(">", field_name)) or (
-          (not bf.imgui_is_disabled())
-          and im.is_key_pressed(im.Key.d)
-          and tim.selected_keyframe
-          and field_is_the_same_as_of_selected_keyframe
-        ):
-          _select_keyframe(field_name, index_f + 1, frames)
-        if field_is_the_same_as_of_selected_keyframe:
-          im.set_item_tooltip("Key: D")
-        if index_f >= len(frames) - 1:
-          bf.imgui_end_disabled()
-        if not len(frames):
-          bf.imgui_end_disabled()
-        ##
-
-        ## Column 2. Field input
-        im.table_set_column_index(2)
-
-        match keyframe_type:
-          case _KeyframeTypeBool():
-            _inspector_checkbox(
-              bf.imgui_id("", f"collider_checkbox_{field_name}"),
-              lambda: frames[index_f].value,
-              lambda x: (
-                atk.scheduled_commands.append(
-                  _CommandAttackColliderAlterField(
-                    atk=atk,
-                    collider_id=c.ref.id,
-                    keyframe_field=field_name,
-                    keyframe_index_inside_list=index_f,
-                    old=frames[index_f].value,
-                    new=x,
+      match visit_type:
+        case TimelineVisitType.ATTACK:
+          match ktype:
+            case _KeyframeTypeBool():
+              _inspector_checkbox(
+                bf.imgui_id("", f"timeline_field_{f}"),
+                lambda: frames[index_f].value,
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackAlterKeyframeField(
+                      atk=atk,
+                      field=f,
+                      index_inside_list=index_f,
+                      old=frames[index_f].value,
+                      new=x,
+                    )
                   )
-                )
-                if frames[index_f].value != x
-                else None
-              ),
-            )
+                  if frames[index_f].value != x
+                  else None
+                ),
+              )
 
-          case _KeyframeTypeFloat():
-            _inspector_input_float(
-              bf.imgui_id("", f"collider_slider_{field_name}"),
-              lambda: frames[index_f].value,
-              lambda x: (
-                atk.scheduled_commands.append(
-                  _CommandAttackColliderAlterField(
-                    atk=atk,
-                    collider_id=c.ref.id,
-                    keyframe_field=field_name,
-                    keyframe_index_inside_list=index_f,
-                    old=frames[index_f].value,
-                    new=x,
+            case _KeyframeTypeFloat():
+              _inspector_input_float(
+                bf.imgui_id("", f"timeline_field_{f}"),
+                lambda: frames[index_f].value,
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackAlterKeyframeField(
+                      atk=atk,
+                      field=f,
+                      index_inside_list=index_f,
+                      old=frames[index_f].value,
+                      new=x,
+                    )
                   )
-                )
-                if frames[index_f].value != x
-                else None
-              ),
-              keyframe_type.min,
-              keyframe_type.max,
-              keyframe_type.step,
-              keyframe_type.step_fast,
-              keyframe_type.fmt,
-            )
+                  if frames[index_f].value != x
+                  else None
+                ),
+                ktype.min,
+                ktype.max,
+                ktype.step,
+                ktype.step_fast,
+                ktype.fmt,
+              )
 
-          case _KeyframeTypeV2():
-            _inspector_input_float(
-              bf.imgui_id("", f"collider_slider_{field_name}_x"),
-              lambda: frames[index_f].value.x,  # ty:ignore[unresolved-attribute]
-              lambda x: (
-                atk.scheduled_commands.append(
-                  _CommandAttackColliderAlterField(
-                    atk=atk,
-                    collider_id=c.ref.id,
-                    keyframe_field=field_name,
-                    keyframe_index_inside_list=index_f,
-                    old=frames[index_f].value,
-                    new=vec2(x, frames[index_f].value.y),  # ty:ignore[unresolved-attribute]
+            case _KeyframeTypeV2():
+              _inspector_input_float(
+                bf.imgui_id("", f"timeline_field_{f}_x"),
+                lambda: frames[index_f].value.x,  # ty:ignore[unresolved-attribute]
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackAlterKeyframeField(
+                      atk=atk,
+                      field=f,
+                      index_inside_list=index_f,
+                      old=frames[index_f].value,
+                      new=vec2(x, frames[index_f].value.y),  # ty:ignore[unresolved-attribute]
+                    )
                   )
-                )
-                if frames[index_f].value.x != x  # ty:ignore[unresolved-attribute]
-                else None
-              ),
-              -_MAX_OFFSET,
-              _MAX_OFFSET,
-              keyframe_type.step,
-              1,
-              "%.2f",
-            )
-            _inspector_input_float(
-              bf.imgui_id("", f"collider_slider_{field_name}_y"),
-              lambda: frames[index_f].value.y,  # ty:ignore[unresolved-attribute]
-              lambda x: (
-                atk.scheduled_commands.append(
-                  _CommandAttackColliderAlterField(
-                    atk=atk,
-                    collider_id=c.ref.id,
-                    keyframe_field=field_name,
-                    keyframe_index_inside_list=index_f,
-                    old=frames[index_f].value,
-                    new=vec2(frames[index_f].value.x, x),  # ty:ignore[unresolved-attribute]
+                  if frames[index_f].value.x != x  # ty:ignore[unresolved-attribute]
+                  else None
+                ),
+                -_MAX_OFFSET,
+                _MAX_OFFSET,
+                ktype.step,
+                1,
+                "%.2f",
+              )
+              _inspector_input_float(
+                bf.imgui_id("", f"timeline_field_{f}_y"),
+                lambda: frames[index_f].value.y,  # ty:ignore[unresolved-attribute]
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackAlterKeyframeField(
+                      atk=atk,
+                      field=f,
+                      index_inside_list=index_f,
+                      old=frames[index_f].value,
+                      new=vec2(frames[index_f].value.x, x),  # ty:ignore[unresolved-attribute]
+                    )
                   )
-                )
-                if frames[index_f].value.y != x  # ty:ignore[unresolved-attribute]
-                else None
-              ),
-              -_MAX_OFFSET,
-              _MAX_OFFSET,
-              keyframe_type.step,
-              1,
-              "%.2f",
-            )
+                  if frames[index_f].value.y != x  # ty:ignore[unresolved-attribute]
+                  else None
+                ),
+                -_MAX_OFFSET,
+                _MAX_OFFSET,
+                ktype.step,
+                1,
+                "%.2f",
+              )
 
-          case _:
-            assert 0
-        ##
+            case _:
+              assert 0
 
-        ## Column 3. Timeline line
-        im.table_set_column_index(3)
+        case TimelineVisitType.COLLIDER_ANIMATED:
+          assert c
+          match ktype:
+            case _KeyframeTypeBool():
+              _inspector_checkbox(
+                bf.imgui_id("", f"timeline_field_{f}"),
+                lambda: frames[index_f].value,
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackColliderAlterKeyframeField(
+                      atk=atk,
+                      collider_id=c.ref.id,
+                      field=f,
+                      index_inside_list=index_f,
+                      old=frames[index_f].value,
+                      new=x,
+                    )
+                  )
+                  if frames[index_f].value != x
+                  else None
+                ),
+              )
 
-        frames_and_ktype = c.get_keyframes(field_name)
+            case _KeyframeTypeFloat():
+              _inspector_input_float(
+                bf.imgui_id("", f"timeline_field_{f}"),
+                lambda: frames[index_f].value,
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackColliderAlterKeyframeField(
+                      atk=atk,
+                      collider_id=c.ref.id,
+                      field=f,
+                      index_inside_list=index_f,
+                      old=frames[index_f].value,
+                      new=x,
+                    )
+                  )
+                  if frames[index_f].value != x
+                  else None
+                ),
+                ktype.min,
+                ktype.max,
+                ktype.step,
+                ktype.step_fast,
+                ktype.fmt,
+              )
 
-        line_spanning_rows = 1
-        if c and field_name:
-          line_spanning_rows = frames_and_ktype[1].line_spanning_rows
+            case _KeyframeTypeV2():
+              _inspector_input_float(
+                bf.imgui_id("", f"timeline_field_{f}_x"),
+                lambda: frames[index_f].value.x,  # ty:ignore[unresolved-attribute]
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackColliderAlterKeyframeField(
+                      atk=atk,
+                      collider_id=c.ref.id,
+                      field=f,
+                      index_inside_list=index_f,
+                      old=frames[index_f].value,
+                      new=vec2(x, frames[index_f].value.y),  # ty:ignore[unresolved-attribute]
+                    )
+                  )
+                  if frames[index_f].value.x != x  # ty:ignore[unresolved-attribute]
+                  else None
+                ),
+                -_MAX_OFFSET,
+                _MAX_OFFSET,
+                ktype.step,
+                1,
+                "%.2f",
+              )
+              _inspector_input_float(
+                bf.imgui_id("", f"timeline_field_{f}_y"),
+                lambda: frames[index_f].value.y,  # ty:ignore[unresolved-attribute]
+                lambda x: (
+                  atk.scheduled_commands.append(
+                    _CommandAttackColliderAlterKeyframeField(
+                      atk=atk,
+                      collider_id=c.ref.id,
+                      field=f,
+                      index_inside_list=index_f,
+                      old=frames[index_f].value,
+                      new=vec2(frames[index_f].value.x, x),  # ty:ignore[unresolved-attribute]
+                    )
+                  )
+                  if frames[index_f].value.y != x  # ty:ignore[unresolved-attribute]
+                  else None
+                ),
+                -_MAX_OFFSET,
+                _MAX_OFFSET,
+                ktype.step,
+                1,
+                "%.2f",
+              )
 
+            case _:
+              assert 0
+
+        case _:
+          raise AssertionError
+      ##
+
+      ## Column 3. Timeline line
+      im.table_set_column_index(3)
+
+      if tim.selected_keyframe and (f == tim.selected_keyframe.field):
+        line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
+      else:
         line_color = im.get_color_u32(im.Col_.frame_bg)
-        if c and field_name:
-          if tim.selected_keyframe and (field_name == tim.selected_keyframe.field):
-            line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
-        else:
-          line_color = im.get_color_u32(im.Col_.frame_bg_hovered)
+      imgui_timeline_line(atk.ref.duration_frames, ktype.line_spanning_rows, line_color)
+      ##
 
-        imgui_timeline_line(atk.ref.duration_frames, line_spanning_rows, line_color)
-        lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
+      match visit_type:
+        case TimelineVisitType.ATTACK:  ##
+          fmove = lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
+            _CommandAttackKeyframeMove(
+              atk=atk,
+              field=f,
+              index_timeline_from=old_tim_index,
+              index_timeline_to=new_tim_index,
+            )
+          )
+          fadd = lambda new_tim_index: atk.scheduled_commands.append(
+            _CommandAttackKeyframeAdd(
+              atk=atk,
+              field=f,
+              index_timeline=new_tim_index,
+            )
+          )
+          fremove = lambda in_list_index: atk.scheduled_commands.append(
+            _CommandAttackKeyframeRemove(
+              atk=atk,
+              field=f,
+              index_timeline=frames[in_list_index].index_timeline,
+              value=frames[in_list_index].value,
+            )
+          )
+          ##
 
-        draw_and_handle_keyframes(
-          field_name,
-          *frames_and_ktype,
-          lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
+        case TimelineVisitType.COLLIDER_ANIMATED:  ##
+          assert c
+          fmove = lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
             _CommandAttackColliderKeyframeMove(
               atk=atk,
               collider_id=c.ref.id,
-              keyframe_field=field_name,
-              keyframe_index_timeline_from=old_tim_index,
-              keyframe_index_timeline_to=new_tim_index,
+              field=f,
+              index_timeline_from=old_tim_index,
+              index_timeline_to=new_tim_index,
             )
-          ),
-          lambda new_tim_index: atk.scheduled_commands.append(
+          )
+          fadd = lambda new_tim_index: atk.scheduled_commands.append(
             _CommandAttackColliderKeyframeAdd(
               atk=atk,
               collider_id=c.ref.id,
-              keyframe_field=field_name,
-              keyframe_index_timeline=new_tim_index,
+              field=f,
+              index_timeline=new_tim_index,
             )
-          ),
-          lambda in_list_index: atk.scheduled_commands.append(
+          )
+          fremove = lambda in_list_index: atk.scheduled_commands.append(
             _CommandAttackColliderKeyframeRemove(
               atk=atk,
               collider_id=c.ref.id,
-              keyframe_field=field_name,
-              keyframe_index_timeline=frames[in_list_index].index_timeline,
-              keyframe_value=frames[in_list_index].value,
+              field=f,
+              index_timeline=frames[in_list_index].index_timeline,
+              value=frames[in_list_index].value,
             )
-          ),
-        )
+          )
+          ##
 
-        ##
+        case _:
+          raise AssertionError
 
-        im.dummy((0, 0))
+      draw_and_handle_keyframes(f, frames, ktype, fmove, fadd, fremove)
 
     im.end_table()
+
+    ## WASD keyframes movement
+    voff_field = None
+    voff_field_index = -1
+    if tim.selected_keyframe:
+      voff_field = tim.selected_keyframe.field
+      voff_field_index = next(
+        (i for i, pair in enumerate(keyframes_to_handle) if pair[0] == voff_field),
+        -1,
+      )
+
+    vertical_off = 0
+    for disabled, key, voff in (
+      ((voff_field_index <= 0), im.Key.w, -1),
+      ((voff_field_index >= len(keyframes_to_handle) - 1), im.Key.s, 1),
+    ):
+      if (not disabled) and im.is_key_pressed(key):
+        vertical_off = voff
+
+    if vertical_off and (tim.selected_keyframe is not None):
+      new_field_to_select, new_frames = keyframes_to_handle[
+        voff_field_index + vertical_off
+      ]
+      _select_keyframe(
+        new_field_to_select,
+        _get_closest_keyframe(new_frames, tim.selected_keyframe.index_timeline)[0],
+        new_frames,
+      )
+    ##
 
     ## Drawing cell lines
     assert lines_top_left
@@ -3221,22 +3344,26 @@ def _post_new_frame() -> None:  ##
       with bf.sane_writable_file(export_path) as out_file:
         yaml.dump(dict_to_dump, out_file, indent=2, line_break="\n")
 
-    if c := atk.get_visualization_collider():
-      if tim.keyframe_to_select:
-        keyframe, update_timeline = tim.keyframe_to_select
-        if update_timeline:
-          atk.timeline_at = keyframe.index_timeline
-        tim.selected_keyframe = keyframe
-        tim.keyframe_to_select = None
+    if tim.keyframe_to_select:
+      keyframe, update_timeline = tim.keyframe_to_select
+      if update_timeline:
+        atk.timeline_at = keyframe.index_timeline
+      tim.selected_keyframe = keyframe
+      tim.keyframe_to_select = None
 
-      if sel_key := tim.selected_keyframe:
-        frames = getattr(c.ref, sel_key.field)
-        _select_keyframe(
-          sel_key.field,
-          _get_closest_keyframe(frames, atk.timeline_at)[0],
-          frames,
-          update_timeline_playhead=False,
-        )
+    if tim.selected_keyframe:
+      found = False
+      for f, frames, _1, _2 in _timeline_visit_frames():
+        if tim.selected_keyframe.field == f:
+          found = True
+          _select_keyframe(
+            tim.selected_keyframe.field,
+            _get_closest_keyframe(frames, atk.timeline_at)[0],
+            frames,
+            update_timeline_playhead=False,
+          )
+      if not found:
+        tim.selected_keyframe = None
 
   ##
 
