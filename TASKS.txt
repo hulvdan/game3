@@ -34,10 +34,12 @@ x mark: wip attack.tracking keyframes
 x mark: tracking: wip
 x mark: tracking: fix is_active keyframes drawing on impulse line
 x mark: tracking: can create tracking keyframe
+x mark: tracking: yield frames of collider in _timeline_visit_frames
 
+* mark: tracking: fix chaning value of tracking bool
+* mark: tracking: fix vertical lines in timeline
 * mark: tracking: fix moving tracking keyframe
 * mark: tracking: tracking keyframe removal works
-* mark: tracking: yield frames of collider in _timeline_visit_frames
 * mark: tracking: wasd keyframes
 * mark: tracking:
 * mark: tracking:

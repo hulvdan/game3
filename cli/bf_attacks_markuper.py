@@ -1573,11 +1573,6 @@ class _State:
   abilities: list[_TransientAbility] = field(default_factory=list)
   creatures: list[_TransientCreature] = field(default_factory=list)
 
-  exiting: bool = False
-  count: int = 0
-
-  frame: int = 0
-
   attack_keyframe_field_types: dict[str, _KeyframeType] = field(default_factory=dict)
   keyframe_field_types_per_collider_type: dict[int, dict[str, _KeyframeType]] = field(
     default_factory=dict
@@ -2552,13 +2547,12 @@ def _timeline_visit_frames() -> Generator[
   assert atk
 
   for f in g.attack_keyframe_field_types:
-    im.table_next_row()
-    im.table_set_column_index(0)
-    im.text(f)
-
-    im.table_set_column_index(3)
-    imgui_timeline_line(atk.ref.duration_frames, 1, im.get_color_u32(im.Col_.frame_bg))
     yield f, *atk.get_keyframes(f), TimelineVisitType.ATTACK
+
+  c = atk.get_visualization_collider()
+  if c:
+    for f in g.keyframe_field_types_per_collider_type[c.ref.type]:
+      yield f, *c.get_keyframes(f), TimelineVisitType.COLLIDER_ANIMATED
   ##
 
 
@@ -2570,7 +2564,6 @@ def _panel_timeline() -> None:
     imgui_draw_cross()
     return
   assert atk.ref.duration_frames > 0
-  c = atk.get_visualization_collider()
 
   io = im.get_io()
 
@@ -3252,7 +3245,7 @@ def _show_status() -> None:  ##
     im.text("|")
 
     im.same_line()
-    im.text(f"history_head: {atk.history_head}")
+    im.text(f"history: {atk.history_head}")
   ##
 
 
