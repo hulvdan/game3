@@ -40,11 +40,12 @@ x mark: tracking: fix vertical lines in timeline
 - mark: tracking: fix moving tracking keyframe
 x mark: tracking: tracking keyframe removal works
 x mark: tracking: wasd keyframes
+x screenshot
 
+* game: different combo finalizers (l l r / l l l l / l r l r)
+*
 * mark: projectile spawn frames
 * mark: display player stamina consumption frame on timeline
-*
-* game: different combo finalizators (l l r / l l l l / l r l r)
 *
 * mark: make it unable to drag playhead when started dragging outside of timeline
 *

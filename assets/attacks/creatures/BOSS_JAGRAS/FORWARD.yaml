@@ -75,10 +75,7 @@ stamina_consumption_frame: 0
 tracking:
 - id: 1
   index_timeline: 0
-  value: true
-- id: 2
-  index_timeline: 15
   value: false
-- id: 3
-  index_timeline: 34
+- id: 4
+  index_timeline: 58
   value: true
