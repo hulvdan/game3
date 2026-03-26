@@ -1,3 +1,4 @@
+#
 ## Imports
 import colorsys
 import hashlib

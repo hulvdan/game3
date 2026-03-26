@@ -1,5 +1,5 @@
 conditions:
-- capsule__radius: 0.5
+- capsule__radius: 0.75
   capsule__rotation: 0.0
   capsule__spread: 3.0
   circle__radius: 0.0
@@ -66,7 +66,7 @@ melee:
         x: 0.25
         y: 0.0
     - id: 3
-      index_timeline: 38
+      index_timeline: 34
       value:
         x: 0.25
         y: 0.0
@@ -75,10 +75,10 @@ stamina_consumption_frame: 0
 tracking:
 - id: 1
   index_timeline: 0
-  value: false
-- id: 2
-  index_timeline: 17
   value: true
-- id: 3
-  index_timeline: 31
+- id: 2
+  index_timeline: 15
   value: false
+- id: 3
+  index_timeline: 34
+  value: true

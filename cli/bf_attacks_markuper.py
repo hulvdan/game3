@@ -1052,11 +1052,11 @@ class _CommandAttackAlterKeyframeField(_CommandAttack):  ##
   new: Any
 
   def do(self) -> None:
-    k = self.atk.get_keyframes(self.field)[0][self.index_inside_list]
+    k: _GKeyframe = self.atk.get_keyframes(self.field)[0][self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.new))
 
   def undo(self) -> None:
-    k = self.atk.get_keyframes(self.field)[0][self.index_inside_list]
+    k: _GKeyframe = self.atk.get_keyframes(self.field)[0][self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.old))
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
@@ -1281,12 +1281,12 @@ class _CommandAttackColliderAlterKeyframeField(_CommandAttackCollider):  ##
 
   def do(self) -> None:
     c = self.c(self.atk)
-    k = c.get_keyframes(self.field)[0][self.index_inside_list]
+    k: _GKeyframe = c.get_keyframes(self.field)[0][self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.new))
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    k = c.get_keyframes(self.field)[0][self.index_inside_list]
+    k: _GKeyframe = c.get_keyframes(self.field)[0][self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.old))
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
@@ -2658,9 +2658,9 @@ def _panel_timeline() -> None:
           and (len(frames) > 1)
         ):
           hov = imgui_timeline_line_out.hovered_index_half_cell_offset
-          for k in frames:
+          for i, k in enumerate(frames):
             if k.index_timeline == hov:
-              on_keyframe_deleted(hov)
+              on_keyframe_deleted(i)
               break
 
       if im.is_mouse_down(0) and (tim.dragging_keyframe == key):
@@ -3068,6 +3068,8 @@ def _panel_timeline() -> None:
       else:
         line_color = im.get_color_u32(im.Col_.frame_bg)
       imgui_timeline_line(atk.ref.duration_frames, ktype.line_spanning_rows, line_color)
+
+      lines_bottom_right = imgui_timeline_line_out.pos_bottom_right
       ##
 
       match visit_type:
