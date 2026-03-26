@@ -1052,11 +1052,11 @@ class _CommandAttackAlterKeyframeField(_CommandAttack):  ##
   new: Any
 
   def do(self) -> None:
-    k = self.atk.get_keyframes(self.field)[self.index_inside_list]
+    k = self.atk.get_keyframes(self.field)[0][self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.new))
 
   def undo(self) -> None:
-    k = self.atk.get_keyframes(self.field)[self.index_inside_list]
+    k = self.atk.get_keyframes(self.field)[0][self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.old))
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:
@@ -1281,12 +1281,12 @@ class _CommandAttackColliderAlterKeyframeField(_CommandAttackCollider):  ##
 
   def do(self) -> None:
     c = self.c(self.atk)
-    k = c.get_keyframes(self.field)[self.index_inside_list]
+    k = c.get_keyframes(self.field)[0][self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.new))
 
   def undo(self) -> None:
     c = self.c(self.atk)
-    k = c.get_keyframes(self.field)[self.index_inside_list]
+    k = c.get_keyframes(self.field)[0][self.index_inside_list]
     _set_proto_field(k, "value", _to_proto(self.old))
 
   def try_merge(self, newest: Self, /) -> _CommandMergeType:

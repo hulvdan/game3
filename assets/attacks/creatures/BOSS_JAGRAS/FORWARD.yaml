@@ -65,6 +65,11 @@ melee:
       value:
         x: 0.25
         y: 0.0
+    - id: 3
+      index_timeline: 38
+      value:
+        x: 0.25
+        y: 0.0
     type: 3
 stamina_consumption_frame: 0
 tracking:
@@ -73,7 +78,7 @@ tracking:
   value: false
 - id: 2
   index_timeline: 17
-  value: false
+  value: true
 - id: 3
   index_timeline: 31
   value: false
