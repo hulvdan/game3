@@ -397,7 +397,7 @@ func _physics_process(dt: float) -> void:
 						var spread: float = _make_keyframe_value_at(collider.get_capsule__spread(), e)
 						q = Collisions.query_capsule(
 							collider_pos,
-							-creature.attack_target_dir.angle() + deg_to_rad(rotation),
+							-creature.looking_angle + deg_to_rad(rotation),
 							radius * 2 + spread,
 							radius,
 							mask,
@@ -414,7 +414,7 @@ func _physics_process(dt: float) -> void:
 							collider_pos,
 							dist_min,
 							dist_max,
-							-creature.attack_target_dir.angle() + deg_to_rad(rotation),
+							-creature.looking_angle + deg_to_rad(rotation),
 							deg_to_rad(spread_angle),
 							mask,
 							true,

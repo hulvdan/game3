@@ -297,8 +297,6 @@ creatures:
     stamina_cost:
       flat: 8
       rally: 2
-  ability_types:
-  - HOOK
 ##
 - type: MOB_SHOOTER ##
   hp: 30
@@ -490,6 +488,7 @@ creatures:
     - at: 30
     cooldown_min: 30.0
     cooldown_max: 30.0
+    ##
 - type: BOSS_JAGRAS ##
   hp: 300
   speed: 0.4

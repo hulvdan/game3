@@ -1,3 +1,4 @@
+conditions: []
 duration_frames: 20
 impulses:
 - at: 5
@@ -8,3 +9,7 @@ impulses:
   rotation: 180
 melee: null
 stamina_consumption_frame: 1
+tracking:
+- id: 1
+  index_timeline: 0
+  value: true

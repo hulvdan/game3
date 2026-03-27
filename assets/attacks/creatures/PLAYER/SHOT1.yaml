@@ -1,3 +1,4 @@
+conditions: []
 duration_frames: 20
 impulses:
 - at: 5
@@ -9,3 +10,7 @@ impulses:
 melee:
   colliders: []
 stamina_consumption_frame: 0
+tracking:
+- id: 1
+  index_timeline: 0
+  value: true

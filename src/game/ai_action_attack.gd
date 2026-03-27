@@ -13,8 +13,11 @@ static func explicit_update_attack(
 ) -> bool:
 	var is_player := c.type == glib.GCreatureType.PLAYER
 
+	var is_attack_start := false
+
 	## Attack start
 	if !c.attack_elapsed_frames:
+		is_attack_start = true
 		if c.change_attack_to:
 			c.current_attack = c.change_attack_to
 		elif c.change_ability_to:
@@ -41,7 +44,7 @@ static func explicit_update_attack(
 		if k.get_index_timeline() > c.attack_elapsed_frames:
 			break
 		tracking = k.get_value()
-	if tracking:
+	if tracking or is_attack_start:
 		c.attack_target_pos = tracking_pos
 		c.attack_target_dir = bf.vector2_direction_or_random(
 			bf.xz(c.transform.origin),

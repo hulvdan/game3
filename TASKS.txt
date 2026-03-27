@@ -30,8 +30,12 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
+x fix: game: shooting direction
 
+* fix: game: bonker dash direction
+*
 * game: different combo finalizers (l l r / l l l l / l r l r)
+  PROTOTYPE USING MELEE
 *
 * mark: projectile spawn frames
 * mark: display player stamina consumption frame on timeline
