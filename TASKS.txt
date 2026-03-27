@@ -30,18 +30,6 @@ BIG PLAN
 PLAN
 ============================================================
 x clear
-x mark: wip attack.tracking keyframes
-x mark: tracking: wip
-x mark: tracking: fix is_active keyframes drawing on impulse line
-x mark: tracking: can create tracking keyframe
-x mark: tracking: yield frames of collider in _timeline_visit_frames
-x mark: tracking: fix chaning value of tracking bool
-x mark: tracking: fix vertical lines in timeline
-- mark: tracking: fix moving tracking keyframe
-x mark: tracking: tracking keyframe removal works
-x mark: tracking: wasd keyframes
-x screenshot
-x ref markuper -> animator
 
 * game: different combo finalizers (l l r / l l l l / l r l r)
 *

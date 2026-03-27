@@ -2623,7 +2623,7 @@ def _panel_timeline() -> None:
     field_name: str,
     frames: _GKeyframesContainer,
     _ktype: _KeyframeType,
-    on_keyframe_dragged: Callable[[int, int], None],
+    on_keyframe_moved: Callable[[int, int], None],
     on_keyframe_created: Callable[[int], None],
     on_keyframe_deleted: Callable[[int], None],
   ):  ##
@@ -2672,7 +2672,7 @@ def _panel_timeline() -> None:
         if fr_index < len(frames) - 1:
           max_right = frames[fr_index + 1].index_timeline - 1
 
-        on_keyframe_dragged(
+        on_keyframe_moved(
           fr.index_timeline,
           bf.clamp(
             imgui_timeline_line_out.hovered_index_half_cell_offset,
