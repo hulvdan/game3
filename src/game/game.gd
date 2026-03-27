@@ -259,7 +259,8 @@ func _physics_process(dt: float) -> void:
 		var target_angle := INF
 		var from := bf.xz(x.transform.origin)
 		if x.attack_id:
-			target_angle = x.attack_target_dir.angle()
+			if x.attack_tracking:
+				target_angle = x.attack_target_dir.angle()
 		elif x.target_pos != from:
 			target_angle = (x.target_pos - from).angle()
 

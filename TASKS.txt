@@ -31,9 +31,8 @@ PLAN
 ============================================================
 x clear
 x fix: game: shooting direction
+x fix: game: bonker dash direction
 
-* fix: game: bonker dash direction
-*
 * game: different combo finalizers (l l r / l l l l / l r l r)
   PROTOTYPE USING MELEE
 *

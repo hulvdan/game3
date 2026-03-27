@@ -27,7 +27,6 @@ case "close_in_godot":
         WinGet, exe, ProcessName, ahk_id %this_id%
         if RegExMatch(exe, "Godot_.*_win64\.exe") {
             ControlSend,, {f8}, ahk_id %this_id%
-            break
         }
     }
 

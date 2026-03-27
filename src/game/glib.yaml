@@ -149,8 +149,8 @@ tags:
 # TODO: Optional fields? Would enable better validation
 - type: DASH_LIMITED ##
   attack_requirements:
-    f1: # starts_at
-    f2: # ends_at
+    i1: # starts_at
+    i2: # ends_at
     f3: # distance
     f4: # distance_delta
     f5: # pow
@@ -158,20 +158,20 @@ tags:
 ##
 - type: DASH ##
   attack_requirements:
-    f1: # starts_at
-    f2: # ends_at
+    i1: # starts_at
+    i2: # ends_at
     f3: # distance
     f4: # pow
     f5_degrees: # rotation
 ##
 - type: BLINK ##
   attack_requirements:
-    f1: # starts_at
-    f2: # ends_at
+    i1: # starts_at
+    i2: # ends_at
     f3: # distance
     f4: # distance_delta
   projectile_requirements:
-    f1: # blink_time
+    i1: # blink_at
     ##
 - type: HOMING ##
   projectile_requirements:
@@ -403,8 +403,8 @@ creatures:
       damage_stamina: 20
     tags:
     - tag_type: DASH_LIMITED
-      f1: 0.2 # starts_at
-      f2: 0.63 # ends_at
+      i1: 12 # starts_at
+      i2: 38 # ends_at
       f3: 3 # distance
       f4: 0.2 # distance_delta
       f5: 1 # pow
@@ -437,8 +437,8 @@ creatures:
       hp_rally_recover: 5
     tags:
     - tag_type: DASH_LIMITED
-      f1: 0.2 # starts_at
-      f2: 0.5 # ends_at
+      i1: 12 # starts_at
+      i2: 30 # ends_at
       f3: 1 # distance
       f4: 0.2 # distance_delta
       f5: 1 # pow
@@ -458,8 +458,8 @@ creatures:
       damage_stamina: 20
     tags:
     - tag_type: DASH_LIMITED
-      f1: 0.4 # starts_at
-      f2: 1.1 # ends_at
+      i1: 24 # starts_at
+      i2: 66 # ends_at
       f3: 4 # distance
       f4: 0.2 # distance_delta
       f5: 1 # pow
@@ -682,7 +682,7 @@ projectiles:
   - ENEMIES
   tags:
   - tag_type: BLINK
-    f1: 1.0 # blink_time
+    i1: 60 # blink_at
 ##
 - type: SUMMON ##
   projectilefly_type: AREA

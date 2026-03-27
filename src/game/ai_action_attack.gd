@@ -44,7 +44,8 @@ static func explicit_update_attack(
 		if k.get_index_timeline() > c.attack_elapsed_frames:
 			break
 		tracking = k.get_value()
-	if tracking or is_attack_start:
+	c.attack_tracking = tracking or is_attack_start
+	if c.attack_tracking:
 		c.attack_target_pos = tracking_pos
 		c.attack_target_dir = bf.vector2_direction_or_random(
 			bf.xz(c.transform.origin),
@@ -73,52 +74,41 @@ static func explicit_update_attack(
 			)
 	##
 
-	c.attack_elapsed += dt
-	c.attack_elapsed_frames += 1
-
 	# Processing tags
 	for tag in attack.get_tags():
 		match tag.get_tag_type():
 			glib.GTagType.DASH_LIMITED: ##
-				if c.attack_dashed:
+				var start := tag.get_i1()
+				if start != c.attack_elapsed_frames:
 					continue
-				var start := tag.get_f1()
-				if start > c.attack_elapsed:
-					continue
-				c.attack_dashed = true
 				var d := c.looking_dir - bf.xz(c.transform.origin)
 				var dist: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
 				var pow_ := tag.get_f5()
-				var end := tag.get_f2()
+				var end := tag.get_i2()
 				var dir := c.looking_dir
-				var dir_rotation := tag.get_f5()
+				var dir_rotation := tag.get_f6()
 				if dir_rotation:
 					dir = dir.rotated(dir_rotation)
-				Game.add_impulse(c.impulses, dir, dist, end - start, pow_)
+				Game.add_impulse(c.impulses, dir, dist, (end - start) / glib.ATTACKS_FPSf, pow_)
 			##
 			glib.GTagType.DASH: ##
-				if c.attack_dashed:
+				var start := tag.get_i1()
+				if start != c.attack_elapsed_frames:
 					continue
-				var start := tag.get_f1()
-				if start > c.attack_elapsed:
-					continue
-				c.attack_dashed = true
 				var dist := tag.get_f3()
 				var pow_ := tag.get_f4()
-				var end := tag.get_f2()
+				var end := tag.get_i2()
 				var dir := c.looking_dir
 				var dir_rotation := tag.get_f5()
 				if dir_rotation:
 					dir = dir.rotated(dir_rotation)
-				Game.add_impulse(c.impulses, dir, dist, end - start, pow_)
+				Game.add_impulse(c.impulses, dir, dist, (end - start) / glib.ATTACKS_FPSf, pow_)
 			##
 			glib.GTagType.BLINK: ##
-				if c.attack_blinked:
+				var dur := tag.get_i2() - tag.get_i1()
+				if c.attack_elapsed_frames * 2 != dur:
+					# Blink happens exactly at the middle between `start` and `end` (i1 and i2)
 					continue
-				var dur := tag.get_f2() - tag.get_f1()
-				if c.attack_elapsed < dur / 2:
-					continue
-				c.attack_blinked = true
 				var d := c.attack_target_pos - bf.xz(c.transform.origin)
 				var l: float = max(0, min(d.length(), tag.get_f3()) - tag.get_f4())
 				c.transform.origin += bf.to_xz(c.attack_target_dir * l)
@@ -140,10 +130,11 @@ static func explicit_update_attack(
 				Game.v.make_projectile(d)
 	##
 
+	c.attack_elapsed += dt
+	c.attack_elapsed_frames += 1
+
 	## Attack finish
 	if c.attack_elapsed_frames >= c.current_attack.get_duration_frames():
-		c.attack_blinked = false
-		c.attack_dashed = false
 		c.attack_elapsed = 0.0
 		c.attack_elapsed_frames = 0
 		c.attack_id = 0
@@ -151,6 +142,7 @@ static func explicit_update_attack(
 		c.attack_damaged_interactables.clear()
 		c.attack_target_pos = Vector2(0, 0)
 		c.attack_target_dir = Vector2(0, 0)
+		c.attack_tracking = false
 		return true
 	##
 
