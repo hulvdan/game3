@@ -36,6 +36,7 @@ x game: combos: can set SP+MOVE for rolling
 x game: combos: comments in tree
 x game: combos: wip
 x game: combos: .proto can describe combo tree
+x spell
 
 * game: combos: rework attacks to use combo tree
 * game: combos:

@@ -481,9 +481,9 @@ func _physics_process(dt: float) -> void:
 		var evade_flags := [spikes_data.get_initial_evade_flags(), spikes_data.get_continuous_evade_flags()]
 		for spike: Spike in room.container_spikes.get_children():
 			if spike.is_active && (spike.activation_elapsed >= glib.v.get_spikes().get_damage_starts_at()):
-				dd.evade_flags = evade_flags[int(spike.striked)]
+				dd.evade_flags = evade_flags[int(spike.struck)]
 				dd.attack_id = spike.attack_id
-				spike.striked = true
+				spike.struck = true
 				for creature: Creature in spike.creatures_to_damage:
 					apply_damage(creature, glib.v.get_spikes().get_damage(), dd)
 	##

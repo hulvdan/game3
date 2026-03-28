@@ -1411,37 +1411,37 @@ def _test_hash32():  ##
 # ██████╔╝██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║███████║
 # ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚══════╝
 
-BANNERIFY_PATTERN = "!" + "banner: "
+BANNER_PATTERN = "!" + "banner: "
 
 
-def bannerify(lines: list[str]) -> str:  ##
+def banner(lines: list[str]) -> str:  ##
   out = ""
-  bannering_prefix = ""
+  banner_prefix = ""
   current_line_index = 0
   off = 0
   while current_line_index + off < len(lines):
     line = lines[current_line_index + off]
 
-    if BANNERIFY_PATTERN in line:
-      if bannering_prefix:
-        print("Found line inside bannering")
+    if BANNER_PATTERN in line:
+      if banner_prefix:
+        print("Found line inside banner")
         exit(1)
 
-      if line.count(BANNERIFY_PATTERN) > 1:
+      if line.count(BANNER_PATTERN) > 1:
         print("Found line with more than 1 pattern inside")
         exit(1)
 
-      bannering_prefix = line[: line.find(BANNERIFY_PATTERN)]
-      if not bannering_prefix:
+      banner_prefix = line[: line.find(BANNER_PATTERN)]
+      if not banner_prefix:
         print("Found line with no prefix")
         exit(1)
 
-      if not line.removeprefix(bannering_prefix + BANNERIFY_PATTERN).strip():
-        print("Found line that has prefix but no content to bannerify")
+      if not line.removeprefix(banner_prefix + BANNER_PATTERN).strip():
+        print("Found line that has prefix but no content to banner")
         exit(1)
 
       for i in range(current_line_index + off + 1, len(lines)):
-        if lines[i].startswith(bannering_prefix):
+        if lines[i].startswith(banner_prefix):
           off += 1
         else:
           out += lines[i]
@@ -1450,16 +1450,16 @@ def bannerify(lines: list[str]) -> str:  ##
       out += line
       out += "\n"
       out += "\n".join(
-        bannering_prefix + x.rstrip()
+        banner_prefix + x.rstrip()
         for x in pyfiglet.figlet_format(
-          line.removeprefix(bannering_prefix + BANNERIFY_PATTERN),
+          line.removeprefix(banner_prefix + BANNER_PATTERN),
           font="ansi_shadow",
           width=90,
         ).splitlines()
         if x.strip()
       )
       out += "\n"
-      bannering_prefix = ""
+      banner_prefix = ""
 
     else:
       out += line + "\n"
@@ -1470,17 +1470,17 @@ def bannerify(lines: list[str]) -> str:  ##
   ##
 
 
-def _test_bannerify():  ##
-  assert bannerify([]) == ""
-  assert bannerify(["a"]) == "a\n"
-  assert bannerify(["a", " b"]) == "a\n b\n"
+def _test_banner():  ##
+  assert banner([]) == ""
+  assert banner(["a"]) == "a\n"
+  assert banner(["a", " b"]) == "a\n b\n"
 
-  got = bannerify(
+  got = banner(
     [
-      f"// {BANNERIFY_PATTERN}a",
-      "// ASDASAD",
+      f"// {BANNER_PATTERN}a",
+      "// would be removed",
       "",
-      f"// {BANNERIFY_PATTERN}b",
+      f"// {BANNER_PATTERN}b",
       "",
       "a",
       "b",
@@ -1493,7 +1493,7 @@ def _test_bannerify():  ##
   expected = "".join(
     x.rstrip() + "\n"
     for x in (
-      f"// {BANNERIFY_PATTERN}a",
+      f"// {BANNER_PATTERN}a",
       "//  █████╗",
       "// ██╔══██╗",
       "// ███████║",
@@ -1501,7 +1501,7 @@ def _test_bannerify():  ##
       "// ██║  ██║",
       "// ╚═╝  ╚═╝",
       "",
-      f"// {BANNERIFY_PATTERN}b",
+      f"// {BANNER_PATTERN}b",
       "// ██████╗",
       "// ██╔══██╗",
       "// ██████╔╝",
@@ -2055,7 +2055,7 @@ class LdtkEntity(BaseModel):  ##
   ##
 
 
-class LdtkTilesetTileCustomdata(BaseModel):  ##
+class LdtkTilesetTileCustomData(BaseModel):  ##
   data: str
   tileId: int
   ##
@@ -2071,7 +2071,7 @@ class LdtkTileset(BaseModel):  ##
   identifier: str
   cHei_: int
   cWid_: int
-  customData: list[LdtkTilesetTileCustomdata]
+  customData: list[LdtkTilesetTileCustomData]
   enumTags: list[LdtkTilesetTileEnumTag]
   uid: int
 
@@ -2585,7 +2585,7 @@ def imgui_is_disabled() -> bool:  ##
 
 
 @contextmanager
-def imgui_colorify_inputs(hue: float):  ##
+def imgui_color_inputs(hue: float):  ##
   im.push_style_color(im.Col_.button, im.ImColor.hsv(hue, 0.6, 0.6).value)
   im.push_style_color(im.Col_.button_hovered, im.ImColor.hsv(hue, 0.7, 0.7).value)
   im.push_style_color(im.Col_.button_active, im.ImColor.hsv(hue, 0.8, 0.8).value)
@@ -2720,27 +2720,27 @@ def _test_round_to_step(v, step, result):
 ##
 
 
-## def clamp(v, vmin, vmax)
+## def clamp(v, v_min, v_max)
 @t.overload
-def clamp(v: int, vmin: int, vmax: int) -> int: ...
+def clamp(v: int, v_min: int, v_max: int) -> int: ...
 @t.overload
-def clamp(v: float, vmin: int, vmax: int) -> float: ...
+def clamp(v: float, v_min: int, v_max: int) -> float: ...
 @t.overload
-def clamp(v: int, vmin: float, vmax: int) -> float: ...
+def clamp(v: int, v_min: float, v_max: int) -> float: ...
 @t.overload
-def clamp(v: int, vmin: int, vmax: float) -> float: ...
+def clamp(v: int, v_min: int, v_max: float) -> float: ...
 @t.overload
-def clamp(v: float, vmin: float, vmax: int) -> float: ...
+def clamp(v: float, v_min: float, v_max: int) -> float: ...
 @t.overload
-def clamp(v: int, vmin: float, vmax: float) -> float: ...
+def clamp(v: int, v_min: float, v_max: float) -> float: ...
 @t.overload
-def clamp(v: float, vmin: int, vmax: float) -> float: ...
+def clamp(v: float, v_min: int, v_max: float) -> float: ...
 @t.overload
-def clamp(v: float, vmin: float, vmax: float) -> float: ...
+def clamp(v: float, v_min: float, v_max: float) -> float: ...
 
 
-def clamp(v, vmin, vmax):
-  return min(max(v, vmin), vmax)
+def clamp(v, v_min, v_max):
+  return min(max(v, v_min), v_max)
 
 
 ##

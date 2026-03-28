@@ -6,7 +6,7 @@ extends Node3D
 
 var is_active: bool = false
 var attack_id: int = 0
-var striked: bool = false
+var struck: bool = false
 var activation_elapsed: float = 0
 var activation_elapsed_visual: float = 0
 var player_is_inside: bool = false
@@ -33,7 +33,7 @@ func _physics_process(dt: float) -> void: ##
 	if is_active:
 		activation_elapsed += dt
 		if activation_elapsed >= glib.v.get_spikes().get_duration_seconds():
-			striked = false
+			struck = false
 			is_active = false
 			attack_id = 0
 			activation_elapsed = 0

@@ -111,8 +111,8 @@ def load_glib(
     glib = yaml.safe_load(glib_file)
     glib.pop("_anchors", None)
 
-  temp_glibgd_path = Path(".temp/glib.gd")
-  temp_glibgd_path.unlink(missing_ok=True)
+  temp_glib_gd_path = Path(".temp/glib.gd")
+  temp_glib_gd_path.unlink(missing_ok=True)
   bf.run_command("""
     godot
     --headless
@@ -120,7 +120,7 @@ def load_glib(
     --input=src/game/glib.proto
     --output=.temp/glib.gd
   """)
-  assert temp_glibgd_path.exists(), "Failed to generate glib.gd from glib.proto!"
+  assert temp_glib_gd_path.exists(), "Failed to generate glib.gd from glib.proto!"
 
   with Path("src/codegen/nolint/glib.gd").open(
     "w", encoding="utf-8", newline="\n"

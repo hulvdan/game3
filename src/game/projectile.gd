@@ -21,7 +21,7 @@ var default__pierced: int
 var attack_id: int
 var calculated__dir: Vector2
 var homing__velocity: Vector2
-var travelled: float
+var traveled: float
 var blinked: bool
 
 @onready var sprite: Sprite3D = %_sprite
@@ -132,7 +132,7 @@ class UpdaterBase:
 			data: glib.GProjectile,
 	) -> void: ##
 		_damage_data.attack_id = x.attack_id
-		if x.travelled > data.get_distance():
+		if x.traveled > data.get_distance():
 			x.queue_free()
 
 		_damage_data.evade_flags = data.get_evade_flags()
@@ -232,10 +232,10 @@ class UpdaterDefault extends UpdaterBase:
 	func explicit_process(dt: float, x: Projectile, is_player: bool, data: glib.GProjectile) -> void: ##
 		super.explicit_process(dt, x, is_player, data)
 
-		var projectile_travelled := data.get_default__speed() * dt
-		x.travelled += projectile_travelled
+		var projectile_traveled := data.get_default__speed() * dt
+		x.traveled += projectile_traveled
 
-		var moved := x.calculated__dir * projectile_travelled
+		var moved := x.calculated__dir * projectile_traveled
 		x.transform.origin += bf.to_xz(moved)
 		for tag in data.get_tags():
 			match tag.get_tag_type():
@@ -274,7 +274,7 @@ class UpdaterDefault extends UpdaterBase:
 				q = Collisions.query_ray(
 					bf.xz(x.transform.origin),
 					x.calculated__dir.angle(),
-					projectile_travelled,
+					projectile_traveled,
 					mask,
 					true,
 					false,
