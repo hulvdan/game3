@@ -495,7 +495,7 @@ def _process_glib(genline, glib, is_game: bool) -> None:
   glib["player"].pop("block_damage_stamina_rally_percent_of_flat")
   glib["player"].pop("block_damage_stamina_rally_discard_mult_post")
 
-  bf.genenum(genline, "ComboAction", [str(x.value) for x in iter(_ComboAction)])
+  bf.genenum(genline, "ComboAction", [str(x.name) for x in iter(_ComboAction)])
 
   bf.recursive_visiter(
     glib, "evade_flags", None, transform_evade_flags_list_of_strings_to_number
@@ -853,8 +853,9 @@ def temp():  ##
 
 
 class _ComboNode(BaseModel):  ##
-  activation: list[int]
-  action: tuple[_ComboAction, int]
+  activation_types: list[str]
+  action_type: str
+  action_index: int = Field(-1)
   children: list["_ComboNode"] = Field(default_factory=list)
   pad: int = Field(0, exclude=True)
 
@@ -877,8 +878,8 @@ def _process_combos(
 
   stack = [
     _ComboNode(
-      activation=[],
-      action=(_ComboAction.INVALID, -1),
+      activation_types=[],
+      action_type=_ComboAction.INVALID.name,
       pad=-1,
     )
   ]
@@ -903,11 +904,21 @@ def _process_combos(
         break
     assert action_[0].value
 
-    activation_ = [activations.index(x) for x in activation.split("+")]
-    v = _ComboNode(activation=activation_, action=action_, pad=pad)
+    activations_ = activation.split("+")
+    for x in activations_:
+      assert x in activations
+    v = _ComboNode(
+      activation_types=activations_,
+      action_type=action_[0].name,
+      action_index=action_[1],
+      pad=pad,
+    )
 
     for c in stack[-1].children:
-      assert c.activation != activation, ("Parent with this activation exists", stack)
+      assert c.activation_types != activation, (
+        "Parent with this activation exists",
+        stack,
+      )
 
     stack[-1].children.append(v)
     stack.append(v)
@@ -939,47 +950,59 @@ def _test_process_combos():  ##
   ).dump_children()
 
   def x(
-    activation: list[int],
-    action: tuple[_ComboAction, int],
+    activation: list[str],
+    action_type: _ComboAction,
+    action_index: int,
     children: list[_ComboNode] | None = None,
   ) -> _ComboNode:
-    return _ComboNode(activation=activation, action=action, children=children or [])
+    return _ComboNode(
+      activation_types=activation,
+      action_type=action_type.name,
+      action_index=action_index,
+      children=children or [],
+    )
 
   expected = _ComboNode(
-    activation=[],
-    action=(_ComboAction.INVALID, -1),
+    activation_types=[],
+    action_type=_ComboAction.INVALID.name,
     children=[
       x(
-        [0],
-        (_ComboAction.ATTACK, 0),
+        ["L"],
+        _ComboAction.ATTACK,
+        0,
         [
           x(
-            [0],
-            (_ComboAction.ATTACK, 1),
+            ["L"],
+            _ComboAction.ATTACK,
+            1,
             [
-              x([0], (_ComboAction.ATTACK, 2)),
+              x(["L"], _ComboAction.ATTACK, 2),
               x(
-                [2, 4],
-                (_ComboAction.ROLL, 0),
-                [x([0], (_ComboAction.ATTACK, 2))],
+                ["SP", "MOVE"],
+                _ComboAction.ROLL,
+                0,
+                [x(["L"], _ComboAction.ATTACK, 2)],
               ),
             ],
           ),
           x(
-            [2, 4],
-            (_ComboAction.ROLL, 0),
-            [x([0], (_ComboAction.ATTACK, 2))],
+            ["SP", "MOVE"],
+            _ComboAction.ROLL,
+            0,
+            [x(["L"], _ComboAction.ATTACK, 2)],
           ),
         ],
       ),
       x(
-        [2, 4],
-        (_ComboAction.ROLL, 0),
+        ["SP", "MOVE"],
+        _ComboAction.ROLL,
+        0,
         [
           x(
-            [0],
-            (_ComboAction.ATTACK, 1),
-            [x([0], (_ComboAction.ATTACK, 2))],
+            ["L"],
+            _ComboAction.ATTACK,
+            1,
+            [x(["L"], _ComboAction.ATTACK, 2)],
           ),
         ],
       ),

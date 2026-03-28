@@ -292,7 +292,7 @@ message GAction {
 message GComboNode {
   repeated int32 activation_types = 1;
   int32 action_type = 2;
-  int32 attack_index = 3;
+  int32 action_index = 3; // e.g. attack_index
   repeated GComboNode children = 4;
 }
 
