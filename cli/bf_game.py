@@ -31,6 +31,7 @@ from bf_attacks_animator import (
   tool_attacks_animator,  # noqa: F401
 )
 from bf_typer import command, timing
+from deepdiff import DeepDiff
 from deepmerge import always_merger
 from PIL import Image
 from pydantic import BaseModel, Field
@@ -409,7 +410,7 @@ def _process_glib(genline, glib, is_game: bool) -> None:
             x.get("combos", ""),
             _ACTION_CONTROLS,
             [atk["debug_name"] for atk in x.get("attacks", [])],
-          ).model_dump(exclude={"pad"})["children"]
+          ).dump_children()
 
   ##
 
@@ -841,7 +842,12 @@ class _ComboNode(BaseModel):  ##
   k: str
   v: str
   children: list["_ComboNode"] = Field(default_factory=list)
-  pad: int = Field(0)
+  pad: int = Field(0, exclude=True)
+
+  def dump_children(self) -> list[dict]:
+    dumped_root = self.model_dump(warnings="error", mode="json")
+    return dumped_root["children"]
+
   ##
 
 
@@ -849,10 +855,9 @@ def _process_combos(
   value: str, _action_controls: list[str], _action_names: list[str]
 ) -> _ComboNode:  ##
   stack = [_ComboNode(k="_root", v="_root", pad=-1)]
-  assert len(stack) == 1
   lines = [x for x in value.split("\n") if x.strip()]
   min_pad = min(len(x) - len(x.lstrip(" ")) for x in lines)
-  lines = [bf.replace_double_spaces(x[min_pad:]) for x in lines]
+  lines = [x[min_pad:] for x in lines]
   for line in lines:
     pad = len(line) - len(line.lstrip(" "))
     while pad <= stack[-1].pad:
@@ -881,46 +886,52 @@ def _test_process_combos():  ##
     """,
     _ACTION_CONTROLS,
     ["SHOT1", "SHOT2", "SHOT3", "ROLL"],
-  ).model_dump(exclude={"pad"})["children"]
+  ).dump_children()
 
   def x(k: str, v: str, next_: list[_ComboNode] | None = None) -> _ComboNode:
     return _ComboNode(k=k, v=v, children=next_ or [])
 
-  expected = [
-    x(
-      "L",
-      "SHOT1",
-      [
-        x(
-          "L",
-          "SHOT2",
-          [
-            x("L", "SHOT3"),
-            x(
-              "SP",
-              "ROLL",
-              [x("L", "SHOT3")],
-            ),
-          ],
-        ),
-        x(
-          "SP",
-          "ROLL",
-          [x("L", "SHOT3")],
-        ),
-      ],
-    ),
-    x(
-      "SP",
-      "ROLL",
-      [
-        x(
-          "L",
-          "SHOT2",
-          [x("L", "SHOT3")],
-        ),
-      ],
-    ),
-  ]
-  assert actual == expected
+  expected = _ComboNode(
+    k="_root",
+    v="_root",
+    children=[
+      x(
+        "L",
+        "SHOT1",
+        [
+          x(
+            "L",
+            "SHOT2",
+            [
+              x("L", "SHOT3"),
+              x(
+                "SP",
+                "ROLL",
+                [x("L", "SHOT3")],
+              ),
+            ],
+          ),
+          x(
+            "SP",
+            "ROLL",
+            [x("L", "SHOT3")],
+          ),
+        ],
+      ),
+      x(
+        "SP",
+        "ROLL",
+        [
+          x(
+            "L",
+            "SHOT2",
+            [x("L", "SHOT3")],
+          ),
+        ],
+      ),
+    ],
+  ).dump_children()
+
+  result = DeepDiff(actual, expected)
+  assert not result, result
   ##

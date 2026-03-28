@@ -300,14 +300,14 @@ creatures:
   combos: |
     L SWING1
       L SWING2
-        HR CSWING1
-          HR CSWING2
+        HR CHARGED_SWING1
+          HR CHARGED_SWING2
         S+DIR ROLL
-          HR CSWING2
-      HR CSWING1
-        HR CSWING2
-    HR CSWING1
-      HR CSWING2
+          HR CHARGED_SWING2
+      HR CHARGED_SWING1
+        HR CHARGED_SWING2
+    HR CHARGED_SWING1
+      HR CHARGED_SWING2
     S+L BACKPORT
     S+DIR ROLL
     S
