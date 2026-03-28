@@ -279,9 +279,15 @@ message GAbility {
   int32 recovering_attacks = 4;
 }
 
+message GActivation {
+  int32 type = 1; // 1 - action (move, roll, L, R), 2 - attack_index
+  int32 attack_index = 2; //
+}
+
 message GComboNode {
-  int32 attack_index = 1;
-  repeated GComboNode follow = 2;
+  int32 action_type = 1;
+  int32 attack_index = 2;
+  repeated GComboNode children = 3;
 }
 
 message GCreature {

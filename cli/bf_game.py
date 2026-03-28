@@ -858,7 +858,7 @@ def _process_combos(
   stack = [_ComboNode(activation=("_root",), action="_root", pad=-1)]
   lines = [x for x in value.split("\n") if x.strip()]
   min_pad = min(len(x) - len(x.lstrip(" ")) for x in lines)
-  lines = [x[min_pad:] for x in lines]
+  lines = [x[min_pad:] for x in lines if x.lstrip()[0] != "#"]
   for line in lines:
     pad = len(line) - len(line.lstrip(" "))
     while pad <= stack[-1].pad:
@@ -878,6 +878,7 @@ def _test_process_combos():  ##
   actual = _process_combos(
     """
     L SHOT1
+      # L SHOT1
       L SHOT2
         L SHOT3
         SP+MOVE ROLL

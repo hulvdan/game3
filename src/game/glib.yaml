@@ -300,18 +300,17 @@ creatures:
   combos: |
     L SWING1
       L SWING2
-        HR CHARGED_SWING1
-          HR CHARGED_SWING2
-        S+DIR ROLL
-          HR CHARGED_SWING2
-      HR CHARGED_SWING1
-        HR CHARGED_SWING2
-    HR CHARGED_SWING1
-      HR CHARGED_SWING2
-    S+L BACKPORT
-    S+DIR ROLL
-    S
-      SHOT3
+        R CHARGED_SWING1
+          R CHARGED_SWING2
+        SP+MOVE ROLL
+          R CHARGED_SWING2
+      R CHARGED_SWING1
+        R CHARGED_SWING2
+    R CHARGED_SWING1
+      R CHARGED_SWING2
+    # SP+L BACKPORT
+    SP+MOVE ROLL
+    SP SHOT3
 ##
 - type: MOB_SHOOTER ##
   hp: 30
