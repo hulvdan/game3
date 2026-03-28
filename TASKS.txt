@@ -8,7 +8,7 @@ PILLARS
 * СБОРКА ОРУЖИЙ КАК В LIES OF P?
 * ЧТО ЛЮДЯМ НЕ НРАВИТСЯ - УЛУЧШИТЬ / ВЫПИЛИТЬ
   * НАЧАЛО: ЗАТОЧКА
-  * ЗАТОЧКА БЕЗ WHETFISH GRIND
+  * ЗАТОЧКА БЕЗ WHET FISH GRIND
   * ФАРМ КАКЕХ
   * тупая handler
   *
@@ -55,11 +55,6 @@ x wip combos
 * mark:
 * mark: impl support of abilities
 *
-* devlog: post: name: Жоско Погромироваю Боевку
-* devlog: post:
-* devlog: post:
-* devlog: post:
-*
 * LATER
   * Docking Splits
     runner_params.docking_params.docking_splits = [hello_imgui.DockingSplit(
@@ -79,7 +74,7 @@ x wip combos
 * jagras: attacks: combo 3 hits
 * jagras: attacks: combo 2 hits
 * jagras: attacks:
-* jagras: attacks: ramdomly chooses allowed attack but not the last one
+* jagras: attacks: randomly chooses allowed attack but not the last one
 * jagras: attacks:
 * jagras: attacks:
 * jagras: attacks:
@@ -131,8 +126,8 @@ x wip combos
 * tag: previously spawned ability's area gets removed upon triggering ability once again
   (make it not possible to have 2 player KAZUHA areas on screen)
 *
-* hooked/stunned/cantmove/immobilized/nomove state? (hook applies it on enemy = attack stops)
-* some creatures / attack grant UNHOOKABLE tag
+* hooked/stunned/cant_move/immobilized/no_move state? (hook applies it on enemy = attack stops)
+* some creatures / attack grant NOT_HOOKABLE tag
 *
 * ability reverse kazuha void:
 * ability reverse kazuha void:
@@ -152,7 +147,7 @@ x wip combos
 *
 * recoverable ki stamina decreases after a short time of not using ki
 *
-* summoners: limit max count of summonees
+* summoners: limit max count of summons
 * summoners: can set summon projectile angles + offsets
 * summoners: summoner goes away when player gets too close (pathfinding)
 * summoners:
@@ -185,7 +180,7 @@ x wip combos
   (melee attack mask type + exclude this mob)
   (projectile attack mask type + exclude this mob)
 *
-* marking attacks / proejctiles as only_perfect_blockable
+* marking attacks / projectiles as only_perfect_blockable
   -> projectile/melee hitbox shows up as red
 *
 * projectile blockable / not
