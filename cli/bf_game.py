@@ -840,8 +840,8 @@ def temp():  ##
 
 
 class _ComboNode(BaseModel):  ##
-  k: str
-  v: str
+  activation: tuple[str, ...]
+  action: str
   children: list["_ComboNode"] = Field(default_factory=list)
   pad: int = Field(0, exclude=True)
 
@@ -855,7 +855,7 @@ class _ComboNode(BaseModel):  ##
 def _process_combos(
   value: str, _action_controls: list[str], _action_names: list[str]
 ) -> _ComboNode:  ##
-  stack = [_ComboNode(k="_root", v="_root", pad=-1)]
+  stack = [_ComboNode(activation=("_root",), action="_root", pad=-1)]
   lines = [x for x in value.split("\n") if x.strip()]
   min_pad = min(len(x) - len(x.lstrip(" ")) for x in lines)
   lines = [x[min_pad:] for x in lines]
@@ -864,7 +864,10 @@ def _process_combos(
     while pad <= stack[-1].pad:
       stack.pop()
     activation, action = line.strip().split(" ", 1)
-    v = _ComboNode(k=activation, v=action, pad=pad)
+    activation = tuple(activation.split("+"))
+    v = _ComboNode(activation=activation, action=action, pad=pad)
+    for c in stack[-1].children:
+      assert c.activation != activation, ("Parent with this activation exists", stack)
     stack[-1].children.append(v)
     stack.append(v)
   return stack[0]
@@ -877,11 +880,11 @@ def _test_process_combos():  ##
     L SHOT1
       L SHOT2
         L SHOT3
-        SP ROLL
+        SP+MOVE ROLL
           L SHOT3
-      SP ROLL
+      SP+MOVE ROLL
         L SHOT3
-    SP ROLL
+    SP+MOVE ROLL
       L SHOT2
         L SHOT3
     """,
@@ -889,44 +892,46 @@ def _test_process_combos():  ##
     ["SHOT1", "SHOT2", "SHOT3", "ROLL"],
   ).dump_children()
 
-  def x(k: str, v: str, next_: list[_ComboNode] | None = None) -> _ComboNode:
-    return _ComboNode(k=k, v=v, children=next_ or [])
+  def x(
+    activation: tuple[str, ...], action: str, children: list[_ComboNode] | None = None
+  ) -> _ComboNode:
+    return _ComboNode(activation=activation, action=action, children=children or [])
 
   expected = _ComboNode(
-    k="_root",
-    v="_root",
+    activation=("_root",),
+    action="_root",
     children=[
       x(
-        "L",
+        ("L",),
         "SHOT1",
         [
           x(
-            "L",
+            ("L",),
             "SHOT2",
             [
-              x("L", "SHOT3"),
+              x(("L",), "SHOT3"),
               x(
-                "SP",
+                ("SP", "MOVE"),
                 "ROLL",
-                [x("L", "SHOT3")],
+                [x(("L",), "SHOT3")],
               ),
             ],
           ),
           x(
-            "SP",
+            ("SP", "MOVE"),
             "ROLL",
-            [x("L", "SHOT3")],
+            [x(("L",), "SHOT3")],
           ),
         ],
       ),
       x(
-        "SP",
+        ("SP", "MOVE"),
         "ROLL",
         [
           x(
-            "L",
+            ("L",),
             "SHOT2",
-            [x("L", "SHOT3")],
+            [x(("L",), "SHOT3")],
           ),
         ],
       ),

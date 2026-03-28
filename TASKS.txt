@@ -32,8 +32,8 @@ PLAN
 x clear
 x wip combos
 x game: combos: parsing tree
+x game: combos: can set SP+MOVE for rolling
 
-* game: combos:
 * game: combos:
 * game: combos:
 * game: combos:
