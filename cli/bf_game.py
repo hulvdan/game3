@@ -609,7 +609,7 @@ def process_images():  ##
       )
 
   # OUTLINE_WIDTH = 10
-
+  #
   # bf.im_conveyor(
   #     "volume_bands",
   #     "volume_bands",
@@ -619,7 +619,7 @@ def process_images():  ##
   #     bf.imc_outline(radius=8),
   #     out_dir=bf.ART_TEXTURES_DIR,
   # )
-
+  #
   # bf.im_conveyor(
   #     "icons_audio",
   #     "icons_audio",
@@ -629,15 +629,15 @@ def process_images():  ##
   #     # bf.imc_scale(0.5),
   #     out_dir=bf.ART_TEXTURES_DIR,
   # )
-
+  #
   # # _ui_background_rect
   # bf.im_rectangle((412, 582), radius=30).save(
   #     bf.ART_TEXTURES_DIR / "_ui_background_rect.png"
   # )
-
+  #
   # # _game_item_spot_shadow
   # bf.im_ellipse((120, 120)).save(bf.ART_TEXTURES_DIR / "_game_item_spot_shadow.png")
-
+  #
   # # _ui_button
   # bf.im_outline(
   #     bf.im_remap(
@@ -647,9 +647,9 @@ def process_images():  ##
   #     ),
   #     radius=OUTLINE_WIDTH,
   # ).save(bf.ART_TEXTURES_DIR / "_ui_button.png")
-
+  #
   # image_star = Image.open(bf.ART_TEXTURES_DIR / "other" / "ui_star.png")
-
+  #
   # # _ui_star_gold, _ui_star_gray, _ui_star_gold_small, _ui_star_gray_small
   # for suf, c1, c2 in (
   #     ("gold", "ORANGE", "CASABLANCA"),
@@ -662,27 +662,27 @@ def process_images():  ##
   #         radius=int(OUTLINE_WIDTH * 1.4),
   #     )
   #     image_star_processed.save(bf.ART_TEXTURES_DIR / f"_ui_star_{suf}.png")
-
+  #
   #     small_star_scale = 0.1
   #     bf.im_outline(bf.im_scale(image_star_processed, small_star_scale), radius=2).save(
   #         bf.ART_TEXTURES_DIR / f"_ui_star_small_{suf}.png"
   #     )
-
+  #
   # # _game_particle_star
   # bf.im_outline(bf.im_star(270), radius=20, color=(255, 255, 255, 255)).save(
   #     bf.ART_TEXTURES_DIR / "_game_particle_star.png"
   # )
-
+  #
   # # _game_particle_circle_outline
   # bf.im_ellipse(
   #     180, width=int(20 * 7 / 8), fill=(0, 0, 0, 0), outline=(255, 255, 255)
   # ).save(bf.ART_TEXTURES_DIR / "_game_particle_circle_outline.png")
-
+  #
   # # _game_feedback_circle
   # bf.im_outline(
   #     bf.im_ellipse(60), radius=100, is_shadow=True, color=(255, 255, 255, 255)
   # ).save(bf.ART_TEXTURES_DIR / "_game_feedback_circle.png")
-
+  #
   # # _game_particle_diamond
   # diamond_size = 320
   # rh = Image.new("RGBA", (diamond_size, diamond_size), (255, 255, 255, 255))
@@ -697,13 +697,13 @@ def process_images():  ##
   #         ell,
   #     )
   # bf.im_extract_white(rh).save(bf.ART_TEXTURES_DIR / "_game_particle_diamond.png")
-
+  #
   # # _ui_icon_ad_small
   # bf.im_outline(
   #     bf.im_scale(Image.open(bf.ART_DIR / "src" / "icons" / "ic_video_fill.png"), 0.25),
   #     radius=OUTLINE_WIDTH,
   # ).save(bf.ART_TEXTURES_DIR / "_ui_icon_ad_small.png")
-
+  #
   # # Spritesheetifying items.
   # bf.im_spritesheetify(
   #     bf.ART_DIR / "src" / "main_001.png",
@@ -717,7 +717,7 @@ def process_images():  ##
   #     img = Image.open(f)
   #     img.save(bf.ART_TEXTURES_DIR / f.name)
   #     bf.im_white(img).save(bf.ART_TEXTURES_DIR / (f.stem + "_dark.png"))
-
+  #
   # bf.im_conveyor(
   #     "icons",
   #     "Icons",
@@ -725,7 +725,7 @@ def process_images():  ##
   #     bf.imc_scale(0.55),
   #     bf.imc_outline(radius=OUTLINE_WIDTH),
   # )
-
+  #
   # # Screenshots.
   # # if 1:
   # banner = Image.open(bf.ART_DIR / "src" / "dist_screenshot.png")
@@ -765,13 +765,13 @@ def process_images():  ##
   # font = ImageFont.truetype(
   #     bf.ART_DIR / "src" / "screenshots" / "SeymourOne-Regular.ttf", size=150
   # )
-
+  #
   # for language, texts in _result.loc_by_languages.items():
   #     out_dir = bf.ART_DIR / "src" / "screenshots_processed" / language
   #     for f in out_dir.glob("*.png"):
   #         f.unlink()
   #     bf.recursive_mkdir(out_dir)
-
+  #
   #     for banner_color_, loc_id_index, f in zip(
   #         banner_colors,
   #         screenshot_loc_id_indices,
@@ -779,7 +779,7 @@ def process_images():  ##
   #         strict=True,
   #     ):
   #         banner_color = bf.hex_to_rgb_ints(banner_color_)
-
+  #
   #         text_image = Image.new("RGBA", (3840, 1550))
   #         draw = ImageDraw.Draw(text_image)
   #         draw.text(
@@ -805,13 +805,13 @@ def process_images():  ##
   #             is_shadow=True,
   #             extend=False,
   #         )
-
+  #
   #         brightness = 1.0
   #         contrast = 1.0
   #         if 1:
   #             brightness = 1.06
   #             contrast = 1.1
-
+  #
   #         img = Image.new("RGBA", (1920, 1080))
   #         img.paste(
   #             ImageEnhance.Brightness(
@@ -823,13 +823,14 @@ def process_images():  ##
   #             bf.im_draw_on_top(img, banner, (*banner_color, 255)),
   #             text_image.resize((1920, 1080)),
   #         ).save(out_dir / f.name)
-
+  #
   # import bf_cli
-
+  #
   # bf_cli.do_generate(bf.BuildPlatform.Win, bf.BuildType.Debug)
   # bf_cli.do_activate_game_ahk()
 
-  ##
+
+##
 
 
 @command
