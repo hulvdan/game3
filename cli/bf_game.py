@@ -15,6 +15,7 @@ USAGE:
 
 ## Imports
 import copy
+import enum
 import inspect
 import json
 from collections import defaultdict
@@ -76,8 +77,7 @@ bf.game_settings.colors = [  ##
   "#000000",
 ]  ##
 
-_ACTION_CONTROLS = ["L", "R", "M", "X1", "X2", "SP", "SH"]
-
+_ACTION_CONTROLS = ["L", "R", "SP", "SH", "MOVE"]
 
 _context: list = []
 _context_errors: list = []
@@ -130,6 +130,14 @@ def _test_outer_transpose_pos() -> None:  ##
   ##
 
 
+@enum.unique
+class _ComboAction(enum.IntEnum):  ##
+  INVALID = enum.auto()
+  ROLL = enum.auto()
+  ATTACK = enum.auto()
+  ##
+
+
 def _process_glib(genline, glib, is_game: bool) -> None:
   _test_outer_transpose_pos()
 
@@ -170,10 +178,10 @@ def _process_glib(genline, glib, is_game: bool) -> None:
 
   ## LDTK. Enums
   ldtk_data = json.loads(Path("assets/level/level.ldtk").read_text(encoding="utf-8"))
-  for enum in ldtk_data["defs"]["enums"]:
-    identifier = enum["identifier"].lower()
+  for enum_ in ldtk_data["defs"]["enums"]:
+    identifier = enum_["identifier"].lower()
     if identifier.startswith("codegen_"):
-      enum["values"] = [
+      enum_["values"] = [
         {"id": v["type"], "tileRect": None, "color": 0}
         for v in glib[identifier.removeprefix("codegen_")]
         if v["type"] != "INVALID"
@@ -409,7 +417,10 @@ def _process_glib(genline, glib, is_game: bool) -> None:
           x["combos"] = _process_combos(
             x.get("combos", ""),
             _ACTION_CONTROLS,
-            [atk["debug_name"] for atk in x.get("attacks", [])],
+            {
+              "ROLL": ["ROLL"],
+              "ATTACK": [atk["debug_name"] for atk in x.get("attacks", [])],
+            },
           ).dump_children()
 
   ##
@@ -483,6 +494,8 @@ def _process_glib(genline, glib, is_game: bool) -> None:
   glib["player"].pop("block_damage_stamina_rally_discard_mult_pre")
   glib["player"].pop("block_damage_stamina_rally_percent_of_flat")
   glib["player"].pop("block_damage_stamina_rally_discard_mult_post")
+
+  bf.genenum(genline, "ComboAction", [str(x.value) for x in iter(_ComboAction)])
 
   bf.recursive_visiter(
     glib, "evade_flags", None, transform_evade_flags_list_of_strings_to_number
@@ -840,8 +853,8 @@ def temp():  ##
 
 
 class _ComboNode(BaseModel):  ##
-  activation: tuple[str, ...]
-  action: str
+  activation: list[int]
+  action: tuple[_ComboAction, int]
   children: list["_ComboNode"] = Field(default_factory=list)
   pad: int = Field(0, exclude=True)
 
@@ -853,23 +866,52 @@ class _ComboNode(BaseModel):  ##
 
 
 def _process_combos(
-  value: str, _action_controls: list[str], _action_names: list[str]
+  value: str, activations: list[str], action_groups: dict[str, list[str]]
 ) -> _ComboNode:  ##
-  stack = [_ComboNode(activation=("_root",), action="_root", pad=-1)]
+  for group_name_1, actions_1 in action_groups.items():
+    for group_name_2, actions_2 in action_groups.items():
+      if group_name_1 == group_name_2:
+        continue
+      for a in actions_1:
+        assert a not in actions_2
+
+  stack = [
+    _ComboNode(
+      activation=[],
+      action=(_ComboAction.INVALID, -1),
+      pad=-1,
+    )
+  ]
+
   lines = [x for x in value.split("\n") if x.strip()]
-  min_pad = min(len(x) - len(x.lstrip(" ")) for x in lines)
-  lines = [x[min_pad:] for x in lines if x.lstrip()[0] != "#"]
+  if lines:
+    min_pad = min(len(x) - len(x.lstrip(" ")) for x in lines)
+    lines = [x[min_pad:] for x in lines if x.lstrip()[0] != "#"]
+
   for line in lines:
     pad = len(line) - len(line.lstrip(" "))
     while pad <= stack[-1].pad:
       stack.pop()
+
     activation, action = line.strip().split(" ", 1)
-    activation = tuple(activation.split("+"))
-    v = _ComboNode(activation=activation, action=action, pad=pad)
+
+    action_ = (_ComboAction.INVALID, -1)
+    for group_name, group_actions in action_groups.items():
+      action_index = bf.find(group_actions, action)
+      if action_index >= 0:
+        action_ = (_ComboAction[group_name], action_index)
+        break
+    assert action_[0].value
+
+    activation_ = [activations.index(x) for x in activation.split("+")]
+    v = _ComboNode(activation=activation_, action=action_, pad=pad)
+
     for c in stack[-1].children:
       assert c.activation != activation, ("Parent with this activation exists", stack)
+
     stack[-1].children.append(v)
     stack.append(v)
+
   return stack[0]
   ##
 
@@ -890,49 +932,54 @@ def _test_process_combos():  ##
         L SHOT3
     """,
     _ACTION_CONTROLS,
-    ["SHOT1", "SHOT2", "SHOT3", "ROLL"],
+    {
+      "ROLL": ["ROLL"],
+      "ATTACK": ["SHOT1", "SHOT2", "SHOT3"],
+    },
   ).dump_children()
 
   def x(
-    activation: tuple[str, ...], action: str, children: list[_ComboNode] | None = None
+    activation: list[int],
+    action: tuple[_ComboAction, int],
+    children: list[_ComboNode] | None = None,
   ) -> _ComboNode:
     return _ComboNode(activation=activation, action=action, children=children or [])
 
   expected = _ComboNode(
-    activation=("_root",),
-    action="_root",
+    activation=[],
+    action=(_ComboAction.INVALID, -1),
     children=[
       x(
-        ("L",),
-        "SHOT1",
+        [0],
+        (_ComboAction.ATTACK, 0),
         [
           x(
-            ("L",),
-            "SHOT2",
+            [0],
+            (_ComboAction.ATTACK, 1),
             [
-              x(("L",), "SHOT3"),
+              x([0], (_ComboAction.ATTACK, 2)),
               x(
-                ("SP", "MOVE"),
-                "ROLL",
-                [x(("L",), "SHOT3")],
+                [2, 4],
+                (_ComboAction.ROLL, 0),
+                [x([0], (_ComboAction.ATTACK, 2))],
               ),
             ],
           ),
           x(
-            ("SP", "MOVE"),
-            "ROLL",
-            [x(("L",), "SHOT3")],
+            [2, 4],
+            (_ComboAction.ROLL, 0),
+            [x([0], (_ComboAction.ATTACK, 2))],
           ),
         ],
       ),
       x(
-        ("SP", "MOVE"),
-        "ROLL",
+        [2, 4],
+        (_ComboAction.ROLL, 0),
         [
           x(
-            ("L",),
-            "SHOT2",
-            [x(("L",), "SHOT3")],
+            [0],
+            (_ComboAction.ATTACK, 1),
+            [x([0], (_ComboAction.ATTACK, 2))],
           ),
         ],
       ),

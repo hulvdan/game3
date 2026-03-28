@@ -34,9 +34,9 @@ x wip combos
 x game: combos: parsing tree
 x game: combos: can set SP+MOVE for rolling
 x game: combos: comments in tree
+x game: combos: wip
 
-* game: combos: .proto can describes combo tree
-* game: combos:
+* game: combos: .proto can describe combo tree
 * game: combos:
 *
 * mark: projectile spawn frames

@@ -280,14 +280,20 @@ message GAbility {
 }
 
 message GActivation {
-  int32 type = 1; // 1 - action (move, roll, L, R), 2 - attack_index
-  int32 attack_index = 2; //
+  int32 type = 1;
+  string debug_name = 2;
+}
+
+message GAction {
+  int32 type = 1;
+  string debug_name = 2;
 }
 
 message GComboNode {
-  int32 action_type = 1;
-  int32 attack_index = 2;
-  repeated GComboNode children = 3;
+  repeated int32 activation_types = 1;
+  int32 action_type = 2;
+  int32 attack_index = 3;
+  repeated GComboNode children = 4;
 }
 
 message GCreature {
@@ -472,20 +478,22 @@ message Lib {
   GV2i progression_size = 19;
 
   // TABLE_GEN_START
-  repeated GCol colliders = 20;
-  repeated GDamage damages = 21;
-  repeated GEvade evades = 22;
-  repeated GTeam teams = 23;
-  repeated GProgression progression = 24;
-  repeated GAbility abilities = 25;
-  repeated GCreature creatures = 26;
-  repeated GItem items = 27;
-  repeated GCollectible collectibles = 28;
-  repeated GProjectileFly projectile_fly_types = 29;
-  repeated GProjectile projectiles = 30;
-  repeated GInteractable interactables = 31;
-  repeated GMask masks = 32;
-  repeated GTag tags = 33;
-  repeated GImpulse impulses = 34;
+  repeated GActivation activations = 20;
+  repeated GAction actions = 21;
+  repeated GCol colliders = 22;
+  repeated GDamage damages = 23;
+  repeated GEvade evades = 24;
+  repeated GTeam teams = 25;
+  repeated GProgression progression = 26;
+  repeated GAbility abilities = 27;
+  repeated GCreature creatures = 28;
+  repeated GItem items = 29;
+  repeated GCollectible collectibles = 30;
+  repeated GProjectileFly projectile_fly_types = 31;
+  repeated GProjectile projectiles = 32;
+  repeated GInteractable interactables = 33;
+  repeated GMask masks = 34;
+  repeated GTag tags = 35;
+  repeated GImpulse impulses = 36;
   // TABLE_GEN_END
 }

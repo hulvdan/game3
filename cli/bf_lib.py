@@ -184,6 +184,25 @@ AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".aac", ".m4a", ".wma", ".ogg"}
 #  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
 
 
+def find(values: list, value) -> int:  ##
+  return next((i for i, x in enumerate(values) if x == value), -1)
+  ##
+
+
+## def _test_find
+@pytest.mark.parametrize(
+  ("values", "value", "result"),
+  [
+    ([1, 2, 3], 1, 0),
+    ([1, 2, 3], 4, -1),
+    ([1, 2, 3], 3, 2),
+  ],
+)
+def _test_find(values, value, result):
+  assert find(values, value) == result
+  ##
+
+
 def eprint(*args, **kwargs):
   print(*args, file=sys.stderr, **kwargs)
 
@@ -2303,7 +2322,7 @@ def ldtk_get_referenced_entity(
 
 
 def _ldtk_transform_field_names(data) -> None:
-  """Перевод полей формата `__aboba` в `aboba_`."""
+  """Перевод полей формата `__x` в `x_`."""
   ##
   if not isinstance(data, dict):
     return

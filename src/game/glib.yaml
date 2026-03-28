@@ -107,6 +107,18 @@ spikes: ##
   - ROLLABLE
   ##
 
+activations: ##
+- type: L
+- type: R
+- type: MOVE
+- type: SP
+##
+
+actions: ##
+- type: ATTACK
+- type: ROLL
+##
+
 hp_damage_rally_percent: 0.8
 hp_rally_decays_after: 3.5
 hp_rally_decay_speed: 5
@@ -298,17 +310,11 @@ creatures:
       flat: 8
       rally: 2
   combos: |
-    L SWING1
-      L SWING2
-        R CHARGED_SWING1
-          R CHARGED_SWING2
-        SP+MOVE ROLL
-          R CHARGED_SWING2
-      R CHARGED_SWING1
-        R CHARGED_SWING2
-    R CHARGED_SWING1
-      R CHARGED_SWING2
-    # SP+L BACKPORT
+    L SHOT1
+      L SHOT2
+        L SHOT3
+    R SHOT3
+      SP SHOT3
     SP+MOVE ROLL
     SP SHOT3
 ##

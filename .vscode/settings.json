@@ -5,7 +5,6 @@
     "**/*.tscn*.tmp": true,
     "**/*.uid": true,
     ".godot/": true,
-    // ".venv/": true,
     "node_modules": true,
     "uv.lock": true
   },
@@ -16,7 +15,6 @@
     "**/*.uid": true,
     "**/*_pb2.py": true,
     ".godot/": true,
-    // ".venv/": true,
     "node_modules": true,
     "uv.lock": true
   },
