@@ -1,6 +1,7 @@
 #
 ## Imports
 import colorsys
+import dataclasses
 import hashlib
 import math
 import os
@@ -11,7 +12,7 @@ import sys
 import typing as t
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from dataclasses import Field, dataclass, field, fields, is_dataclass
+from dataclasses import dataclass, field, fields, is_dataclass
 from datetime import datetime
 from enum import Enum, IntEnum, unique
 from functools import partial
@@ -65,7 +66,9 @@ from pyglm.glm import mat3, mat4, quat, vec1, vec2, vec3, vec4
 
 ##
 
+
 T = TypeVar("T")
+
 
 ColorLike: TypeAlias = tuple[int, int, int, int] | tuple[int, int, int] | str
 
@@ -246,11 +249,6 @@ def replace_double_spaces(string: str) -> str:  ##
   ##
 
 
-def replace_double_newlines(string: str) -> str:  ##
-  return re.sub(REPLACING_NEWLINES_PATTERN, "\n", string)
-  ##
-
-
 def _test_replace_double_spaces():  ##
   assert replace_double_spaces("") == ""
   assert replace_double_spaces(" ") == " "
@@ -259,6 +257,11 @@ def _test_replace_double_spaces():  ##
   assert replace_double_spaces("\n") == "\n"
   assert replace_double_spaces("\n\n") == "\n\n"
   assert replace_double_spaces("\n\n\n") == "\n\n\n"
+  ##
+
+
+def replace_double_newlines(string: str) -> str:  ##
+  return re.sub(REPLACING_NEWLINES_PATTERN, "\n", string)
   ##
 
 
@@ -393,7 +396,9 @@ class DataclassSerializer:
         if param is to:
           to = t.get_args(type_)[i]
           break
-      assert not isinstance(to, Field)  # Avoiding setting type hints same as type names
+      assert not isinstance(
+        to, dataclasses.Field
+      )  # Avoiding setting type hints same as type names
       self.validate_serializable(to)  # type: ignore
     ##
 

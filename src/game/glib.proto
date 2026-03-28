@@ -279,6 +279,11 @@ message GAbility {
   int32 recovering_attacks = 4;
 }
 
+message GComboNode {
+  int32 attack_index = 1;
+  repeated GComboNode follow = 2;
+}
+
 message GCreature {
   int32 type = 1;
   string debug_name = 2;
@@ -294,7 +299,9 @@ message GCreature {
   repeated GCreatureDrop drops = 10;
 
   repeated GAttack attacks = 11;
-  repeated int32 ability_types = 12;
+  repeated GComboNode combos = 12;
+
+  repeated int32 ability_types = 13;
 }
 
 message GDamage {

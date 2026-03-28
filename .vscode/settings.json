@@ -26,43 +26,43 @@
   },
   "runOnSave.commands": [
     {
-      "match": ".json$",
+      "match": "\\.json$",
       "command": "prettier -w ${file}"
     },
     {
-      "match": ".(yml|yaml|yamlfmt|yamllint)$",
+      "match": "\\.(yml|yaml|yamlfmt|yamllint)$",
       "command": "yamlfmt ${file}"
     },
     {
-      "match": "localization.csv$",
+      "match": "localization\\.csv$",
       "command": "uv run python cli/bf_cli.py godot_reimport_localization",
       "runningStatusMessage": "Localizing..."
     },
     {
-      "match": "glib.yaml$",
+      "match": "glib\\.yaml$",
       "command": "uv run python cli/bf_cli.py codegen windows debug",
       "runningStatusMessage": "glibbing..."
     },
     {
-      "match": ".proto$",
+      "match": "\\.proto$",
       "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && proto-renumber -replace ${file} && buf format -w ${file} && uv run python cli/bf_cli.py codegen windows debug",
       "runningStatusMessage": "glibbing..."
     },
     {
-      "match": ".gd$",
+      "match": "\\.gd$",
       "command": "uv run gdscript-formatter --reorder-code ${file}"
     },
     {
-      "match": ".pyi?$",
+      "match": "\\.pyi?$",
       "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix"
     },
     {
-      "match": "bf_lib.py$",
+      "match": "(bf_lib|bf_game)\\.py$",
       "command": "testing.runCurrentFile",
       "runIn": "vscode"
     },
     {
-      "match": ".md$",
+      "match": "\\.md$",
       "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file}"
     }
     // {
@@ -96,5 +96,11 @@
   "launches": {
     "run_f4": "tool_attacks_animator",
     "run_f5": "game"
-  }
+  },
+  "cSpell.words": [
+    "asserte",
+    "ktype",
+    "mult",
+    "ress"
+  ]
 }

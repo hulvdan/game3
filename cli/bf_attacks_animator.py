@@ -164,11 +164,11 @@ def _set_proto_field(instance, field: str, value: Any) -> None:  ##
   ##
 
 
-## _gcollider_keyframe_fields: list[str]
+## _collider_keyframe_fields: list[str]
 # [[[cog
 # import ast, pathlib
 # tree = ast.parse(pathlib.Path("cli/glib_pb2.pyi").read_text(encoding="utf-8"))
-# _gcollider_keyframe_fields = [
+# _collider_keyframe_fields = [
 #     a.target.id
 #     for cls in tree.body if (isinstance(cls, ast.ClassDef) and cls.name == "GColliderAnimated")
 #     for a in cls.body if isinstance(a, ast.AnnAssign)
@@ -177,9 +177,9 @@ def _set_proto_field(instance, field: str, value: Any) -> None:  ##
 #     and (a.annotation.value.attr == "RepeatedCompositeFieldContainer")
 #     and a.annotation.slice.id.startswith("GKeyframe")
 # ]
-# print(f"{_gcollider_keyframe_fields=}")
+# print(f"{_collider_keyframe_fields=}")
 # cog]]]
-_gcollider_keyframe_fields = [
+_collider_keyframe_fields = [
   "tr",
   "is_active",
   "circle__radius",
@@ -1796,7 +1796,7 @@ def _panel_attack_inspector() -> None:
       )
     ##
 
-  if im.begin_tab_bar("attack_tab_bar", im.TabBarFlags_.none):
+  if im.begin_tab_bar("attack_tab_bar"):
     ## Colliders
     if im.begin_tab_item("Colliders")[0]:
       if atk.ref.melee:
@@ -3074,7 +3074,7 @@ def _panel_timeline() -> None:
 
       match visit_type:
         case TimelineVisitType.ATTACK:  ##
-          fmove = lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
+          f_move = lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
             _CommandAttackKeyframeMove(
               atk=atk,
               field=f,
@@ -3082,14 +3082,14 @@ def _panel_timeline() -> None:
               index_timeline_to=new_tim_index,
             )
           )
-          fadd = lambda new_tim_index: atk.scheduled_commands.append(
+          f_add = lambda new_tim_index: atk.scheduled_commands.append(
             _CommandAttackKeyframeAdd(
               atk=atk,
               field=f,
               index_timeline=new_tim_index,
             )
           )
-          fremove = lambda in_list_index: atk.scheduled_commands.append(
+          f_remove = lambda in_list_index: atk.scheduled_commands.append(
             _CommandAttackKeyframeRemove(
               atk=atk,
               field=f,
@@ -3101,7 +3101,7 @@ def _panel_timeline() -> None:
 
         case TimelineVisitType.COLLIDER_ANIMATED:  ##
           assert c
-          fmove = lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
+          f_move = lambda old_tim_index, new_tim_index: atk.scheduled_commands.append(
             _CommandAttackColliderKeyframeMove(
               atk=atk,
               collider_id=c.ref.id,
@@ -3110,7 +3110,7 @@ def _panel_timeline() -> None:
               index_timeline_to=new_tim_index,
             )
           )
-          fadd = lambda new_tim_index: atk.scheduled_commands.append(
+          f_add = lambda new_tim_index: atk.scheduled_commands.append(
             _CommandAttackColliderKeyframeAdd(
               atk=atk,
               collider_id=c.ref.id,
@@ -3118,7 +3118,7 @@ def _panel_timeline() -> None:
               index_timeline=new_tim_index,
             )
           )
-          fremove = lambda in_list_index: atk.scheduled_commands.append(
+          f_remove = lambda in_list_index: atk.scheduled_commands.append(
             _CommandAttackColliderKeyframeRemove(
               atk=atk,
               collider_id=c.ref.id,
@@ -3132,31 +3132,31 @@ def _panel_timeline() -> None:
         case _:
           raise AssertionError
 
-      draw_and_handle_keyframes(f, frames, ktype, fmove, fadd, fremove)
+      draw_and_handle_keyframes(f, frames, ktype, f_move, f_add, f_remove)
 
     im.end_table()
 
     ## WASD keyframes movement
-    voff_field = None
-    voff_field_index = -1
+    v_off_field = None
+    v_off_field_index = -1
     if tim.selected_keyframe:
-      voff_field = tim.selected_keyframe.field
-      voff_field_index = next(
-        (i for i, pair in enumerate(keyframes_to_handle) if pair[0] == voff_field),
+      v_off_field = tim.selected_keyframe.field
+      v_off_field_index = next(
+        (i for i, pair in enumerate(keyframes_to_handle) if pair[0] == v_off_field),
         -1,
       )
 
     vertical_off = 0
-    for disabled, key, voff in (
-      ((voff_field_index <= 0), im.Key.w, -1),
-      ((voff_field_index >= len(keyframes_to_handle) - 1), im.Key.s, 1),
+    for disabled, key, v_off in (
+      ((v_off_field_index <= 0), im.Key.w, -1),
+      ((v_off_field_index >= len(keyframes_to_handle) - 1), im.Key.s, 1),
     ):
       if (not disabled) and im.is_key_pressed(key):
-        vertical_off = voff
+        vertical_off = v_off
 
     if vertical_off and (tim.selected_keyframe is not None):
       new_field_to_select, new_frames = keyframes_to_handle[
-        voff_field_index + vertical_off
+        v_off_field_index + vertical_off
       ]
       _select_keyframe(
         new_field_to_select,
@@ -3170,12 +3170,12 @@ def _panel_timeline() -> None:
     draw = im.get_window_draw_list()
 
     for i in range(atk.ref.duration_frames):
-      posx = (
+      pos_x = (
         lines_top_left.x + i * imgui_timeline_line_out.width / atk.ref.duration_frames
       )
       draw.add_line(
-        ImVec2(posx, lines_top_left.y),
-        ImVec2(posx, lines_bottom_right.y),
+        ImVec2(pos_x, lines_top_left.y),
+        ImVec2(pos_x, lines_bottom_right.y),
         im.get_color_u32(im.Col_.text if hovered_frame_index == i else im.Col_.border),
       )
     ##
@@ -3220,8 +3220,8 @@ def _inspector_input_float(
   label: str,
   getter: Callable[[], float],
   setter: Callable[[float], None],
-  vmin: float,
-  vmax: float,
+  v_min: float,
+  v_max: float,
   step: float,
   step_fast: float,
   fmt: str,
@@ -3229,7 +3229,7 @@ def _inspector_input_float(
   im.set_next_item_width(im.get_content_region_avail()[0])
   changed, value = im.input_float(label, getter(), step, step_fast, format=fmt)
   if changed:
-    setter(bf.clamp(round(value / step) * step, vmin, vmax))
+    setter(bf.clamp(round(value / step) * step, v_min, v_max))
   ##
 
 

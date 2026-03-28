@@ -25,11 +25,15 @@ from typing import Any, Generator
 import bf_lib as bf
 import numpy as np
 import yaml
-from bf_attacks_animator import *  # noqa: F403
-from bf_attacks_animator import ASSETS_ATTACKS_DIR, ATTACKS_FPS
+from bf_attacks_animator import (
+  ASSETS_ATTACKS_DIR,
+  ATTACKS_FPS,
+  tool_attacks_animator,  # noqa: F401
+)
 from bf_typer import command, timing
 from deepmerge import always_merger
 from PIL import Image
+from pydantic import BaseModel, Field
 
 ##
 
@@ -70,6 +74,8 @@ bf.game_settings.colors = [  ##
   "#8ff8e2",
   "#000000",
 ]  ##
+
+_ACTION_CONTROLS = ["L", "R", "M", "X1", "X2", "SP", "SH"]
 
 
 _context: list = []
@@ -313,9 +319,9 @@ def _process_glib(genline, glib, is_game: bool) -> None:
             entity, f"{entity}_requirements"
           ),
         )
-      for field in entity_2_tag_required_fields[entity][tag_type]:
-        with push(field):
-          asserte(field.removesuffix("_degrees") in tag_keys)
+      for f in entity_2_tag_required_fields[entity][tag_type]:
+        with push(f):
+          asserte(f.removesuffix("_degrees") in tag_keys)
 
   ##
 
@@ -398,6 +404,13 @@ def _process_glib(genline, glib, is_game: bool) -> None:
               if attack := ability.get("attack"):
                 with push("attack"):
                   validate_tags(attack.get("tags", []), "attack")
+        with push("combos"):
+          x["combos"] = _process_combos(
+            x.get("combos", ""),
+            _ACTION_CONTROLS,
+            [atk["debug_name"] for atk in x.get("attacks", [])],
+          ).model_dump(exclude={"pad"})["children"]
+
   ##
 
   ## Projectiles
@@ -438,7 +451,7 @@ def _process_glib(genline, glib, is_game: bool) -> None:
     p = prog_type_2_prog[progression_type]
     p["pos"] = bf.as_dict(entity.pos)
   assert not required_to_specify_progression_types, (
-    f"{_context} The folliwing progressions must be specified in LDTK: {required_to_specify_progression_types}"
+    f"{_context} The following progressions must be specified in LDTK: {required_to_specify_progression_types}"
   )
   glib["progression_size"] = bf.as_dict(level_progression.size)
   ##
@@ -453,7 +466,7 @@ def _process_glib(genline, glib, is_game: bool) -> None:
     setter(
       {
         "flat": x,
-        "rally": x * glib["player"]["block_damage_stamina_rally_perfent_of_flat"],
+        "rally": x * glib["player"]["block_damage_stamina_rally_percent_of_flat"],
         "rally_discard_mult_pre": glib["player"][
           "block_damage_stamina_rally_discard_mult_pre"
         ],
@@ -467,7 +480,7 @@ def _process_glib(genline, glib, is_game: bool) -> None:
   bf.recursive_visiter(glib, "damage_stamina", None, transform_damage_stamina)
 
   glib["player"].pop("block_damage_stamina_rally_discard_mult_pre")
-  glib["player"].pop("block_damage_stamina_rally_perfent_of_flat")
+  glib["player"].pop("block_damage_stamina_rally_percent_of_flat")
   glib["player"].pop("block_damage_stamina_rally_discard_mult_post")
 
   bf.recursive_visiter(
@@ -821,4 +834,93 @@ def process_images():  ##
 @command
 def temp():  ##
   pass
+  ##
+
+
+class _ComboNode(BaseModel):  ##
+  k: str
+  v: str
+  children: list["_ComboNode"] = Field(default_factory=list)
+  pad: int = Field(0)
+  ##
+
+
+def _process_combos(
+  value: str, _action_controls: list[str], _action_names: list[str]
+) -> _ComboNode:  ##
+  stack = [_ComboNode(k="_root", v="_root", pad=-1)]
+  assert len(stack) == 1
+  lines = [x for x in value.split("\n") if x.strip()]
+  min_pad = min(len(x) - len(x.lstrip(" ")) for x in lines)
+  lines = [bf.replace_double_spaces(x[min_pad:]) for x in lines]
+  for line in lines:
+    pad = len(line) - len(line.lstrip(" "))
+    while pad <= stack[-1].pad:
+      stack.pop()
+    activation, action = line.strip().split(" ", 1)
+    v = _ComboNode(k=activation, v=action, pad=pad)
+    stack[-1].children.append(v)
+    stack.append(v)
+  return stack[0]
+  ##
+
+
+def _test_process_combos():  ##
+  actual = _process_combos(
+    """
+    L SHOT1
+      L SHOT2
+        L SHOT3
+        SP ROLL
+          L SHOT3
+      SP ROLL
+        L SHOT3
+    SP ROLL
+      L SHOT2
+        L SHOT3
+    """,
+    _ACTION_CONTROLS,
+    ["SHOT1", "SHOT2", "SHOT3", "ROLL"],
+  ).model_dump(exclude={"pad"})["children"]
+
+  def x(k: str, v: str, next_: list[_ComboNode] | None = None) -> _ComboNode:
+    return _ComboNode(k=k, v=v, children=next_ or [])
+
+  expected = [
+    x(
+      "L",
+      "SHOT1",
+      [
+        x(
+          "L",
+          "SHOT2",
+          [
+            x("L", "SHOT3"),
+            x(
+              "SP",
+              "ROLL",
+              [x("L", "SHOT3")],
+            ),
+          ],
+        ),
+        x(
+          "SP",
+          "ROLL",
+          [x("L", "SHOT3")],
+        ),
+      ],
+    ),
+    x(
+      "SP",
+      "ROLL",
+      [
+        x(
+          "L",
+          "SHOT2",
+          [x("L", "SHOT3")],
+        ),
+      ],
+    ),
+  ]
+  assert actual == expected
   ##

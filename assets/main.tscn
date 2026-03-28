@@ -38,7 +38,6 @@ color_ui_hp_rally = Color(0.9882353, 0.654902, 0.5647059, 1)
 color_ui_stamina = Color(0.5686275, 0.85882354, 0.4117647, 1)
 color_ui_stamina_rally = Color(0.9843137, 0.7254902, 0.32941177, 1)
 color_ui_stamina_ki = Color(0.9843137, 1, 0.5254902, 1)
-world_3d = NodePath("../_meta/_world_3d")
 packed_room = ExtResource("7_vqaxa")
 packed_creature = ExtResource("6_qdlv5")
 packed_floor_tile = ExtResource("5_tkxyu")
@@ -55,6 +54,7 @@ packed_ui_bar_player = ExtResource("13_km2eh")
 packed_ui_bar_mob = ExtResource("11_wpieh")
 packed_ui_minimap_room = ExtResource("9_otm8r")
 packed_ui_progression_entry = ExtResource("9_vvw4a")
+world_3d = NodePath("../_meta/_world_3d")
 
 [node name="Control" type="Control" parent="_game" unique_id=929978051]
 visible = false

@@ -128,7 +128,7 @@ func _ready() -> void:
 
 		for x in range(ws.x):
 			var room_data := RoomData.new()
-			room_data.gindex = (x + y * ws.x) % len(g_rooms)
+			room_data.g_index = (x + y * ws.x) % len(g_rooms)
 
 			rooms.append(room_data)
 
@@ -160,7 +160,7 @@ func _ready() -> void:
 
 func _process(dt: float) -> void:
 	## Updating camera and stuff looking at camera
-	var g_room := glib.v.get_rooms()[rooms[current_room_index].gindex]
+	var g_room := glib.v.get_rooms()[rooms[current_room_index].g_index]
 	var room_size := Vector2(glib.ToV2i(g_room.get_size()))
 
 	var camera_dir := Vector3(0, sin(camera_angle), cos(camera_angle))
@@ -878,7 +878,7 @@ func _remake_room(new_room_pos: Vector2i, player_direction_index: int) -> void:
 	##
 
 	var g_rooms = glib.v.get_rooms()
-	var g_room = g_rooms[rooms[current_room_index].gindex]
+	var g_room = g_rooms[rooms[current_room_index].g_index]
 	var size := glib.ToV2i(g_room.get_size())
 
 	## Placing floor tiles
@@ -993,7 +993,7 @@ class Impulse: ##
 
 class RoomData: ##
 	var directions := 0
-	var gindex := -1
+	var g_index := -1
 	##
 
 

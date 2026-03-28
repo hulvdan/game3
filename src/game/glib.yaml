@@ -72,7 +72,7 @@ player: ##
   stamina_ki_decay_speed: 30
 
   block_damage_stamina_rally_discard_mult_pre: 0
-  block_damage_stamina_rally_perfent_of_flat: 0.5
+  block_damage_stamina_rally_percent_of_flat: 0.5
   block_damage_stamina_rally_discard_mult_post: 0
 
   cooldown__block: 0.25
@@ -297,6 +297,21 @@ creatures:
     stamina_cost:
       flat: 8
       rally: 2
+  combos: |
+    L SWING1
+      L SWING2
+        HR CSWING1
+          HR CSWING2
+        S+DIR ROLL
+          HR CSWING2
+      HR CSWING1
+        HR CSWING2
+    HR CSWING1
+      HR CSWING2
+    S+L BACKPORT
+    S+DIR ROLL
+    S
+      SHOT3
 ##
 - type: MOB_SHOOTER ##
   hp: 30
