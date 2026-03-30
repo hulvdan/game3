@@ -156,7 +156,7 @@ exclude = [
   "**/build",
   "**/dist",
 ]
-# ignore = ["src/oldstuff"]
+# ignore = ["src/old_stuff"]
 # defineConstant = { DEBUG = true }
 # stubPath = "src/stubs"
 reportMissingImports = "none"

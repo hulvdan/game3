@@ -8,17 +8,6 @@ enum StateType {
 	ROLL,
 	BLOCK,
 }
-enum ActionType {
-	NONE,
-	AL,
-	AR,
-	AM,
-	SP,
-	SH,
-	SET_MOVE_DIR,
-	A1,
-	A2,
-}
 
 var creature: Creature
 var bow: Node3D
@@ -35,8 +24,9 @@ var blocking := false
 var blocking_perfectly := false
 var ki := false
 var aim_pos: Vector2
-var next_combos: Array[glib.GComboNode]
 var finished_attack_recently := 0
+var _next_combos: Array[glib.GComboNode]
+var _actions_state: Array[bool]
 var _stamina_depleted_at := 0.0
 var _next_block_at: float = 0.0
 var _next_roll_at: float = 0.0
@@ -55,6 +45,10 @@ var _states: Array[PlayerBase] = [
 
 
 func init(creature_: Creature, bow_: Node3D) -> void: ##
+	assert(!_actions_state)
+	for _i in range(glib.GActivationType.COUNT):
+		_actions_state.append(false)
+
 	_states[StateType.ROLL].inside_enemies_t_affects_speed = false
 
 	for s: PlayerBase in _states:
@@ -72,12 +66,12 @@ func init(creature_: Creature, bow_: Node3D) -> void: ##
 	##
 
 
-func push_action(type: ActionType, down: bool, dir: Vector2) -> void: ##
+func push_action(type: glib.GActivationType, down: bool, dir: Vector2) -> void: ##
 	match type:
-		ActionType.SH:
+		glib.GActivationType.SH:
 			if down:
 				bf.remove_all_by_key(_buffer, Action.is_unblock)
-		ActionType.SET_MOVE_DIR:
+		glib.GActivationType.MOVE:
 			bf.remove_all_by_key(_buffer, Action.is_set_move_dir)
 
 	_buffer.append(Action.new(type, down, dir))
@@ -104,6 +98,12 @@ func explicit_process(dt: float) -> void: ##
 			_states[_current_state].on_enter(_change_state_action)
 		_change_state_to = StateType.NONE
 		_change_state_action = null
+
+	if (
+		(_current_state != StateType.ATTACK)
+		&& (_states[_current_state].elapsed_frames >= 1)
+	):
+		_next_combos = glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_combos()
 
 	assert(creature.controller.move != Vector2.INF)
 	_states[_current_state].explicit_process(dt)
@@ -190,6 +190,27 @@ func _can_start_attack() -> bool: ##
 	##
 
 
+func _get_next_combo_node() -> glib.GComboNode: ##
+	if not _next_combos:
+		_next_combos = glib.v.get_creatures()[glib.GCreatureType.PLAYER].get_combos()
+	if not _next_combos:
+		return null
+
+	for combo in _next_combos:
+		var found := true
+
+		for x in combo.get_activation_types():
+			if not _actions_state[x]:
+				found = false
+				break
+
+		if found:
+			return combo
+
+	return null
+	##
+
+
 func _can_start_roll() -> bool: ##
 	if stamina <= 0:
 		return false
@@ -203,13 +224,13 @@ func _can_start_block() -> bool: ##
 
 
 class Action: ##
-	var type: ActionType
+	var type: glib.GActivationType
 	var down: bool
 	var shoot_or_move_or_roll__dir: Vector2
 	var created_at: float
 
 
-	func _init(type_: ActionType, down_: bool, dir_: Vector2) -> void:
+	func _init(type_: glib.GActivationType, down_: bool, dir_: Vector2) -> void:
 		self.type = type_
 		self.down = down_
 		self.shoot_or_move_or_roll__dir = dir_
@@ -217,11 +238,11 @@ class Action: ##
 
 
 	static func is_set_move_dir(x: Action) -> bool:
-		return x.type == ActionType.SET_MOVE_DIR
+		return x.type == glib.GActivationType.MOVE
 
 
 	static func is_unblock(x: Action) -> bool:
-		return (x.type == ActionType.SH) and !x.down
+		return (x.type == glib.GActivationType.SH) and !x.down
 
 	##
 
@@ -229,6 +250,7 @@ class Action: ##
 @abstract
 class PlayerBase: ##
 	var elapsed: float
+	var elapsed_frames: int
 	var player: PlayerController
 	var inside_enemies_t_affects_speed := true
 
@@ -237,6 +259,7 @@ class PlayerBase: ##
 
 	func on_enter(_a: Action) -> void:
 		elapsed = 0
+		elapsed_frames = 0
 
 
 	func on_exit() -> void:
@@ -248,17 +271,23 @@ class PlayerBase: ##
 
 	func explicit_process(dt: float) -> void:
 		elapsed += dt
+		elapsed_frames += 1
 
 		# Consuming actions
 		var action_consumption_duration := glib.v.get_controls().get_action_consumption_duration()
-		var i1 := -1
+
+		var i := -1
 		for a: Action in player._buffer:
-			i1 += 1
+			i += 1
+
+			if a.down && (a.type in glib.v.get_consumable_activation_types()):
+				self.player._actions_state[a.type] = true
+
 			var e := Room.v.start_elapsed - a.created_at
 			if e > action_consumption_duration:
-				_consumed_action_indices.append(i1)
+				_consumed_action_indices.append(i)
 			elif consume_action(a):
-				_consumed_action_indices.append(i1)
+				_consumed_action_indices.append(i)
 
 		bf.unstable_remove_indices(player._buffer, _consumed_action_indices)
 	##
@@ -266,22 +295,23 @@ class PlayerBase: ##
 
 class PlayerDefault extends PlayerBase: ##
 	func consume_action(a: Action) -> bool:
-		match a.type:
-			ActionType.AL, ActionType.AR, ActionType.AM, ActionType.A1, ActionType.A2:
-				if a.down && player._can_start_attack():
-					player._change_state(StateType.ATTACK, a)
-					return true
-			ActionType.SP:
-				if a.down && player._can_start_roll():
-					player._change_state(StateType.ROLL, a)
-					return true
-			ActionType.SH:
-				if a.down && player._can_start_block():
-					player._change_state(StateType.BLOCK, a)
-					return true
-			ActionType.SET_MOVE_DIR:
-				player.creature.controller.move = a.shoot_or_move_or_roll__dir
+		if a.type == glib.GActivationType.MOVE:
+			player.creature.controller.move = a.shoot_or_move_or_roll__dir
+			return true
+
+		if a.down:
+			if player._can_start_attack() && player._get_next_combo_node():
+				player._change_state(StateType.ATTACK, a)
 				return true
+
+			if (a.type == glib.GActivationType.SP) && player._can_start_roll():
+				player._change_state(StateType.ROLL, a)
+				return true
+
+			if (a.type == glib.GActivationType.SH) && player._can_start_block():
+				player._change_state(StateType.BLOCK, a)
+				return true
+
 		return false
 	##
 
@@ -289,26 +319,20 @@ class PlayerDefault extends PlayerBase: ##
 class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
-		var data := glib.v.get_creatures()[player.creature.type]
-
-		if player.finished_attack_recently:
-			player.next_attack_index += 1
-			if player.next_attack_index >= 3:
-				player.next_attack_index = 0
-		else:
-			player.next_combos = data.get_combos()
 
 		match a.type:
-			ActionType.AL:
-				var next_combo := player.next_combos[0]
-				var attack := data.get_attacks()[next_combo.get_action_index()]
+			glib.GActivationType.AL, glib.GActivationType.AR, glib.GActivationType.AM, glib.GActivationType.SP, glib.GActivationType.SH:
+				var combo := player._get_next_combo_node()
+				assert(combo)
+				for x in combo.get_activation_types():
+					player._actions_state[x] = false
+				player._next_combos = combo.get_children()
+				var data := glib.v.get_creatures()[player.creature.type]
+				var attack := data.get_attacks()[combo.get_action_index()]
 				player.creature.enqueue_attack(attack)
-				player.next_combos = next_combo.get_children()
-				if not player.next_combos:
-					player.next_combos = data.get_combos()
-			ActionType.A1:
+			glib.GActivationType.A1:
 				player.creature.enqueue_ability(glib.v.get_abilities()[0])
-			ActionType.A2:
+			glib.GActivationType.A2:
 				player.creature.enqueue_ability(glib.v.get_abilities()[1])
 			_:
 				bf.invalid_path()
@@ -338,11 +362,11 @@ class PlayerAttack extends PlayerBase: ##
 
 	func consume_action(a: Action) -> bool:
 		match a.type:
-			ActionType.SP:
+			glib.GActivationType.SP:
 				if a.down && player._can_start_roll():
 					player._change_state(StateType.ROLL, a)
 					return true
-			ActionType.SET_MOVE_DIR:
+			glib.GActivationType.MOVE:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
 				return true
 		return false
@@ -398,7 +422,7 @@ class PlayerRoll extends PlayerBase: ##
 
 	func consume_action(a: Action) -> bool:
 		match a.type:
-			ActionType.SET_MOVE_DIR:
+			glib.GActivationType.MOVE:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
 				return true
 		return false
@@ -462,10 +486,10 @@ class PlayerBlock extends PlayerBase: ##
 
 	func consume_action(a: Action) -> bool:
 		match a.type:
-			ActionType.SH:
+			glib.GActivationType.SH:
 				scheduled_exit = !a.down
 				return true
-			ActionType.SET_MOVE_DIR:
+			glib.GActivationType.MOVE:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir
 				return true
 		return false

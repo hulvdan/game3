@@ -477,23 +477,25 @@ message Lib {
   GV2i world_size = 18;
   GV2i progression_size = 19;
 
+  repeated int32 consumable_activation_types = 20;
+
   // TABLE_GEN_START
-  repeated GActivation activations = 20;
-  repeated GAction actions = 21;
-  repeated GCol colliders = 22;
-  repeated GDamage damages = 23;
-  repeated GEvade evades = 24;
-  repeated GTeam teams = 25;
-  repeated GProgression progression = 26;
-  repeated GAbility abilities = 27;
-  repeated GCreature creatures = 28;
-  repeated GItem items = 29;
-  repeated GCollectible collectibles = 30;
-  repeated GProjectileFly projectile_fly_types = 31;
-  repeated GProjectile projectiles = 32;
-  repeated GInteractable interactables = 33;
-  repeated GMask masks = 34;
-  repeated GTag tags = 35;
-  repeated GImpulse impulses = 36;
+  repeated GActivation activations = 21;
+  repeated GAction actions = 22;
+  repeated GCol colliders = 23;
+  repeated GDamage damages = 24;
+  repeated GEvade evades = 25;
+  repeated GTeam teams = 26;
+  repeated GProgression progression = 27;
+  repeated GAbility abilities = 28;
+  repeated GCreature creatures = 29;
+  repeated GItem items = 30;
+  repeated GCollectible collectibles = 31;
+  repeated GProjectileFly projectile_fly_types = 32;
+  repeated GProjectile projectiles = 33;
+  repeated GInteractable interactables = 34;
+  repeated GMask masks = 35;
+  repeated GTag tags = 36;
+  repeated GImpulse impulses = 37;
   // TABLE_GEN_END
 }

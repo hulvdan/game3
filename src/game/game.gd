@@ -222,17 +222,17 @@ func _physics_process(dt: float) -> void:
 	room.player.creature.controller.move = Vector2(0, 0)
 
 	if !player_is_entering_door:
-		_process_action_button("al", PlayerController.ActionType.AL)
-		_process_action_button("ar", PlayerController.ActionType.AR)
-		_process_action_button("am", PlayerController.ActionType.AM)
-		_process_action_button("a1", PlayerController.ActionType.A1)
-		_process_action_button("a2", PlayerController.ActionType.A2)
-		_process_action_button("sp", PlayerController.ActionType.SP)
-		_process_action_button("sh", PlayerController.ActionType.SH)
+		_process_action_button("al", glib.GActivationType.AL)
+		_process_action_button("ar", glib.GActivationType.AR)
+		_process_action_button("am", glib.GActivationType.AM)
+		_process_action_button("a1", glib.GActivationType.A1)
+		_process_action_button("a2", glib.GActivationType.A2)
+		_process_action_button("sp", glib.GActivationType.SP)
+		_process_action_button("sh", glib.GActivationType.SH)
 
 		var move_dir := Input.get_vector("move_l", "move_r", "move_u", "move_d")
 		room.player.push_action(
-			PlayerController.ActionType.SET_MOVE_DIR,
+			glib.GActivationType.MOVE,
 			move_dir != Vector2(0, 0),
 			move_dir,
 		)
@@ -739,7 +739,10 @@ func make_projectile(d: Projectile.Data) -> void: ##
 	##
 
 
-func _process_action_button(action_name: String, action_type: PlayerController.ActionType) -> void: ##
+func _process_action_button(
+		action_name: String,
+		action_type: glib.GActivationType,
+) -> void: ##
 	if Input.is_action_just_pressed(action_name):
 		room.player.push_action(action_type, true, Vector2.INF)
 	if Input.is_action_just_released(action_name):

@@ -47,3 +47,4 @@ unnecessary-pass: null
 unused-argument: null
 disable:
   - no-elif-return
+  - no-else-return

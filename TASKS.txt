@@ -31,10 +31,10 @@ PLAN
 ============================================================
 x clear
 x game: combos: ref
+x game: combos: rework attacks to use combo tree
 
-* game: combos: rework attacks to use combo tree
+* game: combos: move+sp starts roll
 * game: combos: remove rolling when theres no move direction
-* game: combos:
 * game: combos:
 *
 * mark: projectile spawn frames

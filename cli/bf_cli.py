@@ -71,7 +71,7 @@ def do_profile(godot_platform: str) -> None:  ##
 
 @timing
 def do_godot_lint() -> None:  ##
-  bf.run_command("gdlint src", timeout_seconds=5)
+  bf.run_command("uv run gdlint src", timeout_seconds=5)
   ##
 
 

@@ -77,7 +77,7 @@ bf.game_settings.colors = [  ##
   "#000000",
 ]  ##
 
-_ACTION_CONTROLS = ["L", "R", "SP", "SH", "MOVE"]
+_ACTION_CONTROLS = ["AL", "AR", "AM", "SP", "SH", "MOVE"]
 
 _context: list = []
 _context_errors: list = []
@@ -930,17 +930,17 @@ def _process_combos(
 def _test_process_combos():  ##
   actual = _process_combos(
     """
-    L SHOT1
-      # L SHOT1
-      L SHOT2
-        L SHOT3
+    AL SHOT1
+      # AL SHOT1
+      AL SHOT2
+        AL SHOT3
         SP+MOVE ROLL
-          L SHOT3
+          AL SHOT3
       SP+MOVE ROLL
-        L SHOT3
+        AL SHOT3
     SP+MOVE ROLL
-      L SHOT2
-        L SHOT3
+      AL SHOT2
+        AL SHOT3
     """,
     _ACTION_CONTROLS,
     {
@@ -967,21 +967,21 @@ def _test_process_combos():  ##
     action_type=_ComboAction.INVALID.name,
     children=[
       x(
-        ["L"],
+        ["AL"],
         _ComboAction.ATTACK,
         0,
         [
           x(
-            ["L"],
+            ["AL"],
             _ComboAction.ATTACK,
             1,
             [
-              x(["L"], _ComboAction.ATTACK, 2),
+              x(["AL"], _ComboAction.ATTACK, 2),
               x(
                 ["SP", "MOVE"],
                 _ComboAction.ROLL,
                 0,
-                [x(["L"], _ComboAction.ATTACK, 2)],
+                [x(["AL"], _ComboAction.ATTACK, 2)],
               ),
             ],
           ),
@@ -989,7 +989,7 @@ def _test_process_combos():  ##
             ["SP", "MOVE"],
             _ComboAction.ROLL,
             0,
-            [x(["L"], _ComboAction.ATTACK, 2)],
+            [x(["AL"], _ComboAction.ATTACK, 2)],
           ),
         ],
       ),
@@ -999,10 +999,10 @@ def _test_process_combos():  ##
         0,
         [
           x(
-            ["L"],
+            ["AL"],
             _ComboAction.ATTACK,
             1,
-            [x(["L"], _ComboAction.ATTACK, 2)],
+            [x(["AL"], _ComboAction.ATTACK, 2)],
           ),
         ],
       ),

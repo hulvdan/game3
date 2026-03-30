@@ -108,13 +108,27 @@ spikes: ##
   ##
 
 activations: ##
-- type: L
-- type: R
-- type: MOVE
+- type: INVALID
+- type: AL
+- type: AR
+- type: AM
 - type: SP
+- type: SH
+- type: MOVE
+- type: A1
+- type: A2
+##
+
+consumable_activation_types: ##
+- AL
+- AR
+- AM
+- SP
+- SH
 ##
 
 actions: ##
+- type: INVALID
 - type: ATTACK
 - type: ROLL
 ##
@@ -310,10 +324,10 @@ creatures:
       flat: 8
       rally: 2
   combos: |
-    L SHOT1
-      L SHOT2
-        L SHOT3
-    R SHOT3
+    AL SHOT1
+      AL SHOT2
+        AL SHOT3
+    AR SHOT3
       SP SHOT3
     SP+MOVE ROLL
     SP SHOT3
