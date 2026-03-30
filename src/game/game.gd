@@ -220,22 +220,21 @@ func _physics_process(dt: float) -> void:
 
 	## Player actions
 	room.player.creature.controller.move = Vector2(0, 0)
+
 	if !player_is_entering_door:
-		if Input.is_action_just_pressed("block"):
-			room.player.push_action(PlayerController.ActionType.BLOCK, Vector2.INF)
-		if Input.is_action_just_released("block"):
-			room.player.push_action(PlayerController.ActionType.UNBLOCK, Vector2.INF)
-		if Input.is_action_just_pressed("shoot"):
-			room.player.push_action(PlayerController.ActionType.ATTACK, Vector2.INF)
-		if Input.is_action_just_pressed("ability_1"):
-			room.player.push_action(PlayerController.ActionType.ABILITY_1, Vector2.INF)
-		if Input.is_action_just_pressed("ability_2"):
-			room.player.push_action(PlayerController.ActionType.ABILITY_2, Vector2.INF)
-		if Input.is_action_just_pressed("roll"):
-			room.player.push_action(PlayerController.ActionType.ROLL, Vector2.INF)
+		_process_action_button("al", PlayerController.ActionType.AL)
+		_process_action_button("ar", PlayerController.ActionType.AR)
+		_process_action_button("am", PlayerController.ActionType.AM)
+		_process_action_button("a1", PlayerController.ActionType.A1)
+		_process_action_button("a2", PlayerController.ActionType.A2)
+		_process_action_button("sp", PlayerController.ActionType.SP)
+		_process_action_button("sh", PlayerController.ActionType.SH)
+
+		var move_dir := Input.get_vector("move_l", "move_r", "move_u", "move_d")
 		room.player.push_action(
 			PlayerController.ActionType.SET_MOVE_DIR,
-			Input.get_vector("move_l", "move_r", "move_u", "move_d"),
+			move_dir != Vector2(0, 0),
+			move_dir,
 		)
 	##
 
@@ -737,6 +736,14 @@ func make_projectile(d: Projectile.Data) -> void: ##
 	d.target = d.pos + target_dir * min(data.get_distance(), (d.target - d.pos).length())
 
 	projectiles_to_make.append(d)
+	##
+
+
+func _process_action_button(action_name: String, action_type: PlayerController.ActionType) -> void: ##
+	if Input.is_action_just_pressed(action_name):
+		room.player.push_action(action_type, true, Vector2.INF)
+	if Input.is_action_just_released(action_name):
+		room.player.push_action(action_type, false, Vector2.INF)
 	##
 
 

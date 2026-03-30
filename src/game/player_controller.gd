@@ -10,13 +10,14 @@ enum StateType {
 }
 enum ActionType {
 	NONE,
-	ATTACK,
-	ROLL,
-	BLOCK,
-	UNBLOCK,
+	AL,
+	AR,
+	AM,
+	SP,
+	SH,
 	SET_MOVE_DIR,
-	ABILITY_1,
-	ABILITY_2,
+	A1,
+	A2,
 }
 
 var creature: Creature
@@ -34,7 +35,7 @@ var blocking := false
 var blocking_perfectly := false
 var ki := false
 var aim_pos: Vector2
-var next_attack_index := 0
+var next_combos: Array[glib.GComboNode]
 var finished_attack_recently := 0
 var _stamina_depleted_at := 0.0
 var _next_block_at: float = 0.0
@@ -71,18 +72,15 @@ func init(creature_: Creature, bow_: Node3D) -> void: ##
 	##
 
 
-func push_action(type: ActionType, dir: Vector2) -> void: ##
+func push_action(type: ActionType, down: bool, dir: Vector2) -> void: ##
 	match type:
-		ActionType.BLOCK:
-			bf.remove_all_by_key(_buffer, Action.is_unblock)
+		ActionType.SH:
+			if down:
+				bf.remove_all_by_key(_buffer, Action.is_unblock)
 		ActionType.SET_MOVE_DIR:
 			bf.remove_all_by_key(_buffer, Action.is_set_move_dir)
 
-	var x := Action.new()
-	x.created_at = Room.v.start_elapsed
-	x.type = type
-	x.shoot_or_move_or_roll__dir = dir
-	_buffer.append(x)
+	_buffer.append(Action.new(type, down, dir))
 	##
 
 
@@ -206,8 +204,16 @@ func _can_start_block() -> bool: ##
 
 class Action: ##
 	var type: ActionType
-	var created_at: float
+	var down: bool
 	var shoot_or_move_or_roll__dir: Vector2
+	var created_at: float
+
+
+	func _init(type_: ActionType, down_: bool, dir_: Vector2) -> void:
+		self.type = type_
+		self.down = down_
+		self.shoot_or_move_or_roll__dir = dir_
+		self.created_at = Room.v.start_elapsed
 
 
 	static func is_set_move_dir(x: Action) -> bool:
@@ -215,7 +221,8 @@ class Action: ##
 
 
 	static func is_unblock(x: Action) -> bool:
-		return x.type == ActionType.UNBLOCK
+		return (x.type == ActionType.SH) and !x.down
+
 	##
 
 
@@ -260,16 +267,16 @@ class PlayerBase: ##
 class PlayerDefault extends PlayerBase: ##
 	func consume_action(a: Action) -> bool:
 		match a.type:
-			ActionType.ATTACK, ActionType.ABILITY_1, ActionType.ABILITY_2:
-				if player._can_start_attack():
+			ActionType.AL, ActionType.AR, ActionType.AM, ActionType.A1, ActionType.A2:
+				if a.down && player._can_start_attack():
 					player._change_state(StateType.ATTACK, a)
 					return true
-			ActionType.ROLL:
-				if player._can_start_roll():
+			ActionType.SP:
+				if a.down && player._can_start_roll():
 					player._change_state(StateType.ROLL, a)
 					return true
-			ActionType.BLOCK:
-				if player._can_start_block():
+			ActionType.SH:
+				if a.down && player._can_start_block():
 					player._change_state(StateType.BLOCK, a)
 					return true
 			ActionType.SET_MOVE_DIR:
@@ -282,21 +289,26 @@ class PlayerDefault extends PlayerBase: ##
 class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
+		var data := glib.v.get_creatures()[player.creature.type]
 
 		if player.finished_attack_recently:
 			player.next_attack_index += 1
 			if player.next_attack_index >= 3:
 				player.next_attack_index = 0
 		else:
-			player.next_attack_index = 0
+			player.next_combos = data.get_combos()
 
 		match a.type:
-			ActionType.ATTACK:
-				var attacks := glib.v.get_creatures()[player.creature.type].get_attacks()
-				player.creature.enqueue_attack(attacks[player.next_attack_index])
-			ActionType.ABILITY_1:
+			ActionType.AL:
+				var next_combo := player.next_combos[0]
+				var attack := data.get_attacks()[next_combo.get_action_index()]
+				player.creature.enqueue_attack(attack)
+				player.next_combos = next_combo.get_children()
+				if not player.next_combos:
+					player.next_combos = data.get_combos()
+			ActionType.A1:
 				player.creature.enqueue_ability(glib.v.get_abilities()[0])
-			ActionType.ABILITY_2:
+			ActionType.A2:
 				player.creature.enqueue_ability(glib.v.get_abilities()[1])
 			_:
 				bf.invalid_path()
@@ -326,8 +338,8 @@ class PlayerAttack extends PlayerBase: ##
 
 	func consume_action(a: Action) -> bool:
 		match a.type:
-			ActionType.ROLL:
-				if player._can_start_roll():
+			ActionType.SP:
+				if a.down && player._can_start_roll():
 					player._change_state(StateType.ROLL, a)
 					return true
 			ActionType.SET_MOVE_DIR:
@@ -450,11 +462,8 @@ class PlayerBlock extends PlayerBase: ##
 
 	func consume_action(a: Action) -> bool:
 		match a.type:
-			ActionType.BLOCK:
-				scheduled_exit = false
-				return true
-			ActionType.UNBLOCK:
-				scheduled_exit = true
+			ActionType.SH:
+				scheduled_exit = !a.down
 				return true
 			ActionType.SET_MOVE_DIR:
 				player.creature.controller.move = a.shoot_or_move_or_roll__dir

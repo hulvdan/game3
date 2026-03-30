@@ -8,7 +8,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
 	var data := glib.v.get_creatures()[c.type]
 	var target_pos: Vector2 = bf.xz(Room.v.player.creature.transform.origin)
 	var pos = bf.xz((c as Node3D).transform.origin)
-	var dpos: Vector2 = target_pos - pos
+	var diff_pos: Vector2 = target_pos - pos
 
 	for attack: glib.GAttack in data.get_attacks():
 		for condition in attack.get_conditions():
@@ -17,7 +17,7 @@ func tick(actor_: Node, _blackboard: Blackboard) -> int: ##
 				c.controller.move = Vector2(0, 0)
 				return SUCCESS
 
-	c.controller.move = dpos.normalized()
+	c.controller.move = diff_pos.normalized()
 	return RUNNING
 	##
 
