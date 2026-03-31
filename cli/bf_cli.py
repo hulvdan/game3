@@ -128,7 +128,7 @@ def do_build(
 
 
 @timing
-def do_test() -> None:  ##
+def do_godot_test() -> None:  ##
   bf.run_command(
     "godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src/tests -gexit -gprefix test -gdisable_colors",
     timeout_seconds=5,
@@ -281,7 +281,7 @@ def test():  ##
   do_generate(platform, build_type, is_game=True)
   do_godot_lint()
   do_godot_check_errors()
-  do_test()
+  do_godot_test()
   ##
 
 
@@ -334,9 +334,6 @@ def make_swatch():  ##
         "values": bf.hex_to_rgb_floats(color),
       },
     }
-
-  # swatch_data = [process_color(c) for c in colors]
-  # bf_swatch.write(swatch_data, "aboba.ase")
 
   def process_color2(color: str) -> bf_swatch.RawColor:
     r, g, b = bf.hex_to_rgb_ints(color)

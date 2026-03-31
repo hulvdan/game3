@@ -48,16 +48,24 @@
     },
     {
       "match": "\\.gd$",
-      "command": "uv run gdscript-formatter --reorder-code ${file}"
+      "command": "uv run gdscript-formatter --reorder-code ${file}",
+      "async": false
+    },
+    {
+      "match": "\\.gd$",
+      "command": "godot --no-header --headless -s addons/gut/gut_cmdln.gd -gdir src/tests -gexit -gprefix test -gdisable_colors",
+      "async": false
     },
     {
       "match": "\\.pyi?$",
-      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix"
+      "command": "uv run cog -n utf-8 -U -r -P --markers=\"[[[cog cog]]] [[[end]]]\" ${file} && uv run ruff format ${file} && uv run ruff check --select I ${file} --fix",
+      "async": false
     },
     {
       "match": "(bf_lib|bf_game)\\.py$",
       "command": "testing.runCurrentFile",
-      "runIn": "vscode"
+      "runIn": "vscode",
+      "async": false
     },
     {
       "match": "\\.md$",
@@ -100,6 +108,10 @@
     "BONKER",
     "Deser",
     "flattenizer",
+    "gdir",
+    "gdisable",
+    "gexit",
+    "gprefix",
     "HIVER",
     "ktype",
     "mult",

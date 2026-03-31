@@ -320,22 +320,19 @@ class PlayerAttack extends PlayerBase: ##
 	func on_enter(a: Action) -> void:
 		super.on_enter(a)
 
-		match a.type:
-			glib.GActivationType.AL, glib.GActivationType.AR, glib.GActivationType.AM, glib.GActivationType.SP, glib.GActivationType.SH:
-				var combo := player._get_next_combo_node()
-				assert(combo)
-				for x in combo.get_activation_types():
-					player._actions_state[x] = false
-				player._next_combos = combo.get_children()
-				var data := glib.v.get_creatures()[player.creature.type]
-				var attack := data.get_attacks()[combo.get_action_index()]
-				player.creature.enqueue_attack(attack)
-			glib.GActivationType.A1:
-				player.creature.enqueue_ability(glib.v.get_abilities()[0])
-			glib.GActivationType.A2:
-				player.creature.enqueue_ability(glib.v.get_abilities()[1])
-			_:
-				bf.invalid_path()
+		if a.type == glib.GActivationType.A1:
+			player.creature.enqueue_ability(glib.v.get_abilities()[0])
+		elif a.type == glib.GActivationType.A2:
+			player.creature.enqueue_ability(glib.v.get_abilities()[1])
+		else:
+			var combo := player._get_next_combo_node()
+			assert(combo)
+			for x in combo.get_activation_types():
+				player._actions_state[x] = false
+			player._next_combos = combo.get_children()
+			var data := glib.v.get_creatures()[player.creature.type]
+			var attack := data.get_attacks()[combo.get_action_index()]
+			player.creature.enqueue_attack(attack)
 
 		player.creature.speed_modifiers.attacking = glib.v.get_player().get_speed_scale__shooting()
 		player._stamina_regen_modifiers.attacking = glib.v.get_player().get_stamina_regen_scale__shooting()

@@ -32,6 +32,7 @@ PLAN
 x clear
 x game: combos: ref
 x game: combos: rework attacks to use combo tree
+x tests
 
 * game: combos: move+sp starts roll
 * game: combos: remove rolling when theres no move direction
