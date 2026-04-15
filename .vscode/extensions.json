@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "mark-wiemer.vscode-autohotkey-plus-plus",
+    "bufbuild.vscode-buf",
+    "EditorConfig.EditorConfig",
+    "zokugun.explicit-folding",
+    "ArturoDent.launch-config",
+    "pucelle.run-on-save",
+    "tangent.taskasaurus"
+  ]
+}
